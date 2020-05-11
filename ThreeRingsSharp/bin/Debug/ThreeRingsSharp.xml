@@ -1,0 +1,284 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ThreeRingsSharp</name>
+    </assembly>
+    <members>
+        <member name="T:ThreeRingsSharp.DataHandlers.ModelConfigBrancher">
+            <summary>
+            A class that takes in a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>, determines its subtype (e.g. <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/>, <see cref="T:com.threerings.opengl.model.config.StaticConfig"/>, etc.), and handles the data appropriately.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.GetRootDataTreeObject">
+            <summary>
+            A <see cref="T:System.Func`1"/> that returns a reference to the RootDataTreeObject in the base SKAnimatorTools program. The program's main form will set this on its own.<para/>
+            Consider referencing <see cref="P:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.RootDataTreeObject"/> directly rather than calling <see cref="M:System.Func`1.Invoke"/> on this.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.RootDataTreeObject">
+            <summary>
+            A reference to the <see cref="P:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.RootDataTreeObject"/> property of the GUI, which contains the model hierarchy.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.HandleDataFrom(com.threerings.opengl.model.config.ModelConfig)">
+            <summary>
+            Sends an arbitrary <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> into the data brancher and processes it.
+            </summary>
+            <param name="model"></param>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.ArticulatedConfigHandler.RootDataTreeObject">
+            <summary>
+            A reference to the <see cref="P:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.ArticulatedConfigHandler.RootDataTreeObject"/> property of the GUI, which contains the model hierarchy.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.ArticulatedConfigHandler.SetupCosmeticInformation(com.threerings.opengl.model.config.ArticulatedConfig)">
+            <summary>
+            Sets up the cosmetic data for this model, or, what's displayed in the GUI for the program.
+            </summary>
+            <param name="model"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.ArticulatedConfigHandler.HandleArticulatedConfig(com.threerings.opengl.model.config.ArticulatedConfig)">
+            <summary>
+            Handles an ArticulatedConfig
+            </summary>
+            <param name="model"></param>
+        </member>
+        <member name="T:ThreeRingsSharp.Utility.Interface.AsyncMessageBox">
+            <summary>
+            Provides a method to asynchronously display a message box.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.AsyncMessageBox.Show(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxIcon)">
+            <summary>
+            Asynchronously show a message box (show a message box without causing the GUI to stop updating, allowing stuff to work in the background).<para/>
+            This also allows the user to interact with the GUI before closing the message box, as a side effect.
+            </summary>
+            <param name="text">The text to display in the body of the message box.</param>
+            <param name="title">The title displayed at the top of the message box.</param>
+            <param name="buttons">The buttons used in the message box (e.g. OK)</param>
+            <param name="icon">The icon to display on the left side of the message box.</param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.Utility.Interface.DataTreeObjectEventMarshaller">
+            <summary>
+            Handles click events for <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> by storing bindings from a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> to its identical <see cref="T:System.Windows.Forms.TreeNode"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObjectEventMarshaller.ClearAllNodeBindings">
+            <summary>
+            Erases all node bindings created via <see cref="M:ThreeRingsSharp.Utility.Interface.DataTreeObjectEventMarshaller.RegisterTreeNodeBinding(ThreeRingsSharp.Utility.Interface.DataTreeObject,System.Windows.Forms.TreeNode)"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObjectEventMarshaller.RegisterTreeNodeBinding(ThreeRingsSharp.Utility.Interface.DataTreeObject,System.Windows.Forms.TreeNode)">
+            <summary>
+            Registers a binding from a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> to a <see cref="T:System.Windows.Forms.TreeNode"/>.
+            </summary>
+            <param name="data"></param>
+            <param name="node"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObjectEventMarshaller.GetDataObjectOf(System.Windows.Forms.TreeNode)">
+            <summary>
+            Returns the <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> associated with the given <paramref name="node"/>, or <see langword="null"/> if one does not exist.
+            </summary>
+            <param name="node">The node used to find the equivalent <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/></param>
+        </member>
+        <member name="T:ThreeRingsSharp.Utility.Interface.DataTreeObject">
+            <summary>
+            A class that represents a data tree object. It is a basic container with a parent/child hierarchy as well as other applicable data.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Parent">
+            <summary>
+            The <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> that contains this instance, or null if this is a root instance.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.DataTreeObject._Parent">
+            <summary>
+            The internal reference of the parent. Do not change this internally, and instead change <see cref="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Parent"/>, as it properly updates the object hierarchy.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.DataTreeObject.Locked">
+            <summary>
+            If true, the <see cref="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Parent"/> property of this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> cannot be changed and will always be null.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Children">
+            <summary>
+            All <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>s that are first-level descendants of this object (this does NOT include nested objects).
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.ImageKey">
+            <summary>
+            The image key for this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> which defines the icon displayed to the left of the item in the data tree.<para/>
+            The default <see cref="T:ThreeRingsSharp.Utility.Interface.SilkImage"/> is <see cref="F:ThreeRingsSharp.Utility.Interface.SilkImage.Generic"/> which represents a generic hierarchy element.<para/>
+            The "Silk" term comes from the creator of the images, see https://famfamfam.com/
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Text">
+            <summary>
+            The text displayed in the data tree for this object.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Properties">
+            <summary>
+            The properties of this object. When the associated node is selected, the properties menu will update.<para/>
+            The method in which this is displayed is via creating the given <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>s in the Properties menu hierarchy, and then adding a child with no icon containing the associated <see langword="string"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.ClearAllChildren">
+            <summary>
+            Iterates through all children of this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> and sets their <see cref="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Parent"/> property to <see langword="null"/>.<para/>
+            This preserves the hierarchy of the children, so if a child object has its own children, their <see cref="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Parent"/>s will remain unchanged.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.Dispose">
+            <summary>
+            Sets the <see cref="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Parent"/> property of this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> to <see langword="null"/>, locks the <see cref="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Parent"/> property, and then calls <see cref="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.Dispose"/> on all children.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.AddChild(ThreeRingsSharp.Utility.Interface.DataTreeObject)">
+            <summary>
+            Adds the given child to this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>'s children.
+            </summary>
+            <param name="child"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.RemoveChild(ThreeRingsSharp.Utility.Interface.DataTreeObject)">
+            <summary>
+            Removes the given child from this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>'s children.
+            </summary>
+            <param name="child"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.ToTreeNode">
+            <summary>
+            Converts this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> into a <see cref="T:System.Windows.Forms.TreeNode"/>. This does NOT add any children. If you need to keep the hierarchy, use <see cref="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.ConvertHierarchyToTreeNodes"/>
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.ConvertHierarchyToTreeNodes">
+            <summary>
+            Converts this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> and all children into an identical hierarchy of <see cref="T:System.Windows.Forms.TreeNode"/> objects, and then returns this object as a <see cref="T:System.Windows.Forms.TreeNode"/> with all of the proper children.<para/>
+            This also connects events to being clicked so that they fire the associated events in <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObjectEventMarshaller"/>.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.CreateHierarchy(ThreeRingsSharp.Utility.Interface.DataTreeObject,System.Windows.Forms.TreeNode)">
+            <summary>
+            The internal variant of <see cref="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.ConvertHierarchyToTreeNodes"/> that handles the recursion.
+            </summary>
+            <param name="current"></param>
+            <param name="targetParent"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.AddSimpleProperty(System.String,System.Object,ThreeRingsSharp.Utility.Interface.SilkImage,ThreeRingsSharp.Utility.Interface.SilkImage)">
+            <summary>
+            An alias method used to add a property with a generic icon to <see cref="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Properties"/> (omitting the need to create a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>)<para/>
+            If the objec array is a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty"/> instance, that instance will be used.
+            </summary>
+            <param name="name">The name of the property.</param>
+            <param name="value">The value displayed under the property.</param>
+            <param name="propertyNameImage">The image displayed next to the property name.</param>
+            <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.AddSimpleProperty(System.String,System.Object[],ThreeRingsSharp.Utility.Interface.SilkImage,ThreeRingsSharp.Utility.Interface.SilkImage)">
+            <summary>
+            An alias method used to add a property with a generic icon to <see cref="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Properties"/> (omitting the need to create a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>)<para/>
+            If the object array contains any <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty"/> instances, those instances will be used (and <paramref name="propertyValueImages"/> will be overridden where applicable).
+            </summary>
+            <param name="name">The name of the property.</param>
+            <param name="values">The values displayed under the property.</param>
+            <param name="propertyNameImage">The image displayed next to the property name.</param>
+            <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.#ctor(ThreeRingsSharp.Utility.Interface.DataTreeObject)">
+            <summary>
+            Construct a new <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>.
+            </summary>
+            <param name="parent">The parent <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> to add this object to.</param>
+        </member>
+        <member name="T:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty">
+            <summary>
+            Represents a simpler variant of <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> storing text and an image.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty.Text">
+            <summary>
+            The text displayed in the data tree for this object.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty.ImageKey">
+            <summary>
+            The image key for this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> which defines the icon displayed to the left of the item in the data tree.<para/>
+            The default <see cref="T:ThreeRingsSharp.Utility.Interface.SilkImage"/> is <see cref="F:ThreeRingsSharp.Utility.Interface.SilkImage.Generic"/> which represents a generic hierarchy element.<para/>
+            The "Silk" term comes from the creator of the images, see https://famfamfam.com/
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty.ToTreeNode">
+            <summary>
+            Converts this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> into a <see cref="T:System.Windows.Forms.TreeNode"/>.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty.#ctor(System.String,ThreeRingsSharp.Utility.Interface.SilkImage)">
+            <summary>
+            Construct a new property with empty string and the <see cref="F:ThreeRingsSharp.Utility.Interface.SilkImage.Value"/> image.
+            </summary>
+            <param name="text"></param>
+            <param name="imageKey"></param>
+        </member>
+        <member name="T:ThreeRingsSharp.Utility.Interface.SilkImage">
+            <summary>
+            An enum that represents the available icons in the data tree.<para/>
+            Note to self: Keep this list updated, and ensure its order is identical to the order in which they are defined by the generated code.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.HackyGetImplementation(System.IO.FileInfo,System.Boolean)">
+            <summary>
+            A very hacky method of returning the implementation of this model in its string form so that if Clyde can't read it, we can still see its name.
+            </summary>
+            <param name="datFile"></param>
+            <param name="isCompressed"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.IsValidClydeFile(System.IO.FileInfo)">
+            <summary>
+            Returns <see langword="true"/> if the input <see cref="T:System.IO.FileInfo"/> represents a file exported by Clyde.
+            </summary>
+            <param name="datFile"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.GetCosmeticInformation(System.IO.FileInfo)">
+            <summary>
+            Returns three strings, in order, the compression status (Yes/No), the version name (user friendly), and the implementation.
+            </summary>
+            <param name="datFile"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.XanLogger.BoxReference">
+            <summary>
+            A reference to the text box storing the log.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.WriteLine">
+            <summary>
+            Append a new line to the log.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.WriteLine(System.String)">
+            <summary>
+            Append the given text to the log and advance by one line.
+            </summary>
+            <param name="text"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.Write(System.String)">
+            <summary>
+            Append the given text to the log.
+            </summary>
+            <param name="text"></param>
+            <exception cref="T:System.NullReferenceException">If the RichTextBox reference has not been set.</exception>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.RTFScrolledBottom.IsScrolledToBottom">
+            <summary>
+            True if the component is scrolled as far down as possible.
+            </summary>
+        </member>
+    </members>
+</doc>
