@@ -6,6 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using com.threerings.opengl.model.config;
+using com.threerings.opengl.scene;
+using com.threerings.opengl.scene.config;
+using org.lwjgl.opengl;
 
 namespace ThreeRingsSharp.Utility.Interface {
 
@@ -124,10 +128,20 @@ namespace ThreeRingsSharp.Utility.Interface {
 		public string Text { get; set; }
 
 		/// <summary>
+		/// Internal compatibility for casts between this and <see cref="DataTreeObjectProperty"/>
+		/// </summary>
+		internal bool DisplaySingleChildInline { get; set; } = true;
+
+		/// <summary>
+		/// If true, this <see cref="DataTreeObject"/> was cast from a <see cref="DataTreeObjectProperty"/>.
+		/// </summary>
+		public bool CreatedFromProperty { get; internal set; } = false;
+
+		/// <summary>
 		/// The properties of this object. When the associated node is selected, the properties menu will update.<para/>
 		/// The method in which this is displayed is via creating the given <see cref="DataTreeObject"/>s in the Properties menu hierarchy, and then adding a child with no icon containing the associated <see langword="string"/>.
 		/// </summary>
-		public Dictionary<DataTreeObjectProperty, List<DataTreeObjectProperty>> Properties { get; } = new Dictionary<DataTreeObjectProperty, List<DataTreeObjectProperty>>();
+		public Dictionary<DataTreeObjectProperty, List<DataTreeObject>> Properties { get; } = new Dictionary<DataTreeObjectProperty, List<DataTreeObject>>();
 
 		/// <summary>
 		/// Iterates through all children of this <see cref="DataTreeObject"/> and sets their <see cref="Parent"/> property to <see langword="null"/>.<para/>
@@ -216,7 +230,8 @@ namespace ThreeRingsSharp.Utility.Interface {
 		/// <param name="value">The value displayed under the property.</param>
 		/// <param name="propertyNameImage">The image displayed next to the property name.</param>
 		/// <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
-		public void AddSimpleProperty(string name, object value, SilkImage propertyNameImage = SilkImage.Value, SilkImage propertyValueImages = SilkImage.Value) => AddSimpleProperty(name, new object[] { value }, propertyNameImage, propertyValueImages);
+		/// <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
+		public void AddSimpleProperty(string name, object value, SilkImage propertyNameImage = SilkImage.Value, SilkImage propertyValueImages = SilkImage.Value, bool displaySinglePropertiesInline = true) => AddSimpleProperty(name, new object[] { value }, propertyNameImage, propertyValueImages, displaySinglePropertiesInline);
 
 		/// <summary>
 		/// An alias method used to add a property with a generic icon to <see cref="Properties"/> (omitting the need to create a <see cref="DataTreeObject"/>)<para/>
@@ -226,11 +241,14 @@ namespace ThreeRingsSharp.Utility.Interface {
 		/// <param name="values">The values displayed under the property.</param>
 		/// <param name="propertyNameImage">The image displayed next to the property name.</param>
 		/// <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
-		public void AddSimpleProperty(string name, object[] values, SilkImage propertyNameImage = SilkImage.Value, SilkImage propertyValueImages = SilkImage.Value) {
-			DataTreeObjectProperty propName = new DataTreeObjectProperty(name, propertyNameImage);
-			List<DataTreeObjectProperty> pValues = new List<DataTreeObjectProperty>();
+		/// <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
+		public void AddSimpleProperty(string name, object[] values, SilkImage propertyNameImage = SilkImage.Value, SilkImage propertyValueImages = SilkImage.Value, bool displaySinglePropertiesInline = true) {
+			DataTreeObjectProperty propName = new DataTreeObjectProperty(name, propertyNameImage, displaySinglePropertiesInline);
+			List<DataTreeObject> pValues = new List<DataTreeObject>();
 			foreach (object obj in values) {
-				if (obj is DataTreeObjectProperty prop) {
+				if (obj is DataTreeObject objInstance) {
+					pValues.Add(objInstance);
+				} else if (obj is DataTreeObjectProperty prop) {
 					pValues.Add(prop);
 				} else {
 					pValues.Add(new DataTreeObjectProperty(obj.ToString(), propertyValueImages));
@@ -247,21 +265,26 @@ namespace ThreeRingsSharp.Utility.Interface {
 			Parent = parent;
 		}
 
-		/*
-		~DataTreeObject() {
-			Dispose();
+		public static explicit operator DataTreeObjectProperty(DataTreeObject obj) {
+			return new DataTreeObjectProperty(obj.Text, obj.ImageKey, obj.DisplaySingleChildInline);
 		}
-		*/
 	}
 
 	/// <summary>
-	/// Represents a simpler variant of <see cref="DataTreeObject"/> storing text and an image.
+	/// Represents a simpler variant of <see cref="DataTreeObject"/> storing text and an image. It cannot have children.
 	/// </summary>
 	public class DataTreeObjectProperty {
+
 		/// <summary>
 		/// The text displayed in the data tree for this object.
 		/// </summary>
 		public string Text { get; set; }
+
+		/// <summary>
+		/// If <see langword="true"/>, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).<para/>
+		/// This object must be a key in a <see cref="DataTreeObject.Properties"/> for this to do anything. When the GUI system creates the properties menu, if this property object has one associated child value, it will display inline if this is <see langword="true"/>.
+		/// </summary>
+		public bool DisplaySingleChildInline { get; set; }
 
 		/// <summary>
 		/// The image key for this <see cref="DataTreeObject"/> which defines the icon displayed to the left of the item in the data tree.<para/>
@@ -281,48 +304,22 @@ namespace ThreeRingsSharp.Utility.Interface {
 		/// <summary>
 		/// Construct a new property with empty string and the <see cref="SilkImage.Value"/> image.
 		/// </summary>
-		/// <param name="text"></param>
-		/// <param name="imageKey"></param>
-		public DataTreeObjectProperty(string text = "", SilkImage imageKey = SilkImage.Value) {
+		/// <param name="text">The text to display in this property.</param>
+		/// <param name="imageKey">The image to display to the left of the text.</param>
+		/// <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>). In the case of this constructor, this object must be a key in a <see cref="DataTreeObject.Properties"/>. When the GUI system creates the properties menu, if this property object has one associated child value, it will display inline as mentioend prior.</param>
+		public DataTreeObjectProperty(string text = "", SilkImage imageKey = SilkImage.Value, bool displaySinglePropertiesInline = true) {
 			Text = text;
 			ImageKey = imageKey;
+			DisplaySingleChildInline = displaySinglePropertiesInline;
 		}
-	}
-	
-	/// <summary>
-	/// An enum that represents the available icons in the data tree.<para/>
-	/// Note to self: Keep this list updated, and ensure its order is identical to the order in which they are defined by the generated code.
-	/// </summary>
-	public enum SilkImage {
-		Generic,
-		Object,
-		Scene,
-		Sky,
-		Model,
-		ModelSet,
-		Articulated,
-		Billboard,
-		Static,
-		MergedStatic,
-		Sound,
-		Attachment,
-		Derived,
-		Conditional,
-		CameraShake,
-		Generated,
-		Schemed,
-		SchemedModel,
-		Animation,
-		Scripted,
-		TimedAction,
-		Config,
-		Shading,
-		Reference,
-		Array,
-		Texture,
-		Variant,
-		Light,
-		Value,
-		None
+
+		public static implicit operator DataTreeObject(DataTreeObjectProperty prop) {
+			return new DataTreeObject() {
+				Text = prop.Text,
+				ImageKey = prop.ImageKey,
+				DisplaySingleChildInline = prop.DisplaySingleChildInline,
+				CreatedFromProperty = true
+			};
+		}
 	}
 }

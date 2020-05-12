@@ -2,7 +2,6 @@ F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\SKAnimatorTo
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\SKAnimatorTools.exe
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\SKAnimatorTools.pdb
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.csprojAssemblyReference.cache
-F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.MainForm.resources
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.Properties.Resources.resources
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.csproj.GenerateResource.cache
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.csproj.CoreCompileInputs.cache
@@ -42,3 +41,7 @@ F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.Reflection.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.Runtime.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.Runtime.JNI.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Newtonsoft.Json.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Newtonsoft.Json.xml
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.ConfigurationForm.resources
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.MainWindow.resources

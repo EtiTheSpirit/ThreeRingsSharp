@@ -36,7 +36,5 @@ F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.Runtime
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.Runtime.JNI.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\OOOLibAndDeps.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\obj\Debug\ThreeRingsSharp.csproj.CopyComplete
-F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\AssimpNet.dll
-F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\System.Numerics.Vectors.dll
-F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\AssimpNet.xml
-F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\System.Numerics.Vectors.xml
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\Newtonsoft.Json.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\Newtonsoft.Json.xml

@@ -23,7 +23,7 @@ namespace ThreeRingsSharp.Utility {
 
 
 		/// <summary>
-		/// A very hacky method of returning the implementation of this model in its string form so that if Clyde can't read it, we can still see its name.
+		/// A very hacky method of returning the implementation of this model in its string form so that if Clyde can't read it, we can still see its name. This returns the full class name.
 		/// </summary>
 		/// <param name="datFile"></param>
 		/// <param name="isCompressed"></param>
@@ -43,13 +43,17 @@ namespace ThreeRingsSharp.Utility {
 			index += 4; // Accomodate for int
 			byte typeLength = buffer[index];
 			string clip = modelAsString.Substring(index + 1, typeLength);
+			/*
 			int dollar = clip.IndexOf("$");
 			if (dollar != -1) {
 				clip = clip.Substring(0, dollar);
 			}
 			if (clip.Contains('.')) {
 				clip = clip.Substring(clip.LastIndexOf('.') + 1);
-			}
+			} // Line below didn't exist, and these two if blocks were the only thing. Line below replaced these.
+			string cutClip = ClassNameStripper.GetBaseClassName(clip);
+			return cutClip ?? clip; // Return the cut clip, or if it couldn't be parsed, just the actual raw text.
+			*/
 			return clip;
 		}
 
