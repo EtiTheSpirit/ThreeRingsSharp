@@ -180,6 +180,7 @@
     <Compile Include="XansData\IO\OBJExporter.cs" />
     <Compile Include="XansData\EnumerableExtension.cs" />
     <Compile Include="XansData\ModelFormat.cs" />
+    <Compile Include="XansData\Singleton.cs" />
     <Compile Include="XansData\StringExtension.cs" />
     <Compile Include="XansData\Structs\Vector2.cs" />
     <Compile Include="XansData\Structs\Vector3.cs" />
