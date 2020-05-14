@@ -23,6 +23,11 @@ namespace SKAnimatorTools {
 		/// </summary>
 		private static readonly Color RedColor = Color.FromArgb(255, 127, 127);
 
+		/// <summary>
+		/// A reference to a yellow color that represents a control *could* be invalid (e.g. rsrc directory isn't named rsrc).
+		/// </summary>
+		private static readonly Color YellowColor = Color.FromArgb(255, 255, 127);
+
 		public ConfigurationForm() {
 			InitializeComponent();
 			MainTooltip.ShowAlways = true;
@@ -33,9 +38,10 @@ namespace SKAnimatorTools {
 			IsOK = true;
 		}
 
-		public void SetDataFromConfig(string defaultLoad, string defaultSave, bool rememberLoad) {
+		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad) {
 			TextBox_DefaultLoadLoc.Text = defaultLoad;
 			TextBox_DefaultSaveLoc.Text = defaultSave;
+			TextBox_RsrcDirectory.Text = defaultRsrc;
 			CheckBox_RememberLastLoad.Checked = rememberLoad;
 			VerifyAllPathIntegrity();
 		}
@@ -48,6 +54,8 @@ namespace SKAnimatorTools {
 			ConfigurationInterface.SetConfigurationValue("DefaultLoadDirectory", TextBox_DefaultLoadLoc.Text);
 			ConfigurationInterface.SetConfigurationValue("LastSaveDirectory", TextBox_DefaultSaveLoc.Text);
 			ConfigurationInterface.SetConfigurationValue("RememberDirectoryAfterOpen", CheckBox_RememberLastLoad.Checked);
+			ConfigurationInterface.SetConfigurationValue("RsrcDirectory", TextBox_RsrcDirectory.Text);
+			ConfigurationInterface.SetConfigurationValue("IsFirstTimeOpening", false);
 			Close();
 		}
 
@@ -55,18 +63,29 @@ namespace SKAnimatorTools {
 
 		private void VerifySaveLocationIntegrity(object sender, CancelEventArgs e) => VerifyAllPathIntegrity();
 
+		private void VerifyRsrcDirectoryIntegrity(object sender, CancelEventArgs e) => VerifyAllPathIntegrity();
+
 		/// <summary>
 		/// Verifies the integrity of both the load and save path.
 		/// </summary>
 		private void VerifyAllPathIntegrity() {
 			string loadPath = TextBox_DefaultLoadLoc.Text;
 			string savePath = TextBox_DefaultSaveLoc.Text;
+			string rsrcPath = TextBox_RsrcDirectory.Text;
 			bool loadOK = IsPathOK(loadPath);
 			bool saveOK = IsPathOK(savePath);
-			IsOK = loadOK && saveOK;
+			bool rsrcOK = IsPathOK(rsrcPath);
+			IsOK = loadOK && saveOK & rsrcOK;
 
 			TextBox_DefaultLoadLoc.BackColor = loadOK ? SystemColors.Window : RedColor;
 			TextBox_DefaultSaveLoc.BackColor = saveOK ? SystemColors.Window : RedColor;
+			TextBox_RsrcDirectory.BackColor = rsrcOK ? (new DirectoryInfo(rsrcPath).Name == "rsrc" ? SystemColors.Window : YellowColor) : RedColor;
+
+			if (TextBox_RsrcDirectory.BackColor == YellowColor) {
+				MainTooltip.SetToolTip(TextBox_RsrcDirectory, "WARNING: rsrc directory isn't named rsrc! Please consider verifying that this is the correct directory. Example:\nC:\\Program Files (x86)\\Steam\\steamapps\\common\\Spiral Knights\\rsrc");
+			} else {
+				MainTooltip.SetToolTip(TextBox_RsrcDirectory, MainTooltip.GetToolTip(LabelRsrcDir));
+			}
 
 			BtnSave.Enabled = IsOK;
 		}

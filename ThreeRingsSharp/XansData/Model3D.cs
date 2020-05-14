@@ -1,4 +1,5 @@
 ﻿using com.google.inject;
+using com.threerings.math;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.IO;
 using ThreeRingsSharp.XansData.Structs;
 
@@ -32,7 +34,17 @@ namespace ThreeRingsSharp.XansData {
 		/// <summary>
 		/// A reference to the file that the model here came from. This is used to reference textures and other path-dependent extra data.
 		/// </summary>
-		public string Source { get; set; }
+		public FileInfo Source { get; set; }
+
+		/// <summary>
+		/// The transformation to apply to the model data. By default, this is the identity transformation (so no transform).
+		/// </summary>
+		public Transform3D Transform { get; set; } = new Transform3D(Transform3D.GENERAL);
+
+		/// <summary>
+		/// If true, then <see cref="Transform"/> has been applied to all <see cref="Vertices"/>.
+		/// </summary>
+		public bool HasDoneTransformation { get; protected internal set; } = false;
 
 		/// <summary>
 		/// The vertices that make up this 3D model.
@@ -66,6 +78,19 @@ namespace ThreeRingsSharp.XansData {
 		}
 
 		/// <summary>
+		/// Takes <see cref="Transform"/> and applies it to <see cref="Vertices"/>. This can only be called once.
+		/// </summary>
+		public void ApplyTransformations() {
+			if (HasDoneTransformation) return;
+			for (int idx = 0; idx < Vertices.Count; idx++) {
+				Vector3 old = Vertices[idx];
+				Vertices[idx] = Transform.transformPoint(old);
+				//XanLogger.Write("Vector translated from [" + old + "] to [" + Vertices[idx] + "].");
+			}
+			HasDoneTransformation = true;
+		}
+
+		/// <summary>
 		/// Frees all information used by this <see cref="Model3D"/>.
 		/// </summary>
 		public void Dispose() {
@@ -75,6 +100,7 @@ namespace ThreeRingsSharp.XansData {
 			Indices.Clear();
 			Source = null;
 			Name = null;
+			Transform = null;
 		}
 
 		/// <summary>

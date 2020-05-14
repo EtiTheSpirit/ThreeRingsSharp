@@ -1,4 +1,5 @@
-﻿using com.threerings.opengl.geometry.config;
+﻿using com.threerings.math;
+using com.threerings.opengl.geometry.config;
 using com.threerings.opengl.model.config;
 using com.threerings.util;
 using System;
@@ -17,7 +18,7 @@ namespace ThreeRingsSharp.DataHandlers.Model.StaticConfigHandlers {
 	public class StaticConfigHandler : IModelDataHandler, IDataTreeInterface<StaticConfig> {
 
 		/// <summary>
-		/// A reference to the singleton instance of <see cref="StaticConfigHandler"/>.
+		/// A reference to the singleton instance of this handler.
 		/// </summary>
 		public static StaticConfigHandler Instance { get; } = new StaticConfigHandler();
 
@@ -40,8 +41,8 @@ namespace ThreeRingsSharp.DataHandlers.Model.StaticConfigHandlers {
 			}
 		}
 
-		public void HandleModelConfig(FileInfo sourceFile, ModelConfig baseModel, ref List<Model3D> modelCollection, DataTreeObject dataTreeParent = null) {
-			ModelConfigHandler.SetupCosmeticInformation(baseModel, dataTreeParent);
+		public void HandleModelConfig(FileInfo sourceFile, ModelConfig baseModel, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null) {
+			// ModelConfigHandler.SetupCosmeticInformation(baseModel, dataTreeParent);
 			StaticConfig model = (StaticConfig)baseModel.implementation;
 			SetupCosmeticInformation(model, dataTreeParent);
 
@@ -52,7 +53,10 @@ namespace ThreeRingsSharp.DataHandlers.Model.StaticConfigHandlers {
 			int idx = 0;
 			foreach (VisibleMesh mesh in renderedMeshes) {
 				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry);
-				meshToModel.Name = ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile) + "-Mesh[" + idx + "]";
+				meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + "-Mesh[" + idx + "]";
+				if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
+				meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(meshes.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
+
 				modelCollection.Add(meshToModel);
 				idx++;
 			}

@@ -1,4 +1,5 @@
-﻿using com.threerings.opengl.model.config;
+﻿using com.threerings.math;
+using com.threerings.opengl.model.config;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +16,7 @@ namespace ThreeRingsSharp.DataHandlers.Model.StaticSetConfigHandler {
 	class StaticSetConfigHandler : IModelDataHandler, IDataTreeInterface<StaticSetConfig> {
 
 		/// <summary>
-		/// A reference to the singleton instance of <see cref="StaticSetConfigHandler"/>.
+		/// A reference to the singleton instance of this handler.
 		/// </summary>
 		public static StaticSetConfigHandler Instance { get; } = new StaticSetConfigHandler();
 
@@ -24,7 +25,7 @@ namespace ThreeRingsSharp.DataHandlers.Model.StaticSetConfigHandler {
 
 			// So a note to self: Static sets have the 'meshes' container which is a map of other model files.
 			// In SK Animator Tools V1 I was an idiot and thought the "model" property was the only key. This is false.
-			// Instead, "model" represents the *default selection*. There may be more models.
+			// Instead, model represents the *default selection*. There may be more models. Iterate through the keys like damn lol.
 
 			dataTreeParent.AddSimpleProperty("Default Model", model.model);
 
@@ -51,24 +52,26 @@ namespace ThreeRingsSharp.DataHandlers.Model.StaticSetConfigHandler {
 					msIdx++;
 				}
 			}
-			dataTreeParent.AddSimpleProperty("Referenced Meshes", objects.ToArray(), SilkImage.Reference, SilkImage.Reference, false);
+			dataTreeParent.AddSimpleProperty("Contained Meshes", objects.ToArray(), SilkImage.Reference, SilkImage.Reference, false);
 		}
 
-		public void HandleModelConfig(FileInfo sourceFile, ModelConfig baseModel, ref List<Model3D> modelCollection, DataTreeObject dataTreeParent = null) {
-			ModelConfigHandler.SetupCosmeticInformation(baseModel, dataTreeParent);
+		public void HandleModelConfig(FileInfo sourceFile, ModelConfig baseModel, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null) {
+			// ModelConfigHandler.SetupCosmeticInformation(baseModel, dataTreeParent);
 			StaticSetConfig staticSet = (StaticSetConfig)baseModel.implementation;
 			SetupCosmeticInformation(staticSet, dataTreeParent);
 
 			if (staticSet.meshes != null) {
 				object[] keys = staticSet.meshes.keySet().toArray();
-				int msIdx = 0;
 				foreach (object key in keys) {
 					MeshSet subModel = (MeshSet)staticSet.meshes.get(key);
 					VisibleMesh[] meshes = subModel.visible;
 					int idx = 0;
 					foreach (VisibleMesh mesh in meshes) {
 						Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry);
-						meshToModel.Name = ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile) + "-MeshSets[" + msIdx + "].Mesh[" + idx + "]";
+						meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + "-MeshSets[" + key.ToString() + "].Mesh[" + idx + "]";
+						if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
+						meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
+
 						modelCollection.Add(meshToModel);
 						idx++;
 					}

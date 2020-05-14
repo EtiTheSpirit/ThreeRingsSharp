@@ -24,6 +24,8 @@ namespace ThreeRingsSharp.XansData.IO {
 				objBuilder.Append("\n\no ");
 				objBuilder.AppendLine(model.Name ?? "ExportedModel" + modelIndex);
 
+				model.ApplyTransformations();
+
 				foreach (Vector3 vertex in model.Vertices) {
 					WriteVertex(objBuilder, vertex);
 				}

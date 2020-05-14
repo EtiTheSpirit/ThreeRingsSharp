@@ -143,20 +143,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataHandlers\ClydeFileHandler.cs" />
     <Compile Include="DataHandlers\ModelConfigBrancher.cs" />
-    <Compile Include="DataHandlers\Model\ActionConfig\ActionConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\AnimationConfig\AnimationConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\ArticulatedConfig\ArticulatedConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\CompoundConfig\CompoundConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\ConditionalConfig\ConditionalConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\ActionConfigHandler\ActionConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\AnimationConfigHandler\AnimationConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\ArticulatedConfigHandler\ArticulatedConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\CompoundConfigHandler\CompoundConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\ConditionalConfigHandler\ConditionalConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\GeometryConfigTranslator.cs" />
     <Compile Include="DataHandlers\Model\IDataTreeInterface.cs" />
-    <Compile Include="DataHandlers\Model\MergedStaticConfig\MergedStaticConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\MergedStaticConfigHandler\MergedStaticConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\ModelConfigHandler\ModelConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\IModelDataHandler.cs" />
     <Compile Include="DataHandlers\Model\ScriptedConfigHandler\ScriptedConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\StaticConfigHandler\StaticConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\StaticSetConfig\StaticSetConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\StaticSetConfigHandler\StaticSetConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\ViewerAffecterConfigHandler\ViewerAffecterConfigHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -170,6 +172,7 @@
     <Compile Include="Utility\ResourceDirectoryGrabber.cs" />
     <Compile Include="Utility\VersionInfoScraper.cs" />
     <Compile Include="Utility\XanLogger.cs" />
+    <Compile Include="XansData\Exceptions\ClydeDataReadException.cs" />
     <Compile Include="XansData\Exceptions\InvalidTypeException.cs" />
     <Compile Include="XansData\IO\AbstractModelExporter.cs" />
     <Compile Include="XansData\IO\GLTF\GLTFExporter.cs" />

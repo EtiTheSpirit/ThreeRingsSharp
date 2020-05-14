@@ -166,7 +166,7 @@
 			this.GroupBoxCoreModelInfo.Size = new System.Drawing.Size(401, 98);
 			this.GroupBoxCoreModelInfo.TabIndex = 5;
 			this.GroupBoxCoreModelInfo.TabStop = false;
-			this.GroupBoxCoreModelInfo.Text = "Core Data";
+			this.GroupBoxCoreModelInfo.Text = "Base Import Core Data";
 			// 
 			// ModelCoreDataTable
 			// 
@@ -345,6 +345,7 @@
 			this.MinimumSize = new System.Drawing.Size(804, 608);
 			this.Name = "MainWindow";
 			this.Text = "Spiral Knights Animator Tools";
+			this.Activated += new System.EventHandler(this.OnMainWindowFocused);
 			this.GroupBoxModelInfo.ResumeLayout(false);
 			this.GroupBoxProperties.ResumeLayout(false);
 			this.GroupBoxModelTree.ResumeLayout(false);

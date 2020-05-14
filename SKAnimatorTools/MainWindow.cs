@@ -26,9 +26,19 @@ namespace SKAnimatorTools {
 		public MainWindow() {
 			InitializeComponent();
 			XanLogger.BoxReference = ProgramLog;
-			ModelConfigBrancher.GetRootDataTreeObject = () => RootDataTreeObject;
+			// ClydeFileHandler.GetRootDataTreeObject = () => RootDataTreeObject;
+			ClydeFileHandler.UpdateGUIAction = (string fileName, string isCompressed, string formatVersion, string type) => {
+				LabelFileName.Text = fileName ?? LabelFileName.Text;
+				LabelModelCompressed.Text = isCompressed ?? LabelModelCompressed.Text;
+				LabelFormatVersion.Text = formatVersion ?? LabelFormatVersion.Text;
+				LabelType.Text = type ?? LabelType.Text;
+			};
+			AsyncMessageBox.IsInGUIContext = true;
+
+			bool isFreshLoad = ConfigurationInterface.GetConfigurationValue("IsFirstTimeOpening", true, true);
 			string loadDir = ConfigurationInterface.GetConfigurationValue("DefaultLoadDirectory", @"C:\", true);
 			string saveDir = ConfigurationInterface.GetConfigurationValue("LastSaveDirectory", @"C:\", true);
+			string rsrcDir = ConfigurationInterface.GetConfigurationValue("RsrcDirectory", @"C:\", true);
 			bool restoreDirectoryWhenLoading = ConfigurationInterface.GetConfigurationValue("RememberDirectoryAfterOpen", false, true);
 			if (Directory.Exists(loadDir)) {
 				OpenModel.InitialDirectory = loadDir;
@@ -36,14 +46,30 @@ namespace SKAnimatorTools {
 			if (Directory.Exists(saveDir)) {
 				SaveModel.InitialDirectory = saveDir;
 			}
+			if (Directory.Exists(rsrcDir)) {
+				ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(rsrcDir);
+			}
 			OpenModel.RestoreDirectory = restoreDirectoryWhenLoading;
 
 			ConfigurationInterface.OnConfigurationChanged += OnConfigChanged;
+			if (isFreshLoad) {
+				MessageBox.Show("Welcome to ThreeRingsSharp! Before you can use the program, you need to set up your configuration so that the program knows where to look for game data.", "ThreeRingsSharp Setup", MessageBoxButtons.OK);
+				OnConfigClicked(null, null);
+			}
 		}
+
+		/// <summary>
+		/// The current configuration form, if it exists.
+		/// </summary>
+		private ConfigurationForm ConfigForm { get; set; }
 
 		private void OnConfigChanged(string configKey, dynamic oldValue, dynamic newValue) {
 			if (configKey == "RememberDirectoryAfterOpen") {
 				OpenModel.RestoreDirectory = newValue;
+			} else if (configKey == "RsrcDirectory") {
+				if (Directory.Exists(newValue)) {
+					ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(newValue);
+				}
 			}
 		}
 
@@ -54,9 +80,9 @@ namespace SKAnimatorTools {
 		public static DataTreeObject RootDataTreeObject { get; } = new DataTreeObject();
 
 		/// <summary>
-		/// A reference to the current active <see cref="ModelConfigBrancher"/>
+		/// All models from the latest opened .DAT file.
 		/// </summary>
-		private static ModelConfigBrancher CurrentBrancher { get; set; }
+		private static List<Model3D> AllModels;
 
 		private void OpenClicked(object sender, EventArgs e) {
 			DialogResult result = OpenModel.ShowDialog();
@@ -67,68 +93,21 @@ namespace SKAnimatorTools {
 				ModelStructureTree.Nodes.Clear();
 
 
-				FileInfo fInfo = new FileInfo(OpenModel.FileName);
-				XanLogger.WriteLine($"Loading [{fInfo.FullName}]...");
-				ProgramLog.Update();
-				if (!VersionInfoScraper.IsValidClydeFile(fInfo)) {
-					XanLogger.WriteLine("Invalid file. Sending error.");
-					AsyncMessageBox.Show("This file isn't a valid Clyde file! (Reason: Incorrect header)", "Invalid File", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					return;
-				}
-				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(fInfo);
-				XanLogger.WriteLine($"Read file to grab the raw info.");
-				string modelFullClass = cosmeticInfo.Item3;
-				string[] modelClassInfo = ClassNameStripper.GetSplitClassName(modelFullClass);
-
-				string modelClass = null;
-				string modelSubclass = null;
-				if (modelClassInfo != null) {
-					modelClass = modelClassInfo[0];
-					if (modelClassInfo.Length == 2) modelSubclass = modelClassInfo[1];
+				FileInfo clydeFile = new FileInfo(OpenModel.FileName);
+				AllModels = new List<Model3D>();
+				bool isOK = true;
+				try {
+					ClydeFileHandler.HandleClydeFile(clydeFile, AllModels, true, ModelStructureTree);
+				} catch (System.Exception err) {
+					XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}");
+					AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}", "Oh no!", icon: MessageBoxIcon.Error);
+					isOK = false;
 				}
 
-				if (modelClass == "ProjectXModelConfig") {
-					XanLogger.WriteLine("User imported a Player Knight model. These are unsupported. Sending warning.");
-					MessageBox.Show("Player Knights do not use the standard ArticulatedConfig type (used for all animated character models) and instead use a unique type called ProjectXModelConfig. Unless the Spiral Knights jar is directly referenced, this type cannot be loaded.\n\nThankfully, an automatic fix will be employed for you! I'm going to load /rsrc/character/npc/crew/model.dat instead, which is a Knight model that uses ArticulatedConfig since it's an NPC.", "Knights are not supported!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-					string characterFolder = fInfo.Directory.Parent.FullName;
-					if (!characterFolder.EndsWith("/")) characterFolder += "/";
-					fInfo = new FileInfo(characterFolder + "npc/crew/model.dat");
-					if (!fInfo.Exists) {
-						XanLogger.WriteLine("Failed to locate substitute crew NPC model in target directory.");
-						AsyncMessageBox.Show("Oh no! The file at " + fInfo.FullName + " doesn't exist :(\nThis path is intended to work only for cases where you loaded /rsrc/character/pc/model.dat directly, so if this was a custom saved .DAT file, this error was bound to happen.", "Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-						LabelFileName.Text = "Nothing Loaded!";
-						LabelModelCompressed.Text = "N/A";
-						LabelFormatVersion.Text = "N/A";
-						LabelType.Text = "N/A";
-						return;
-					}
-				}
-
-				LabelFileName.Text = fInfo.Name;
-				LabelModelCompressed.Text = cosmeticInfo.Item1;
-				LabelFormatVersion.Text = cosmeticInfo.Item2;
-				LabelType.Text = "Processing...";
-
-				DataInputStream dataInput = new DataInputStream(new FileInputStream(fInfo.FullName));
-				BinaryImporter importer = new BinaryImporter(dataInput);
-				CurrentBrancher = new ModelConfigBrancher();
-
-
-				var obj = (java.lang.Object)importer.readObject();
-				if (obj is ModelConfig model) {
-					LabelType.Text = "ModelConfig";
-					CurrentBrancher.HandleDataFrom(fInfo, model);
-				} else {
-					LabelType.Text = "Unknown! :(";
-					AsyncMessageBox.Show("Oh Fiddlesticks! While this *is* a valid .DAT file, I'm afraid I can't actually do anything with this data!\n\nData Class:\n" + obj.getClass().getTypeName(), "Invalid Type", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					RootDataTreeObject.Text = modelClass;
-					RootDataTreeObject.ImageKey = SilkImage.Generic;
-				}
-
-				ModelStructureTree.Nodes.Add(RootDataTreeObject.ConvertHierarchyToTreeNodes());
-				SetPropertiesMenu(DataTreeObjectEventMarshaller.GetDataObjectOf(ModelStructureTree.Nodes[0]));
-
-				BtnSaveModel.Enabled = CurrentBrancher.OK;
+				if (ModelStructureTree.Nodes[0] != null) SetPropertiesMenu(DataTreeObjectEventMarshaller.GetDataObjectOf(ModelStructureTree.Nodes[0]));
+				//BtnSaveModel.Enabled = CurrentBrancher.OK;
+				BtnSaveModel.Enabled = isOK;
+				XanLogger.WriteLine("Number of models: " + AllModels.Count);
 			}
 		}
 
@@ -139,19 +118,19 @@ namespace SKAnimatorTools {
 				ConfigurationInterface.SetConfigurationValue("LastSaveDirectory", saveTo.DirectoryName);
 				ModelFormat targetFmt = ModelFormatUtil.ExtensionToFormatBindings[saveTo.Extension];
 
-				if (CurrentBrancher.OK) {
-					//Model3D.ExportIntoOne(saveTo, targetFmt, CurrentBrancher.Models.ToArray());
-					try {
-						CurrentBrancher.SaveAllToFile(saveTo, targetFmt);
-						XanLogger.WriteLine($"Done! Exported to [{saveTo.FullName}]");
-					} catch (System.Exception ex) {
-						XanLogger.WriteLine($"Failed to save to [{saveTo.FullName}] -- Reason: {ex.GetType().Name} thrown!\n{ex.Message}");
-					}
+				try {
+					Model3D.ExportIntoOne(saveTo, targetFmt, AllModels.ToArray());
+					XanLogger.WriteLine($"Done! Exported to [{saveTo.FullName}]");
+				} catch (System.Exception ex) {
+					XanLogger.WriteLine($"Failed to save to [{saveTo.FullName}] -- Reason: {ex.GetType().Name} thrown!\n{ex.Message}");
 				}
 			}
 		}
 
+		private TreeNode LastNode { get; set; } = null;
 		private void OnNodeClicked(object sender, TreeNodeMouseClickEventArgs evt) {
+			if (LastNode == evt.Node) return;
+			LastNode = evt.Node;
 			DataTreeObject associatedDataTreeObject = DataTreeObjectEventMarshaller.GetDataObjectOf(evt.Node);
 			if (associatedDataTreeObject != null) {
 				SetPropertiesMenu(associatedDataTreeObject);
@@ -230,9 +209,20 @@ namespace SKAnimatorTools {
 		}
 
 		private void OnConfigClicked(object sender, EventArgs e) {
-			ConfigurationForm cfgForm = new ConfigurationForm();
-			cfgForm.SetDataFromConfig(OpenModel.InitialDirectory, SaveModel.InitialDirectory, OpenModel.RestoreDirectory);
-			cfgForm.Show();
+			ConfigForm = new ConfigurationForm();
+			ConfigForm.SetDataFromConfig(OpenModel.InitialDirectory, SaveModel.InitialDirectory, ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", OpenModel.RestoreDirectory);
+			ConfigForm.Show();
+			ConfigForm.Activate();
+			ConfigForm.FormClosed += OnConfigFormClosed;
+		}
+
+		private void OnConfigFormClosed(object sender, FormClosedEventArgs e) {
+			ConfigForm = null;
+		}
+
+		private void OnMainWindowFocused(object sender, EventArgs e) {
+			if (ConfigForm == null) return;
+			ConfigForm.Activate();
 		}
 	}
 }

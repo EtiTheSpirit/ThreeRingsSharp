@@ -1,4 +1,6 @@
-﻿using System;
+﻿using com.threerings.math;
+using org.omg.PortableServer;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -54,6 +56,14 @@ namespace ThreeRingsSharp.XansData.Structs {
 				vecs[idx / 3] = new Vector3(values[idx], values[idx + 1], values[idx + 2]);
 			}
 			return vecs;
+		}
+
+		public static implicit operator Vector3f(Vector3 input) {
+			return new Vector3f(input.X, input.Y, input.Z);
+		}
+
+		public static implicit operator Vector3(Vector3f input) {
+			return new Vector3(input.x, input.y, input.z);
 		}
 
 		/// <summary>

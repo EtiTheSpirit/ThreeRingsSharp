@@ -5,10 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using com.threerings.math;
 using com.threerings.opengl.model.config;
+using com.threerings.opengl.scene.config;
 using ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers;
+using ThreeRingsSharp.DataHandlers.Model.CompoundConfigHandler;
+using ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers;
 using ThreeRingsSharp.DataHandlers.Model.StaticConfigHandlers;
 using ThreeRingsSharp.DataHandlers.Model.StaticSetConfigHandler;
+using ThreeRingsSharp.DataHandlers.Model.ViewerAffecterConfigHandlers;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
@@ -21,33 +26,15 @@ namespace ThreeRingsSharp.DataHandlers {
 	public class ModelConfigBrancher {
 
 		/// <summary>
-		/// A <see cref="Func{TResult}"/> that returns a reference to the RootDataTreeObject in the base SKAnimatorTools program. The program's main form will set this on its own.<para/>
-		/// Consider referencing <see cref="RootDataTreeObject"/> directly rather than calling <see cref="Func{TResult}.Invoke"/> on this.
-		/// </summary>
-		public static Func<DataTreeObject> GetRootDataTreeObject { private get; set; }
-
-		/// <summary>
-		/// A reference to the <see cref="RootDataTreeObject"/> property of the GUI, which contains the model hierarchy.
-		/// </summary>
-		public static DataTreeObject RootDataTreeObject => GetRootDataTreeObject.Invoke();
-
-		/// <summary>
-		/// The models that have been loaded by this loader, including all referenced assets, if applicable.
-		/// </summary>
-		public IReadOnlyList<Model3D> Models => _Models.AsReadOnly();
-		private List<Model3D> _Models = new List<Model3D>();
-
-		/// <summary>
-		/// If <see langword="false"/>, something has gone wrong when parsing models and this <see cref="ModelConfigBrancher"/> is not fit for use.
-		/// </summary>
-		public bool OK { get; set; } = true;
-
-		/// <summary>
 		/// Sends an arbitrary <see cref="ModelConfig"/> into the data brancher and processes it.
 		/// </summary>
 		/// <param name="sourceFile">The file that the given <see cref="ModelConfig"/> came from.</param>
 		/// <param name="model">The <see cref="ModelConfig"/> itself.</param>
-		public void HandleDataFrom(FileInfo sourceFile, ModelConfig model) {
+		/// <param name="models">A list containing every processed model from the entire hierarchy.</param>
+		/// <param name="currentDataTreeObject">The current element in the data tree hierarchy to use.</param>
+		/// <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name. Additionally, it will not have its implementation property.</param>
+		/// <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them.</param>
+		public void HandleDataFrom(FileInfo sourceFile, ModelConfig model, List<Model3D> models, DataTreeObject currentDataTreeObject = null, bool useImplementation = false, Transform3D transform = null) {
 			ModelConfig.Implementation implementation = model.implementation;
 			if (implementation == null) {
 				XanLogger.WriteLine("ALERT: Implementation is null! Sending error.");
@@ -55,10 +42,17 @@ namespace ThreeRingsSharp.DataHandlers {
 				return;
 			}
 
-			string implName = ClassNameStripper.GetBaseClassName(implementation.getClass()) ?? implementation.getClass().getTypeName();
-			RootDataTreeObject.Text = implName;
+			string implName = (ClassNameStripper.GetWholeClassName(implementation.getClass()) ?? implementation.getClass().getTypeName()).Replace("$", "::");
+			if (currentDataTreeObject != null) {
+				if (useImplementation) {
+					currentDataTreeObject.Text = implName;
+				} else {
+					currentDataTreeObject.Text = sourceFile.Name;
+				}
 
-			_Models.Clear();
+			}
+
+			// _Models.Clear();
 
 			/*
 			 * if (implementation is ArticulatedConfig) {
@@ -68,39 +62,39 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			} else 
 			*/
-			
-			if (implementation is StaticConfig) {
+
+			ModelConfigHandler.SetupCosmeticInformation(model, currentDataTreeObject, useImplementation);
+
+			if (implementation is ArticulatedConfig) {
+				XanLogger.WriteLine("Model is of the type 'ArticulatedConfig'. Accessing handlers...");
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Articulated;
+				ArticulatedConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject);
+
+			} else if (implementation is StaticConfig) {
 				XanLogger.WriteLine("Model is of the type 'StaticConfig'. Accessing handlers...");
-				RootDataTreeObject.ImageKey = SilkImage.Static;
-				StaticConfigHandler.Instance.HandleModelConfig(sourceFile, model, ref _Models, RootDataTreeObject);
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Static;
+				StaticConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject);
 
 			} else if (implementation is StaticSetConfig) {
 				XanLogger.WriteLine("Model is of the type 'StaticSetConfig'. Accessing handlers...");
-				RootDataTreeObject.ImageKey = SilkImage.ModelSet;
-				StaticSetConfigHandler.Instance.HandleModelConfig(sourceFile, model, ref _Models, RootDataTreeObject);
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.ModelSet;
+				StaticSetConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject);
 
+			} else if (implementation is CompoundConfig) {
+				XanLogger.WriteLine("Model is of the type 'CompoundConfig'. Accessing handlers...");
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.ModelSet;
+				CompoundConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject);
+
+			} else if (implementation is ViewerAffecterConfig) {
+				XanLogger.WriteLine("Model is of the type 'ViewerAffecterConfig'. Accessing handlers...");
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Object;
+				ViewerAffecterConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject);
 
 			} else {
-				XanLogger.WriteLine("Known core type, but no code present to handle it. Sending warning.");
-				AsyncMessageBox.Show("This specific implementation is valid, but it has no handler! (There's no code that can translate this data for you :c).\nImplementation: " + implementation.getClass().getTypeName(), "Can't Handle Model", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				RootDataTreeObject.ImageKey = SilkImage.Generic;
-				OK = false;
+				XanLogger.WriteLine($"\nERROR: Known core type, but no code present to handle it! This model (or component) will fail! Type: {implName}\nReferenced In: {sourceFile}\n");
+				// AsyncMessageBox.ShowAsync("This specific implementation is valid, but it has no handler! (There's no code that can translate this data for you :c).\nImplementation: " + implementation.getClass().getTypeName(), "Can't Handle Model", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Generic;
 			}
-
-
-		}
-
-		/// <summary>
-		/// Saves all models loaded by this <see cref="ModelConfigBrancher"/> in bulk to the same file as defined by <paramref name="toFile"/>.
-		/// </summary>
-		/// <param name="toFile">The file to write to.</param>
-		/// <param name="targetFormat">The target format to write in.</param>
-		public void SaveAllToFile(FileInfo toFile, ModelFormat targetFormat) {
-			Model3D.ExportIntoOne(toFile, targetFormat, _Models.ToArray());
-		}
-
-		internal void HandleDataFrom() {
-
 		}
 
 	}

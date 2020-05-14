@@ -4,49 +4,53 @@
         <name>ThreeRingsSharp</name>
     </assembly>
     <members>
+        <member name="T:ThreeRingsSharp.DataHandlers.ClydeFileHandler">
+            <summary>
+            A class designed to handle files exported by the Clyde library.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.ClydeFileHandler.UpdateGUIAction">
+            <summary>
+            A delegate action that is called when the GUI needs to update. This can safely be <see langword="null"/> for contexts that do not have a GUI, as it is used for the SK Animator Tools UI.<para/>
+            Pass in <see langword="null"/> for arguments to make their data remain unchanged.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.HandleClydeFile(System.IO.FileInfo,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},System.Boolean,System.Object,System.Boolean,com.threerings.math.Transform3D)">
+            <summary>
+            Takes in a <see cref="T:System.IO.FileInfo"/> representing a file that was created with the Clyde library.<para/>
+            This will throw a 
+            </summary>
+            <param name="clydeFile">The file to load and decode.</param>
+            <param name="allGrabbedModels">A list containing every processed model from the entire hierarchy.</param>
+            <param name="isBaseFile">If <see langword="true"/>, this will update the main GUI (if it is not null) display data for the base loaded model.</param>
+            <param name="lastNodeParent">Intended for use if <paramref name="isBaseFile"/> is <see langword="false"/>, this is the parent Data Tree element to add this model into (so that the hierarchy can be constructed). This should be a <see cref="T:System.Windows.Forms.TreeNode"/>, a <see cref="T:System.Windows.Forms.TreeView"/>, or a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>.</param>
+            <param name="useFileName">If <see langword="true"/>, the name of the loaded file will be displayed, followed by its type in brackets: model.dat [ModelConfig]</param>
+            <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them.</param>
+        </member>
         <member name="T:ThreeRingsSharp.DataHandlers.ModelConfigBrancher">
             <summary>
             A class that takes in a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>, determines its subtype (e.g. <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/>, <see cref="T:com.threerings.opengl.model.config.StaticConfig"/>, etc.), and handles the data appropriately.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.GetRootDataTreeObject">
-            <summary>
-            A <see cref="T:System.Func`1"/> that returns a reference to the RootDataTreeObject in the base SKAnimatorTools program. The program's main form will set this on its own.<para/>
-            Consider referencing <see cref="P:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.RootDataTreeObject"/> directly rather than calling <see cref="M:System.Func`1.Invoke"/> on this.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.RootDataTreeObject">
-            <summary>
-            A reference to the <see cref="P:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.RootDataTreeObject"/> property of the GUI, which contains the model hierarchy.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.Models">
-            <summary>
-            The models that have been loaded by this loader, including all referenced assets, if applicable.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.OK">
-            <summary>
-            If <see langword="false"/>, something has gone wrong when parsing models and this <see cref="T:ThreeRingsSharp.DataHandlers.ModelConfigBrancher"/> is not fit for use.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.HandleDataFrom(System.IO.FileInfo,com.threerings.opengl.model.config.ModelConfig)">
+        <member name="M:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.HandleDataFrom(System.IO.FileInfo,com.threerings.opengl.model.config.ModelConfig,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,System.Boolean,com.threerings.math.Transform3D)">
             <summary>
             Sends an arbitrary <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> into the data brancher and processes it.
             </summary>
             <param name="sourceFile">The file that the given <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> came from.</param>
             <param name="model">The <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> itself.</param>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.SaveAllToFile(System.IO.FileInfo,ThreeRingsSharp.XansData.ModelFormat)">
-            <summary>
-            Saves all models loaded by this <see cref="T:ThreeRingsSharp.DataHandlers.ModelConfigBrancher"/> in bulk to the same file as defined by <paramref name="toFile"/>.
-            </summary>
-            <param name="toFile">The file to write to.</param>
-            <param name="targetFormat">The target format to write in.</param>
+            <param name="models">A list containing every processed model from the entire hierarchy.</param>
+            <param name="currentDataTreeObject">The current element in the data tree hierarchy to use.</param>
+            <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name. Additionally, it will not have its implementation property.</param>
+            <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them.</param>
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers.ArticulatedConfigHandler.Instance">
             <summary>
             A reference to the singleton instance of <see cref="T:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers.ArticulatedConfigHandler"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Model.CompoundConfigHandler.CompoundConfigHandler.Instance">
+            <summary>
+            A reference to the singleton instance of this handler.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator">
@@ -80,31 +84,33 @@
             <param name="model">The <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> to pull data from.</param>
             <param name="dataTreeParent">This is the instance in the data tree that represents this object in the hierarchy.</param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers.ModelConfigHandler.SetupCosmeticInformation(com.threerings.opengl.model.config.ModelConfig,ThreeRingsSharp.Utility.Interface.DataTreeObject)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers.ModelConfigHandler.SetupCosmeticInformation(com.threerings.opengl.model.config.ModelConfig,ThreeRingsSharp.Utility.Interface.DataTreeObject,System.Boolean)">
             <summary>
             Sets up the cosmetic data for this model, or, what's displayed in the GUI for the program.<para/>
             This specific method populates data that is common across all imported models.
             </summary>
             <param name="model">The model containing other data, such as the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/>.</param>
             <param name="dataTreeParent">This is the instance in the data tree that represents this object in the hierarchy. If null, this method call is skipped.</param>
+            <param name="dataTreeNameIsImplementation">If <see langword="true"/>, the name of <paramref name="dataTreeParent"/> is the implementation of the model, so the implementation property will not be added.</param>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.Model.IModelDataHandler">
             <summary>
             Represents a class designed to handle the data within a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.IModelDataHandler.HandleModelConfig(System.IO.FileInfo,com.threerings.opengl.model.config.ModelConfig,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D}@,ThreeRingsSharp.Utility.Interface.DataTreeObject)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.IModelDataHandler.HandleModelConfig(System.IO.FileInfo,com.threerings.opengl.model.config.ModelConfig,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D)">
             <summary>
             Handles the data from the given <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
             </summary>
             <param name="sourceFile">The file that contains this data.</param>
             <param name="baseModel">The <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> storing the data.</param>
             <param name="modelCollection">A reference to a list of models that will be written to.</param>
-            <param name="dataTreeParent">An optional parameter for use in GUI Data Trees that will be populated with information about this model.</param>
+            <param name="dataTreeParent">An optional parameter for use in GUI Data Trees that will be populated with information about this model. This node will be one in the object hierarchy. Add properties to this to display these properties when it is selected, or add direct children to this.</param>
+            <param name="globalTransform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy should have this transform applied to them.</param>
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Model.StaticConfigHandlers.StaticConfigHandler.Instance">
             <summary>
-            A reference to the singleton instance of <see cref="T:ThreeRingsSharp.DataHandlers.Model.StaticConfigHandlers.StaticConfigHandler"/>.
+            A reference to the singleton instance of this handler.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Model.StaticConfigHandlers.StaticConfigHandler.SetupCosmeticInformation(com.threerings.opengl.model.config.StaticConfig,ThreeRingsSharp.Utility.Interface.DataTreeObject)">
@@ -116,7 +122,12 @@
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Model.StaticSetConfigHandler.StaticSetConfigHandler.Instance">
             <summary>
-            A reference to the singleton instance of <see cref="T:ThreeRingsSharp.DataHandlers.Model.StaticSetConfigHandler.StaticSetConfigHandler"/>.
+            A reference to the singleton instance of this handler.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Model.ViewerAffecterConfigHandlers.ViewerAffecterConfigHandler.Instance">
+            <summary>
+            A reference to the singleton instance of this handler.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.Utility.ClassNameStripper">
@@ -177,13 +188,31 @@
         </member>
         <member name="T:ThreeRingsSharp.Utility.Interface.AsyncMessageBox">
             <summary>
-            Provides a method to asynchronously display a message box.
+            Provides a method to asynchronously display a message box, as well as a method to conditionally show a message box.
             </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.AsyncMessageBox.IsInGUIContext">
+            <summary>
+            If <see langword="false"/>, <see cref="M:ThreeRingsSharp.Utility.Interface.AsyncMessageBox.ShowAsync(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxIcon)"/> will not do anything.<para/>
+            This should be set to <see langword="true"/> in contexts where there is a GUI accompanied with the program.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.AsyncMessageBox.ShowAsync(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxIcon)">
+            <summary>
+            Asynchronously show a message box (show a message box without causing the GUI to stop updating, allowing stuff to work in the background).<para/>
+            This also allows the user to interact with the GUI before closing the message box, as a side effect.<para/>
+            This task will return <see langword="null"/> if <see cref="P:ThreeRingsSharp.Utility.Interface.AsyncMessageBox.IsInGUIContext"/> is <see langword="false"/>!
+            </summary>
+            <param name="text">The text to display in the body of the message box.</param>
+            <param name="title">The title displayed at the top of the message box.</param>
+            <param name="buttons">The buttons used in the message box (e.g. OK)</param>
+            <param name="icon">The icon to display on the left side of the message box.</param>
+            <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.Utility.Interface.AsyncMessageBox.Show(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxIcon)">
             <summary>
-            Asynchronously show a message box (show a message box without causing the GUI to stop updating, allowing stuff to work in the background).<para/>
-            This also allows the user to interact with the GUI before closing the message box, as a side effect.
+            Synchronously show a message box. This is virtually identical to calling <see cref="M:System.Windows.Forms.MessageBox.Show(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxIcon)"/>, with the exception that it will return <see langword="null"/> if <see cref="P:ThreeRingsSharp.Utility.Interface.AsyncMessageBox.IsInGUIContext"/> is <see langword="false"/>.<para/>
+            Consider using <see cref="M:ThreeRingsSharp.Utility.Interface.AsyncMessageBox.ShowAsync(System.String,System.String,System.Windows.Forms.MessageBoxButtons,System.Windows.Forms.MessageBoxIcon)"/> if you wish to allow the program to continue functioning and accept inputs while the dialog is open.
             </summary>
             <param name="text">The text to display in the body of the message box.</param>
             <param name="title">The title displayed at the top of the message box.</param>
@@ -221,7 +250,8 @@
         </member>
         <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Parent">
             <summary>
-            The <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> that contains this instance, or null if this is a root instance.
+            The <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> that contains this instance, or null if this is a root instance.<para/>
+            Setting this will update the children of the applicable objects (remove this from the children of the old parent (if applicable), add this to the children of the new parent (if applicable)) automatically.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.Utility.Interface.DataTreeObject._Parent">
@@ -331,6 +361,61 @@
             <param name="propertyNameImage">The image displayed next to the property name.</param>
             <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
             <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.EditSimpleProperty(System.String,System.String,System.Object,System.Nullable{ThreeRingsSharp.Utility.Interface.SilkImage},System.Nullable{ThreeRingsSharp.Utility.Interface.SilkImage},System.Nullable{System.Boolean})">
+            <summary>
+            Attempts to locate a property with the given name, and then updates its values. This will do nothing if the property cannot be found.<para/>
+            Any <see langword="null"/> parameters will retain their existing values.
+            </summary>
+            <param name="name">The name to search for.</param>
+            <param name="newName">If <see langword="null"/>, the name will remain unchanged. If defined, the name of the property will be changed to this.</param>
+            <param name="value">The new value to set the property to.</param>
+            <param name="propertyNameImage">The image displayed next to the property name.</param>
+            <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
+            <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.EditSimpleProperty(ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty,System.String,System.Object,System.Nullable{ThreeRingsSharp.Utility.Interface.SilkImage},System.Nullable{ThreeRingsSharp.Utility.Interface.SilkImage},System.Nullable{System.Boolean})">
+            <summary>
+            Updates the property with the given data.<para/>
+            Any <see langword="null"/> parameters will retain their existing values.
+            </summary>
+            <param name="key">The property to edit.</param>
+            <param name="newName">If <see langword="null"/>, the name will remain unchanged. If defined, the name of the property will be changed to this.</param>
+            <param name="value">The new value to set the property to.</param>
+            <param name="propertyNameImage">The image displayed next to the property name.</param>
+            <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
+            <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.EditSimpleProperty(System.String,System.String,System.Object[],System.Nullable{ThreeRingsSharp.Utility.Interface.SilkImage},System.Nullable{ThreeRingsSharp.Utility.Interface.SilkImage},System.Nullable{System.Boolean})">
+            <summary>
+            Attempts to locate a property with the given name, and then updates its values. This will do nothing if the property cannot be found.<para/>
+            Any <see langword="null"/> parameters will retain their existing values.
+            </summary>
+            <param name="name">The name to search for.</param>
+            <param name="newName">If defined, the name of the property will be changed to this.</param>
+            <param name="values">The new values to set the property to.</param>
+            <param name="propertyNameImage">The image displayed next to the property name.</param>
+            <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
+            <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.EditSimpleProperty(ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty,System.String,System.Object[],System.Nullable{ThreeRingsSharp.Utility.Interface.SilkImage},System.Nullable{ThreeRingsSharp.Utility.Interface.SilkImage},System.Nullable{System.Boolean})">
+            <summary>
+            Updates the property with the given data. If the property does not exist, it will be added.<para/>
+            Any <see langword="null"/> parameters will retain their existing values.
+            </summary>
+            <param name="key">The property to edit.</param>
+            <param name="newName">If defined, the name of the property will be changed to this.</param>
+            <param name="values">The new values to set the property to.</param>
+            <param name="propertyNameImage">The image displayed next to the property name.</param>
+            <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
+            <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.FindSimpleProperty(System.String)">
+            <summary>
+            Locates a given <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty"/> in <see cref="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Properties"/> whose key is the given <paramref name="name"/>.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.#ctor(ThreeRingsSharp.Utility.Interface.DataTreeObject)">
             <summary>
@@ -542,12 +627,34 @@
             A utility class that looks at directory information to try to find the rsrc folder.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.ResourceDirectoryGrabber.GetFormattedPathFromRsrc(System.IO.FileInfo)">
+        <member name="P:ThreeRingsSharp.Utility.ResourceDirectoryGrabber.ResourceDirectory">
             <summary>
-            Takes <paramref name="fileIn"/> and climbs up its directory tree until it locates a folder named <code>rsrc</code>. It will then return the path starting from rsrc and ending at this file.
+            A reference to the rsrc directory.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.ResourceDirectoryGrabber.ResourceDirectoryPath">
+            <summary>
+            Returns <see cref="P:ThreeRingsSharp.Utility.ResourceDirectoryGrabber.ResourceDirectory"/> as its string path. It will always end in a slash. This enforces the use of forward slashes (/) so that it works with <see cref="T:com.threerings.opengl.model.config.CompoundConfig"/> references.<para/>
+            Returns <see langword="null"/> if <see cref="P:ThreeRingsSharp.Utility.ResourceDirectoryGrabber.ResourceDirectory"/> is <see langword="null"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.ResourceDirectoryGrabber.GetFormattedPathFromRsrc(System.IO.FileInfo,System.Boolean)">
+            <summary>
+            Takes <paramref name="fileIn"/> and climbs up its directory tree until it locates a folder named <c>rsrc</c>. It will then return the path starting from rsrc and ending at this file.<para/>
+            The returned path will always use forward slashes.
+            </summary>
+            <param name="fileIn">The file that is presumably a descendant of the rsrc directory.</param>
+            <param name="includeRsrc">If false, the directory path will NOT start with <c>rsrc/</c>.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.ResourceDirectoryGrabber.GetDirectoryDepth(System.IO.FileInfo,System.Int32)">
+            <summary>
+            Returns a path that uses forward slashes, going <paramref name="depth"/> folders up. A depth of 1 will return the parent directory, a depth of 2 will return the parent of the parent directory, and so on.
             </summary>
             <param name="fileIn"></param>
+            <param name="depth"></param>
             <returns></returns>
+            <exception cref="T:System.ArgumentOutOfRangeException">Thrown if depth is less than 1.</exception>
         </member>
         <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.HackyGetImplementation(System.IO.FileInfo,System.Boolean)">
             <summary>
@@ -597,6 +704,11 @@
         <member name="P:ThreeRingsSharp.Utility.RTFScrolledBottom.IsScrolledToBottom">
             <summary>
             True if the component is scrolled as far down as possible.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Exceptions.ClydeDataReadException">
+            <summary>
+            An exception that is thrown when a critical read error occurs when trying to process files.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.Exceptions.InvalidTypeException">
@@ -841,6 +953,16 @@
             A reference to the file that the model here came from. This is used to reference textures and other path-dependent extra data.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.Transform">
+            <summary>
+            The transformation to apply to the model data. By default, this is the identity transformation (so no transform).
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.HasDoneTransformation">
+            <summary>
+            If true, then <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> has been applied to all <see cref="F:ThreeRingsSharp.XansData.Model3D.Vertices"/>.
+            </summary>
+        </member>
         <member name="F:ThreeRingsSharp.XansData.Model3D.Vertices">
             <summary>
             The vertices that make up this 3D model.
@@ -867,6 +989,11 @@
             </summary>
             <param name="targetFile">The file that will be written to.</param>
             <param name="targetFormat">The file format to use for the 3D model.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Model3D.ApplyTransformations">
+            <summary>
+            Takes <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> and applies it to <see cref="F:ThreeRingsSharp.XansData.Model3D.Vertices"/>. This can only be called once.
+            </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Model3D.Dispose">
             <summary>

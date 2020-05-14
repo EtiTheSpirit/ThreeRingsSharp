@@ -77,7 +77,8 @@ namespace ThreeRingsSharp.Utility.Interface {
 	public class DataTreeObject : IDisposable {
 
 		/// <summary>
-		/// The <see cref="DataTreeObject"/> that contains this instance, or null if this is a root instance.
+		/// The <see cref="DataTreeObject"/> that contains this instance, or null if this is a root instance.<para/>
+		/// Setting this will update the children of the applicable objects (remove this from the children of the old parent (if applicable), add this to the children of the new parent (if applicable)) automatically.
 		/// </summary>
 		public DataTreeObject Parent {
 			get {
@@ -231,7 +232,7 @@ namespace ThreeRingsSharp.Utility.Interface {
 		/// <param name="propertyNameImage">The image displayed next to the property name.</param>
 		/// <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
 		/// <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
-		public void AddSimpleProperty(string name, object value, SilkImage propertyNameImage = SilkImage.Value, SilkImage propertyValueImages = SilkImage.Value, bool displaySinglePropertiesInline = true) => AddSimpleProperty(name, new object[] { value }, propertyNameImage, propertyValueImages, displaySinglePropertiesInline);
+		public DataTreeObjectProperty AddSimpleProperty(string name, object value, SilkImage propertyNameImage = SilkImage.Value, SilkImage propertyValueImages = SilkImage.Value, bool displaySinglePropertiesInline = true) => AddSimpleProperty(name, new object[] { value }, propertyNameImage, propertyValueImages, displaySinglePropertiesInline);
 
 		/// <summary>
 		/// An alias method used to add a property with a generic icon to <see cref="Properties"/> (omitting the need to create a <see cref="DataTreeObject"/>)<para/>
@@ -242,7 +243,7 @@ namespace ThreeRingsSharp.Utility.Interface {
 		/// <param name="propertyNameImage">The image displayed next to the property name.</param>
 		/// <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
 		/// <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
-		public void AddSimpleProperty(string name, object[] values, SilkImage propertyNameImage = SilkImage.Value, SilkImage propertyValueImages = SilkImage.Value, bool displaySinglePropertiesInline = true) {
+		public DataTreeObjectProperty AddSimpleProperty(string name, object[] values, SilkImage propertyNameImage = SilkImage.Value, SilkImage propertyValueImages = SilkImage.Value, bool displaySinglePropertiesInline = true) {
 			DataTreeObjectProperty propName = new DataTreeObjectProperty(name, propertyNameImage, displaySinglePropertiesInline);
 			List<DataTreeObject> pValues = new List<DataTreeObject>();
 			foreach (object obj in values) {
@@ -255,6 +256,95 @@ namespace ThreeRingsSharp.Utility.Interface {
 				}
 			}
 			Properties[propName] = pValues;
+			return propName;
+		}
+
+		/// <summary>
+		/// Attempts to locate a property with the given name, and then updates its values. This will do nothing if the property cannot be found.<para/>
+		/// Any <see langword="null"/> parameters will retain their existing values.
+		/// </summary>
+		/// <param name="name">The name to search for.</param>
+		/// <param name="newName">If <see langword="null"/>, the name will remain unchanged. If defined, the name of the property will be changed to this.</param>
+		/// <param name="value">The new value to set the property to.</param>
+		/// <param name="propertyNameImage">The image displayed next to the property name.</param>
+		/// <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
+		/// <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
+		public void EditSimpleProperty(string name, string newName = null, object value = null, SilkImage? propertyNameImage = null, SilkImage? propertyValueImages = null, bool? displaySinglePropertiesInline = null) => EditSimpleProperty(name, newName, new object[] { value }, propertyNameImage, propertyValueImages, displaySinglePropertiesInline);
+
+		/// <summary>
+		/// Updates the property with the given data.<para/>
+		/// Any <see langword="null"/> parameters will retain their existing values.
+		/// </summary>
+		/// <param name="key">The property to edit.</param>
+		/// <param name="newName">If <see langword="null"/>, the name will remain unchanged. If defined, the name of the property will be changed to this.</param>
+		/// <param name="value">The new value to set the property to.</param>
+		/// <param name="propertyNameImage">The image displayed next to the property name.</param>
+		/// <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
+		/// <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
+		public void EditSimpleProperty(DataTreeObjectProperty key, string newName = null, object value = null, SilkImage? propertyNameImage = null, SilkImage? propertyValueImages = null, bool? displaySinglePropertiesInline = null) => EditSimpleProperty(key, newName, new object[] { value }, propertyNameImage, propertyValueImages, displaySinglePropertiesInline);
+
+		/// <summary>
+		/// Attempts to locate a property with the given name, and then updates its values. This will do nothing if the property cannot be found.<para/>
+		/// Any <see langword="null"/> parameters will retain their existing values.
+		/// </summary>
+		/// <param name="name">The name to search for.</param>
+		/// <param name="newName">If defined, the name of the property will be changed to this.</param>
+		/// <param name="values">The new values to set the property to.</param>
+		/// <param name="propertyNameImage">The image displayed next to the property name.</param>
+		/// <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
+		/// <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
+		public void EditSimpleProperty(string name, string newName = null, object[] values = null, SilkImage? propertyNameImage = null, SilkImage? propertyValueImages = null, bool? displaySinglePropertiesInline = null) {
+			foreach (DataTreeObjectProperty propContainer in Properties.Keys) {
+				if (propContainer.Text == name) {
+					// This is the one that needs to be edited.
+					EditSimpleProperty(propContainer, newName, values, propertyNameImage, propertyValueImages, displaySinglePropertiesInline);
+					return;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Updates the property with the given data. If the property does not exist, it will be added.<para/>
+		/// Any <see langword="null"/> parameters will retain their existing values.
+		/// </summary>
+		/// <param name="key">The property to edit.</param>
+		/// <param name="newName">If defined, the name of the property will be changed to this.</param>
+		/// <param name="values">The new values to set the property to.</param>
+		/// <param name="propertyNameImage">The image displayed next to the property name.</param>
+		/// <param name="propertyValueImages">The image displayed next to each of the values for the property.</param>
+		/// <param name="displaySinglePropertiesInline">If true, properties with single values will be displayed in the same element containing the property name (<c>Name: Value</c>) instead of as a child element (<c>Name</c>, with a child of <c>Value</c>).</param>
+		public void EditSimpleProperty(DataTreeObjectProperty key, string newName = null, object[] values = null, SilkImage? propertyNameImage = null, SilkImage? propertyValueImages = null, bool? displaySinglePropertiesInline = null) {
+			key.Text = newName ?? key.Text;
+			List<DataTreeObject> pValues = new List<DataTreeObject>();
+			if (values != null) {
+				foreach (object obj in values) {
+					if (obj == null) continue;
+					if (obj is DataTreeObject objInstance) {
+						pValues.Add(objInstance);
+					} else if (obj is DataTreeObjectProperty prop) {
+						pValues.Add(prop);
+					} else {
+						pValues.Add(new DataTreeObjectProperty(obj.ToString(), propertyValueImages.GetValueOrDefault(SilkImage.Value)));
+					}
+				}
+			}
+			key.ImageKey = propertyNameImage ?? key.ImageKey;
+			key.DisplaySingleChildInline = displaySinglePropertiesInline ?? key.DisplaySingleChildInline;
+			Properties[key] = pValues;
+		}
+
+		/// <summary>
+		/// Locates a given <see cref="DataTreeObjectProperty"/> in <see cref="Properties"/> whose key is the given <paramref name="name"/>.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public DataTreeObjectProperty FindSimpleProperty(string name) {
+			foreach (DataTreeObjectProperty propContainer in Properties.Keys) {
+				if (propContainer.Text == name) {
+					return propContainer;
+				}
+			}
+			return null;
 		}
 
 		/// <summary>
