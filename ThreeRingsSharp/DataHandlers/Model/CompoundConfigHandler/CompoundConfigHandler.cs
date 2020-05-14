@@ -14,12 +14,7 @@ using ThreeRingsSharp.XansData.Exceptions;
 using static com.threerings.opengl.model.config.CompoundConfig;
 
 namespace ThreeRingsSharp.DataHandlers.Model.CompoundConfigHandler {
-	public class CompoundConfigHandler : IModelDataHandler, IDataTreeInterface<CompoundConfig> {
-
-		/// <summary>
-		/// A reference to the singleton instance of this handler.
-		/// </summary>
-		public static CompoundConfigHandler Instance { get; } = new CompoundConfigHandler();
+	public class CompoundConfigHandler : Singleton<CompoundConfigHandler>, IModelDataHandler, IDataTreeInterface<CompoundConfig> {
 
 		public void SetupCosmeticInformation(CompoundConfig model, DataTreeObject dataTreeParent) {
 			ComponentModel[] componentModels = model.models;
@@ -44,9 +39,7 @@ namespace ThreeRingsSharp.DataHandlers.Model.CompoundConfigHandler {
 					throw new ClydeDataReadException($"CompoundConfig at [{ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile, false)}] attempted to reference [{filePathRelativeToRsrc}], but this file could not be found!");
 				}
 				Transform3D newTrs = model.transform;
-				if (globalTransform != null) {
-					newTrs = globalTransform.compose(newTrs);
-				}
+				newTrs = globalTransform.compose(newTrs);
 				ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, transform: newTrs);
 			}
 		}

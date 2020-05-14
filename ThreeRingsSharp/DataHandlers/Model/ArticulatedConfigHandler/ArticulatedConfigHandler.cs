@@ -15,12 +15,7 @@ using static com.threerings.opengl.model.config.ModelConfig;
 using static com.threerings.opengl.model.config.ModelConfig.Imported;
 
 namespace ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers {
-	class ArticulatedConfigHandler : IModelDataHandler, IDataTreeInterface<ArticulatedConfig> {
-
-		/// <summary>
-		/// A reference to the singleton instance of <see cref="ArticulatedConfigHandler"/>.
-		/// </summary>
-		public static ArticulatedConfigHandler Instance { get; } = new ArticulatedConfigHandler();
+	class ArticulatedConfigHandler : Singleton<ArticulatedConfigHandler>, IModelDataHandler, IDataTreeInterface<ArticulatedConfig> {
 
 		public void SetupCosmeticInformation(ArticulatedConfig model, DataTreeObject dataTreeParent) {
 			if (dataTreeParent == null) return;
@@ -50,21 +45,32 @@ namespace ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers {
 				idx++;
 			}
 
-			RecursivelyIterateNodes(model.root, sourceFile, modelCollection, globalTransform);
+			RecursivelyIterateNodes(sourceFile, model.root, modelCollection, globalTransform);
 		}
 
-		private void RecursivelyIterateNodes(Node parent, FileInfo sourceFile, List<Model3D> models, Transform3D globalTransform) {
+		/// <summary>
+		/// A utility function that iterates through all of the nodes recursively, as some may store mesh data.
+		/// </summary>
+		/// <param name="sourceFile">The file where the <see cref="ArticulatedConfig"/> is stored.</param>
+		/// <param name="parent">The parent node to iterate through.</param>
+		/// <param name="models">The <see cref="List{T}"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
+		/// <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
+		private void RecursivelyIterateNodes(FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform) {
 			foreach (Node node in parent.children) {
+				// Transform3D newTransform = latestTransform;
 				if (node is MeshNode meshNode) {
 					VisibleMesh mesh = meshNode.visible;
+					Transform3D modifiedTransform = node.invRefTransform.invertLocal().compose(node.transform);
+
 					Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry);
 					meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + "-Nodes[\"" + node.name + "\"]";
-					if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
-					meshToModel.Transform = meshToModel.Transform.compose(node.invRefTransform.compose(node.transform));
+					meshToModel.Transform = meshToModel.Transform.compose(latestTransform).compose(modifiedTransform);
+					// newTransform = latestTransform.compose(modifiedTransform);
+
 					models.Add(meshToModel);
 				}
 				if (node.children.Length > 0) {
-					RecursivelyIterateNodes(node, sourceFile, models, globalTransform);
+					RecursivelyIterateNodes(sourceFile, node, models, latestTransform);
 				}
 			}
 		}

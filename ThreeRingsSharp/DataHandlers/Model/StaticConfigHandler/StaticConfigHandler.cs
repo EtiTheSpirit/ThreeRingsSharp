@@ -15,12 +15,7 @@ using ThreeRingsSharp.XansData;
 using static com.threerings.opengl.model.config.ModelConfig;
 
 namespace ThreeRingsSharp.DataHandlers.Model.StaticConfigHandlers {
-	public class StaticConfigHandler : IModelDataHandler, IDataTreeInterface<StaticConfig> {
-
-		/// <summary>
-		/// A reference to the singleton instance of this handler.
-		/// </summary>
-		public static StaticConfigHandler Instance { get; } = new StaticConfigHandler();
+	public class StaticConfigHandler : Singleton<StaticConfigHandler>, IModelDataHandler, IDataTreeInterface<StaticConfig> {
 
 		/// <summary>
 		/// Sets up the cosmetic data for this model, or, what's displayed in the GUI for the program.

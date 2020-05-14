@@ -39,7 +39,7 @@ namespace ThreeRingsSharp.XansData {
 		/// <summary>
 		/// The transformation to apply to the model data. By default, this is the identity transformation (so no transform).
 		/// </summary>
-		public Transform3D Transform { get; set; } = new Transform3D(Transform3D.GENERAL);
+		public Transform3D Transform { get; set; } = new Transform3D();
 
 		/// <summary>
 		/// If true, then <see cref="Transform"/> has been applied to all <see cref="Vertices"/>.
@@ -83,8 +83,7 @@ namespace ThreeRingsSharp.XansData {
 		public void ApplyTransformations() {
 			if (HasDoneTransformation) return;
 			for (int idx = 0; idx < Vertices.Count; idx++) {
-				Vector3 old = Vertices[idx];
-				Vertices[idx] = Transform.transformPoint(old);
+				Vertices[idx] = Transform.transformPoint(Vertices[idx]);
 				//XanLogger.Write("Vector translated from [" + old + "] to [" + Vertices[idx] + "].");
 			}
 			HasDoneTransformation = true;

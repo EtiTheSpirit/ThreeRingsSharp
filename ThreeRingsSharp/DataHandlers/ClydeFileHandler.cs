@@ -28,8 +28,14 @@ namespace ThreeRingsSharp.DataHandlers {
 		public static Action<string, string, string, string> UpdateGUIAction { get; set; } = null;
 
 		/// <summary>
+		/// Multiplies the scale of exported models by 100 before applying their defined scale value (which for a lot of models is 0.01 for some reason).<para/>
+		/// This is <see langword="true"/> by default since it's used more than it isn't.
+		/// </summary>
+		public static bool MultiplyScaleByHundred { get; set; } = true;
+
+		/// <summary>
 		/// Takes in a <see cref="FileInfo"/> representing a file that was created with the Clyde library.<para/>
-		/// This will throw a 
+		/// This will throw a <see cref="ClydeDataReadException"/> if anything goes wrong during reading.
 		/// </summary>
 		/// <param name="clydeFile">The file to load and decode.</param>
 		/// <param name="allGrabbedModels">A list containing every processed model from the entire hierarchy.</param>
@@ -87,12 +93,19 @@ namespace ThreeRingsSharp.DataHandlers {
 			var obj = (java.lang.Object)importer.readObject();
 			DataTreeObject rootDataTreeObject = new DataTreeObject();
 
+			// This is kind of hacky behavior but it (ab)uses the fact that this will only run on the first call for any given chain of .DAT files.
+			// That is, all external referenced files have this value passed in instead of it being null.
+			if (transform == null) {
+				transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, MultiplyScaleByHundred ? 100f : 1f);
+			}
+
 			if (obj is ModelConfig model) {
 				if (isBaseFile && UpdateGUIAction != null) {
 					UpdateGUIAction(null, null, null, "ModelConfig");
 				}
+				// Promote to the highest level, 4x4 transformation matrix.
+				// If it was null, create a new one at that level with the identity matrix. Promote will do nothing if it's already at that level.
 
-				if (transform != null) transform.promote(Transform3D.GENERAL); // Highest level, 4x4 transformation matrix.
 				currentBrancher.HandleDataFrom(clydeFile, model, allGrabbedModels, rootDataTreeObject, useFileName, transform);
 			} else {
 				if (isBaseFile && UpdateGUIAction != null) {

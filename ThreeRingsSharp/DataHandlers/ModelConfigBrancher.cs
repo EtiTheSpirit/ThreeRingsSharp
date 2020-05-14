@@ -33,8 +33,11 @@ namespace ThreeRingsSharp.DataHandlers {
 		/// <param name="models">A list containing every processed model from the entire hierarchy.</param>
 		/// <param name="currentDataTreeObject">The current element in the data tree hierarchy to use.</param>
 		/// <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name. Additionally, it will not have its implementation property.</param>
-		/// <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them.</param>
+		/// <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="Transform3D"/>.</param>
 		public void HandleDataFrom(FileInfo sourceFile, ModelConfig model, List<Model3D> models, DataTreeObject currentDataTreeObject = null, bool useImplementation = false, Transform3D transform = null) {
+			transform = transform ?? new Transform3D();
+			//transform.promote(Transform3D.GENERAL);
+
 			ModelConfig.Implementation implementation = model.implementation;
 			if (implementation == null) {
 				XanLogger.WriteLine("ALERT: Implementation is null! Sending error.");
@@ -52,43 +55,32 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			}
 
-			// _Models.Clear();
-
-			/*
-			 * if (implementation is ArticulatedConfig) {
-				XanLogger.WriteLine("Model is of the type 'ArticulatedConfig'. Accessing handlers...");
-				RootDataTreeObject.ImageKey = SilkImage.Articulated;
-				ArticulatedConfigHandler.Instance.HandleModelConfig(sourceFile, model, ref _Models, RootDataTreeObject);
-
-			} else 
-			*/
-
 			ModelConfigHandler.SetupCosmeticInformation(model, currentDataTreeObject, useImplementation);
 
 			if (implementation is ArticulatedConfig) {
 				XanLogger.WriteLine("Model is of the type 'ArticulatedConfig'. Accessing handlers...");
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Articulated;
-				ArticulatedConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject);
+				ArticulatedConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform);
 
 			} else if (implementation is StaticConfig) {
 				XanLogger.WriteLine("Model is of the type 'StaticConfig'. Accessing handlers...");
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Static;
-				StaticConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject);
+				StaticConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform);
 
 			} else if (implementation is StaticSetConfig) {
 				XanLogger.WriteLine("Model is of the type 'StaticSetConfig'. Accessing handlers...");
-				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.ModelSet;
-				StaticSetConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject);
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.MergedStatic;
+				StaticSetConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform);
 
 			} else if (implementation is CompoundConfig) {
 				XanLogger.WriteLine("Model is of the type 'CompoundConfig'. Accessing handlers...");
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.ModelSet;
-				CompoundConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject);
+				CompoundConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform);
 
 			} else if (implementation is ViewerAffecterConfig) {
 				XanLogger.WriteLine("Model is of the type 'ViewerAffecterConfig'. Accessing handlers...");
-				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Object;
-				ViewerAffecterConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject);
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.CameraShake;
+				ViewerAffecterConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform);
 
 			} else {
 				XanLogger.WriteLine($"\nERROR: Known core type, but no code present to handle it! This model (or component) will fail! Type: {implName}\nReferenced In: {sourceFile}\n");
