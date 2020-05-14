@@ -40,6 +40,7 @@ namespace SKAnimatorTools {
 			string saveDir = ConfigurationInterface.GetConfigurationValue("LastSaveDirectory", @"C:\", true);
 			string rsrcDir = ConfigurationInterface.GetConfigurationValue("RsrcDirectory", @"C:\", true);
 			bool restoreDirectoryWhenLoading = ConfigurationInterface.GetConfigurationValue("RememberDirectoryAfterOpen", false, true);
+			ClydeFileHandler.MultiplyScaleByHundred = ConfigurationInterface.GetConfigurationValue("ScaleBy100", true, true);
 			if (Directory.Exists(loadDir)) {
 				OpenModel.InitialDirectory = loadDir;
 			}
@@ -70,6 +71,8 @@ namespace SKAnimatorTools {
 				if (Directory.Exists(newValue)) {
 					ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(newValue);
 				}
+			} else if (configKey == "ScaleBy100") {
+				ClydeFileHandler.MultiplyScaleByHundred = newValue;
 			}
 		}
 

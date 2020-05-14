@@ -55,6 +55,7 @@ namespace SKAnimatorTools {
 			ConfigurationInterface.SetConfigurationValue("LastSaveDirectory", TextBox_DefaultSaveLoc.Text);
 			ConfigurationInterface.SetConfigurationValue("RememberDirectoryAfterOpen", CheckBox_RememberLastLoad.Checked);
 			ConfigurationInterface.SetConfigurationValue("RsrcDirectory", TextBox_RsrcDirectory.Text);
+			ConfigurationInterface.SetConfigurationValue("ScaleBy100", CheckBox_MultiplyScaleByHundred.Checked);
 			ConfigurationInterface.SetConfigurationValue("IsFirstTimeOpening", false);
 			Close();
 		}
