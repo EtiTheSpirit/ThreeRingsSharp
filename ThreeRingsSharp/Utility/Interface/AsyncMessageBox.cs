@@ -8,7 +8,7 @@ using System.Windows.Forms;
 namespace ThreeRingsSharp.Utility.Interface {
 
 	/// <summary>
-	/// Provides a method to asynchronously display a message box, as well as a method to conditionally show a message box.
+	/// Provides a method to asynchronously display a message box. Both methods will do nothing if this class's primary parameter, <see cref="IsInGUIContext"/>, is <see langword="false"/>.
 	/// </summary>
 	public class AsyncMessageBox {
 

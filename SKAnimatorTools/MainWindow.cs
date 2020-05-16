@@ -32,6 +32,7 @@ namespace SKAnimatorTools {
 				LabelModelCompressed.Text = isCompressed ?? LabelModelCompressed.Text;
 				LabelFormatVersion.Text = formatVersion ?? LabelFormatVersion.Text;
 				LabelType.Text = type ?? LabelType.Text;
+				Update(); // Update all of the display data.
 			};
 			AsyncMessageBox.IsInGUIContext = true;
 
@@ -107,7 +108,7 @@ namespace SKAnimatorTools {
 					isOK = false;
 				}
 
-				if (ModelStructureTree.Nodes[0] != null) SetPropertiesMenu(DataTreeObjectEventMarshaller.GetDataObjectOf(ModelStructureTree.Nodes[0]));
+				if (ModelStructureTree.Nodes.Count != 0 && ModelStructureTree.Nodes[0] != null) SetPropertiesMenu(DataTreeObjectEventMarshaller.GetDataObjectOf(ModelStructureTree.Nodes[0]));
 				//BtnSaveModel.Enabled = CurrentBrancher.OK;
 				BtnSaveModel.Enabled = isOK;
 				XanLogger.WriteLine("Number of models: " + AllModels.Count);

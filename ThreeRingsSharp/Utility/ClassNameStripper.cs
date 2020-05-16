@@ -9,8 +9,7 @@ using ThreeRingsSharp.XansData;
 namespace ThreeRingsSharp.Utility {
 
 	/// <summary>
-	/// A utility dedicated to taking in Java classnames and breaking them down into parts.<para/>
-	/// This also offers extension methods to string, for instance, 
+	/// A utility dedicated to taking in Java classnames and breaking them down into parts.
 	/// </summary>
 	public static class ClassNameStripper {
 

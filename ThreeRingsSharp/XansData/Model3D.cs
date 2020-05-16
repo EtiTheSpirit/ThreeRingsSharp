@@ -1,5 +1,6 @@
 ﻿using com.google.inject;
 using com.threerings.math;
+using java.nio.channels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -27,7 +28,7 @@ namespace ThreeRingsSharp.XansData {
 		};
 
 		/// <summary>
-		/// The display name for this model.
+		/// The display name for this model, used in exporting (i.e. this is the name that will show up in Blender or any other modelling software.)
 		/// </summary>
 		public string Name { get; set; } = null;
 
@@ -67,6 +68,39 @@ namespace ThreeRingsSharp.XansData {
 		public readonly List<short> Indices = new List<short>();
 
 		/// <summary>
+		/// All of the vertex groups in this model, represented as a list of indices. These indices reference <see cref="Vertices"/>.
+		/// </summary>
+		public readonly List<VertexGroup> VertexGroups = new List<VertexGroup>();
+
+		/// <summary>
+		/// A list of every bone name in this model. Unlike the list provided in Clyde geometry, the first element (index 0) of this list is null.<para/>
+		/// This allows easier bone indexing when observing vertex groups since all that needs to be done is testing if the name is null (0 denotes "not in a bone group")
+		/// </summary>
+		public string[] BoneNames = new string[0];
+
+		/// <summary>
+		/// The indices for bones. These correspond to an entry in the modified <see cref="BoneNames"/> list.<para/>
+		/// If you need to find the bone for a given vertex, search <see cref="VertexGroups"/> instead, as <see cref="VertexGroup"/>s contain bindings to bones.
+		/// </summary>
+		public int[,] BoneIndices = new int[0,0];
+		// NOTE TO SELF: Yes, these vanilla indices correspond to your modded name list.
+		// You said it everywhere else, you say it here: OOO models dictate that a bone index of 0 = "no bone"
+		// This means that every *other* index is actually subtracted by 1 to get the position in their vanilla bone name list.
+		// Not here. You just have null at the start of the list then everything else corresponds linearly. No -1.
+
+		/// <summary>
+		/// The weights for bones.<para/>
+		/// If you need to find the weight of a vertex for a given bone, search <see cref="VertexGroups"/> instead.
+		/// </summary>
+		public float[,] BoneWeights = new float[0,0];
+
+		/// <summary>
+		/// This should be <see langword="true"/> if this has bone data. If it is false, <see cref="ConstructGroups"/> will not do anything.<para/>
+		/// Ensure this is only set to <see langword="true"/> if <see cref="BoneNames"/>, <see cref="BoneIndices"/>, and <see cref="BoneWeights"/> are all populated properly.
+		/// </summary>
+		public bool HasBoneData { get; set; } = false;
+
+		/// <summary>
 		/// Exports this model in a given format, writing the data to the target <see cref="FileInfo"/>
 		/// </summary>
 		/// <param name="targetFile">The file that will be written to.</param>
@@ -78,14 +112,25 @@ namespace ThreeRingsSharp.XansData {
 		}
 
 		/// <summary>
-		/// Takes <see cref="Transform"/> and applies it to <see cref="Vertices"/>. This can only be called once.
+		/// Takes <see cref="Transform"/> and applies it to <see cref="Vertices"/>, as well as every <see cref="Vertex"/> in each individual <see cref="VertexGroup"/> This can only be called once.
 		/// </summary>
 		public void ApplyTransformations() {
 			if (HasDoneTransformation) return;
 			for (int idx = 0; idx < Vertices.Count; idx++) {
 				Vertices[idx] = Transform.transformPoint(Vertices[idx]);
-				//XanLogger.Write("Vector translated from [" + old + "] to [" + Vertices[idx] + "].");
+				//Vertex vtx = Vertices[idx];
+				//vtx.Point = Transform.transformPoint(vtx.Point);
+				//Vertices[idx] = vtx;
 			}
+
+			foreach (VertexGroup vtxGroup in VertexGroups) {
+				for (int idx = 0; idx < vtxGroup.Vertices.Count; idx++) {
+					Vertex vtx = vtxGroup.Vertices[idx];
+					vtx.Point = Transform.transformPoint(vtx.Point);
+					vtxGroup.Vertices[idx] = vtx;
+				}
+			}
+
 			HasDoneTransformation = true;
 		}
 
@@ -97,9 +142,63 @@ namespace ThreeRingsSharp.XansData {
 			Normals.Clear();
 			UVs.Clear();
 			Indices.Clear();
+			VertexGroups.Clear();
+			BoneNames = new string[0];
+			BoneIndices = new int[0, 0];
+			BoneWeights = new float[0, 0];
 			Source = null;
 			Name = null;
 			Transform = null;
+		}
+
+		/// <summary>
+		/// Iterates through <see cref="VertexGroups"/> and returns the first <see cref="VertexGroup"/> whose <see cref="VertexGroup.Name"/> is equal to <paramref name="name"/>, or <see langword="null"/> if one could not be found.
+		/// </summary>
+		/// <param name="name">The name to search for.</param>
+		/// <returns></returns>
+		public VertexGroup GetVertexGroupByName(string name) => VertexGroups.Where(vtxGroup => vtxGroup.Name == name).FirstOrDefault();
+
+		/// <summary>
+		/// Constructs all <see cref="VertexGroup"/> instances automatically.
+		/// </summary>
+		public void ConstructGroups() {
+			if (!HasBoneData) return;
+			// To reiterate this from GeometryConfigTranslater since this is where looking back at the program is going to get confusing...
+
+			// Consider it literally: boneIndices and boneWeights for bones are vertex *attribute* arrays.
+			// This means that we iterate through the indices of the model itself, then...
+			// The vertex at vertices[index] is part of up to four bone groups.
+			// Why four? Bone indices are quadruplets. The returned indices point to a bone name in the name array.
+			// A bone index of 0 means "no associated bone".
+			// A note to self: SkinnedIndexedStored geometry contains a bone name list. You have altered this list so that [0] is null, then everything else starts at [1] and after.
+			// You did this so that you could check if the returned bone name was null.
+
+			// Apparently, this concept went way over my head in SK Animator Tools and it was a disaster. Part of why the code was so horrifying.
+			
+			foreach (string boneName in BoneNames) {
+				if (boneName != null) {
+					VertexGroups.Add(new VertexGroup(boneName));
+				}
+			}
+
+			foreach (short index in Indices) {
+				int[] boneIndices = BoneIndices.GetSecondDimensionAt(index);
+				float[] boneWeights = BoneWeights.GetSecondDimensionAt(index);
+				Vector3 point = Vertices[index];
+
+				for (int idx = 0; idx < 4; idx++) {
+					int boneIndex = boneIndices[idx];
+					float boneWeight = boneWeights[idx];
+					string boneName = BoneNames[boneIndex];
+					if (boneName == null) break;
+					VertexGroup groupForBone = GetVertexGroupByName(boneName);
+					if (groupForBone == null) throw new Exception("ooOOoo! scHET!");
+
+					// So now we have the group we need to populate.
+					// Populate it!
+					groupForBone.Vertices.Add(new Vertex(point, boneWeight));
+				}
+			}
 		}
 
 		/// <summary>

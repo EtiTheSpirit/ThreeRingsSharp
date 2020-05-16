@@ -114,12 +114,15 @@ namespace ThreeRingsSharp.Utility.Interface {
 		/// All <see cref="DataTreeObject"/>s that are first-level descendants of this object (this does NOT include nested objects).
 		/// </summary>
 		public IReadOnlyList<DataTreeObject> Children => _Children.AsReadOnly();
-		private List<DataTreeObject> _Children = new List<DataTreeObject>();
+
+		/// <summary>
+		/// An internal reference to the children of this <see cref="DataTreeObject"/>.
+		/// </summary>
+		private readonly List<DataTreeObject> _Children = new List<DataTreeObject>();
 
 		/// <summary>
 		/// The image key for this <see cref="DataTreeObject"/> which defines the icon displayed to the left of the item in the data tree.<para/>
-		/// The default <see cref="SilkImage"/> is <see cref="SilkImage.Generic"/> which represents a generic hierarchy element.<para/>
-		/// The "Silk" term comes from the creator of the images, see https://famfamfam.com/
+		/// The default <see cref="SilkImage"/> is <see cref="SilkImage.Generic"/> which represents a generic hierarchy element.
 		/// </summary>
 		public SilkImage ImageKey { get; set; } = SilkImage.Generic;
 

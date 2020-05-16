@@ -45,3 +45,5 @@ F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Newtonsoft.J
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Newtonsoft.Json.xml
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.ConfigurationForm.resources
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.MainWindow.resources
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.Bcl.HashCode.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.Bcl.HashCode.xml

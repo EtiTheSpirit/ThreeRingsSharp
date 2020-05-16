@@ -23,12 +23,17 @@ namespace ThreeRingsSharp.DataHandlers {
 
 		/// <summary>
 		/// A delegate action that is called when the GUI needs to update. This can safely be <see langword="null"/> for contexts that do not have a GUI, as it is used for the SK Animator Tools UI.<para/>
-		/// Pass in <see langword="null"/> for arguments to make their data remain unchanged.
+		/// Pass in <see langword="null"/> for arguments to make their data remain unchanged.<para/>
+		/// This is designed to work with the UI offered by SK Animator Tools V2. The parameters are as follows:<para/>
+		/// <c>string fileName (the name of the file that was opened)<para/>
+		/// string isCompressed (a string of true/false, yes/no, etc.)<para/>
+		/// string formatVersion (represents clyde file version. Classic, Intermediate, or VarInt for example)<para/>
+		/// string type (the base class, e.g. ModelConfig, AnimationConfig, ScriptedConfig)</c>
 		/// </summary>
 		public static Action<string, string, string, string> UpdateGUIAction { get; set; } = null;
 
 		/// <summary>
-		/// Multiplies the scale of exported models by 100 before applying their defined scale value (which for a lot of models is 0.01 for some reason).<para/>
+		/// Multiplies the scale of exported models by 100. This is really handy for a lot of models but may cause others to be huge.<para/>
 		/// This is <see langword="true"/> by default since it's used more than it isn't.
 		/// </summary>
 		public static bool MultiplyScaleByHundred { get; set; } = true;
@@ -38,11 +43,11 @@ namespace ThreeRingsSharp.DataHandlers {
 		/// This will throw a <see cref="ClydeDataReadException"/> if anything goes wrong during reading.
 		/// </summary>
 		/// <param name="clydeFile">The file to load and decode.</param>
-		/// <param name="allGrabbedModels">A list containing every processed model from the entire hierarchy.</param>
-		/// <param name="isBaseFile">If <see langword="true"/>, this will update the main GUI (if it is not null) display data for the base loaded model.</param>
+		/// <param name="allGrabbedModels">A list containing every processed model from the entire hierarchy. This list should be defined by you and then passed in.</param>
+		/// <param name="isBaseFile">If <see langword="true"/>, this will update the main GUI display data for the base loaded model. If the GUI is not defined (e.g. this is being used in a library) this will do nothing.</param>
 		/// <param name="lastNodeParent">Intended for use if <paramref name="isBaseFile"/> is <see langword="false"/>, this is the parent Data Tree element to add this model into (so that the hierarchy can be constructed). This should be a <see cref="TreeNode"/>, a <see cref="TreeView"/>, or a <see cref="DataTreeObject"/>.</param>
-		/// <param name="useFileName">If <see langword="true"/>, the name of the loaded file will be displayed, followed by its type in brackets: model.dat [ModelConfig]</param>
-		/// <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them.</param>
+		/// <param name="useFileName">If <see langword="true"/>, the name of the loaded file will be displayed in the tree hierarchy's root node, e.g. model.dat</param>
+		/// <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If it doesn't exist, it will be created.</param>
 		public static void HandleClydeFile(FileInfo clydeFile, List<Model3D> allGrabbedModels, bool isBaseFile = false, dynamic lastNodeParent = null, bool useFileName = false, Transform3D transform = null) {
 			// TODO: Do NOT update the main GUI if this is a referenced file (e.g. a CompoundConfig wants to load other data, don't change the table view in the top right)
 			XanLogger.WriteLine($"Loading [{clydeFile.FullName}]...");
@@ -81,7 +86,9 @@ namespace ThreeRingsSharp.DataHandlers {
 			}
 
 
+			// So if this is the file we actually opened (not a referenced file) and we've defined the action necessary to update the GUI...
 			if (isBaseFile && UpdateGUIAction != null) {
+				// Then update the display text in the top right to reflect on this.
 				UpdateGUIAction(clydeFile.Name, cosmeticInfo.Item1, cosmeticInfo.Item2, "Processing...");
 			}
 
@@ -95,9 +102,8 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			// This is kind of hacky behavior but it (ab)uses the fact that this will only run on the first call for any given chain of .DAT files.
 			// That is, all external referenced files have this value passed in instead of it being null.
-			if (transform == null) {
-				transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, MultiplyScaleByHundred ? 100f : 1f);
-			}
+			if (transform == null) transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, 1f);
+			transform.setScale(transform.getScale() * (MultiplyScaleByHundred ? 100f : 1f));
 
 			if (obj is ModelConfig model) {
 				if (isBaseFile && UpdateGUIAction != null) {

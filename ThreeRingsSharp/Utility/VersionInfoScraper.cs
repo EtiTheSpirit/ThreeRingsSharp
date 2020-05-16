@@ -17,6 +17,11 @@ using sun.misc;
 using com.google.common.io;
 
 namespace ThreeRingsSharp.Utility {
+
+	/// <summary>
+	/// A hacky class that can read the raw binary of a Clyde file and find its implementation.<para/>
+	/// When files are read by <see cref="BinaryImporter"/>, their implementation is cast into a <see cref="Class"/>, or is made null if that implementation doesn't exist. This is particularly problematic for Spiral Knights, where player knight models use the unique <c>ProjectXModelConfig</c> that does not exist in this library since Spiral Knights defines it instead. This class allows us to see that it's using this class.
+	/// </summary>
 	public class VersionInfoScraper {
 
 		private const string IMPLEMENTATION_TAG = "com.threerings.opengl.model.config.ModelConfig$Implementation";
@@ -29,6 +34,10 @@ namespace ThreeRingsSharp.Utility {
 		/// <param name="isCompressed"></param>
 		/// <returns></returns>
 		private static string HackyGetImplementation(FileInfo datFile, bool isCompressed) {
+			// This is mainly intended for Spiral Knights's ProjectXModelConfig.
+			// SK Animator Tools relied on being in the game directory (like Spiral Spy did) to detect ^
+			// This allows reading arbitrary class names, even for hypothetical cases where it's a completely different game that uses Clyde.
+
 			FileInputStream fileIn = new FileInputStream(datFile.FullName);
 			fileIn.skip(8);
 			byte[] buffer;
@@ -40,25 +49,14 @@ namespace ThreeRingsSharp.Utility {
 			}
 			string modelAsString = Encoding.ASCII.GetString(buffer);
 			int index = modelAsString.IndexOf(IMPLEMENTATION_TAG) + IMPLEMENTATION_TAG.Length;
-			index += 4; // Accomodate for int
-			byte typeLength = buffer[index];
+			index += 4; // Accomodate for int of space taken after that string. I don't know what purpose it serves (maybe class size?)
+			byte typeLength = buffer[index]; // Length of the string storing the name of the type.
 			string clip = modelAsString.Substring(index + 1, typeLength);
-			/*
-			int dollar = clip.IndexOf("$");
-			if (dollar != -1) {
-				clip = clip.Substring(0, dollar);
-			}
-			if (clip.Contains('.')) {
-				clip = clip.Substring(clip.LastIndexOf('.') + 1);
-			} // Line below didn't exist, and these two if blocks were the only thing. Line below replaced these.
-			string cutClip = ClassNameStripper.GetBaseClassName(clip);
-			return cutClip ?? clip; // Return the cut clip, or if it couldn't be parsed, just the actual raw text.
-			*/
 			return clip;
 		}
 
 		/// <summary>
-		/// Returns <see langword="true"/> if the input <see cref="FileInfo"/> represents a file exported by Clyde.
+		/// Returns <see langword="true"/> if the input <see cref="FileInfo"/> represents a file exported by Clyde. This tests the header of the file.
 		/// </summary>
 		/// <param name="datFile"></param>
 		/// <returns></returns>
@@ -72,7 +70,7 @@ namespace ThreeRingsSharp.Utility {
 		}
 
 		/// <summary>
-		/// Returns three strings, in order, the compression status (Yes/No), the version name (user friendly), and the implementation.
+		/// Returns three <see langword="string"/>, in order, the compression status (as a <see langword="string"/>, "Yes" or "No"), the version name (user friendly), and the implementation.
 		/// </summary>
 		/// <param name="datFile"></param>
 		/// <returns></returns>

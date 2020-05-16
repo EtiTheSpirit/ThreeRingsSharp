@@ -38,3 +38,5 @@ F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\OOOLibAndDep
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\obj\Debug\ThreeRingsSharp.csproj.CopyComplete
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\Newtonsoft.Json.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\Newtonsoft.Json.xml
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\Microsoft.Bcl.HashCode.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\Microsoft.Bcl.HashCode.xml

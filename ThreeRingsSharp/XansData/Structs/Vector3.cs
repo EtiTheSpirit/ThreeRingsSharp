@@ -13,7 +13,7 @@ namespace ThreeRingsSharp.XansData.Structs {
 	/// Stores three <see langword="float"/> values that represent a coordinate in 3D space.<para/>
 	/// Unlike <see cref="System.Numerics.Vector3"/>, this does not contain any vector math methods. This is strictly for data storage.
 	/// </summary>
-	public struct Vector3 {
+	public struct Vector3 : IEquatable<Vector3> {
 
 		/// <summary>
 		/// The X component of this <see cref="Vector3"/> which generally represents left or right positions relative to the world.
@@ -31,7 +31,7 @@ namespace ThreeRingsSharp.XansData.Structs {
 		public float Z;
 
 		/// <summary>
-		/// Construct a new Vector3 with the given X, Y, and Z coordinates.
+		/// Construct a new <see cref="Vector3"/> with the given X, Y, and Z coordinates.
 		/// </summary>
 		/// <param name="x">The X component of this Vector3.</param>
 		/// <param name="y">The Y component of this Vector3.</param>
@@ -58,12 +58,39 @@ namespace ThreeRingsSharp.XansData.Structs {
 			return vecs;
 		}
 
+		#region Casts to and from OOO Vector3f to this Vector3
 		public static implicit operator Vector3f(Vector3 input) {
 			return new Vector3f(input.X, input.Y, input.Z);
 		}
 
 		public static implicit operator Vector3(Vector3f input) {
 			return new Vector3(input.x, input.y, input.z);
+		}
+		#endregion
+
+		#region Equality: Vector3 to Vector3
+		public static bool operator ==(Vector3 left, Vector3 right) => left.Equals(right);
+
+		public static bool operator !=(Vector3 left, Vector3 right) => !(left == right);
+
+		public bool Equals(Vector3 other) {
+			if (ReferenceEquals(this, other)) return true;
+			return X == other.X && Y == other.Y && Z == other.Z;
+		}
+		#endregion
+
+		#region Equality: Vector3 to Vertex
+		// Note: Cases where Vertex is the left operand are defined in Vertex.
+		public static bool operator ==(Vector3 left, Vertex right) => left == right.Point;
+
+		public static bool operator !=(Vector3 left, Vertex right) => !(left == right);
+		#endregion
+
+		#region Stock Object Overrides
+		public override bool Equals(object obj) => obj is Vector3 other ? Equals(other) : ReferenceEquals(this, obj);
+
+		public override int GetHashCode() {
+			return HashCode.Combine(X, Y, Z);
 		}
 
 		/// <summary>
@@ -73,5 +100,6 @@ namespace ThreeRingsSharp.XansData.Structs {
 		public override string ToString() {
 			return $"{X} {Y} {Z}";
 		}
+		#endregion
 	}
 }

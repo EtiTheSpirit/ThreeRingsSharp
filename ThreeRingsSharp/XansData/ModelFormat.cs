@@ -29,6 +29,9 @@ namespace ThreeRingsSharp.XansData {
 	
 	public class ModelFormatUtil {
 	#pragma warning disable CS0612 // Type or member is obsolete
+		/// <summary>
+		/// A binding from <see cref="String"/> to <see cref="ModelFormat"/>, e.g. the string <c>".fbx"</c> translates to <see cref="ModelFormat.FBX"/>.
+		/// </summary>
 		public static readonly IReadOnlyDictionary<string, ModelFormat> ExtensionToFormatBindings = new Dictionary<string, ModelFormat>() {
 			[".fbx"] = ModelFormat.FBX,
 			[".obj"] = ModelFormat.OBJ,

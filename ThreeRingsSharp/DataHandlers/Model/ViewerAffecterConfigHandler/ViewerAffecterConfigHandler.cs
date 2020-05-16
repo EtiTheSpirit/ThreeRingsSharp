@@ -14,6 +14,10 @@ using ThreeRingsSharp.XansData.Exceptions;
 using static com.threerings.opengl.scene.config.ViewerEffectConfig;
 
 namespace ThreeRingsSharp.DataHandlers.Model.ViewerAffecterConfigHandlers {
+
+	/// <summary>
+	/// Handles instance of <see cref="ViewerAffecterConfig"/> and their associated <see cref="ViewerEffectConfig"/>s.
+	/// </summary>
 	class ViewerAffecterConfigHandler : Singleton<ViewerAffecterConfigHandler>, IModelDataHandler, IDataTreeInterface<ViewerAffecterConfig> {
 
 		public void SetupCosmeticInformation(ViewerAffecterConfig model, DataTreeObject dataTreeParent) {

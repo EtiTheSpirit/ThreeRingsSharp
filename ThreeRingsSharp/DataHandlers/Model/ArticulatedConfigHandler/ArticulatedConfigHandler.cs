@@ -10,6 +10,7 @@ using ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
+using ThreeRingsSharp.XansData.Structs;
 using static com.threerings.opengl.model.config.ArticulatedConfig;
 using static com.threerings.opengl.model.config.ModelConfig;
 using static com.threerings.opengl.model.config.ModelConfig.Imported;
@@ -37,15 +38,21 @@ namespace ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers {
 			VisibleMesh[] renderedMeshes = meshes.visible;
 
 			int idx = 0;
-			foreach (VisibleMesh mesh in renderedMeshes) {
-				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry);
-				meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + "-SKIN-Mesh[" + idx + "]";
+			//foreach (VisibleMesh mesh in renderedMeshes) {
+			// TODO: Is this always a single object in articulated models?
+
+			VisibleMesh mesh = renderedMeshes.First();
+			Model3D meshToModel = null;
+			if (mesh != null) {
+				meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry);
+				meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + "-Skin-Mesh[" + idx + "]";
 				if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
 				modelCollection.Add(meshToModel);
-				idx++;
 			}
+			//idx++;
+			//}
 
-			RecursivelyIterateNodes(sourceFile, model.root, modelCollection, globalTransform);
+			RecursivelyIterateNodes(sourceFile, model.root, modelCollection, globalTransform, meshToModel);
 		}
 
 		/// <summary>
@@ -55,10 +62,13 @@ namespace ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers {
 		/// <param name="parent">The parent node to iterate through.</param>
 		/// <param name="models">The <see cref="List{T}"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
 		/// <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
-		private void RecursivelyIterateNodes(FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform) {
+		/// <param name="skin">If defined, a skin was located inside of this model, and these nodes serve as its bones.</param>
+		private void RecursivelyIterateNodes(FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform, Model3D skin) {
 			foreach (Node node in parent.children) {
 				// Transform3D newTransform = latestTransform;
 				if (node is MeshNode meshNode) {
+					if (skin != null) XanLogger.WriteLine("\nDEBUG: SKIN HAD MESH NODES!\n");
+
 					VisibleMesh mesh = meshNode.visible;
 					Transform3D modifiedTransform = node.invRefTransform.invertLocal().compose(node.transform);
 
@@ -69,8 +79,12 @@ namespace ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers {
 
 					models.Add(meshToModel);
 				}
+
+				//VertexGroup group = new VertexGroup();
+				//group.Name = node.name;
+
 				if (node.children.Length > 0) {
-					RecursivelyIterateNodes(sourceFile, node, models, latestTransform);
+					RecursivelyIterateNodes(sourceFile, node, models, latestTransform, skin);
 				}
 			}
 		}

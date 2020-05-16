@@ -12,12 +12,17 @@
         <member name="P:ThreeRingsSharp.DataHandlers.ClydeFileHandler.UpdateGUIAction">
             <summary>
             A delegate action that is called when the GUI needs to update. This can safely be <see langword="null"/> for contexts that do not have a GUI, as it is used for the SK Animator Tools UI.<para/>
-            Pass in <see langword="null"/> for arguments to make their data remain unchanged.
+            Pass in <see langword="null"/> for arguments to make their data remain unchanged.<para/>
+            This is designed to work with the UI offered by SK Animator Tools V2. The parameters are as follows:<para/>
+            <c>string fileName (the name of the file that was opened)<para/>
+            string isCompressed (a string of true/false, yes/no, etc.)<para/>
+            string formatVersion (represents clyde file version. Classic, Intermediate, or VarInt for example)<para/>
+            string type (the base class, e.g. ModelConfig, AnimationConfig, ScriptedConfig)</c>
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.ClydeFileHandler.MultiplyScaleByHundred">
             <summary>
-            Multiplies the scale of exported models by 100 before applying their defined scale value (which for a lot of models is 0.01 for some reason).<para/>
+            Multiplies the scale of exported models by 100. This is really handy for a lot of models but may cause others to be huge.<para/>
             This is <see langword="true"/> by default since it's used more than it isn't.
             </summary>
         </member>
@@ -27,11 +32,11 @@
             This will throw a <see cref="T:ThreeRingsSharp.XansData.Exceptions.ClydeDataReadException"/> if anything goes wrong during reading.
             </summary>
             <param name="clydeFile">The file to load and decode.</param>
-            <param name="allGrabbedModels">A list containing every processed model from the entire hierarchy.</param>
-            <param name="isBaseFile">If <see langword="true"/>, this will update the main GUI (if it is not null) display data for the base loaded model.</param>
+            <param name="allGrabbedModels">A list containing every processed model from the entire hierarchy. This list should be defined by you and then passed in.</param>
+            <param name="isBaseFile">If <see langword="true"/>, this will update the main GUI display data for the base loaded model. If the GUI is not defined (e.g. this is being used in a library) this will do nothing.</param>
             <param name="lastNodeParent">Intended for use if <paramref name="isBaseFile"/> is <see langword="false"/>, this is the parent Data Tree element to add this model into (so that the hierarchy can be constructed). This should be a <see cref="T:System.Windows.Forms.TreeNode"/>, a <see cref="T:System.Windows.Forms.TreeView"/>, or a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>.</param>
-            <param name="useFileName">If <see langword="true"/>, the name of the loaded file will be displayed, followed by its type in brackets: model.dat [ModelConfig]</param>
-            <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them.</param>
+            <param name="useFileName">If <see langword="true"/>, the name of the loaded file will be displayed in the tree hierarchy's root node, e.g. model.dat</param>
+            <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If it doesn't exist, it will be created.</param>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.ModelConfigBrancher">
             <summary>
@@ -49,7 +54,7 @@
             <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name. Additionally, it will not have its implementation property.</param>
             <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="T:com.threerings.math.Transform3D"/>.</param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers.ArticulatedConfigHandler.RecursivelyIterateNodes(System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers.ArticulatedConfigHandler.RecursivelyIterateNodes(System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,ThreeRingsSharp.XansData.Model3D)">
             <summary>
             A utility function that iterates through all of the nodes recursively, as some may store mesh data.
             </summary>
@@ -57,6 +62,7 @@
             <param name="parent">The parent node to iterate through.</param>
             <param name="models">The <see cref="T:System.Collections.Generic.List`1"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
             <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
+            <param name="skin">If defined, a skin was located inside of this model, and these nodes serve as its bones.</param>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator">
             <summary>
@@ -72,10 +78,33 @@
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.GetFromShortBuffer(java.nio.ShortBuffer)">
             <summary>
-            Since the given buffer may not have an array, this will automatically perform necessary edits to get a short array.
+            Since the given buffer may not have an array, this will automatically perform necessary edits to get a <see cref="T:System.Int16"/> array.
             </summary>
             <param name="buffer"></param>
             <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.GetArrayByName(com.threerings.opengl.geometry.config.GeometryConfig.AttributeArrayConfig[],System.String)">
+            <summary>
+            Attempts to locate a <see cref="T:com.threerings.opengl.geometry.config.GeometryConfig.AttributeArrayConfig"/> that has the given name from <paramref name="vertexAttributeArrays"/>.
+            </summary>
+            <param name="vertexAttributeArrays">The list of arrays to search.</param>
+            <param name="name">The name to locate.</param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.BoneDataContainer">
+            <summary>
+            A container class for bone indices and weights.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.BoneDataContainer.BoneIndices">
+            <summary>
+            Bone indices are an array of four <see cref="T:System.Single"/> values. It traverses the chain of bones. An index of 0 means stop traversing (this is because bone 0 is always %ROOT%).
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.BoneDataContainer.BoneWeights">
+            <summary>
+            Bone weights are an array of four <see cref="T:System.Single"/> values. These values correspond to a bone index.
+            </summary>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.Model.IDataTreeInterface`1">
             <summary>
@@ -125,10 +154,14 @@
             A reference to the singleton instance of this handler.
             </summary>
         </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Model.ViewerAffecterConfigHandlers.ViewerAffecterConfigHandler">
+            <summary>
+            Handles instance of <see cref="T:com.threerings.opengl.scene.config.ViewerAffecterConfig"/> and their associated <see cref="T:com.threerings.opengl.scene.config.ViewerEffectConfig"/>s.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.Utility.ClassNameStripper">
             <summary>
-            A utility dedicated to taking in Java classnames and breaking them down into parts.<para/>
-            This also offers extension methods to string, for instance, 
+            A utility dedicated to taking in Java classnames and breaking them down into parts.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.Utility.ClassNameStripper.GetSplitClassName(java.lang.Class)">
@@ -183,7 +216,7 @@
         </member>
         <member name="T:ThreeRingsSharp.Utility.Interface.AsyncMessageBox">
             <summary>
-            Provides a method to asynchronously display a message box, as well as a method to conditionally show a message box.
+            Provides a method to asynchronously display a message box. Both methods will do nothing if this class's primary parameter, <see cref="P:ThreeRingsSharp.Utility.Interface.AsyncMessageBox.IsInGUIContext"/>, is <see langword="false"/>.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.Utility.Interface.AsyncMessageBox.IsInGUIContext">
@@ -264,11 +297,15 @@
             All <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>s that are first-level descendants of this object (this does NOT include nested objects).
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.DataTreeObject._Children">
+            <summary>
+            An internal reference to the children of this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.ImageKey">
             <summary>
             The image key for this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> which defines the icon displayed to the left of the item in the data tree.<para/>
-            The default <see cref="T:ThreeRingsSharp.Utility.Interface.SilkImage"/> is <see cref="F:ThreeRingsSharp.Utility.Interface.SilkImage.Generic"/> which represents a generic hierarchy element.<para/>
-            The "Silk" term comes from the creator of the images, see https://famfamfam.com/
+            The default <see cref="T:ThreeRingsSharp.Utility.Interface.SilkImage"/> is <see cref="F:ThreeRingsSharp.Utility.Interface.SilkImage.Generic"/> which represents a generic hierarchy element.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Text">
@@ -651,6 +688,12 @@
             <returns></returns>
             <exception cref="T:System.ArgumentOutOfRangeException">Thrown if depth is less than 1.</exception>
         </member>
+        <member name="T:ThreeRingsSharp.Utility.VersionInfoScraper">
+            <summary>
+            A hacky class that can read the raw binary of a Clyde file and find its implementation.<para/>
+            When files are read by <see cref="T:com.threerings.export.BinaryImporter"/>, their implementation is cast into a <see cref="T:java.lang.Class"/>, or is made null if that implementation doesn't exist. This is particularly problematic for Spiral Knights, where player knight models use the unique <c>ProjectXModelConfig</c> that does not exist in this library since Spiral Knights defines it instead. This class allows us to see that it's using this class.
+            </summary>
+        </member>
         <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.HackyGetImplementation(System.IO.FileInfo,System.Boolean)">
             <summary>
             A very hacky method of returning the implementation of this model in its string form so that if Clyde can't read it, we can still see its name. This returns the full class name.
@@ -661,21 +704,32 @@
         </member>
         <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.IsValidClydeFile(System.IO.FileInfo)">
             <summary>
-            Returns <see langword="true"/> if the input <see cref="T:System.IO.FileInfo"/> represents a file exported by Clyde.
+            Returns <see langword="true"/> if the input <see cref="T:System.IO.FileInfo"/> represents a file exported by Clyde. This tests the header of the file.
             </summary>
             <param name="datFile"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.GetCosmeticInformation(System.IO.FileInfo)">
             <summary>
-            Returns three strings, in order, the compression status (Yes/No), the version name (user friendly), and the implementation.
+            Returns three <see langword="string"/>, in order, the compression status (as a <see langword="string"/>, "Yes" or "No"), the version name (user friendly), and the implementation.
             </summary>
             <param name="datFile"></param>
             <returns></returns>
         </member>
+        <member name="P:ThreeRingsSharp.Utility.XanLogger.Log">
+            <summary>
+            Intended for exporting the log to a text file. This <see cref="T:System.Text.StringBuilder"/> will contain the entire log.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.Utility.XanLogger.BoxReference">
             <summary>
-            A reference to the text box storing the log.
+            A reference to a textbox that should store the contents of the log in a GUI application.<para/>
+            This should be an instance of <see cref="T:ThreeRingsSharp.Utility.RTFScrolledBottom"/> for proper function. It can be <see langword="null"/> if there is no GUI.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.XanLogger.WasAtBottom">
+            <summary>
+            If true, the box *was* at the bottom before text was appended to it (meaning it should autoscroll)
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.Utility.XanLogger.WriteLine">
@@ -688,13 +742,24 @@
             Append the given text to the log and advance by one line.
             </summary>
             <param name="text"></param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="text"/> is <see langword="null"/>.</exception>
         </member>
         <member name="M:ThreeRingsSharp.Utility.XanLogger.Write(System.String)">
             <summary>
             Append the given text to the log.
             </summary>
-            <param name="text"></param>
-            <exception cref="T:System.NullReferenceException">If the RichTextBox reference has not been set.</exception>
+            <param name="text">The text to write to the log.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="text"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.Clear">
+            <summary>
+            Clears all text from the log. This also wipes <see cref="P:ThreeRingsSharp.Utility.XanLogger.Log"/>.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.Utility.RTFScrolledBottom">
+            <summary>
+            A variant of <see cref="T:System.Windows.Forms.RichTextBox"/> that provides a means of testing if it is scrolled to the bottom.
+            </summary>
         </member>
         <member name="P:ThreeRingsSharp.Utility.RTFScrolledBottom.IsScrolledToBottom">
             <summary>
@@ -790,13 +855,40 @@
             Provides methods that are nice for <see cref="T:System.Collections.Generic.List`1"/>
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.SetTo``1(System.Collections.Generic.List{``0},System.Collections.Generic.IEnumerable{``0})">
+        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.SetFrom``1(System.Collections.Generic.List{``0},System.Collections.Generic.IEnumerable{``0})">
             <summary>
             Sets the contents of the given <see cref="T:System.Collections.Generic.List`1"/> to the given content.
             </summary>
             <typeparam name="T"></typeparam>
             <param name="list"></param>
             <param name="values"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.As2D``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            Converts this <see cref="T:System.Collections.Generic.IEnumerable`1"/> into a 2D array of <typeparamref name="T"/>, where the second dimension's size is <paramref name="groupSize"/>. For instance, calling this on an array of 16 items with an argument of 8 will return a 2D array with 2 elements in the first dimension, and 8 in the second dimension.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="enumerable"></param>
+            <param name="groupSize">The size of the second dimension of the array.</param>
+            <returns></returns>
+            <exception cref="T:System.DataMisalignedException">Thrown if the length of the given <paramref name="enumerable"/> is not divisible by <paramref name="groupSize"/>.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.GetSecondDimensionAt``1(``0[0:,0:],System.Int32)">
+            <summary>
+            Given an <paramref name="index"/>, this will return the second dimension of the 2D array. If the 2D array were constructed as an array of arrays, this would be the equivalent to getting array[x] in array[x][y].
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="array2D"></param>
+            <param name="index">The index in the first dimension corresponding to the desired second dimension.</param>
+            <returns></returns>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown if the given index is out of the range fo the array.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.ToIntArray(System.Single[])">
+            <summary>
+            A very specialized method designed specifically for <see cref="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator"/> which converts a float array to an int array.
+            </summary>
+            <param name="floatArray"></param>
+            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.XansData.ModelFormat">
             <summary>
@@ -818,11 +910,16 @@
             Graphics Library Transmission Format
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.ModelFormatUtil.ExtensionToFormatBindings">
+            <summary>
+            A binding from <see cref="T:System.String"/> to <see cref="T:ThreeRingsSharp.XansData.ModelFormat"/>, e.g. the string <c>".fbx"</c> translates to <see cref="F:ThreeRingsSharp.XansData.ModelFormat.FBX"/>.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.Singleton`1">
             <summary>
             When extended, a property named <c>Instance</c> is statically provided for the given type that references an instance of said type.
             </summary>
-            <typeparam name="T"></typeparam>
+            <typeparam name="T">The type of the singleton instance.</typeparam>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Singleton`1.Instance">
             <summary>
@@ -919,7 +1016,7 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.Structs.Vector3.#ctor(System.Single,System.Single,System.Single)">
             <summary>
-            Construct a new Vector3 with the given X, Y, and Z coordinates.
+            Construct a new <see cref="T:ThreeRingsSharp.XansData.Structs.Vector3"/> with the given X, Y, and Z coordinates.
             </summary>
             <param name="x">The X component of this Vector3.</param>
             <param name="y">The Y component of this Vector3.</param>
@@ -939,6 +1036,91 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:ThreeRingsSharp.XansData.Structs.Vertex">
+            <summary>
+            Represents a vertex, which is effectively identical to a <see cref="T:ThreeRingsSharp.XansData.Structs.Vector3"/> with a Weight value.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.Structs.Vertex.Point">
+            <summary>
+            The location of this <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> in 3D space.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.Structs.Vertex.Weight">
+            <summary>
+            The weight of this <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> in the context of bone groups.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Structs.Vertex.#ctor(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Construct a new <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> with the given X, Y, and Z coordinates and weight.
+            </summary>
+            <param name="x">The X component of this Vector3.</param>
+            <param name="y">The Y component of this Vector3.</param>
+            <param name="z">The Z component of this Vector3.</param>
+            <param name="weight">The weight of this vertex in the context of any associated bone data.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Structs.Vertex.#ctor(ThreeRingsSharp.XansData.Structs.Vector3,System.Single)">
+            <summary>
+            Construct a new <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> from the given point and weight.
+            </summary>
+            <param name="point">The location of this <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> in 3D space.</param>
+            <param name="weight">The weight of this <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> in the context of any associated bone data.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Structs.Vertex.FromFloatArray(System.Single[],System.Single)">
+            <summary>
+            Returns a list of <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/>s composed of the given float array, taking each value out in triplets. The weight of each <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> will be set to <paramref name="defaultWeight"/>.<para/>
+            Throws <see cref="T:System.DataMisalignedException"/> if the float array's length is not divisible by three.
+            </summary>
+            <param name="values">The float array to be translated into a <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> array.</param>
+            <param name="defaultWeight">The weight to give to each vertex, which is used in the context of bone information.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Structs.Vertex.FromFloatArray(System.Single[],System.Single[])">
+            <summary>
+            Returns a list of <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/>s composed of the given float array, taking each value out in triplets.<para/>
+            Throws <see cref="T:System.DataMisalignedException"/> if the float array's length is not divisible by three, or if the length of the weight array isn't the same as the result <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> array.
+            </summary>
+            <param name="values">The float array to be translated into a <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> array.</param>
+            <param name="weights">A list of the weights to give the resulting <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> instances.</param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Structs.VertexGroup">
+            <summary>
+            Represents a vertex group, which is used for rigged models.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Vertices">
+            <summary>
+            All of the vertices stored in this VertexGroup. These ARE unique since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="F:ThreeRingsSharp.XansData.Model3D.Vertices"/>, since these vertices are not affected by transforms which may drastically malform the output.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Indices">
+            <summary>
+            The indices in this vertex group. An index refers to a vertex in an associated <see cref="T:ThreeRingsSharp.XansData.Model3D"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Weights">
+            <summary>
+            An array of all of the weights that are in this vertex group. These values have a 1:1 correspondence with <see cref="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Indices"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Name">
+            <summary>
+            The name of this vertex group, which should be identical to the node it corresponds to.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Structs.VertexGroup.#ctor">
+            <summary>
+            Construct a new <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/> with default properties.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Structs.VertexGroup.#ctor(System.String)">
+            <summary>
+            Construct a new <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/> with the given name.
+            </summary>
+            <param name="name"></param>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.Model3D">
             <summary>
             A unified representation of a model. Since various implementations from Clyde may store data differently, this provides a common interface.
@@ -951,7 +1133,7 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.Name">
             <summary>
-            The display name for this model.
+            The display name for this model, used in exporting (i.e. this is the name that will show up in Blender or any other modelling software.)
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.Source">
@@ -989,6 +1171,35 @@
             The indices that define triangles.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.Model3D.VertexGroups">
+            <summary>
+            All of the vertex groups in this model, represented as a list of indices. These indices reference <see cref="F:ThreeRingsSharp.XansData.Model3D.Vertices"/>.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.Model3D.BoneNames">
+            <summary>
+            A list of every bone name in this model. Unlike the list provided in Clyde geometry, the first element (index 0) of this list is null.<para/>
+            This allows easier bone indexing when observing vertex groups since all that needs to be done is testing if the name is null (0 denotes "not in a bone group")
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.Model3D.BoneIndices">
+            <summary>
+            The indices for bones. These correspond to an entry in the modified <see cref="F:ThreeRingsSharp.XansData.Model3D.BoneNames"/> list.<para/>
+            If you need to find the bone for a given vertex, search <see cref="F:ThreeRingsSharp.XansData.Model3D.VertexGroups"/> instead, as <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/>s contain bindings to bones.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.Model3D.BoneWeights">
+            <summary>
+            The weights for bones.<para/>
+            If you need to find the weight of a vertex for a given bone, search <see cref="F:ThreeRingsSharp.XansData.Model3D.VertexGroups"/> instead.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.HasBoneData">
+            <summary>
+            This should be <see langword="true"/> if this has bone data. If it is false, <see cref="M:ThreeRingsSharp.XansData.Model3D.ConstructGroups"/> will not do anything.<para/>
+            Ensure this is only set to <see langword="true"/> if <see cref="F:ThreeRingsSharp.XansData.Model3D.BoneNames"/>, <see cref="F:ThreeRingsSharp.XansData.Model3D.BoneIndices"/>, and <see cref="F:ThreeRingsSharp.XansData.Model3D.BoneWeights"/> are all populated properly.
+            </summary>
+        </member>
         <member name="M:ThreeRingsSharp.XansData.Model3D.Export(System.IO.FileInfo,ThreeRingsSharp.XansData.ModelFormat)">
             <summary>
             Exports this model in a given format, writing the data to the target <see cref="T:System.IO.FileInfo"/>
@@ -998,12 +1209,24 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.Model3D.ApplyTransformations">
             <summary>
-            Takes <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> and applies it to <see cref="F:ThreeRingsSharp.XansData.Model3D.Vertices"/>. This can only be called once.
+            Takes <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> and applies it to <see cref="F:ThreeRingsSharp.XansData.Model3D.Vertices"/>, as well as every <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> in each individual <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/> This can only be called once.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Model3D.Dispose">
             <summary>
             Frees all information used by this <see cref="T:ThreeRingsSharp.XansData.Model3D"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Model3D.GetVertexGroupByName(System.String)">
+            <summary>
+            Iterates through <see cref="F:ThreeRingsSharp.XansData.Model3D.VertexGroups"/> and returns the first <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/> whose <see cref="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Name"/> is equal to <paramref name="name"/>, or <see langword="null"/> if one could not be found.
+            </summary>
+            <param name="name">The name to search for.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Model3D.ConstructGroups">
+            <summary>
+            Constructs all <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/> instances automatically.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Model3D.ExportIntoOne(System.IO.FileInfo,ThreeRingsSharp.XansData.ModelFormat,ThreeRingsSharp.XansData.Model3D[])">

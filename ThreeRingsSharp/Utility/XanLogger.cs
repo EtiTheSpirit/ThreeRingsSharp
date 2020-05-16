@@ -12,10 +12,19 @@ namespace ThreeRingsSharp.Utility {
 	public class XanLogger {
 
 		/// <summary>
-		/// A reference to the text box storing the log.
+		/// Intended for exporting the log to a text file. This <see cref="StringBuilder"/> will contain the entire log.
+		/// </summary>
+		public static StringBuilder Log { get; } = new StringBuilder();
+
+		/// <summary>
+		/// A reference to a textbox that should store the contents of the log in a GUI application.<para/>
+		/// This should be an instance of <see cref="RTFScrolledBottom"/> for proper function. It can be <see langword="null"/> if there is no GUI.
 		/// </summary>
 		public static RTFScrolledBottom BoxReference { get; set; }
 
+		/// <summary>
+		/// If true, the box *was* at the bottom before text was appended to it (meaning it should autoscroll)
+		/// </summary>
 		private static bool WasAtBottom { get; set; }
 
 		/// <summary>
@@ -27,6 +36,7 @@ namespace ThreeRingsSharp.Utility {
 		/// Append the given text to the log and advance by one line.
 		/// </summary>
 		/// <param name="text"></param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="text"/> is <see langword="null"/>.</exception>
 		public static void WriteLine(string text) {
 			if (text == null) text = "null";
 			Write(text + "\n");
@@ -35,20 +45,34 @@ namespace ThreeRingsSharp.Utility {
 		/// <summary>
 		/// Append the given text to the log.
 		/// </summary>
-		/// <param name="text"></param>
-		/// <exception cref="NullReferenceException">If the RichTextBox reference has not been set.</exception>
+		/// <param name="text">The text to write to the log.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="text"/> is <see langword="null"/>.</exception>
 		public static void Write(string text) {
-			if (BoxReference == null) throw new NullReferenceException("A reference to the RichTextBox was not set!");
+			if (text == null) throw new ArgumentNullException("text");
+			Log.Append(text);
+			if (BoxReference == null) return;
 
 			WasAtBottom = BoxReference.IsScrolledToBottom;
 			BoxReference.AppendText(text);
+			
 			if (WasAtBottom && !BoxReference.IsScrolledToBottom) {
 				BoxReference.SelectionStart = BoxReference.TextLength;
 				BoxReference.ScrollToCaret();
 			}
 		}
+
+		/// <summary>
+		/// Clears all text from the log. This also wipes <see cref="Log"/>.
+		/// </summary>
+		public static void Clear() {
+			Log.Clear();
+		}
 	}
 
+
+	/// <summary>
+	/// A variant of <see cref="RichTextBox"/> that provides a means of testing if it is scrolled to the bottom.
+	/// </summary>
 	public class RTFScrolledBottom : RichTextBox {
 		//private const int WM_VSCROLL = 0x115;
 		//private const int WM_MOUSEWHEEL = 0x20A;
@@ -69,9 +93,7 @@ namespace ThreeRingsSharp.Utility {
 		public bool IsScrolledToBottom => IsAtMaxScroll();
 
 		private bool IsAtMaxScroll() {
-			int minScroll;
-			int maxScroll;
-			GetScrollRange(this.Handle, SB_VERT, out minScroll, out maxScroll);
+			GetScrollRange(this.Handle, SB_VERT, out int _, out int maxScroll);
 			Point rtfPoint = Point.Empty;
 			SendMessage(this.Handle, EM_GETSCROLLPOS, 0, ref rtfPoint);
 
