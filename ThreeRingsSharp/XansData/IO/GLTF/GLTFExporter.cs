@@ -42,7 +42,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 		/// <summary>
 		/// The JSON data for this glTF file.
 		/// </summary>
-		private GLTFJSONRoot JSONData = new GLTFJSONRoot();
+		private readonly GLTFJSONRoot JSONData = new GLTFJSONRoot();
 
 		/// <summary>
 		/// Converts <see cref="JSONData"/> into a JSON String using <see cref="JsonConvert"/>, and then ensures it's aligned to a four-byte boundary as mandated by glTF 2.0 standards.

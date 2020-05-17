@@ -22,9 +22,9 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// </summary>
 		public int byteOffset = 0;
 
-		/// <summary>
-		/// The spacing between the bytes in this view. For types larger than one byte, this represents the spacing between the first bytes (e.g. if I have a buffer of int32s, the stride here would be 4, NOT 1)
-		/// </summary>
+		// <summary>
+		// The spacing between the bytes in this view. For types larger than one byte, this represents the spacing between the first bytes (e.g. if I have a buffer of int32s, the stride here would be 4, NOT 1)
+		// </summary>
 		// public int? byteStride = null;
 
 	}
