@@ -7,24 +7,20 @@ using System.Threading.Tasks;
 namespace ThreeRingsSharp.XansData.Structs {
 
 	/// <summary>
-	/// Represents a vertex group, which is used for rigged models.
+	/// Represents a vertex group, which is used for rigged models. All stored vertices simply represent a vertex that has a weight in a given bone group. As such, if a vertex has a weight value less than 1, it will be a duplicate of at least one other vertex in one other vertex group.
 	/// </summary>
 	public class VertexGroup {
 
 		/// <summary>
-		/// All of the vertices stored in this VertexGroup. These ARE unique since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="Model3D.Vertices"/>, since these vertices are not affected by transforms which may drastically malform the output.
+		/// All of the vertices stored in this VertexGroup. These ARE unique objects (not unique positions in space) since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="Model3D.Vertices"/>, since these vertices are not affected by transforms which may drastically malform the output.
 		/// </summary>
 		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
 
 		/// <summary>
-		/// The indices in this vertex group. An index refers to a vertex in an associated <see cref="Model3D"/>.
+		/// The indices in this vertex group. These refer to the triangles in this <see cref="VertexGroup"/>, but are the indices used by the whole model otherwise.<para/>
+		/// Please note that certain indices in this array may be duplicated (or, the same exact index will appear up to 4 times in a row). If this is the case, ignore subsequent instances of the same number. For instance, this array may contain <c>1 2 2 2 3 3 4</c>, and should turn into <c>1 2 3 4</c> after you trim it yourself.
 		/// </summary>
-		[Obsolete("Use Vertices instead.")] public List<short> Indices { get; set; } = new List<short>();
-
-		/// <summary>
-		/// An array of all of the weights that are in this vertex group. These values have a 1:1 correspondence with <see cref="Indices"/>.
-		/// </summary>
-		[Obsolete("Use Vertices instead.")] public List<float> Weights { get; set; } = new List<float>();
+		public List<short> Indices { get; set; } = new List<short>();
 
 		/// <summary>
 		/// The name of this vertex group, which should be identical to the node it corresponds to.

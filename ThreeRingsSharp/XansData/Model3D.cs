@@ -48,7 +48,8 @@ namespace ThreeRingsSharp.XansData {
 		public bool HasDoneTransformation { get; protected internal set; } = false;
 
 		/// <summary>
-		/// The vertices that make up this 3D model.
+		/// The vertices that make up this 3D model. Generally speaking, this should be used if the model is not rigged.<para/>
+		/// Consider using <see cref="VertexGroups"/> to access the geometry of rigged models, do mind some vertices may be duplicated.
 		/// </summary>
 		public readonly List<Vector3> Vertices = new List<Vector3>();
 
@@ -112,10 +113,13 @@ namespace ThreeRingsSharp.XansData {
 		}
 
 		/// <summary>
-		/// Takes <see cref="Transform"/> and applies it to <see cref="Vertices"/>, as well as every <see cref="Vertex"/> in each individual <see cref="VertexGroup"/> This can only be called once.
+		/// Takes <see cref="Transform"/> and applies it to <see cref="Vertices"/>, as well as every <see cref="Vertex"/> in each individual <see cref="VertexGroup"/>. This also normalizes the weights of vertices across all vertex groups.<para/>
+		/// This can only be called once.
 		/// </summary>
 		public void ApplyTransformations() {
 			if (HasDoneTransformation) return;
+
+			// Transform the referenced geometry here.
 			for (int idx = 0; idx < Vertices.Count; idx++) {
 				Vertices[idx] = Transform.transformPoint(Vertices[idx]);
 				//Vertex vtx = Vertices[idx];
@@ -130,6 +134,8 @@ namespace ThreeRingsSharp.XansData {
 					vtxGroup.Vertices[idx] = vtx;
 				}
 			}
+
+			//
 
 			HasDoneTransformation = true;
 		}
@@ -186,17 +192,17 @@ namespace ThreeRingsSharp.XansData {
 				float[] boneWeights = BoneWeights.GetSecondDimensionAt(index);
 				Vector3 point = Vertices[index];
 
+				// Iterate 4x because again, quadruplets.
 				for (int idx = 0; idx < 4; idx++) {
 					int boneIndex = boneIndices[idx];
 					float boneWeight = boneWeights[idx];
 					string boneName = BoneNames[boneIndex];
 					if (boneName == null) break;
 					VertexGroup groupForBone = GetVertexGroupByName(boneName);
-					if (groupForBone == null) throw new Exception("ooOOoo! scHET!");
 
-					// So now we have the group we need to populate.
-					// Populate it!
+					// Populate the group.
 					groupForBone.Vertices.Add(new Vertex(point, boneWeight));
+					groupForBone.Indices.Add(index);
 				}
 			}
 		}
