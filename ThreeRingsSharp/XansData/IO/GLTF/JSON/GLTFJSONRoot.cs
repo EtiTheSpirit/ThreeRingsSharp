@@ -7,11 +7,21 @@ using System.Threading.Tasks;
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	public class GLTFJSONRoot {
 
-		public GLTFAsset Asset = new GLTFAsset();
+		public GLTFAsset asset = new GLTFAsset();
 
-		public GLTFBuffer[] Buffers = new GLTFBuffer[0];
+		public List<GLTFBuffer> buffers = new List<GLTFBuffer>();
 
-		public GLTFBufferView[] BufferViews = new GLTFBufferView[0];
+		public List<GLTFBufferView> bufferViews = new List<GLTFBufferView>();
+
+		public List<GLTFAccessor> accessors = new List<GLTFAccessor>();
+
+		public List<GLTFMesh> meshes = new List<GLTFMesh>();
+
+		public List<GLTFNode> nodes = new List<GLTFNode>();
+
+		public int scene = 0;
+
+		public List<GLTFScene> scenes = new List<GLTFScene>();
 
 	}
 }

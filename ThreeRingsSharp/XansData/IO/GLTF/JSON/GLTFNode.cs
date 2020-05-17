@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
-	public class GLTFAsset {
+	public class GLTFNode {
 
-		public string version = "2.0";
+		public string name;
 
-		public string generator = AbstractModelExporter.TOOL;
+		public int mesh;
 
 	}
 }
