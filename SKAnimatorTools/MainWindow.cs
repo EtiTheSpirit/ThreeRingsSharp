@@ -42,7 +42,8 @@ namespace SKAnimatorTools {
 			string saveDir = ConfigurationInterface.GetConfigurationValue("LastSaveDirectory", @"C:\", true);
 			string rsrcDir = ConfigurationInterface.GetConfigurationValue("RsrcDirectory", @"C:\", true);
 			bool restoreDirectoryWhenLoading = ConfigurationInterface.GetConfigurationValue("RememberDirectoryAfterOpen", false, true);
-			ClydeFileHandler.MultiplyScaleByHundred = ConfigurationInterface.GetConfigurationValue("ScaleBy100", true, true);
+			Model3D.MultiplyScaleByHundred = ConfigurationInterface.GetConfigurationValue("ScaleBy100", true, true);
+			Model3D.ProtectAgainstZeroScale = ConfigurationInterface.GetConfigurationValue("ProtectAgainstZeroScale", true, true);
 			if (Directory.Exists(loadDir)) {
 				OpenModel.InitialDirectory = loadDir;
 			}
@@ -74,7 +75,7 @@ namespace SKAnimatorTools {
 					ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(newValue);
 				}
 			} else if (configKey == "ScaleBy100") {
-				ClydeFileHandler.MultiplyScaleByHundred = newValue;
+				Model3D.MultiplyScaleByHundred = newValue;
 			}
 		}
 
@@ -219,7 +220,7 @@ namespace SKAnimatorTools {
 
 		private void OnConfigClicked(object sender, EventArgs e) {
 			ConfigForm = new ConfigurationForm();
-			ConfigForm.SetDataFromConfig(OpenModel.InitialDirectory, SaveModel.InitialDirectory, ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", OpenModel.RestoreDirectory);
+			ConfigForm.SetDataFromConfig(OpenModel.InitialDirectory, SaveModel.InitialDirectory, ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", OpenModel.RestoreDirectory, Model3D.MultiplyScaleByHundred, Model3D.ProtectAgainstZeroScale);
 			ConfigForm.Show();
 			ConfigForm.Activate();
 			ConfigForm.FormClosed += OnConfigFormClosed;

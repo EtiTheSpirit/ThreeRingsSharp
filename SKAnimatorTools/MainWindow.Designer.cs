@@ -101,19 +101,20 @@
 			this.SilkImages.Images.SetKeyName(15, "Generated");
 			this.SilkImages.Images.SetKeyName(16, "Schemed");
 			this.SilkImages.Images.SetKeyName(17, "SchemedModel");
-			this.SilkImages.Images.SetKeyName(18, "Animation");
-			this.SilkImages.Images.SetKeyName(19, "Scripted");
-			this.SilkImages.Images.SetKeyName(20, "TimedAction");
-			this.SilkImages.Images.SetKeyName(21, "Config");
-			this.SilkImages.Images.SetKeyName(22, "Shading");
-			this.SilkImages.Images.SetKeyName(23, "Reference");
-			this.SilkImages.Images.SetKeyName(24, "Array");
-			this.SilkImages.Images.SetKeyName(25, "Texture");
-			this.SilkImages.Images.SetKeyName(26, "Variant");
-			this.SilkImages.Images.SetKeyName(27, "Light");
-			this.SilkImages.Images.SetKeyName(28, "Value");
-			this.SilkImages.Images.SetKeyName(29, "Triangle");
-			this.SilkImages.Images.SetKeyName(30, "None");
+			this.SilkImages.Images.SetKeyName(18, "Scheme");
+			this.SilkImages.Images.SetKeyName(19, "Animation");
+			this.SilkImages.Images.SetKeyName(20, "Scripted");
+			this.SilkImages.Images.SetKeyName(21, "TimedAction");
+			this.SilkImages.Images.SetKeyName(22, "Config");
+			this.SilkImages.Images.SetKeyName(23, "Shading");
+			this.SilkImages.Images.SetKeyName(24, "Reference");
+			this.SilkImages.Images.SetKeyName(25, "Array");
+			this.SilkImages.Images.SetKeyName(26, "Texture");
+			this.SilkImages.Images.SetKeyName(27, "Variant");
+			this.SilkImages.Images.SetKeyName(28, "Light");
+			this.SilkImages.Images.SetKeyName(29, "Value");
+			this.SilkImages.Images.SetKeyName(30, "Triangle");
+			this.SilkImages.Images.SetKeyName(31, "None");
 			// 
 			// GroupBoxModelInfo
 			// 
