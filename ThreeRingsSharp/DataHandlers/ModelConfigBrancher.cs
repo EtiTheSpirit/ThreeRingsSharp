@@ -88,6 +88,16 @@ namespace ThreeRingsSharp.DataHandlers {
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.CameraShake;
 				ViewerAffecterConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform);
 
+			} else if (implementation is ModelConfig.Derived) {
+				XanLogger.WriteLine("Model is of the type 'ModelConfig::Derived'. Accessing handlers...");
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Derived;
+				ModelConfigHandler.DerivedHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform);
+
+			} else if (implementation is ModelConfig.Schemed) {
+				XanLogger.WriteLine("Model is of the type 'ModelConfig::Schemed'. Accessing handlers...");
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Schemed;
+				ModelConfigHandler.SchemedHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform);
+
 			} else {
 				XanLogger.WriteLine($"\nERROR: A ModelConfig had an unknown implementation!\n=> Implementation: {implName}\n=> Referenced In: {sourceFile}\n");
 				// AsyncMessageBox.ShowAsync("This specific implementation is valid, but it has no handler! (There's no code that can translate this data for you :c).\nImplementation: " + implementation.getClass().getTypeName(), "Can't Handle Model", MessageBoxButtons.OK, MessageBoxIcon.Warning);

@@ -9,6 +9,11 @@ using static com.threerings.opengl.model.config.ModelConfig;
 using static com.threerings.opengl.model.config.ModelConfig.Imported;
 using static com.threerings.opengl.model.config.ModelConfig.Implementation;
 using ThreeRingsSharp.Utility;
+using com.google.inject;
+using ThreeRingsSharp.XansData;
+using System.IO;
+using com.threerings.math;
+using ThreeRingsSharp.XansData.Exceptions;
 
 namespace ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers {
 	public class ModelConfigHandler {
@@ -33,9 +38,7 @@ namespace ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers {
 
 			// It's imported!
 			// ...Unless it's a CompoundConfig. (I mean given the properties below it makes sense, it's just a container, not actual model data.)
-			if (imp is Imported) {
-				Imported imported = (Imported)imp;
-
+			if (imp is Imported imported) {
 				//RootDataTreeObject.AddSimpleProperty("Scale", model.scale);
 				List<object> influences = new List<object>(3);
 				if (imported.influences.fog) influences.Add(new DataTreeObjectProperty("Fog", SilkImage.Shading));
@@ -50,6 +53,53 @@ namespace ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers {
 				}
 				dataTreeParent.AddSimpleProperty("Textures", materials, SilkImage.Value, SilkImage.Texture, false);
 			}
+		}
+
+		public class DerivedHandler : Singleton<DerivedHandler>, IModelDataHandler, IDataTreeInterface<Derived> {
+			public void SetupCosmeticInformation(Derived model, DataTreeObject dataTreeParent) {
+				if (dataTreeParent == null) return;
+				dataTreeParent.AddSimpleProperty("Referenced Model", model.model.getName(), SilkImage.Reference, SilkImage.Reference, false);
+			}
+
+			public void HandleModelConfig(FileInfo sourceFile, ModelConfig baseModel, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null) {
+				Derived derived = (Derived)baseModel.implementation;
+				string filePathRelativeToRsrc = derived.model.getName();
+				if (filePathRelativeToRsrc.StartsWith("/")) filePathRelativeToRsrc = filePathRelativeToRsrc.Substring(1);
+				FileInfo referencedModel = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + filePathRelativeToRsrc);
+				if (!referencedModel.Exists) {
+					throw new ClydeDataReadException($"Derived at [{ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile, false)}] attempted to reference [{filePathRelativeToRsrc}], but this file could not be found!");
+				}
+				ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, false, globalTransform);
+			}
+
+		}
+
+		public class SchemedHandler : Singleton<SchemedHandler>, IModelDataHandler, IDataTreeInterface<Schemed> {
+			public void SetupCosmeticInformation(Schemed model, DataTreeObject dataTreeParent) {
+				if (dataTreeParent == null) return;
+
+				SchemedModel[] models = model.models;
+				List<object> refs = new List<object>();
+				foreach (SchemedModel schemedModel in models) {
+					refs.Add(schemedModel.model.getName());
+				}
+				dataTreeParent.AddSimpleProperty(models.Length + " Schemed References", refs.ToArray(), SilkImage.Reference, SilkImage.SchemedModel);
+			}
+
+			public void HandleModelConfig(FileInfo sourceFile, ModelConfig baseModel, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null) {
+				Schemed schemed = (Schemed)baseModel.implementation;
+				SchemedModel[] models = schemed.models;
+				foreach (SchemedModel schemedModel in models) {
+					string filePathRelativeToRsrc = schemedModel.model.getName();
+					if (filePathRelativeToRsrc.StartsWith("/")) filePathRelativeToRsrc = filePathRelativeToRsrc.Substring(1);
+					FileInfo referencedModel = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + filePathRelativeToRsrc);
+					if (!referencedModel.Exists) {
+						throw new ClydeDataReadException($"Schemed at [{ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile, false)}] attempted to reference [{filePathRelativeToRsrc}], but this file could not be found!");
+					}
+					ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, false, globalTransform);
+				}
+			}
+
 		}
 
 	}

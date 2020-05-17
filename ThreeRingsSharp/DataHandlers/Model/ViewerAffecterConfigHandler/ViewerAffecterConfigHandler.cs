@@ -21,6 +21,7 @@ namespace ThreeRingsSharp.DataHandlers.Model.ViewerAffecterConfigHandlers {
 	class ViewerAffecterConfigHandler : Singleton<ViewerAffecterConfigHandler>, IModelDataHandler, IDataTreeInterface<ViewerAffecterConfig> {
 
 		public void SetupCosmeticInformation(ViewerAffecterConfig model, DataTreeObject dataTreeParent) {
+			if (dataTreeParent == null) return;
 			ViewerEffectConfig effect = model.effect;
 			string cls = ClassNameStripper.GetWholeClassName(effect.getClass());
 			if (cls == null) {
@@ -32,8 +33,14 @@ namespace ThreeRingsSharp.DataHandlers.Model.ViewerAffecterConfigHandlers {
 			DataTreeObject implementationProp = dataTreeParent.Properties[implementationPropKey].First();
 			implementationProp.Text = cls.Replace("$", "::");
 			if (effect is Skybox skybox) {
-				implementationPropKey.ImageKey = SilkImage.Sky;
-				dataTreeParent.AddSimpleProperty("Model Reference", skybox.model.getName(), SilkImage.Reference, SilkImage.ModelSet, false);
+				dataTreeParent.ImageKey = SilkImage.Sky;
+				string name = skybox.model?.getName();
+				if (name == null && dataTreeParent.Parent != null && dataTreeParent.Parent.ImageKey == SilkImage.Schemed) {
+					dataTreeParent.ImageKey = SilkImage.Scheme;
+					dataTreeParent.AddSimpleProperty("Data Type", "Render Scheme", SilkImage.Scheme);
+				} else {
+					dataTreeParent.AddSimpleProperty("Model Reference", name, SilkImage.Reference, SilkImage.ModelSet, false);
+				}
 			}
 		}
 
@@ -43,20 +50,25 @@ namespace ThreeRingsSharp.DataHandlers.Model.ViewerAffecterConfigHandlers {
 			SetupCosmeticInformation(vac, dataTreeParent);
 
 			if (effect is Skybox skybox) {
-				string filePathRelativeToRsrc = skybox.model.getName();
-				if (filePathRelativeToRsrc.StartsWith("/")) filePathRelativeToRsrc = filePathRelativeToRsrc.Substring(1);
-				FileInfo referencedModel = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + filePathRelativeToRsrc);
-				if (!referencedModel.Exists) {
-					throw new ClydeDataReadException($"CompoundConfig at [{ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile, false)}] attempted to reference [{filePathRelativeToRsrc}], but this file could not be found!");
-				}
+				string filePathRelativeToRsrc = skybox.model?.getName();
+				if (filePathRelativeToRsrc != null) {
+					// If this is null, it is okay!
+					// Certain implementations, (for instance, schemed implementations) use this to define their render scheme.
 
-				// Note to self: You only use the x component on scale for a reason.
-				// For some reason, skybox scale is internally stored as a Vector3. I assume this is because they thought they'd need to stretch skyboxes.
-				// In all implementations from the scene viewer, it only uses the x component for a single-float scale.
-				// Why? Ask OOO. This is how it needs to work in seemingly 100% of cases with SK stuff.
-				Transform3D newTrs = new Transform3D(skybox.translationOrigin, Quaternion.IDENTITY, skybox.translationScale.x);
-				newTrs = globalTransform.compose(newTrs);
-				ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, false, newTrs);
+					if (filePathRelativeToRsrc.StartsWith("/")) filePathRelativeToRsrc = filePathRelativeToRsrc.Substring(1);
+					FileInfo referencedModel = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + filePathRelativeToRsrc);
+					if (!referencedModel.Exists) {
+						throw new ClydeDataReadException($"ViewerEffectConfig::Skybox at [{ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile, false)}] attempted to reference [{filePathRelativeToRsrc}], but this file could not be found!");
+					}
+
+					// Note to self: You only use the x component on scale for a reason.
+					// For some reason, skybox scale is internally stored as a Vector3. I assume this is because they thought they'd need to stretch skyboxes.
+					// In all implementations from the scene viewer, it only uses the x component for a single-float scale.
+					// Why? Ask OOO. This is how it needs to work in seemingly 100% of cases with SK stuff.
+					Transform3D newTrs = new Transform3D(skybox.translationOrigin, Quaternion.IDENTITY, skybox.translationScale.x);
+					newTrs = globalTransform.compose(newTrs);
+					ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, false, newTrs);
+				}
 			}
 		}
 	}

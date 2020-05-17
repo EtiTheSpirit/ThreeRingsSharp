@@ -35,12 +35,6 @@ namespace ThreeRingsSharp.DataHandlers {
 		public static Action<string, string, string, string> UpdateGUIAction { get; set; } = null;
 
 		/// <summary>
-		/// Multiplies the scale of exported models by 100. This is really handy for a lot of models but may cause others to be huge.<para/>
-		/// This is <see langword="true"/> by default since it's used more than it isn't.
-		/// </summary>
-		public static bool MultiplyScaleByHundred { get; set; } = true;
-
-		/// <summary>
 		/// Takes in a <see cref="FileInfo"/> representing a file that was created with the Clyde library.<para/>
 		/// This will throw a <see cref="ClydeDataReadException"/> if anything goes wrong during reading.
 		/// </summary>
@@ -72,6 +66,11 @@ namespace ThreeRingsSharp.DataHandlers {
 			}
 
 			DataTreeObject rootDataTreeObject = new DataTreeObject();
+			// Other case was put at the bottom
+			if (lastNodeParent is DataTreeObject datObj) {
+				rootDataTreeObject.Parent = datObj;
+			}
+
 			// Since I want to tie up some UI stuff before throwing the error, I'll store it for later.
 			ClydeDataReadException errToThrow = null;
 
@@ -102,7 +101,7 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			// This is kind of hacky behavior but it (ab)uses the fact that this will only run on the first call for any given chain of .DAT files.
 			// That is, all external referenced files have this value passed in instead of it being null.
-			if (transform == null) transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, MultiplyScaleByHundred ? 100f : 1f);
+			if (transform == null) transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, Model3D.MultiplyScaleByHundred ? 100f : 1f);
 			// transform.setScale(transform.getScale() * (MultiplyScaleByHundred ? 100f : 1f));
 
 			if (obj is null) {
@@ -149,12 +148,9 @@ namespace ThreeRingsSharp.DataHandlers {
 				errToThrow = new ClydeDataReadException($"This implementation type ({mdlClass}) is unsupported by the program.", "Unsupported Implementation", MessageBoxIcon.Warning);
 			}
 
-			// look dog idgaf if u dont like labels
 			FINALIZE_NODES:
 			if (lastNodeParent is TreeNode || lastNodeParent is TreeView) {
 				lastNodeParent.Nodes.Add(rootDataTreeObject.ConvertHierarchyToTreeNodes());
-			} else if (lastNodeParent is DataTreeObject datObj) {
-				rootDataTreeObject.Parent = datObj;
 			}
 
 			if (errToThrow != null) throw errToThrow;
