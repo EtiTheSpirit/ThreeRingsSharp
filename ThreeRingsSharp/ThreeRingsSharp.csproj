@@ -177,12 +177,13 @@
     <Compile Include="Utility\XanLogger.cs" />
     <Compile Include="XansData\Exceptions\ClydeDataReadException.cs" />
     <Compile Include="XansData\Exceptions\InvalidTypeException.cs" />
+    <Compile Include="XansData\FileUtils.cs" />
     <Compile Include="XansData\IO\AbstractModelExporter.cs" />
     <Compile Include="XansData\IO\GLTF\GLTFExporter.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFAsset.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFBuffer.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFBufferView.cs" />
-    <Compile Include="XansData\IO\GLTF\JSON\GLTFObject.cs" />
+    <Compile Include="XansData\IO\GLTF\JSON\GLTFJSONRoot.cs" />
     <Compile Include="XansData\IO\ModelExporterFactory.cs" />
     <Compile Include="XansData\IO\OBJExporter.cs" />
     <Compile Include="XansData\EnumerableExtension.cs" />

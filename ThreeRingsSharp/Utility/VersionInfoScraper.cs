@@ -28,7 +28,8 @@ namespace ThreeRingsSharp.Utility {
 
 
 		/// <summary>
-		/// A very hacky method of returning the implementation of this model in its string form so that if Clyde can't read it, we can still see its name. This returns the full class name.
+		/// A very hacky method of returning the implementation of this model in its string form so that if Clyde can't read it, we can still see its name. This returns the full class name.<para/>
+		/// This is only functional for extensions of <see cref="ModelConfig"/>.
 		/// </summary>
 		/// <param name="datFile"></param>
 		/// <param name="isCompressed"></param>

@@ -38,21 +38,15 @@ namespace ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers {
 			VisibleMesh[] renderedMeshes = meshes.visible;
 
 			int idx = 0;
-			//foreach (VisibleMesh mesh in renderedMeshes) {
-			// TODO: Is this always a single object in articulated models?
-
-			VisibleMesh mesh = renderedMeshes.First();
-			Model3D meshToModel = null;
-			if (mesh != null) {
+			foreach (VisibleMesh mesh in renderedMeshes) {
+				Model3D meshToModel = null;
 				meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry);
 				meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + "-Skin-Mesh[" + idx + "]";
 				if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
+				RecursivelyIterateNodes(sourceFile, model.root, modelCollection, globalTransform, meshToModel);
 				modelCollection.Add(meshToModel);
+				idx++;
 			}
-			//idx++;
-			//}
-
-			RecursivelyIterateNodes(sourceFile, model.root, modelCollection, globalTransform, meshToModel);
 		}
 
 		/// <summary>

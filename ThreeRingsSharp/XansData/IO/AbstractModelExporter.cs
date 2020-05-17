@@ -16,7 +16,7 @@ namespace ThreeRingsSharp.XansData.IO {
 		/// <summary>
 		/// A message accompanied with all exports describing the tool used to export the model.
 		/// </summary>
-		public const string TOOL = "Exported by ThreeRingsSharp (Spiral Knights Animator Tools V2)";
+		public const string TOOL = "Exported by ThreeRingsSharp // Created by Xan the Dragon / Eti the Spirit";
 
 		/// <summary>
 		/// Exports the data stored in the given <see cref="Model3D"/>(s) to the given file.

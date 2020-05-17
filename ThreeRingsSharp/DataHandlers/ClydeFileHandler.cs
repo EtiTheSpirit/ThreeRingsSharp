@@ -1,11 +1,13 @@
 ﻿using com.threerings.export;
 using com.threerings.math;
 using com.threerings.opengl.model.config;
+using com.threerings.tudey.data;
 using java.io;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -69,22 +71,23 @@ namespace ThreeRingsSharp.DataHandlers {
 				if (modelClassInfo.Length == 2) modelSubclass = modelClassInfo[1];
 			}
 
+			DataTreeObject rootDataTreeObject = new DataTreeObject();
+			// Since I want to tie up some UI stuff before throwing the error, I'll store it for later.
+			ClydeDataReadException errToThrow = null;
+
+			// Just abort early here.
 			if (modelClass == "ProjectXModelConfig") {
 				XanLogger.WriteLine("User imported a Player Knight model. These are unsupported. Sending warning.");
-				if (isBaseFile) AsyncMessageBox.Show("Player Knights do not use the standard ArticulatedConfig type (used for all animated character models) and instead use a unique type called ProjectXModelConfig. Unless the Spiral Knights jar is directly referenced, this type cannot be loaded.\n\nThankfully, an automatic fix will be employed for you! I'm going to load /rsrc/character/npc/crew/model.dat instead, which is a Knight model that uses ArticulatedConfig since it's an NPC.", "Knights are not supported!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-				string characterFolder = clydeFile.Directory.Parent.FullName;
-				if (!characterFolder.EndsWith("/")) characterFolder += "/";
-				clydeFile = new FileInfo(characterFolder + "npc/crew/model.dat");
-				if (!clydeFile.Exists) {
-					XanLogger.WriteLine("Failed to locate substitute crew NPC model in target directory.");
-					//if (isBaseFile) AsyncMessageBox.ShowAsync("Oh no! The file at " + clydeFile.FullName + " doesn't exist :(\nThis path is intended to work only for cases where you loaded /rsrc/character/pc/model.dat directly, so if this was a custom saved .DAT file, this error was bound to happen.", "Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-					if (isBaseFile && UpdateGUIAction != null) {
-						UpdateGUIAction("Nothing Loaded!", "N/A", "N/A", "N/A");
-					}
-					throw new ClydeDataReadException("The file at " + clydeFile.FullName + " doesn't exist!");
+				if (isBaseFile && UpdateGUIAction != null) {
+					UpdateGUIAction(null, null, null, "ModelConfig");
 				}
+				if (rootDataTreeObject != null) {
+					rootDataTreeObject.Text = "ProjectXModelConfig";
+					rootDataTreeObject.ImageKey = SilkImage.Articulated;
+				}
+				errToThrow = new ClydeDataReadException("Player Knights do not use the standard ArticulatedConfig type (used for all animated character models) and instead use a unique type called ProjectXModelConfig. Unfortunately, this type cannot be read by the program (I had to use some hacky data skimming to even get this error message to work)!", "Knights are not supported!", MessageBoxIcon.Error);
+				goto FINALIZE_NODES;
 			}
-
 
 			// So if this is the file we actually opened (not a referenced file) and we've defined the action necessary to update the GUI...
 			if (isBaseFile && UpdateGUIAction != null) {
@@ -95,40 +98,66 @@ namespace ThreeRingsSharp.DataHandlers {
 			DataInputStream dataInput = new DataInputStream(new FileInputStream(clydeFile.FullName));
 			BinaryImporter importer = new BinaryImporter(dataInput);
 			ModelConfigBrancher currentBrancher = new ModelConfigBrancher();
-
-
-			var obj = (java.lang.Object)importer.readObject();
-			DataTreeObject rootDataTreeObject = new DataTreeObject();
+			object obj = importer.readObject();
 
 			// This is kind of hacky behavior but it (ab)uses the fact that this will only run on the first call for any given chain of .DAT files.
 			// That is, all external referenced files have this value passed in instead of it being null.
 			if (transform == null) transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, 1f);
 			transform.setScale(transform.getScale() * (MultiplyScaleByHundred ? 100f : 1f));
 
+			if (obj is null) {
+				if (isBaseFile && UpdateGUIAction != null) {
+					UpdateGUIAction(null, null, null, "Unknown");
+				}
+				if (rootDataTreeObject != null) {
+					rootDataTreeObject.Text = "Unknown Implementation";
+					rootDataTreeObject.ImageKey = SilkImage.Object;
+				}
+				errToThrow = new ClydeDataReadException("This implementation is null!\nThis usually happens if the implementation is from an outside source that uses Clyde (e.g. Spiral Knights itself) has its own custom classes that are not part of Clyde.\n\nAs a result of this issue, the program is unfortunately unable to extract its data type name.", "Unsupported Implementation");
+			}
+
 			if (obj is ModelConfig model) {
 				if (isBaseFile && UpdateGUIAction != null) {
 					UpdateGUIAction(null, null, null, "ModelConfig");
 				}
-				// Promote to the highest level, 4x4 transformation matrix.
-				// If it was null, create a new one at that level with the identity matrix. Promote will do nothing if it's already at that level.
 
-				currentBrancher.HandleDataFrom(clydeFile, model, allGrabbedModels, rootDataTreeObject, useFileName, transform);
-			} else {
-				if (isBaseFile && UpdateGUIAction != null) {
-					UpdateGUIAction(null, null, null, "Unknown");
+				try {
+					currentBrancher.HandleDataFrom(clydeFile, model, allGrabbedModels, rootDataTreeObject, useFileName, transform);
+				} catch (ClydeDataReadException exc) {
+					errToThrow = exc;
 				}
-				//if (isBaseFile) AsyncMessageBox.ShowAsync("Oh Fiddlesticks! While this *is* a valid .DAT file, I'm afraid I can't actually do anything with this data!\n\nData Class:\n" + obj.getClass().getTypeName(), "Invalid Type", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				rootDataTreeObject.Text = modelClass;
-				rootDataTreeObject.ImageKey = SilkImage.Generic;
-				throw new ClydeDataReadException("This .DAT file is valid, but its type is unknown (The system is only designed to handle ModelConfigs).");
+
+			} else if (obj is AnimationConfig animation) {
+				if (isBaseFile && UpdateGUIAction != null) {
+					UpdateGUIAction(null, null, null, "AnimationConfig");
+				}
+
+				if (rootDataTreeObject != null) {
+					rootDataTreeObject.Text = modelClass;
+					rootDataTreeObject.ImageKey = SilkImage.Generic;
+				}
+				errToThrow = new ClydeDataReadException("Animations are unsupported! Come back later c:", "Unsupported Implementation", MessageBoxIcon.Warning);
+			} else {
+				string mdlClass = modelClass ?? obj.GetType().Name;
+				if (isBaseFile && UpdateGUIAction != null) {
+					UpdateGUIAction(null, null, null, mdlClass);
+				}
+				if (rootDataTreeObject != null) {
+					rootDataTreeObject.Text = mdlClass;
+					rootDataTreeObject.ImageKey = SilkImage.Generic;
+				}
+				errToThrow = new ClydeDataReadException($"This implementation type ({mdlClass}) is unsupported by the program.", "Unsupported Implementation", MessageBoxIcon.Warning);
 			}
 
+			// look dog idgaf if u dont like labels
+			FINALIZE_NODES:
 			if (lastNodeParent is TreeNode || lastNodeParent is TreeView) {
 				lastNodeParent.Nodes.Add(rootDataTreeObject.ConvertHierarchyToTreeNodes());
 			} else if (lastNodeParent is DataTreeObject datObj) {
 				rootDataTreeObject.Parent = datObj;
 			}
-			return;
+
+			if (errToThrow != null) throw errToThrow;
 		}
 	}
 }

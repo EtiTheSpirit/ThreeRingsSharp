@@ -696,7 +696,8 @@
         </member>
         <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.HackyGetImplementation(System.IO.FileInfo,System.Boolean)">
             <summary>
-            A very hacky method of returning the implementation of this model in its string form so that if Clyde can't read it, we can still see its name. This returns the full class name.
+            A very hacky method of returning the implementation of this model in its string form so that if Clyde can't read it, we can still see its name. This returns the full class name.<para/>
+            This is only functional for extensions of <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
             </summary>
             <param name="datFile"></param>
             <param name="isCompressed"></param>
@@ -771,10 +772,40 @@
             An exception that is thrown when a critical read error occurs when trying to process files.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.XansData.Exceptions.ClydeDataReadException.ErrorWindowTitle">
+            <summary>
+            The title that should be displayed in the <see cref="T:System.Windows.Forms.MessageBox"/> if this is sent to a GUI.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Exceptions.ClydeDataReadException.ErrorWindowIcon">
+            <summary>
+            The icon that should be displayed in the <see cref="T:System.Windows.Forms.MessageBox"/> if this is sent to a GUI.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Exceptions.ClydeDataReadException.#ctor(System.String,System.String,System.Windows.Forms.MessageBoxIcon)">
+            <summary>
+            Construct a new <see cref="T:ThreeRingsSharp.XansData.Exceptions.ClydeDataReadException"/> with the optional given title and icon, intended for use in GUI displays of this error.
+            </summary>
+            <param name="message">The message to display for this error.</param>
+            <param name="title">The title to display for this error in a GUI.</param>
+            <param name="icon">The icon to use in the GUI.</param>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.Exceptions.InvalidTypeException">
             <summary>
             An exception thrown when a method that handles an arbitrary class type receives a type that is invalid for the given context (but is otherwise within constraints defined by the language)
             </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.FileUtils">
+            <summary>
+            Offers better file control methods.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.FileUtils.OpenWriteNew(System.IO.FileInfo)">
+            <summary>
+            Identical to <see cref="M:System.IO.FileInfo.OpenWrite"/>, but this will completely erase the file and rewrite it from scratch.
+            </summary>
+            <param name="file"></param>
+            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.AbstractModelExporter">
             <summary>
@@ -802,6 +833,37 @@
             <summary>
             Represents a GLTF file and its associated data.
             </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.#cctor">
+            <summary>
+            Initialize camel case serialization.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.MAGIC_NUMBER">
+            <summary>
+            The unique header ID describing glTF files. This is the ASCII string "glTF".
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.VERSION">
+            <summary>
+            The glTF spec version.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.JSONData">
+            <summary>
+            The JSON data for this glTF file.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.GetPaddedJSONData">
+            <summary>
+            Converts <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.JSONData"/> into a JSON String using <see cref="T:Newtonsoft.Json.JsonConvert"/>, and then ensures it's aligned to a four-byte boundary as mandated by glTF 2.0 standards.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.GetJSONBuffer">
+            <summary>
+            Returns the fully-formatted JSON data buffer, ready to be written into the file.
+            </summary>
+            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.ModelExporterFactory`1">
             <summary>
@@ -956,6 +1018,15 @@
             <param name="inp"></param>
             <returns></returns>
         </member>
+        <member name="M:ThreeRingsSharp.XansData.StringExtension.WriteASCIIToByteArray(System.String,System.Byte[]@,System.Int32)">
+            <summary>
+            Formats the given string to an ASCII string and then writes it to the array, starting at the given offset.<para/>
+            Throws <see cref="T:System.IndexOutOfRangeException"/> if the array is too short to contain the string.
+            </summary>
+            <param name="str">The string to write.</param>
+            <param name="array">The array to write the string into.</param>
+            <param name="offset">The index to start writing at.</param>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.Structs.Vector2">
             <summary>
             Stores three <see langword="float"/> values that represent a coordinate in 3D space.<para/>
@@ -1087,22 +1158,18 @@
         </member>
         <member name="T:ThreeRingsSharp.XansData.Structs.VertexGroup">
             <summary>
-            Represents a vertex group, which is used for rigged models.
+            Represents a vertex group, which is used for rigged models. All stored vertices simply represent a vertex that has a weight in a given bone group. As such, if a vertex has a weight value less than 1, it will be a duplicate of at least one other vertex in one other vertex group.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Vertices">
             <summary>
-            All of the vertices stored in this VertexGroup. These ARE unique since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="F:ThreeRingsSharp.XansData.Model3D.Vertices"/>, since these vertices are not affected by transforms which may drastically malform the output.
+            All of the vertices stored in this VertexGroup. These ARE unique objects (not unique positions in space) since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="F:ThreeRingsSharp.XansData.Model3D.Vertices"/>, since these vertices are not affected by transforms which may drastically malform the output.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Indices">
             <summary>
-            The indices in this vertex group. An index refers to a vertex in an associated <see cref="T:ThreeRingsSharp.XansData.Model3D"/>.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Weights">
-            <summary>
-            An array of all of the weights that are in this vertex group. These values have a 1:1 correspondence with <see cref="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Indices"/>.
+            The indices in this vertex group. These refer to the triangles in this <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/>, but are the indices used by the whole model otherwise.<para/>
+            Please note that certain indices in this array may be duplicated (or, the same exact index will appear up to 4 times in a row). If this is the case, ignore subsequent instances of the same number. For instance, this array may contain <c>1 2 2 2 3 3 4</c>, and should turn into <c>1 2 3 4</c> after you trim it yourself.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Name">
@@ -1153,7 +1220,8 @@
         </member>
         <member name="F:ThreeRingsSharp.XansData.Model3D.Vertices">
             <summary>
-            The vertices that make up this 3D model.
+            The vertices that make up this 3D model. Generally speaking, this should be used if the model is not rigged.<para/>
+            Consider using <see cref="F:ThreeRingsSharp.XansData.Model3D.VertexGroups"/> to access the geometry of rigged models, do mind some vertices may be duplicated.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.Model3D.Normals">
@@ -1209,7 +1277,8 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.Model3D.ApplyTransformations">
             <summary>
-            Takes <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> and applies it to <see cref="F:ThreeRingsSharp.XansData.Model3D.Vertices"/>, as well as every <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> in each individual <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/> This can only be called once.
+            Takes <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> and applies it to <see cref="F:ThreeRingsSharp.XansData.Model3D.Vertices"/>, as well as every <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> in each individual <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/>. This also normalizes the weights of vertices across all vertex groups.<para/>
+            This can only be called once.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Model3D.Dispose">

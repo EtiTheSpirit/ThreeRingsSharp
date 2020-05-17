@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
-	public class GLTFObject {
+	public class GLTFJSONRoot {
 
 		public GLTFAsset Asset = new GLTFAsset();
 

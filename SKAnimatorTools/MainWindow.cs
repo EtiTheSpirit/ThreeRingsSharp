@@ -20,6 +20,7 @@ using ThreeRingsSharp.DataHandlers;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
 using SKAnimatorTools.Configuration;
+using ThreeRingsSharp.XansData.Exceptions;
 
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {
@@ -102,6 +103,10 @@ namespace SKAnimatorTools {
 				bool isOK = true;
 				try {
 					ClydeFileHandler.HandleClydeFile(clydeFile, AllModels, true, ModelStructureTree);
+				} catch (ClydeDataReadException exc) {
+					XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message);
+					AsyncMessageBox.Show(exc.Message, exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
+					isOK = false;
 				} catch (System.Exception err) {
 					XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}");
 					AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}", "Oh no!", icon: MessageBoxIcon.Error);
@@ -111,7 +116,7 @@ namespace SKAnimatorTools {
 				if (ModelStructureTree.Nodes.Count != 0 && ModelStructureTree.Nodes[0] != null) SetPropertiesMenu(DataTreeObjectEventMarshaller.GetDataObjectOf(ModelStructureTree.Nodes[0]));
 				//BtnSaveModel.Enabled = CurrentBrancher.OK;
 				BtnSaveModel.Enabled = isOK;
-				XanLogger.WriteLine("Number of models: " + AllModels.Count);
+				XanLogger.WriteLine("Number of models loaded: " + AllModels.Count);
 			}
 		}
 

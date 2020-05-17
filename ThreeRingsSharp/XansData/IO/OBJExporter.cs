@@ -45,11 +45,8 @@ namespace ThreeRingsSharp.XansData.IO {
 				indexOffset += model.Vertices.Count;
 			}
 
-			if (toFile.Exists) toFile.Delete(); // DO NOT KEEP THIS IN PROD.
-			using (FileStream fileStr = toFile.Open(FileMode.CreateNew)) {
-				byte[] data = Encoding.ASCII.GetBytes(objBuilder.ToString());
-				fileStr.Write(data, 0, data.Length);
-			}
+			// Write the file now.
+			File.WriteAllText(toFile.FullName, objBuilder.ToString());
 		}
 
 		/// <summary>
