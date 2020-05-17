@@ -30,6 +30,17 @@ namespace ThreeRingsSharp.XansData {
 		};
 
 		/// <summary>
+		/// Multiplies the scale of exported models by 100. This is really handy for a lot of models but may cause others to be huge.<para/>
+		/// This is <see langword="true"/> by default since it's used more than it isn't.
+		/// </summary>
+		public static bool MultiplyScaleByHundred { get; set; } = true;
+
+		/// <summary>
+		/// If <see langword="true"/>, any models that have a scale of zero will have their scale changed to 1 instead.
+		/// </summary>
+		public static bool ProtectAgainstZeroScale { get; set; } = true;
+
+		/// <summary>
 		/// The display name for this model, used in exporting (i.e. this is the name that will show up in Blender or any other modelling software.)
 		/// </summary>
 		public string Name { get; set; } = null;
@@ -116,25 +127,44 @@ namespace ThreeRingsSharp.XansData {
 
 		/// <summary>
 		/// Takes <see cref="Transform"/> and applies it to <see cref="Vertices"/>, as well as every <see cref="Vertex"/> in each individual <see cref="VertexGroup"/>. This also normalizes the weights of vertices across all vertex groups.<para/>
-		/// This can only be called once.
+		/// This will only apply the transformation once, that is, when called and if it has already applied the transformation, it will invert said transformation, reapply it (undoing the first call), and then apply it again. This is done so that properties affecting scale can update.
 		/// </summary>
 		public void ApplyTransformations() {
-			if (HasDoneTransformation) return;
+			if (HasDoneTransformation) {
+				ApplyTransform(Transform.invert());
+			}
 
+			if (Transform.getScale() == 0 && ProtectAgainstZeroScale) {
+				Transform.setScale(1);
+				XanLogger.WriteLine("A Model3D had a scale of 0. Protection was enabled, so it has been changed to 1.");
+			}
+
+			if (MultiplyScaleByHundred) {
+				Transform.setScale(Transform.getScale() * 100f);
+			}
+
+			ApplyTransform(Transform);
+
+			HasDoneTransformation = true;
+		}
+
+		/// <summary>
+		/// Performs the actual application of a <see cref="Transform3D"/> on this model's data. Called by <see cref="ApplyTransformations()"/>
+		/// </summary>
+		/// <param name="transform"></param>
+		private void ApplyTransform(Transform3D transform) {
 			// Transform the referenced geometry here.
 			for (int idx = 0; idx < Vertices.Count; idx++) {
-				Vertices[idx] = Transform.transformPoint(Vertices[idx]);
+				Vertices[idx] = transform.transformPoint(Vertices[idx]);
 			}
 
 			foreach (VertexGroup vtxGroup in VertexGroups) {
 				for (int idx = 0; idx < vtxGroup.Vertices.Count; idx++) {
 					Vertex vtx = vtxGroup.Vertices[idx];
-					vtx.Point = Transform.transformPoint(vtx.Point);
+					vtx.Point = transform.transformPoint(vtx.Point);
 					vtxGroup.Vertices[idx] = vtx;
 				}
 			}
-
-			HasDoneTransformation = true;
 		}
 
 		/// <summary>
