@@ -54,7 +54,7 @@
             <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name. Additionally, it will not have its implementation property.</param>
             <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="T:com.threerings.math.Transform3D"/>.</param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers.ArticulatedConfigHandler.RecursivelyIterateNodes(System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,ThreeRingsSharp.XansData.Model3D)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers.ArticulatedConfigHandler.RecursivelyIterateNodes(System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D)">
             <summary>
             A utility function that iterates through all of the nodes recursively, as some may store mesh data.
             </summary>
@@ -62,7 +62,6 @@
             <param name="parent">The parent node to iterate through.</param>
             <param name="models">The <see cref="T:System.Collections.Generic.List`1"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
             <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
-            <param name="skin">If defined, a skin was located inside of this model, and these nodes serve as its bones.</param>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator">
             <summary>
@@ -829,14 +828,84 @@
             A generic constructor for <see cref="T:ThreeRingsSharp.XansData.IO.AbstractModelExporter"/>. Required for the factory to interface with this class properly.
             </summary>
         </member>
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.GLTFComponentType">
+            <summary>
+            Represents a component type in glTF for use in accessors.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFComponentType.BYTE">
+            <summary>
+            A <see langword="sbyte"/> value.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFComponentType.UNSIGNED_BYTE">
+            <summary>
+            A <see langword="byte"/> value.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFComponentType.SHORT">
+            <summary>
+            A <see langword="short"/> value.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFComponentType.UNSIGNED_SHORT">
+            <summary>
+            A <see langword="ushort"/> value.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFComponentType.UNSIGNED_INT">
+            <summary>
+            An <see langword="int"/> value.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFComponentType.FLOAT">
+            <summary>
+            A <see langword="float"/> value.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.GLTFType">
+            <summary>
+            Represents a type in glTF for use in accessors.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.SCALAR">
+            <summary>
+            A scalar value, which contains a single component.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.VEC2">
+            <summary>
+            A Vector2 value, which contains 2 components.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.VEC3">
+            <summary>
+            A Vector3 value, which contains 3 components.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.VEC4">
+            <summary>
+            A Vector4 value, which contains 4 components.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.MAT2">
+            <summary>
+            A MAT2 value (2x2 transformation matrix), which contains 4 components.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.MAT3">
+            <summary>
+            A MAT3 value (3x3 transformation matrix), which contains 9 components.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.MAT4">
+            <summary>
+            A MAT4 value (4x4 transformation matrix), which contains 16 components.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter">
             <summary>
             Represents a GLTF file and its associated data.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.#cctor">
-            <summary>
-            Initialize camel case serialization.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.MAGIC_NUMBER">
@@ -864,6 +933,31 @@
             Returns the fully-formatted JSON data buffer, ready to be written into the file.
             </summary>
             <returns></returns>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.max">
+            <summary>
+            NOTE: Cast these values into their appropriate type as dictated by <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.componentType"/>.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.min">
+            <summary>
+            NOTE: Cast these values into their appropriate type as dictated by <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.componentType"/>.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFBufferView.buffer">
+            <summary>
+             The ID of the buffer to browse.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFBufferView.byteLength">
+            <summary>
+            The length of the view in bytes (how many bytes this view "contains")
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFBufferView.byteOffset">
+            <summary>
+            The offset of the first byte in this view
+            </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.ModelExporterFactory`1">
             <summary>
@@ -951,6 +1045,26 @@
             </summary>
             <param name="floatArray"></param>
             <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.CopyToList``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.List{``0},System.Int32)">
+            <summary>
+            Similar to <see cref="M:System.Array.CopyTo(System.Array,System.Int32)"/> but for <see cref="T:System.Collections.Generic.List`1"/>s.<para/>
+            If the offset is larger than the size of the list, the empty space will be filled with <see langword="default"/>.<para/>
+            If the offset is somewhere within the list, it will overwrite elements.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="enumerable"></param>
+            <param name="list"></param>
+            <param name="offset"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.SetListCap``1(System.Collections.Generic.List{System.Object},``0,System.Int32)">
+            <summary>
+            A utility designed exclusively for the glTF exporter which can populate a list with the given default value
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list"></param>
+            <param name="defaultValue"></param>
+            <param name="values"></param>
         </member>
         <member name="T:ThreeRingsSharp.XansData.ModelFormat">
             <summary>
