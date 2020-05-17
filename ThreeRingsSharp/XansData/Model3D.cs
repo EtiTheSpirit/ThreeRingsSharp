@@ -115,6 +115,11 @@ namespace ThreeRingsSharp.XansData {
 		public bool HasBoneData { get; set; } = false;
 
 		/// <summary>
+		/// The attached models on this <see cref="Model3D"/>.
+		/// </summary>
+		public List<Model3D> Attachments { get; set; } = new List<Model3D>();
+
+		/// <summary>
 		/// Exports this model in a given format, writing the data to the target <see cref="FileInfo"/>
 		/// </summary>
 		/// <param name="targetFile">The file that will be written to.</param>
