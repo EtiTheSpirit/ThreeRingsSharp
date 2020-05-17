@@ -18,6 +18,7 @@ using ThreeRingsSharp.DataHandlers.Model.ViewerAffecterConfigHandlers;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
+using ThreeRingsSharp.XansData.Exceptions;
 
 namespace ThreeRingsSharp.DataHandlers {
 
@@ -42,8 +43,7 @@ namespace ThreeRingsSharp.DataHandlers {
 			ModelConfig.Implementation implementation = model.implementation;
 			if (implementation == null) {
 				XanLogger.WriteLine("ALERT: Implementation is null! Sending error.");
-				AsyncMessageBox.Show("This specific model does not have an implementation, which is the data for the model itself. The program cannot continue.", "Can't Handle Model", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				return;
+				throw new ClydeDataReadException("This specific model does not have an implementation, which is the data for the model itself. The program cannot continue! This generally happens if the implementation is from another game that uses Clyde and has defined its own custom model types (e.g. Spiral Knights does this)", "Can't Read Model", MessageBoxIcon.Error);
 			}
 
 			string implName = (ClassNameStripper.GetWholeClassName(implementation.getClass()) ?? implementation.getClass().getTypeName()).Replace("$", "::");
@@ -89,7 +89,7 @@ namespace ThreeRingsSharp.DataHandlers {
 				ViewerAffecterConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform);
 
 			} else {
-				XanLogger.WriteLine($"\nERROR: Known core type, but no code present to handle it! This model (or component) will fail! Type: {implName}\nReferenced In: {sourceFile}\n");
+				XanLogger.WriteLine($"\nERROR: A ModelConfig had an unknown implementation!\n=> Implementation: {implName}\n=> Referenced In: {sourceFile}\n");
 				// AsyncMessageBox.ShowAsync("This specific implementation is valid, but it has no handler! (There's no code that can translate this data for you :c).\nImplementation: " + implementation.getClass().getTypeName(), "Can't Handle Model", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Generic;
 			}

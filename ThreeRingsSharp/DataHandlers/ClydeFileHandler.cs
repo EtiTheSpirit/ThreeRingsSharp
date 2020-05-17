@@ -102,8 +102,8 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			// This is kind of hacky behavior but it (ab)uses the fact that this will only run on the first call for any given chain of .DAT files.
 			// That is, all external referenced files have this value passed in instead of it being null.
-			if (transform == null) transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, 1f);
-			transform.setScale(transform.getScale() * (MultiplyScaleByHundred ? 100f : 1f));
+			if (transform == null) transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, MultiplyScaleByHundred ? 100f : 1f);
+			// transform.setScale(transform.getScale() * (MultiplyScaleByHundred ? 100f : 1f));
 
 			if (obj is null) {
 				if (isBaseFile && UpdateGUIAction != null) {
