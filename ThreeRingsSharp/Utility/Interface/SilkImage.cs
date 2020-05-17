@@ -104,6 +104,11 @@ namespace ThreeRingsSharp.Utility.Interface {
 		SchemedModel,
 
 		/// <summary>
+		/// A picture of a computer monitor with a small pencil in the lower right corner. This is intended to represent an actual render scheme. This should be used on any instances of a class like <see cref="ViewerEffectConfig"/> that have no model reference and are direct descendants to a <see cref="ModelConfig.Schemed"/>.
+		/// </summary>
+		Scheme,
+
+		/// <summary>
 		/// A picture of a snippet of film. Intended to represent an animation, specifically a <see cref="AnimationConfig"/>.
 		/// </summary>
 		Animation,

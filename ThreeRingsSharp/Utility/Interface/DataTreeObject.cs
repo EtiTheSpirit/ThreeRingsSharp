@@ -228,7 +228,7 @@ namespace ThreeRingsSharp.Utility.Interface {
 
 		/// <summary>
 		/// An alias method used to add a property with a generic icon to <see cref="Properties"/> (omitting the need to create a <see cref="DataTreeObject"/>)<para/>
-		/// If the objec array is a <see cref="DataTreeObjectProperty"/> instance, that instance will be used.
+		/// If the object array is a <see cref="DataTreeObjectProperty"/> instance, that instance will be used.
 		/// </summary>
 		/// <param name="name">The name of the property.</param>
 		/// <param name="value">The value displayed under the property.</param>
@@ -255,7 +255,11 @@ namespace ThreeRingsSharp.Utility.Interface {
 				} else if (obj is DataTreeObjectProperty prop) {
 					pValues.Add(prop);
 				} else {
-					pValues.Add(new DataTreeObjectProperty(obj.ToString(), propertyValueImages));
+					if (obj is null) {
+						pValues.Add(new DataTreeObjectProperty("null", propertyValueImages));
+					} else {
+						pValues.Add(new DataTreeObjectProperty(obj.ToString(), propertyValueImages));
+					}
 				}
 			}
 			Properties[propName] = pValues;
