@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThreeRingsSharp.DataHandlers.Model.ConfigReferenceHandler;
 using ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
@@ -44,6 +45,11 @@ namespace ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers {
 				if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
 				modelCollection.Add(meshToModel);
 				idx++;
+			}
+
+			foreach (Attachment attachment in model.attachments) {
+				//List<Model3D> attachmentMdls = 
+				ConfigReferenceUtil.HandleConfigReference(sourceFile, attachment.model, modelCollection, dataTreeParent, globalTransform);
 			}
 
 			RecursivelyIterateNodes(sourceFile, model.root, modelCollection, globalTransform);

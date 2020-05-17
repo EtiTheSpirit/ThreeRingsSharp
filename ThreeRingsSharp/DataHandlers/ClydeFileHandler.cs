@@ -136,6 +136,18 @@ namespace ThreeRingsSharp.DataHandlers {
 					rootDataTreeObject.ImageKey = SilkImage.Generic;
 				}
 				errToThrow = new ClydeDataReadException("Animations are unsupported! Come back later c:", "Unsupported Implementation", MessageBoxIcon.Warning);
+
+			} else if (obj is TudeySceneModel scene) {
+				if (isBaseFile && UpdateGUIAction != null) {
+					UpdateGUIAction(null, null, null, "TudeySceneModel");
+				}
+
+				if (rootDataTreeObject != null) {
+					rootDataTreeObject.Text = "TudeySceneModel";
+					rootDataTreeObject.ImageKey = SilkImage.Scene;
+				}
+				errToThrow = new ClydeDataReadException("Scenes are unsupported! Come back later c:", "Unsupported Implementation", MessageBoxIcon.Warning);
+
 			} else {
 				string mdlClass = modelClass ?? obj.GetType().Name;
 				if (isBaseFile && UpdateGUIAction != null) {

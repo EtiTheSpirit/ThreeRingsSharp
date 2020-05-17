@@ -14,6 +14,7 @@ using ThreeRingsSharp.XansData;
 using System.IO;
 using com.threerings.math;
 using ThreeRingsSharp.XansData.Exceptions;
+using ThreeRingsSharp.DataHandlers.Model.ConfigReferenceHandler;
 
 namespace ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers {
 	public class ModelConfigHandler {
@@ -63,13 +64,7 @@ namespace ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers {
 
 			public void HandleModelConfig(FileInfo sourceFile, ModelConfig baseModel, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null) {
 				Derived derived = (Derived)baseModel.implementation;
-				string filePathRelativeToRsrc = derived.model.getName();
-				if (filePathRelativeToRsrc.StartsWith("/")) filePathRelativeToRsrc = filePathRelativeToRsrc.Substring(1);
-				FileInfo referencedModel = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + filePathRelativeToRsrc);
-				if (!referencedModel.Exists) {
-					throw new ClydeDataReadException($"Derived at [{ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile, false)}] attempted to reference [{filePathRelativeToRsrc}], but this file could not be found!");
-				}
-				ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, false, globalTransform);
+				ConfigReferenceUtil.HandleConfigReference(sourceFile, derived.model, modelCollection, dataTreeParent, globalTransform);
 			}
 
 		}
@@ -90,13 +85,7 @@ namespace ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers {
 				Schemed schemed = (Schemed)baseModel.implementation;
 				SchemedModel[] models = schemed.models;
 				foreach (SchemedModel schemedModel in models) {
-					string filePathRelativeToRsrc = schemedModel.model.getName();
-					if (filePathRelativeToRsrc.StartsWith("/")) filePathRelativeToRsrc = filePathRelativeToRsrc.Substring(1);
-					FileInfo referencedModel = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + filePathRelativeToRsrc);
-					if (!referencedModel.Exists) {
-						throw new ClydeDataReadException($"Schemed at [{ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile, false)}] attempted to reference [{filePathRelativeToRsrc}], but this file could not be found!");
-					}
-					ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, false, globalTransform);
+					ConfigReferenceUtil.HandleConfigReference(sourceFile, schemedModel.model, modelCollection, dataTreeParent, globalTransform);
 				}
 			}
 

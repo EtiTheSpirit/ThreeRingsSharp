@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThreeRingsSharp.DataHandlers.Model.ConfigReferenceHandler;
 using ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
@@ -32,15 +33,7 @@ namespace ThreeRingsSharp.DataHandlers.Model.CompoundConfigHandler {
 
 			ComponentModel[] componentModels = compound.models;
 			foreach (ComponentModel model in componentModels) {
-				string filePathRelativeToRsrc = model.model.getName();
-				if (filePathRelativeToRsrc.StartsWith("/")) filePathRelativeToRsrc = filePathRelativeToRsrc.Substring(1);
-				FileInfo referencedModel = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + filePathRelativeToRsrc);
-				if (!referencedModel.Exists) {
-					throw new ClydeDataReadException($"CompoundConfig at [{ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile, false)}] attempted to reference [{filePathRelativeToRsrc}], but this file could not be found!");
-				}
-				Transform3D newTrs = model.transform;
-				newTrs = globalTransform.compose(newTrs);
-				ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, transform: newTrs);
+				ConfigReferenceUtil.HandleComponentModel(sourceFile, model, modelCollection, dataTreeParent, globalTransform);
 			}
 		}
 	}
