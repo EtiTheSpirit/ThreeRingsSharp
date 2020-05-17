@@ -78,5 +78,44 @@ namespace ThreeRingsSharp.XansData {
 			return retn;
 		}
 
+		/// <summary>
+		/// Similar to <see cref="Array.CopyTo(Array, int)"/> but for <see cref="List{T}"/>s.<para/>
+		/// If the offset is larger than the size of the list, the empty space will be filled with <see langword="default"/>.<para/>
+		/// If the offset is somewhere within the list, it will overwrite elements.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="enumerable"></param>
+		/// <param name="list"></param>
+		/// <param name="offset"></param>
+		public static void CopyToList<T>(this IEnumerable<T> enumerable, List<T> list, int offset = 0) {
+			if (list.Count < offset) {
+				int numElementsToAdd = offset - list.Count;
+				for (int idx = 0; idx < numElementsToAdd; idx++) {
+					list.Add(default);
+				}
+			}
+
+			list.Capacity = Math.Max(enumerable.Count() + offset, list.Capacity);
+			for (int idx = 0; idx < enumerable.Count(); idx++) {
+				int listIdx = idx + offset;
+				list[listIdx] = enumerable.ElementAt(idx);
+			}
+		}
+
+		/// <summary>
+		/// A utility designed exclusively for the glTF exporter which can populate a list with the given default value
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="list"></param>
+		/// <param name="defaultValue"></param>
+		/// <param name="values"></param>
+		public static void SetListCap<T>(this List<dynamic> list, T defaultValue, int values) {
+			list.Clear();
+			list.Capacity = values;
+			for (int idx = 0; idx < values; idx++) {
+				list.Add(defaultValue);
+			}
+		}
+
 	}
 }

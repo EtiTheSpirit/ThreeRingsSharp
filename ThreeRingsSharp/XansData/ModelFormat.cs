@@ -35,7 +35,7 @@ namespace ThreeRingsSharp.XansData {
 		public static readonly IReadOnlyDictionary<string, ModelFormat> ExtensionToFormatBindings = new Dictionary<string, ModelFormat>() {
 			[".fbx"] = ModelFormat.FBX,
 			[".obj"] = ModelFormat.OBJ,
-			[".gltf"] = ModelFormat.GLTF,
+			[".glb"] = ModelFormat.GLTF,
 		};
 
 	}

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.IO;
+using ThreeRingsSharp.XansData.IO.GLTF;
 using ThreeRingsSharp.XansData.Structs;
 
 namespace ThreeRingsSharp.XansData {
@@ -25,6 +26,7 @@ namespace ThreeRingsSharp.XansData {
 		internal static readonly IReadOnlyDictionary<ModelFormat, dynamic> ExporterBindings = new Dictionary<ModelFormat, dynamic>() {
 			[ModelFormat.FBX] = null,
 			[ModelFormat.OBJ] = new ModelExporterFactory<OBJExporter>(),
+			[ModelFormat.GLTF] = new ModelExporterFactory<GLTFExporter>()
 		};
 
 		/// <summary>
@@ -122,9 +124,6 @@ namespace ThreeRingsSharp.XansData {
 			// Transform the referenced geometry here.
 			for (int idx = 0; idx < Vertices.Count; idx++) {
 				Vertices[idx] = Transform.transformPoint(Vertices[idx]);
-				//Vertex vtx = Vertices[idx];
-				//vtx.Point = Transform.transformPoint(vtx.Point);
-				//Vertices[idx] = vtx;
 			}
 
 			foreach (VertexGroup vtxGroup in VertexGroups) {
@@ -134,8 +133,6 @@ namespace ThreeRingsSharp.XansData {
 					vtxGroup.Vertices[idx] = vtx;
 				}
 			}
-
-			//
 
 			HasDoneTransformation = true;
 		}
