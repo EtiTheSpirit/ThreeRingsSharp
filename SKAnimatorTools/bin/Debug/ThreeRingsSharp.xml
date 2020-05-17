@@ -20,12 +20,6 @@
             string type (the base class, e.g. ModelConfig, AnimationConfig, ScriptedConfig)</c>
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.ClydeFileHandler.MultiplyScaleByHundred">
-            <summary>
-            Multiplies the scale of exported models by 100. This is really handy for a lot of models but may cause others to be huge.<para/>
-            This is <see langword="true"/> by default since it's used more than it isn't.
-            </summary>
-        </member>
         <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.HandleClydeFile(System.IO.FileInfo,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},System.Boolean,System.Object,System.Boolean,com.threerings.math.Transform3D)">
             <summary>
             Takes in a <see cref="T:System.IO.FileInfo"/> representing a file that was created with the Clyde library.<para/>
@@ -374,7 +368,7 @@
         <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.AddSimpleProperty(System.String,System.Object,ThreeRingsSharp.Utility.Interface.SilkImage,ThreeRingsSharp.Utility.Interface.SilkImage,System.Boolean)">
             <summary>
             An alias method used to add a property with a generic icon to <see cref="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Properties"/> (omitting the need to create a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>)<para/>
-            If the objec array is a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty"/> instance, that instance will be used.
+            If the object array is a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty"/> instance, that instance will be used.
             </summary>
             <param name="name">The name of the property.</param>
             <param name="value">The value displayed under the property.</param>
@@ -586,6 +580,11 @@
         <member name="F:ThreeRingsSharp.Utility.Interface.SilkImage.SchemedModel">
             <summary>
             A picture of a single building brick with a small pencil in the lower right corner. Intended to represent a schemed model, specifically a <see cref="T:com.threerings.opengl.model.config.ModelConfig.SchemedModel"/>.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.SilkImage.Scheme">
+            <summary>
+            A picture of a computer monitor with a small pencil in the lower right corner. This is intended to represent an actual render scheme. This should be used on any instances of a class like <see cref="T:com.threerings.opengl.scene.config.ViewerEffectConfig"/> that have no model reference and are direct descendants to a <see cref="T:com.threerings.opengl.model.config.ModelConfig.Schemed"/>.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.Utility.Interface.SilkImage.Animation">
@@ -1310,6 +1309,17 @@
         <member name="F:ThreeRingsSharp.XansData.Model3D.ExporterBindings">
             <summary>
             A list of bindings from <see cref="T:ThreeRingsSharp.XansData.ModelFormat"/>s to a singleton of their applicable <see cref="T:ThreeRingsSharp.XansData.IO.AbstractModelExporter"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.MultiplyScaleByHundred">
+            <summary>
+            Multiplies the scale of exported models by 100. This is really handy for a lot of models but may cause others to be huge.<para/>
+            This is <see langword="true"/> by default since it's used more than it isn't.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.ProtectAgainstZeroScale">
+            <summary>
+            If <see langword="true"/>, any models that have a scale of zero will have their scale changed to 1 instead.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.Name">

@@ -152,13 +152,11 @@
     <Compile Include="DataHandlers\Model\AnimationConfigHandler\AnimationConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\ArticulatedConfigHandler\ArticulatedConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\CompoundConfigHandler\CompoundConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\ConditionalConfigHandler\ConditionalConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\GeometryConfigTranslator.cs" />
     <Compile Include="DataHandlers\Model\IDataTreeInterface.cs" />
     <Compile Include="DataHandlers\Model\MergedStaticConfigHandler\MergedStaticConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\ModelConfigHandler\ModelConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\IModelDataHandler.cs" />
-    <Compile Include="DataHandlers\Model\ScriptedConfigHandler\ScriptedConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\StaticConfigHandler\StaticConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\StaticSetConfigHandler\StaticSetConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\ViewerAffecterConfigHandler\ViewerAffecterConfigHandler.cs" />
