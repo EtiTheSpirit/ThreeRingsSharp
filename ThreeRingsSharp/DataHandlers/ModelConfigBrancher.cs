@@ -10,6 +10,7 @@ using com.threerings.opengl.model.config;
 using com.threerings.opengl.scene.config;
 using ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandlers;
 using ThreeRingsSharp.DataHandlers.Model.CompoundConfigHandler;
+using ThreeRingsSharp.DataHandlers.Model.MergedStaticConfigHandler;
 using ThreeRingsSharp.DataHandlers.Model.ModelConfigHandlers;
 using ThreeRingsSharp.DataHandlers.Model.StaticConfigHandlers;
 using ThreeRingsSharp.DataHandlers.Model.StaticSetConfigHandler;
@@ -71,6 +72,11 @@ namespace ThreeRingsSharp.DataHandlers {
 				XanLogger.WriteLine("Model is of the type 'StaticSetConfig'. Accessing handlers...");
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.MergedStatic;
 				StaticSetConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform);
+
+			} else if (implementation is MergedStaticConfig) {
+				XanLogger.WriteLine("Model is of type 'MergedStaticConfig'. Accessing handlers...");
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.ModelSet;
+				MergedStaticConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform);
 
 			} else if (implementation is CompoundConfig) {
 				XanLogger.WriteLine("Model is of the type 'CompoundConfig'. Accessing handlers...");
