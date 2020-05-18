@@ -117,5 +117,32 @@ namespace ThreeRingsSharp.XansData {
 			}
 		}
 
+		/// <summary>
+		/// Returns the value stored in the <see cref="Dictionary{TKey, TValue}"/>, or <paramref name="def"/> if the item could not be found.
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="dictionary"></param>
+		/// <param name="key"></param>
+		/// <param name="def"></param>
+		/// <returns></returns>
+		public static TValue GetOrDefault<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue def = default) {
+			if (dictionary.ContainsKey(key)) return dictionary[key];
+			return def;
+		}
+
+		/// <summary>
+		/// Returns the value stored in the <see cref="Dictionary{TKey, TValue}"/>, or <paramref name="def"/> if the item could not be found.
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="dictionary"></param>
+		/// <param name="key"></param>
+		/// <param name="def"></param>
+		/// <returns></returns>
+		public static TValue GetOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, TKey key, TValue def = default) {
+			if (dictionary.ContainsKey(key)) return dictionary[key];
+			return def;
+		}
 	}
 }

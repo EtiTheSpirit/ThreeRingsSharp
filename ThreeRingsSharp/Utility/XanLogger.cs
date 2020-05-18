@@ -17,6 +17,24 @@ namespace ThreeRingsSharp.Utility {
 		public static StringBuilder Log { get; } = new StringBuilder();
 
 		/// <summary>
+		/// The log while <see cref="UpdateAutomatically"/> is false and it's written to (this is used to append all of the data when <see cref="UpdateLog"/> is called)
+		/// </summary>
+		private static StringBuilder LogWhileNotUpdating { get; } = new StringBuilder();
+
+		/// <summary>
+		/// If <see langword="true"/>, the textbox will be updated to display new text the moment it is written. If <see langword="false"/>, <see cref="UpdateLog"/> can be called, which will copy the contents of <see cref="Log"/> and append it to the textbox.<para/>
+		/// Setting this to true will cause <see cref="UpdateLog"/> to run.
+		/// </summary>
+		public static bool UpdateAutomatically {
+			get => _UpdateAutomatically;
+			set {
+				_UpdateAutomatically = value;
+				if (!value) UpdateLog();
+			}
+		}
+		private static bool _UpdateAutomatically = true;
+
+		/// <summary>
 		/// A reference to a textbox that should store the contents of the log in a GUI application.<para/>
 		/// This should be an instance of <see cref="RTFScrolledBottom"/> for proper function. It can be <see langword="null"/> if there is no GUI.
 		/// </summary>
@@ -26,6 +44,24 @@ namespace ThreeRingsSharp.Utility {
 		/// If true, the box *was* at the bottom before text was appended to it (meaning it should autoscroll)
 		/// </summary>
 		private static bool WasAtBottom { get; set; }
+
+		/// <summary>
+		/// Manually update the contents of <see cref="BoxReference"/>. Only works if <see cref="UpdateAutomatically"/> is <see langword="false"/>, and of course, if <see cref="BoxReference"/> is not <see langword="null"/>.
+		/// </summary>
+		public static void UpdateLog() {
+			if (BoxReference == null) return;
+			if (!UpdateAutomatically) {
+				WasAtBottom = BoxReference.IsScrolledToBottom;
+				BoxReference.AppendText(LogWhileNotUpdating.ToString());
+
+				if (WasAtBottom && !BoxReference.IsScrolledToBottom) {
+					BoxReference.SelectionStart = BoxReference.TextLength;
+					BoxReference.ScrollToCaret();
+				}
+
+				LogWhileNotUpdating.Clear();
+			}
+		}
 
 		/// <summary>
 		/// Append a new line to the log.
@@ -52,12 +88,16 @@ namespace ThreeRingsSharp.Utility {
 			Log.Append(text);
 			if (BoxReference == null) return;
 
-			WasAtBottom = BoxReference.IsScrolledToBottom;
-			BoxReference.AppendText(text);
-			
-			if (WasAtBottom && !BoxReference.IsScrolledToBottom) {
-				BoxReference.SelectionStart = BoxReference.TextLength;
-				BoxReference.ScrollToCaret();
+			if (UpdateAutomatically) {
+				WasAtBottom = BoxReference.IsScrolledToBottom;
+				BoxReference.AppendText(text);
+
+				if (WasAtBottom && !BoxReference.IsScrolledToBottom) {
+					BoxReference.SelectionStart = BoxReference.TextLength;
+					BoxReference.ScrollToCaret();
+				}
+			} else {
+				LogWhileNotUpdating.Append(text);
 			}
 		}
 
@@ -66,6 +106,7 @@ namespace ThreeRingsSharp.Utility {
 		/// </summary>
 		public static void Clear() {
 			Log.Clear();
+			BoxReference.Text = "";
 		}
 	}
 

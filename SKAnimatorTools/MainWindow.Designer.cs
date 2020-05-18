@@ -114,7 +114,10 @@
 			this.SilkImages.Images.SetKeyName(28, "Light");
 			this.SilkImages.Images.SetKeyName(29, "Value");
 			this.SilkImages.Images.SetKeyName(30, "Triangle");
-			this.SilkImages.Images.SetKeyName(31, "None");
+			this.SilkImages.Images.SetKeyName(31, "Tile");
+			this.SilkImages.Images.SetKeyName(32, "Matrix");
+			this.SilkImages.Images.SetKeyName(33, "Missing");
+			this.SilkImages.Images.SetKeyName(34, "None");
 			// 
 			// GroupBoxModelInfo
 			// 

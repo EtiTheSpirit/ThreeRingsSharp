@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java class="com.threerings.export.XMLImporter" version="1.0">
+<object class="[Lcom.threerings.projectx.event.config.EventConfig;">
+  <entry>
+    <name>Anniversary</name>
+  </entry>
+  <entry>
+    <name>Anniversary - Items</name>
+  </entry>
+  <entry>
+    <name>Anniversary - Tokens</name>
+  </entry>
+  <entry>
+    <name>Apocrea</name>
+  </entry>
+  <entry>
+    <name>April Fools</name>
+  </entry>
+  <entry>
+    <name>Black Kat</name>
+  </entry>
+  <entry>
+    <name>Dark Harvest</name>
+  </entry>
+  <entry>
+    <name>Dark Harvest - Tokens</name>
+  </entry>
+  <entry>
+    <name>Golden Slime Casino</name>
+  </entry>
+  <entry>
+    <name>Golden Slime Casino : Disable Lockboxes</name>
+  </entry>
+  <entry>
+    <name>Haven - Gobble Snipes</name>
+  </entry>
+  <entry>
+    <name>Haven - Night</name>
+  </entry>
+  <entry>
+    <name>Haven - Winter</name>
+  </entry>
+  <entry>
+    <name>Lockdown - Diehard</name>
+  </entry>
+  <entry>
+    <name>Lockdown - Hardcore</name>
+  </entry>
+  <entry>
+    <name>Lockdown - Hazardous</name>
+  </entry>
+  <entry>
+    <name>Lockdown : Disable classic</name>
+  </entry>
+  <entry>
+    <name>Lockdown : Disable untiered</name>
+  </entry>
+  <entry>
+    <name>Monster Adoption</name>
+  </entry>
+  <entry>
+    <name>Tortodrone</name>
+  </entry>
+  <entry>
+    <name>Winterfest</name>
+  </entry>
+  <entry>
+    <name>Winterfest - Items</name>
+  </entry>
+  <entry>
+    <name>Winterfest - Tokens</name>
+  </entry>
+</object>
+</java>

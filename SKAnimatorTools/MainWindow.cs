@@ -60,6 +60,8 @@ namespace SKAnimatorTools {
 				MessageBox.Show("Welcome to ThreeRingsSharp! Before you can use the program, you need to set up your configuration so that the program knows where to look for game data.", "ThreeRingsSharp Setup", MessageBoxButtons.OK);
 				OnConfigClicked(null, null);
 			}
+
+			XanLogger.UpdateAutomatically = false;
 		}
 
 		/// <summary>
@@ -102,12 +104,26 @@ namespace SKAnimatorTools {
 				FileInfo clydeFile = new FileInfo(OpenModel.FileName);
 				AllModels = new List<Model3D>();
 				bool isOK = true;
+				XanLogger.UpdateAutomatically = false;
 				try {
+					XanLogger.WriteLine("Working. This might take a bit...");
+					XanLogger.UpdateLog();
 					ClydeFileHandler.HandleClydeFile(clydeFile, AllModels, true, ModelStructureTree);
 				} catch (ClydeDataReadException exc) {
 					XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message);
 					AsyncMessageBox.Show(exc.Message, exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
 					isOK = false;
+				} catch (TypeInitializationException tExc) {
+					System.Exception err = tExc.InnerException;
+					if (err is ClydeDataReadException exc) {
+						XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message);
+						AsyncMessageBox.Show(exc.Message, exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
+						isOK = false;
+					} else {
+						XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}");
+						AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}", "Oh no!", icon: MessageBoxIcon.Error);
+						isOK = false;
+					}
 				} catch (System.Exception err) {
 					XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}");
 					AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}", "Oh no!", icon: MessageBoxIcon.Error);
@@ -119,6 +135,8 @@ namespace SKAnimatorTools {
 				BtnSaveModel.Enabled = isOK;
 				XanLogger.WriteLine("Number of models loaded: " + AllModels.Count);
 			}
+			XanLogger.UpdateLog();
+			XanLogger.UpdateAutomatically = true;
 		}
 
 		private void SaveClicked(object sender, EventArgs e) {
@@ -160,11 +178,10 @@ namespace SKAnimatorTools {
 
 				TreeNode nodeObj = propName.ToTreeNode();
 				if (propName.DisplaySingleChildInline && propValues.Count == 1) {
-					if (propValues[0].CreatedFromProperty) {
-						nodeObj.Text += ": " + propValues[0].Text;
-					} else {
+					nodeObj.Text += ": " + propValues[0].Text;
+					if (!propValues[0].CreatedFromProperty) {
 						TreeNode propZeroNode = propValues[0].ToTreeNode();
-						nodeObj.Nodes.Add(propZeroNode);
+						// nodeObj.Nodes.Add(propZeroNode);
 						PopulateTreeNodeForProperties(nodeObj, propValues[0]);
 					}
 				} else {
@@ -196,16 +213,15 @@ namespace SKAnimatorTools {
 
 				TreeNode nodeObj = propName.ToTreeNode();
 				if (propName.DisplaySingleChildInline && propValues.Count == 1) {
-					if (propValues[0].CreatedFromProperty) {
-						nodeObj.Text += ": " + propValues[0].Text;
-					} else {
+					nodeObj.Text += ": " + propValues[0].Text;
+					if (!propValues[0].CreatedFromProperty) {
 						TreeNode propZeroNode = propValues[0].ToTreeNode();
-						nodeObj.Nodes.Add(propZeroNode);
+						// nodeObj.Nodes.Add(propZeroNode);
 						PopulateTreeNodeForProperties(nodeObj, propValues[0]); 
 					}
 				} else {
 					foreach (DataTreeObject property in propValues) {
-						if (property.CreatedFromProperty) {
+						if (!property.CreatedFromProperty) {
 							nodeObj.Nodes.Add(property.ToTreeNode());
 						} else {
 							TreeNode containerNode = property.ToTreeNode();

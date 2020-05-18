@@ -137,6 +137,7 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -146,22 +147,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataHandlers\AnimationConfigBrancher.cs" />
     <Compile Include="DataHandlers\ClydeFileHandler.cs" />
     <Compile Include="DataHandlers\ModelConfigBrancher.cs" />
-    <Compile Include="DataHandlers\Model\ActionConfigHandler\ActionConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\AnimationConfigHandler\AnimationConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\ArticulatedConfigHandler\ArticulatedConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\CompoundConfigHandler\CompoundConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\ConfigReferenceHandler\ConfigReferenceUtil.cs" />
+    <Compile Include="DataHandlers\Model\ArticulatedConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\CompoundConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\ConfigReferenceUtil.cs" />
     <Compile Include="DataHandlers\Model\GeometryConfigTranslator.cs" />
-    <Compile Include="DataHandlers\Model\IDataTreeInterface.cs" />
-    <Compile Include="DataHandlers\Model\MergedStaticConfigHandler\MergedStaticConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\ModelConfigHandler\ModelConfigHandler.cs" />
+    <Compile Include="DataHandlers\IDataTreeInterface.cs" />
+    <Compile Include="DataHandlers\Model\MergedStaticConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\ModelConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\IModelDataHandler.cs" />
-    <Compile Include="DataHandlers\Model\SceneHandler\TudeySceneModelHandler.cs" />
-    <Compile Include="DataHandlers\Model\StaticConfigHandler\StaticConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\StaticSetConfigHandler\StaticSetConfigHandler.cs" />
-    <Compile Include="DataHandlers\Model\ViewerAffecterConfigHandler\ViewerAffecterConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\StaticConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\StaticSetConfigHandler.cs" />
+    <Compile Include="DataHandlers\Model\ViewerAffecterConfigHandler.cs" />
+    <Compile Include="DataHandlers\Scene\Data\ShallowTileConfig.cs" />
+    <Compile Include="DataHandlers\Scene\IEntryHandler.cs" />
+    <Compile Include="DataHandlers\Scene\PlaceableHandler.cs" />
+    <Compile Include="DataHandlers\Scene\TileHandler.cs" />
+    <Compile Include="DataHandlers\TudeySceneConfigBrancher.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -185,23 +189,31 @@
     <Compile Include="XansData\IO\GLTF\JSON\GLTFAsset.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFBuffer.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFBufferView.cs" />
+    <Compile Include="XansData\IO\GLTF\JSON\GLTFImage.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFJSONRoot.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFMesh.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFNode.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFPrimitive.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFPrimitiveAttribute.cs" />
+    <Compile Include="XansData\IO\GLTF\JSON\GLTFSampler.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFScene.cs" />
+    <Compile Include="XansData\IO\GLTF\JSON\GLTFTexture.cs" />
     <Compile Include="XansData\IO\ModelExporterFactory.cs" />
     <Compile Include="XansData\IO\OBJExporter.cs" />
     <Compile Include="XansData\EnumerableExtension.cs" />
     <Compile Include="XansData\ModelFormat.cs" />
+    <Compile Include="XansData\ModelGroup.cs" />
     <Compile Include="XansData\Singleton.cs" />
     <Compile Include="XansData\StringExtension.cs" />
+    <Compile Include="XansData\Structs\Axis.cs" />
     <Compile Include="XansData\Structs\Vector2.cs" />
     <Compile Include="XansData\Structs\Vector3.cs" />
     <Compile Include="XansData\Model3D.cs" />
     <Compile Include="XansData\Structs\Vertex.cs" />
     <Compile Include="XansData\Structs\VertexGroup.cs" />
+    <Compile Include="XansData\XML\ConfigReferences\ConfigReferenceBootstrapper.cs" />
+    <Compile Include="XansData\XML\ConfigReferences\Tile.cs" />
+    <Compile Include="XansData\XML\XMLExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\.editorconfig">
@@ -214,6 +226,62 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="DataHandlers\Animation\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="ConfigRefs\accessory.xml" />
+    <Content Include="ConfigRefs\actor.xml" />
+    <Content Include="ConfigRefs\area.xml" />
+    <Content Include="ConfigRefs\attack.xml" />
+    <Content Include="ConfigRefs\battle_sprite.xml" />
+    <Content Include="ConfigRefs\behavior.xml" />
+    <Content Include="ConfigRefs\catalog.xml" />
+    <Content Include="ConfigRefs\conversation.xml" />
+    <Content Include="ConfigRefs\cursor.xml" />
+    <Content Include="ConfigRefs\depot_catalog.xml" />
+    <Content Include="ConfigRefs\depth_scale.xml" />
+    <Content Include="ConfigRefs\description.xml" />
+    <Content Include="ConfigRefs\effect.xml" />
+    <Content Include="ConfigRefs\emote.xml" />
+    <Content Include="ConfigRefs\event.xml" />
+    <Content Include="ConfigRefs\fire_action.xml" />
+    <Content Include="ConfigRefs\font.xml" />
+    <Content Include="ConfigRefs\forge_property.xml" />
+    <Content Include="ConfigRefs\gift.xml" />
+    <Content Include="ConfigRefs\ground.xml" />
+    <Content Include="ConfigRefs\harness.xml" />
+    <Content Include="ConfigRefs\interact.xml" />
+    <Content Include="ConfigRefs\interface_script.xml" />
+    <Content Include="ConfigRefs\item.xml" />
+    <Content Include="ConfigRefs\item_depth_weight.xml" />
+    <Content Include="ConfigRefs\item_property.xml" />
+    <Content Include="ConfigRefs\level_table.xml" />
+    <Content Include="ConfigRefs\material.xml" />
+    <Content Include="ConfigRefs\mission.xml" />
+    <Content Include="ConfigRefs\mission_group.xml" />
+    <Content Include="ConfigRefs\mission_property.xml" />
+    <Content Include="ConfigRefs\parameterized_handler.xml" />
+    <Content Include="ConfigRefs\path.xml" />
+    <Content Include="ConfigRefs\placeable.xml" />
+    <Content Include="ConfigRefs\recipe.xml" />
+    <Content Include="ConfigRefs\recipe_property.xml" />
+    <Content Include="ConfigRefs\render_effect.xml" />
+    <Content Include="ConfigRefs\render_queue.xml" />
+    <Content Include="ConfigRefs\render_scheme.xml" />
+    <Content Include="ConfigRefs\scene_global.xml" />
+    <Content Include="ConfigRefs\shader.xml" />
+    <Content Include="ConfigRefs\sounder.xml" />
+    <Content Include="ConfigRefs\spawn_table.xml" />
+    <Content Include="ConfigRefs\status_condition.xml" />
+    <Content Include="ConfigRefs\style.xml" />
+    <Content Include="ConfigRefs\texture.xml" />
+    <Content Include="ConfigRefs\tile.xml" />
+    <Content Include="ConfigRefs\tile_replacement.xml" />
+    <Content Include="ConfigRefs\uplink.xml" />
+    <Content Include="ConfigRefs\variant.xml" />
+    <Content Include="ConfigRefs\variant_table.xml" />
+    <Content Include="ConfigRefs\wall.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

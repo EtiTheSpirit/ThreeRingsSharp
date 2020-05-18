@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java class="com.threerings.export.XMLImporter" version="1.0">
+<object class="[Lcom.threerings.opengl.renderer.config.ShaderConfig;">
+  <entry>
+    <name>Fragment/Diffuse</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Multiply x2</name>
+        <paths>implementation.contents.definitions[1].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>diffuseMap</name>
+        </entry>
+      </uniforms>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment$SourceFile">
+        <file>shader/fragment/diffuse.frag</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogBlendSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$BooleanDefinition">
+            <name>MULTIPLY_X2</name>
+            <value>true</value>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Fragment/Diffuse (Masked Composite)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Multiply x2</name>
+        <paths>implementation.contents.definitions[1].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>diffuseMap0</name>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>diffuseMap1</name>
+          <value>1</value>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>maskMap</name>
+          <value>2</value>
+        </entry>
+      </uniforms>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment$SourceFile">
+        <file>shader/fragment/masked_diffuse_composite.frag</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogBlendSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$BooleanDefinition">
+            <name>MULTIPLY_X2</name>
+            <value>true</value>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Fragment/Emissive</name>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>diffuseMap</name>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>emissiveMap</name>
+          <value>1</value>
+        </entry>
+      </uniforms>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment$SourceFile">
+        <file>shader/fragment/emissive.frag</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogBlendSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Fragment/Fragment-Lit/Diffuse</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Multiply x2</name>
+        <paths>implementation.contents.definitions[1].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>diffuseMap</name>
+        </entry>
+      </uniforms>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment$SourceFile">
+        <file>shader/fragment/lit_diffuse.frag</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FragmentLightingSnippet">
+            <name>SET_COLOR</name>
+            <eyeNormal>nEyeNormal</eyeNormal>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$BooleanDefinition">
+            <name>MULTIPLY_X2</name>
+            <value>true</value>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogBlendSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Fragment/Fresnel</name>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>cubeMap</name>
+        </entry>
+      </uniforms>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment$SourceFile">
+        <file>shader/fragment/fresnel.frag</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogBlendSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Fragment/Masked</name>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>diffuseMap</name>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>maskMap</name>
+          <value>1</value>
+        </entry>
+      </uniforms>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment$SourceFile">
+        <file>shader/fragment/masked.frag</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogBlendSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Fragment/Object Normal Map/Diffuse</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Multiply x2</name>
+        <paths>implementation.contents.definitions[1].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>diffuseMap</name>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>normalMap</name>
+          <value>1</value>
+        </entry>
+      </uniforms>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment$SourceFile">
+        <file>shader/fragment/onm_diffuse.frag</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FragmentLightingSnippet">
+            <name>SET_COLOR</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$BooleanDefinition">
+            <name>MULTIPLY_X2</name>
+            <value>true</value>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogBlendSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Fragment/Refract</name>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>cubeMap</name>
+        </entry>
+      </uniforms>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment$SourceFile">
+        <file>shader/fragment/refract.frag</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogBlendSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Fragment/Tangent Normal Map/Diffuse</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Multiply x2</name>
+        <paths>implementation.contents.definitions[1].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>diffuseMap</name>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>normalMap</name>
+          <value>1</value>
+        </entry>
+      </uniforms>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment$SourceFile">
+        <file>shader/fragment/tnm_diffuse.frag</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FragmentLightingSnippet">
+            <name>SET_COLOR</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$BooleanDefinition">
+            <name>MULTIPLY_X2</name>
+            <value>true</value>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogBlendSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Fragment/Tangent Normal Map/Parallax/Diffuse</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Multiply x2</name>
+        <paths>implementation.contents.definitions[1].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale</name>
+        <paths>implementation.uniforms[2].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>diffuseMap</name>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerUniformConfig">
+          <name>normalMap</name>
+          <value>1</value>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>depthScale</name>
+          <value>0.4</value>
+        </entry>
+      </uniforms>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment$SourceFile">
+        <file>shader/fragment/tnm_parallax_diffuse.frag</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FragmentLightingSnippet">
+            <name>SET_COLOR</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$BooleanDefinition">
+            <name>MULTIPLY_X2</name>
+            <value>true</value>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogBlendSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Fragment/Uniform Blur</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Vertical</name>
+        <paths>implementation.contents.definitions[0].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment">
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Fragment$SourceFile">
+        <file>shader/fragment/uniform_blur.frag</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$BooleanDefinition">
+            <name>VERTICAL</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Vertex/Default</name>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex">
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex$SourceFile">
+        <file>shader/vertex/vertex_lit.vert</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$VertexLightingSnippet">
+            <name>SET_COLORS</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$TexCoordSnippet">
+            <name>SET_TEX_COORDS</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogParamSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Vertex/Fragment-Lit/Default</name>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex">
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex$SourceFile">
+        <file>shader/vertex/fragment_lit.vert</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$TexCoordSnippet">
+            <name>SET_TEX_COORDS</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogParamSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Vertex/Fresnel</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Source Index</name>
+        <paths>implementation.uniforms[0].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Dest Index</name>
+        <paths>implementation.uniforms[1].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>sourceIndex</name>
+          <value>1.0</value>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>destIndex</name>
+          <value>1.5</value>
+        </entry>
+      </uniforms>
+      <colors>false</colors>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex$SourceFile">
+        <file>shader/vertex/fresnel.vert</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogParamSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Vertex/Object Normal Map/Default</name>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex">
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex$SourceFile">
+        <file>shader/vertex/object_normal_map.vert</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$TexCoordSnippet">
+            <name>SET_TEX_COORDS</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogParamSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Vertex/Refract</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Source Index</name>
+        <paths>implementation.uniforms[0].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Dest Index</name>
+        <paths>implementation.uniforms[1].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>sourceIndex</name>
+          <value>1.0</value>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>destIndex</name>
+          <value>1.5</value>
+        </entry>
+      </uniforms>
+      <colors>false</colors>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex$SourceFile">
+        <file>shader/vertex/refract.vert</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogParamSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Vertex/Skin</name>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$MatrixArrayRefUniformConfig">
+          <name>boneMatrices</name>
+        </entry>
+      </uniforms>
+      <attributes>boneIndices, boneWeights</attributes>
+      <coordSpace>EYE</coordSpace>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex$SourceFile">
+        <file>shader/vertex/skin.vert</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$VertexLightingSnippet">
+            <name>SET_COLORS</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$TexCoordSnippet">
+            <name>SET_TEX_COORDS</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogParamSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Vertex/Tangent Normal Map/Default</name>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex">
+      <attributes>tangent</attributes>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex$SourceFile">
+        <file>shader/vertex/tangent_normal_map.vert</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$TexCoordSnippet">
+            <name>SET_TEX_COORDS</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogParamSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Vertex/Wave</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Vector 1</name>
+        <paths>implementation.uniforms[1].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Frequency 1</name>
+        <paths>implementation.uniforms[2].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Amplitude 1</name>
+        <paths>implementation.uniforms[3].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Phase 1</name>
+        <paths>implementation.uniforms[4].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Vector 2</name>
+        <paths>implementation.uniforms[5].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Frequency 2</name>
+        <paths>implementation.uniforms[6].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Amplitude 2</name>
+        <paths>implementation.uniforms[7].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Phase 2</name>
+        <paths>implementation.uniforms[8].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Choppiness</name>
+        <paths>implementation.uniforms[9].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex">
+      <uniforms>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatExprUniformConfig">
+          <name>time</name>
+          <expression class="com.threerings.expr.FloatExpression$Clock">
+            <scope>app</scope>
+          </expression>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$PolarUniformConfig">
+          <name>vectors[0]</name>
+          <value>6.0, 0.0</value>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>frequencies[0]</name>
+          <value>1.0</value>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>amplitudes[0]</name>
+          <value>0.5</value>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>phases[0]</name>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$PolarUniformConfig">
+          <name>vectors[1]</name>
+          <value>-2.6226832E-7, 6.0</value>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>frequencies[1]</name>
+          <value>1.0</value>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>amplitudes[1]</name>
+          <value>0.5</value>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>phases[1]</name>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FloatUniformConfig">
+          <name>choppiness</name>
+          <value>0.5</value>
+        </entry>
+        <entry class="com.threerings.opengl.renderer.config.ShaderConfig$TransformExprUniformConfig">
+          <name>worldMatrix</name>
+          <expression class="com.threerings.expr.Transform3DExpression$Reference">
+            <name>worldTransform</name>
+          </expression>
+        </entry>
+      </uniforms>
+      <coordSpace>WORLD</coordSpace>
+      <contents class="com.threerings.opengl.renderer.config.ShaderConfig$Vertex$SourceFile">
+        <file>shader/vertex/wave.vert</file>
+        <definitions>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$IntegerDefinition">
+            <name>WAVE_COUNT</name>
+            <value>2</value>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$VertexLightingSnippet">
+            <name>SET_COLORS</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$TexCoordSnippet">
+            <name>SET_TEX_COORDS</name>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ShaderConfig$FogParamSnippet">
+            <name>FOG_PARAM</name>
+          </entry>
+        </definitions>
+      </contents>
+    </implementation>
+  </entry>
+</object>
+</java>

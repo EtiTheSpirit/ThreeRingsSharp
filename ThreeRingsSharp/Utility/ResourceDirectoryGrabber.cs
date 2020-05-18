@@ -32,13 +32,14 @@ namespace ThreeRingsSharp.Utility {
 		}
 
 		/// <summary>
-		/// Takes <paramref name="fileIn"/> and climbs up its directory tree until it locates a folder named <c>rsrc</c>. It will then return the path starting from rsrc and ending at this file.<para/>
-		/// The returned path will always use forward slashes.
+		/// Takes <paramref name="fileIn"/> and climbs up its directory tree until it locates a folder named <c>rsrc</c>. It will then return the path starting from rsrc and ending at this file.
 		/// </summary>
 		/// <param name="fileIn">The file that is presumably a descendant of the rsrc directory.</param>
-		/// <param name="includeRsrc">If false, the directory path will NOT start with <c>rsrc/</c>.</param>
+		/// <param name="includeRsrc">If <see langword="false"/>, the directory path will NOT start with <c>rsrc/</c>.</param>
+		/// <param name="removeExtension">If <see langword="true"/>, the extension to the file given will be removed from the returned string.</param>
+		/// <param name="separator">The character used to separate directories.</param>
 		/// <returns></returns>
-		public static string GetFormattedPathFromRsrc(FileInfo fileIn, bool includeRsrc = false) {
+		public static string GetFormattedPathFromRsrc(FileInfo fileIn, bool includeRsrc = false, bool removeExtension = true, char separator = '.') {
 			List<string> parents = new List<string>();
 
 			DirectoryInfo parentDir = fileIn.Directory;
@@ -56,9 +57,11 @@ namespace ThreeRingsSharp.Utility {
 			}
 			string retn = "";
 			foreach (string str in parents) {
-				retn += str + ".";
+				retn += str + separator;
 			}
-			retn += fileIn.Name.Replace(fileIn.Extension, "");
+			string name = fileIn.Name;
+			if (removeExtension) name = name.Replace(fileIn.Extension, "");
+			retn += name;
 			return retn;
 		}
 

@@ -19,6 +19,12 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 
 		public List<GLTFNode> nodes = new List<GLTFNode>();
 
+		public List<GLTFImage> images = new List<GLTFImage>();
+
+		public List<GLTFSampler> samplers = new List<GLTFSampler>();
+
+		public List<GLTFTexture> textures = new List<GLTFTexture>();
+
 		public int scene = 0;
 
 		public List<GLTFScene> scenes = new List<GLTFScene>();

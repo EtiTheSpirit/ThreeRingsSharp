@@ -1,5 +1,7 @@
-﻿using com.threerings.opengl.model.config;
+﻿using com.threerings.math;
+using com.threerings.opengl.model.config;
 using com.threerings.opengl.scene.config;
+using com.threerings.tudey.data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -167,6 +169,21 @@ namespace ThreeRingsSharp.Utility.Interface {
 		/// A blue triangle, intended to represent more rudimentary components of models (e.g. sub-models in a static model).
 		/// </summary>
 		Triangle,
+
+		/// <summary>
+		/// A green square of grass that represents a tile in a <see cref="TudeySceneModel"/>
+		/// </summary>
+		Tile,
+
+		/// <summary>
+		/// A 3x3 grid of blocks within square brackets [ ] that represents a transformation matrix, intended for <see cref="Transform3D"/>
+		/// </summary>
+		Matrix,
+
+		/// <summary>
+		/// A transparent red building brick intended to represent a missing asset.
+		/// </summary>
+		Missing,
 
 		/// <summary>
 		/// A transparent space.

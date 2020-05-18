@@ -79,6 +79,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 			int currentAccessorBaseIndex = 0;
 			int currentModelIndex = 0;
 			int currentOffset = 0;
+			int totalImageCount = 0;
 			foreach (Model3D model in models) {
 				model.ApplyTransformations();
 
@@ -225,6 +226,33 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				foreach (GLTFBufferView bufferView in bufferViews) JSONData.bufferViews.Add(bufferView);
 				foreach (GLTFAccessor accessor in accessors) JSONData.accessors.Add(accessor);
 
+				string targetTex = model.Textures.FirstOrDefault();
+				if (targetTex != null) {
+					int imageIndex = -1;
+					int count = 0;
+					foreach (GLTFImage existingImage in JSONData.images) {
+						if (existingImage.uri == targetTex) {
+							imageIndex = count;
+							break;
+						}
+						count++;
+					}
+
+					int placeIntoIndex = imageIndex;
+					if (imageIndex == -1) {
+						GLTFImage image = new GLTFImage() {
+							uri = targetTex
+						};
+						JSONData.images.Add(image);
+						placeIntoIndex = totalImageCount;
+						totalImageCount++;
+					}
+					JSONData.textures.Add(new GLTFTexture() {
+						sampler = 0,
+						source = placeIntoIndex
+					});
+				}
+
 				// Make the mesh representation.
 				GLTFMesh mesh = new GLTFMesh {
 					// Primitives has a length of 1 by default so ima use that to my advantage.
@@ -244,10 +272,14 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					name = model.Name,
 					mesh = currentModelIndex
 				});
+				if (JSONData.textures.Count > 0) JSONData.samplers.Add(new GLTFSampler());
 				
 				binBuffer.AddRange(buffer);
 				currentAccessorBaseIndex += accessors.Count;
 				currentModelIndex++;
+
+				// For debug
+				// if (currentModelIndex >= 100) break;
 			}
 
 			GLTFScene mainScene = new GLTFScene {

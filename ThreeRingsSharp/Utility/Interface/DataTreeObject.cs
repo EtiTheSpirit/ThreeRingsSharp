@@ -355,6 +355,21 @@ namespace ThreeRingsSharp.Utility.Interface {
 		}
 
 		/// <summary>
+		/// Deletes a given <see cref="DataTreeObjectProperty"/> from <see cref="Properties"/>.
+		/// </summary>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public void DeleteSimpleProperty(string name) {
+			var keys = Properties.Keys;
+			foreach (DataTreeObjectProperty propContainer in keys) {
+				if (propContainer.Text == name) {
+					Properties.Remove(propContainer);
+					return;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Construct a new <see cref="DataTreeObject"/>.
 		/// </summary>
 		/// <param name="parent">The parent <see cref="DataTreeObject"/> to add this object to.</param>
@@ -363,7 +378,9 @@ namespace ThreeRingsSharp.Utility.Interface {
 		}
 
 		public static explicit operator DataTreeObjectProperty(DataTreeObject obj) {
-			return new DataTreeObjectProperty(obj.Text, obj.ImageKey, obj.DisplaySingleChildInline);
+			return new DataTreeObjectProperty(obj.Text, obj.ImageKey, obj.DisplaySingleChildInline) {
+				CreatedFromFullObject = !obj.CreatedFromProperty
+			};
 		}
 	}
 
@@ -391,6 +408,11 @@ namespace ThreeRingsSharp.Utility.Interface {
 		public SilkImage ImageKey { get; set; } = SilkImage.Generic;
 
 		/// <summary>
+		/// If true, this <see cref="DataTreeObjectProperty"/> was cast from a <see cref="DataTreeObject"/>.
+		/// </summary>
+		public bool CreatedFromFullObject { get; internal set; } = false;
+
+		/// <summary>
 		/// Converts this <see cref="DataTreeObject"/> into a <see cref="TreeNode"/>.
 		/// </summary>
 		/// <returns></returns>
@@ -415,7 +437,7 @@ namespace ThreeRingsSharp.Utility.Interface {
 				Text = prop.Text,
 				ImageKey = prop.ImageKey,
 				DisplaySingleChildInline = prop.DisplaySingleChildInline,
-				CreatedFromProperty = true
+				CreatedFromProperty = !prop.CreatedFromFullObject
 			};
 		}
 	}

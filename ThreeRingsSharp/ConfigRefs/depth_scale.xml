@@ -1,0 +1,3578 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java class="com.threerings.export.XMLImporter" version="1.0">
+<object class="[Lcom.threerings.projectx.dungeon.config.DepthScaleConfig;">
+  <entry>
+    <name>Base/Adder</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale</name>
+        <paths>implementation.root.scale</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Add</name>
+        <paths>implementation.root.add</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Adder">
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Base/Constant</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Value</name>
+        <paths>implementation.root.value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Constant">
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Base/Damage Multiplier</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Scale</name>
+        <paths>implementation.root.scale</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Multiplier</name>
+        <paths>implementation.root.multiplier</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$ModifyDamage">
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Base/Depth Cap</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Scale</name>
+        <paths>implementation.root.scale</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Cap</name>
+        <paths>implementation.root.cap</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$DepthCap">
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Base/Multiplier</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale</name>
+        <paths>implementation.root.scale</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Multiplier</name>
+        <paths>implementation.root.multiplier</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Base/Rarity Capper</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale 0</name>
+        <paths>implementation.root.depth_scales[0].depth_scale["Scale"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale 1</name>
+        <paths>implementation.root.depth_scales[1].depth_scale["Scale"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale 2</name>
+        <paths>implementation.root.depth_scales[2].depth_scale["Scale"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale 3</name>
+        <paths>implementation.root.depth_scales[3].depth_scale["Scale"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale 4</name>
+        <paths>implementation.root.depth_scales[4].depth_scale["Scale"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale 5</name>
+        <paths>implementation.root.depth_scales[5].depth_scale["Scale"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Rarity">
+        <depthScales>
+          <entry>
+            <depthScale>
+              <name>Base/Depth Cap</name>
+              <arguments>
+                <key class="java.lang.String">Cap</key>
+                <value class="java.lang.Integer">3</value>
+                <key class="java.lang.String">Scale</key>
+                <value/>
+              </arguments>
+            </depthScale>
+          </entry>
+          <entry>
+            <depthScale>
+              <name>Base/Depth Cap</name>
+              <arguments>
+                <key class="java.lang.String">Cap</key>
+                <value class="java.lang.Integer">7</value>
+                <key class="java.lang.String">Scale</key>
+                <value/>
+              </arguments>
+            </depthScale>
+          </entry>
+          <entry>
+            <depthScale>
+              <name>Base/Depth Cap</name>
+              <arguments>
+                <key class="java.lang.String">Cap</key>
+                <value class="java.lang.Integer">12</value>
+                <key class="java.lang.String">Scale</key>
+                <value/>
+              </arguments>
+            </depthScale>
+          </entry>
+          <entry>
+            <depthScale>
+              <name>Base/Depth Cap</name>
+              <arguments>
+                <key class="java.lang.String">Cap</key>
+                <value class="java.lang.Integer">17</value>
+                <key class="java.lang.String">Scale</key>
+                <value/>
+              </arguments>
+            </depthScale>
+          </entry>
+          <entry>
+            <depthScale>
+              <name>Base/Depth Cap</name>
+              <arguments>
+                <key class="java.lang.String">Cap</key>
+                <value class="java.lang.Integer">30</value>
+                <key class="java.lang.String">Scale</key>
+                <value/>
+              </arguments>
+            </depthScale>
+          </entry>
+          <entry>
+            <depthScale>
+              <name>Base/Depth Cap</name>
+              <arguments>
+                <key class="java.lang.String">Cap</key>
+                <value class="java.lang.Integer">30</value>
+                <key class="java.lang.String">Scale</key>
+                <value/>
+              </arguments>
+            </depthScale>
+          </entry>
+        </depthScales>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Base/Tier Segmented</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 1 Start</name>
+        <paths>implementation.root.segments[0].value, implementation.root.segments[1].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 1 End</name>
+        <paths>implementation.root.segments[2].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 2 Start</name>
+        <paths>implementation.root.segments[3].value, implementation.root.segments[4].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 2 End</name>
+        <paths>implementation.root.segments[5].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 3 Start</name>
+        <paths>implementation.root.segments[6].value, implementation.root.segments[7].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 3 Mid</name>
+        <paths>implementation.root.segments[8].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 3 End</name>
+        <paths>implementation.root.segments[9].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$SegmentedEntry">
+        <segments>
+          <entry>
+            <value>20.0</value>
+          </entry>
+          <entry>
+            <depth>1</depth>
+            <value>20.0</value>
+          </entry>
+          <entry>
+            <depth>7</depth>
+            <value>60.0</value>
+          </entry>
+          <entry>
+            <depth>8</depth>
+            <value>60.0</value>
+          </entry>
+          <entry>
+            <depth>9</depth>
+            <value>80.0</value>
+          </entry>
+          <entry>
+            <depth>17</depth>
+            <value>150.0</value>
+          </entry>
+          <entry>
+            <depth>18</depth>
+            <value>150.0</value>
+          </entry>
+          <entry>
+            <depth>19</depth>
+            <value>180.0</value>
+          </entry>
+          <entry>
+            <depth>23</depth>
+            <value>245.0</value>
+          </entry>
+          <entry>
+            <depth>30</depth>
+            <value>360.0</value>
+          </entry>
+        </segments>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Base/Tier Segmented, T4</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 1 Start</name>
+        <paths>implementation.root.segments[0].value, implementation.root.segments[1].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 1 End</name>
+        <paths>implementation.root.segments[2].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 2 Start</name>
+        <paths>implementation.root.segments[3].value, implementation.root.segments[4].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 2 End</name>
+        <paths>implementation.root.segments[5].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 3 Start</name>
+        <paths>implementation.root.segments[6].value, implementation.root.segments[7].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 3 Mid</name>
+        <paths>implementation.root.segments[8].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 3 End</name>
+        <paths>implementation.root.segments[9].value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 4 End</name>
+        <paths>implementation.root.segments[10].value</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$SegmentedEntry">
+        <segments>
+          <entry>
+            <value>20.0</value>
+          </entry>
+          <entry>
+            <depth>1</depth>
+            <value>20.0</value>
+          </entry>
+          <entry>
+            <depth>7</depth>
+            <value>60.0</value>
+          </entry>
+          <entry>
+            <depth>8</depth>
+            <value>60.0</value>
+          </entry>
+          <entry>
+            <depth>9</depth>
+            <value>80.0</value>
+          </entry>
+          <entry>
+            <depth>17</depth>
+            <value>150.0</value>
+          </entry>
+          <entry>
+            <depth>18</depth>
+            <value>150.0</value>
+          </entry>
+          <entry>
+            <depth>19</depth>
+            <value>180.0</value>
+          </entry>
+          <entry>
+            <depth>23</depth>
+            <value>245.0</value>
+          </entry>
+          <entry>
+            <depth>30</depth>
+            <value>360.0</value>
+          </entry>
+          <entry>
+            <depth>40</depth>
+            <value>400.0</value>
+          </entry>
+        </segments>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/Gear/Dev Shield Health</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Constant">
+        <value>10000.0</value>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/Monster/Normal Defense</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">60.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">20.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">150.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">80.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">360.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/Monster/Normal Health</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">150.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">40.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">450.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">200.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">1440.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">857.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">540.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/PC/Sword</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Rarity Capper</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale 0</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>Dev/PC/Sword 0</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 1</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>Dev/PC/Sword 1</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 2</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>Dev/PC/Sword 2</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 3</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>Dev/PC/Sword 3</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 4</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>Dev/PC/Sword 4</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 5</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>Dev/PC/Sword 5</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/PC/Sword 0</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">45.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">20.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">120.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">80.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">310.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/PC/Sword 1</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">45.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">25.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">120.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">80.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">310.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/PC/Sword 2</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">55.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">30.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">120.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">80.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">310.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/PC/Sword 3</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">58.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">33.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">120.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">85.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">310.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/PC/Sword 4</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">61.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">36.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">140.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">100.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">280.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/PC/Sword 5</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">64.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">39.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">150.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">110.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">310.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">250.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">190.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/PC/Sword Ideal</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">45.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">20.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">120.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">80.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">310.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/PC/Sword Ideal Good</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$SegmentedEntry">
+        <segments>
+          <entry>
+            <value>30.0</value>
+          </entry>
+          <entry>
+            <depth>1</depth>
+            <value>30.0</value>
+          </entry>
+          <entry>
+            <depth>7</depth>
+            <value>55.0</value>
+          </entry>
+          <entry>
+            <depth>8</depth>
+            <value>55.0</value>
+          </entry>
+          <entry>
+            <depth>9</depth>
+            <value>95.0</value>
+          </entry>
+          <entry>
+            <depth>17</depth>
+            <value>137.0</value>
+          </entry>
+          <entry>
+            <depth>18</depth>
+            <value>137.0</value>
+          </entry>
+          <entry>
+            <depth>19</depth>
+            <value>205.0</value>
+          </entry>
+          <entry>
+            <depth>30</depth>
+            <value>342.0</value>
+          </entry>
+        </segments>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Dev/PC/Sword Ideal High</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$SegmentedEntry">
+        <segments>
+          <entry>
+            <value>40.0</value>
+          </entry>
+          <entry>
+            <depth>1</depth>
+            <value>40.0</value>
+          </entry>
+          <entry>
+            <depth>7</depth>
+            <value>60.0</value>
+          </entry>
+          <entry>
+            <depth>8</depth>
+            <value>60.0</value>
+          </entry>
+          <entry>
+            <depth>9</depth>
+            <value>110.0</value>
+          </entry>
+          <entry>
+            <depth>17</depth>
+            <value>150.0</value>
+          </entry>
+          <entry>
+            <depth>18</depth>
+            <value>150.0</value>
+          </entry>
+          <entry>
+            <depth>19</depth>
+            <value>230.0</value>
+          </entry>
+          <entry>
+            <depth>30</depth>
+            <value>360.0</value>
+          </entry>
+        </segments>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Hazard/Hazard Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">70.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">20.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">170.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">80.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">360.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">290.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">210.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Hazard/Hazard Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$ModifyDamage">
+        <scale>
+          <name>Hazard/Hazard Base</name>
+        </scale>
+        <multiplier>0.5</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Hazard/Hazard Base -20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$ModifyDamage">
+        <scale>
+          <name>Hazard/Hazard Base</name>
+        </scale>
+        <multiplier>0.25</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Damage/Attack Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Monster/Damage/Difficulty Base</name>
+        <arguments>
+          <key class="java.lang.String">Easy Multiplier</key>
+          <value class="java.lang.Float">0.8</value>
+          <key class="java.lang.String">Hard Multiplier</key>
+          <value class="java.lang.Float">1.5</value>
+          <key class="java.lang.String">Medium Multiplier</key>
+          <value class="java.lang.Float">1.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Damage/Attack Base (Ranger)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Monster/Damage/Difficulty Base</name>
+        <arguments>
+          <key class="java.lang.String">Easy Multiplier</key>
+          <value class="java.lang.Float">0.15</value>
+          <key class="java.lang.String">Hard Multiplier</key>
+          <value class="java.lang.Float">0.05</value>
+          <key class="java.lang.String">Medium Multiplier</key>
+          <value class="java.lang.Float">0.1</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Damage/Attack Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Monster/Damage/Difficulty Base</name>
+        <arguments>
+          <key class="java.lang.String">Easy Multiplier</key>
+          <value class="java.lang.Float">1.0</value>
+          <key class="java.lang.String">Hard Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+          <key class="java.lang.String">Medium Multiplier</key>
+          <value class="java.lang.Float">1.5</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Damage/Attack Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Monster/Damage/Difficulty Base</name>
+        <arguments>
+          <key class="java.lang.String">Easy Multiplier</key>
+          <value class="java.lang.Float">1.5</value>
+          <key class="java.lang.String">Hard Multiplier</key>
+          <value class="java.lang.Float">2.5</value>
+          <key class="java.lang.String">Medium Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Damage/Attack Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Monster/Damage/Difficulty Base</name>
+        <arguments>
+          <key class="java.lang.String">Easy Multiplier</key>
+          <value class="java.lang.Float">0.6</value>
+          <key class="java.lang.String">Hard Multiplier</key>
+          <value class="java.lang.Float">1.0</value>
+          <key class="java.lang.String">Medium Multiplier</key>
+          <value class="java.lang.Float">0.8</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Damage/Attack Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Monster/Damage/Difficulty Base</name>
+        <arguments>
+          <key class="java.lang.String">Easy Multiplier</key>
+          <value class="java.lang.Float">0.4</value>
+          <key class="java.lang.String">Hard Multiplier</key>
+          <value class="java.lang.Float">0.8</value>
+          <key class="java.lang.String">Medium Multiplier</key>
+          <value class="java.lang.Float">0.6</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Damage/Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented, T4</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">70.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">20.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">170.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">80.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">360.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">290.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">210.0</value>
+          <key class="java.lang.String">Tier 4 End</key>
+          <value class="java.lang.Float">550.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Damage/Difficulty Base</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Easy Multiplier</name>
+        <paths>implementation.root.easy["Multiplier"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Medium Multiplier</name>
+        <paths>implementation.root.medium["Multiplier"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Hard Multiplier</name>
+        <paths>implementation.root.hard["Multiplier"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Difficulty">
+        <easy>
+          <name>Base/Damage Multiplier</name>
+          <arguments>
+            <key class="java.lang.String">Multiplier</key>
+            <value class="java.lang.Float">2.0</value>
+            <key class="java.lang.String">Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Monster/Damage/Base</name>
+            </value>
+          </arguments>
+        </easy>
+        <medium>
+          <name>Base/Damage Multiplier</name>
+          <arguments>
+            <key class="java.lang.String">Multiplier</key>
+            <value class="java.lang.Float">2.0</value>
+            <key class="java.lang.String">Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Monster/Damage/Base</name>
+            </value>
+          </arguments>
+        </medium>
+        <hard>
+          <name>Base/Damage Multiplier</name>
+          <arguments>
+            <key class="java.lang.String">Multiplier</key>
+            <value class="java.lang.Float">2.0</value>
+            <key class="java.lang.String">Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Monster/Damage/Base</name>
+            </value>
+          </arguments>
+        </hard>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Defense/Defense Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented, T4</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">60.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">20.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">150.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">80.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">360.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+          <key class="java.lang.String">Tier 4 End</key>
+          <value class="java.lang.Float">720.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Defense/Defense Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Adder">
+        <scale>
+          <name>Monster/Defense/Defense Base</name>
+        </scale>
+        <add>50.0</add>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Defense/Defense Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Adder">
+        <scale>
+          <name>Monster/Defense/Defense Base</name>
+        </scale>
+        <add>100.0</add>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Defense/Defense Base +25</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Adder">
+        <scale>
+          <name>Monster/Defense/Defense Base</name>
+        </scale>
+        <add>1400.0</add>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Defense/Defense Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Defense/Defense Base</name>
+        </scale>
+        <multiplier>0.7</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Defense/Defense Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Defense/Defense Base</name>
+        </scale>
+        <multiplier>0.5</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Heal/Heal Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Defense/Defense Base</name>
+        </scale>
+        <multiplier>0.5</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Heal/Heal Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Heal/Heal Base</name>
+        </scale>
+        <multiplier>1.5</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Heal/Heal Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Heal/Heal Base</name>
+        </scale>
+        <multiplier>2.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Heal/Heal Base +20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Heal/Heal Base</name>
+        </scale>
+        <multiplier>3.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Heal/Heal Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Heal/Heal Base</name>
+        </scale>
+        <multiplier>0.75</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Heal/Heal Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Heal/Heal Base</name>
+        </scale>
+        <multiplier>0.5</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Heal/Heal Base -15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Heal/Heal Base</name>
+        </scale>
+        <multiplier>0.35</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Heal/Heal Base -30</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Heal/Heal Base</name>
+        </scale>
+        <multiplier>0.05</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented, T4</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">150.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">40.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">375.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">160.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">1080.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">675.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">450.0</value>
+          <key class="java.lang.String">Tier 4 End</key>
+          <value class="java.lang.Float">2160.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>1.5</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>2.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +100</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>11.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +130</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>14.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>3.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +30</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>4.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +40</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>5.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +50</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>6.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +60</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>7.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +70</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>8.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +80</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>9.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base +90</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>10.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>0.75</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>0.5</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base -15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>0.25</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base -20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Monster/Health/Health Base</name>
+        </scale>
+        <multiplier>0.1</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Health/Health Base -99</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Constant">
+        <value>1.0</value>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Split/Split - Full</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Difficulty">
+        <easy>
+          <name>Monster/Split/Tier Base</name>
+          <arguments>
+            <key class="java.lang.String">Tier 1</key>
+            <value class="java.lang.Float">1.0</value>
+            <key class="java.lang.String">Tier 2</key>
+            <value class="java.lang.Float">0.75</value>
+            <key class="java.lang.String">Tier 3</key>
+            <value class="java.lang.Float">0.5</value>
+          </arguments>
+        </easy>
+        <medium>
+          <name>Monster/Split/Tier Base</name>
+          <arguments>
+            <key class="java.lang.String">Tier 1</key>
+            <value class="java.lang.Float">0.75</value>
+            <key class="java.lang.String">Tier 2</key>
+            <value class="java.lang.Float">0.5</value>
+            <key class="java.lang.String">Tier 3</key>
+            <value class="java.lang.Float">0.0</value>
+          </arguments>
+        </medium>
+        <hard>
+          <name>Monster/Split/Tier Base</name>
+          <arguments>
+            <key class="java.lang.String">Tier 1</key>
+            <value class="java.lang.Float">0.5</value>
+            <key class="java.lang.String">Tier 2</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Tier 3</key>
+            <value class="java.lang.Float">0.0</value>
+          </arguments>
+        </hard>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Split/Split - Half</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Difficulty">
+        <easy>
+          <name>Monster/Split/Tier Base</name>
+          <arguments>
+            <key class="java.lang.String">Tier 1</key>
+            <value class="java.lang.Float">1.0</value>
+            <key class="java.lang.String">Tier 2</key>
+            <value class="java.lang.Float">0.75</value>
+            <key class="java.lang.String">Tier 3</key>
+            <value class="java.lang.Float">0.5</value>
+          </arguments>
+        </easy>
+        <medium>
+          <name>Monster/Split/Tier Base</name>
+          <arguments>
+            <key class="java.lang.String">Tier 1</key>
+            <value class="java.lang.Float">0.75</value>
+            <key class="java.lang.String">Tier 2</key>
+            <value class="java.lang.Float">0.5</value>
+            <key class="java.lang.String">Tier 3</key>
+            <value class="java.lang.Float">0.5</value>
+          </arguments>
+        </medium>
+        <hard>
+          <name>Monster/Split/Tier Base</name>
+          <arguments>
+            <key class="java.lang.String">Tier 1</key>
+            <value class="java.lang.Float">0.5</value>
+            <key class="java.lang.String">Tier 2</key>
+            <value class="java.lang.Float">0.25</value>
+            <key class="java.lang.String">Tier 3</key>
+            <value class="java.lang.Float">0.25</value>
+          </arguments>
+        </hard>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Split/Tier Base</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 1</name>
+        <paths>implementation.depth_scale["Tier 1 Start"], implementation.depth_scale["Tier 1 End"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 2</name>
+        <paths>implementation.depth_scale["Tier 2 Start"], implementation.depth_scale["Tier 2 End"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Tier 3</name>
+        <paths>implementation.depth_scale["Tier 3 Start"], implementation.depth_scale["Tier 3 Mid"], implementation.depth_scale["Tier 3 End"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">1.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">1.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">0.5</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">0.5</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">0.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">0.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">0.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Base/Charged</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale</name>
+        <paths>implementation.depth_scale["Scale"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+          <key class="java.lang.String">Scale</key>
+          <value/>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Base/Charged (Handgun)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale</name>
+        <paths>implementation.depth_scale["Scale"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.4</value>
+          <key class="java.lang.String">Scale</key>
+          <value/>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Base/Default</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Rarity Capper</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale 0</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Base/Star 0</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 1</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Base/Star 1</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 2</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Base/Star 2</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 3</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Base/Star 3</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 4</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Base/Star 4</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 5</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Base/Star 5</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Base/Last Chain</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Scale</name>
+        <paths>implementation.depth_scale["Scale"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">1.3</value>
+          <key class="java.lang.String">Scale</key>
+          <value/>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Base/Star 0</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">45.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">20.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">120.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">80.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">280.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Base/Star 1</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">45.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">22.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">120.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">80.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">280.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Base/Star 2</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">75.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">40.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">120.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">80.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">280.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Base/Star 3</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">78.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">43.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">120.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">85.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">280.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Base/Star 4</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">81.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">46.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">165.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">125.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">280.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">245.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">180.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Base/Star 5</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">84.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">49.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">170.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">130.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">310.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">250.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">190.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$ModifyDamage">
+        <scale>
+          <name>PC/Damage/Base/Default</name>
+        </scale>
+        <multiplier>1.15</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base (old)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Default</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">1.15</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base +07</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">1.225</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">1.3</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.85</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base -05 Uncapped 0 Star</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.85</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base Uncapped 0 Star</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base -07</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.775</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.7</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base -15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.55</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base -18</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.45</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base -20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.4</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base -22</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.35</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base -25</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.25</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Bomb/Bomb Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Bomb/Bomb Base Uncapped 0 Star</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$ModifyDamage">
+        <scale>
+          <name>PC/Damage/Base/Star 0</name>
+        </scale>
+        <multiplier>1.15</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$ModifyDamage">
+        <scale>
+          <name>PC/Damage/Base/Default</name>
+        </scale>
+        <multiplier>0.55</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged (Handgun)</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">1.15</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base +05 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged (Handgun)</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base +05</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">1.3</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base +10 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged (Handgun)</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base +10</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base +15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">1.45</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base +15 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged (Handgun)</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base +15</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.85</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base -05 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged (Handgun)</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base -05</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.7</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base -10 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged (Handgun)</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base -10</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base -15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.55</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base -15 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged (Handgun)</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base -15</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base -17</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.48</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base -17 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged (Handgun)</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base -17</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base -20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.4</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Handgun/Handgun Base -20 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged (Handgun)</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Handgun/Handgun Base -20</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Default</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base (Last Chain)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Last Chain</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">1.15</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base +05 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base +05</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base +05 (Last Chain)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Last Chain</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base +05</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">1.3</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base +10 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base +10</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base +10 (Last Chain)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Last Chain</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base +10</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base +15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">1.45</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base +15 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base +15</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base +15 (Last Chain)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Last Chain</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base +15</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.85</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -05 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base -05</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -05 (Last Chain)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Last Chain</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base -05</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.7</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -10 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base -10</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -10 (Last Chain)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Last Chain</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base -10</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.55</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -15 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base -15</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -15 (Last Chain)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Last Chain</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base -15</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Damage Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.4</value>
+          <key class="java.lang.String">Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -20 (Charged)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Charged</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base -20</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Damage/Sword/Sword Base -20 (Last Chain)</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Damage/Base/Last Chain</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Damage/Sword/Sword Base -20</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor (windowed)/Armor Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Base/Default</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor (windowed)/Armor Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$MinValue">
+        <scale>
+          <name>Base/Adder</name>
+          <arguments>
+            <key class="java.lang.String">Add</key>
+            <value class="java.lang.Float">10.0</value>
+            <key class="java.lang.String">Depth Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>PC/Defense/Armor/Armor Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <min>1.0</min>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor (windowed)/Armor Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$MinValue">
+        <scale>
+          <name>Base/Adder</name>
+          <arguments>
+            <key class="java.lang.String">Add</key>
+            <value class="java.lang.Float">20.0</value>
+            <key class="java.lang.String">Depth Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>PC/Defense/Armor/Armor Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <min>1.0</min>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor (windowed)/Armor Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$MinValue">
+        <scale>
+          <name>Base/Adder</name>
+          <arguments>
+            <key class="java.lang.String">Add</key>
+            <value class="java.lang.Float">-10.0</value>
+            <key class="java.lang.String">Depth Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>PC/Defense/Armor/Armor Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <min>1.0</min>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor (windowed)/Armor Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$MinValue">
+        <scale>
+          <name>Base/Adder</name>
+          <arguments>
+            <key class="java.lang.String">Add</key>
+            <value class="java.lang.Float">-20.0</value>
+            <key class="java.lang.String">Depth Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>PC/Defense/Armor/Armor Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <min>1.0</min>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor (windowed)/Armor Base -15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$MinValue">
+        <scale>
+          <name>Base/Adder</name>
+          <arguments>
+            <key class="java.lang.String">Add</key>
+            <value class="java.lang.Float">-30.0</value>
+            <key class="java.lang.String">Depth Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>PC/Defense/Armor/Armor Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <min>1.0</min>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor (windowed)/Armor Base -20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$MinValue">
+        <scale>
+          <name>Base/Adder</name>
+          <arguments>
+            <key class="java.lang.String">Add</key>
+            <value class="java.lang.Float">-40.0</value>
+            <key class="java.lang.String">Depth Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>PC/Defense/Armor/Armor Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <min>1.0</min>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor (windowed)/Armor Base -25</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$MinValue">
+        <scale>
+          <name>Base/Adder</name>
+          <arguments>
+            <key class="java.lang.String">Add</key>
+            <value class="java.lang.Float">-50.0</value>
+            <key class="java.lang.String">Depth Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>PC/Defense/Armor/Armor Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <min>1.0</min>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Base/Default</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor Base +01</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$MinValue">
+        <scale>
+          <name>Base/Adder</name>
+          <arguments>
+            <key class="java.lang.String">Add</key>
+            <value class="java.lang.Float">10.0</value>
+            <key class="java.lang.String">Depth Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>PC/Defense/Armor/Armor Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <min>1.0</min>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$MinValue">
+        <scale>
+          <name>Base/Adder</name>
+          <arguments>
+            <key class="java.lang.String">Add</key>
+            <value class="java.lang.Float">50.0</value>
+            <key class="java.lang.String">Depth Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>PC/Defense/Armor/Armor Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <min>1.0</min>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$MinValue">
+        <scale>
+          <name>Base/Adder</name>
+          <arguments>
+            <key class="java.lang.String">Add</key>
+            <value class="java.lang.Float">150.0</value>
+            <key class="java.lang.String">Depth Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>PC/Defense/Armor/Armor Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <min>1.0</min>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor Base +15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$MinValue">
+        <scale>
+          <name>Base/Adder</name>
+          <arguments>
+            <key class="java.lang.String">Add</key>
+            <value class="java.lang.Float">150.0</value>
+            <key class="java.lang.String">Depth Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>PC/Defense/Armor/Armor Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <min>1.0</min>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Armor/Armor Base</name>
+        </scale>
+        <multiplier>0.93</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Armor/Armor Base</name>
+        </scale>
+        <multiplier>0.79</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor Base -15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Armor/Armor Base</name>
+        </scale>
+        <multiplier>0.79</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor Base -20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Armor/Armor Base</name>
+        </scale>
+        <multiplier>0.72</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Armor/Armor Base -25</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Armor/Armor Base</name>
+        </scale>
+        <multiplier>0.65</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Base/Default</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Rarity Capper</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale 0</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Base/Star 0</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 1</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Base/Star 1</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 2</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Base/Star 2</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 3</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Base/Star 3</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 4</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Base/Star 4</name>
+          </value>
+          <key class="java.lang.String">Depth Scale 5</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Base/Star 5</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Base/Star 0</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">15.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">5.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">50.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">40.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">180.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">122.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">90.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Base/Star 1</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">15.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">10.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">50.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">40.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">180.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">122.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">90.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Base/Star 2</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">16.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">11.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">50.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">40.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">180.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">122.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">80.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Base/Star 3</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">17.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">12.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">50.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">43.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">180.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">122.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">80.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Base/Star 4</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">17.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">12.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">53.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">45.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">125.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">114.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">80.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Base/Star 5</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">17.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">12.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">55.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">48.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">155.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">114.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">90.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Helm/Helm Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Armor/Armor Base</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Helm/Helm Base +01</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Armor/Armor Base +01</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Helm/Helm Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Armor/Armor Base +05</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Helm/Helm Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Armor/Armor Base +10</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Helm/Helm Base +15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Armor/Armor Base +15</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Helm/Helm Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Armor/Armor Base -05</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Helm/Helm Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Armor/Armor Base -10</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Helm/Helm Base -15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Armor/Armor Base -15</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Helm/Helm Base -20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Armor/Armor Base -20</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Helm/Helm Base -25</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>PC/Defense/Armor/Armor Base -25</name>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Health/Health Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Base/Rarity Capper</name>
+          <arguments>
+            <key class="java.lang.String">Depth Scale 0</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Monster/Damage/Attack Base</name>
+            </value>
+            <key class="java.lang.String">Depth Scale 1</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Monster/Damage/Attack Base</name>
+            </value>
+            <key class="java.lang.String">Depth Scale 2</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Monster/Damage/Attack Base</name>
+            </value>
+            <key class="java.lang.String">Depth Scale 3</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Monster/Damage/Attack Base</name>
+            </value>
+            <key class="java.lang.String">Depth Scale 4</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Monster/Damage/Attack Base</name>
+            </value>
+            <key class="java.lang.String">Depth Scale 5</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Monster/Damage/Attack Base</name>
+            </value>
+          </arguments>
+        </scale>
+        <multiplier>2.5</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Health/Health Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Shield/Health/Health Base</name>
+        </scale>
+        <multiplier>1.25</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Health/Health Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Shield/Health/Health Base</name>
+        </scale>
+        <multiplier>1.5</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Health/Health Base +15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Shield/Health/Health Base</name>
+        </scale>
+        <multiplier>1.75</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Health/Health Base +20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Shield/Health/Health Base</name>
+        </scale>
+        <multiplier>2.0</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Health/Health Base +25</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Shield/Health/Health Base</name>
+        </scale>
+        <multiplier>2.25</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Shield Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Armor/Armor Base</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Shield Base +01</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Armor/Armor Base +01</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Shield Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Armor/Armor Base +05</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Shield Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Armor/Armor Base +10</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Shield Base +15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Armor/Armor Base +15</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Shield Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Armor/Armor Base -05</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Shield Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Armor/Armor Base -10</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Shield Base -15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Armor/Armor Base -15</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Shield Base -20</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Armor/Armor Base -20</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Shield/Shield Base -25</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Armor/Armor Base -25</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">2.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Trinket/Trinket Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Armor/Armor Base</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.25</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Trinket/Trinket Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Adder</name>
+        <arguments>
+          <key class="java.lang.String">Add</key>
+          <value class="java.lang.Float">5.0</value>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Trinket/Trinket Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Trinket/Trinket Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Adder</name>
+        <arguments>
+          <key class="java.lang.String">Add</key>
+          <value class="java.lang.Float">10.0</value>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Trinket/Trinket Base</name>
+          </value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Trinket/Trinket Base -05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Trinket/Trinket Base</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.15</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Trinket/Trinket Base -10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Multiplier</name>
+        <arguments>
+          <key class="java.lang.String">Depth Scale</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>PC/Defense/Trinket/Trinket Base</name>
+          </value>
+          <key class="java.lang.String">Multiplier</key>
+          <value class="java.lang.Float">0.05</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Variant/Variant Base</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Armor/Armor Base</name>
+        </scale>
+        <multiplier>0.1</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Variant/Variant Base +05</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Armor/Armor Base</name>
+        </scale>
+        <multiplier>0.2</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Variant/Variant Base +10</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Armor/Armor Base</name>
+        </scale>
+        <multiplier>0.3</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PC/Defense/Variant/Variant Base +15</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Armor/Armor Base</name>
+        </scale>
+        <multiplier>0.4</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PvP/Lockdown/Guardian Defense</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">30.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">30.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">110.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">110.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">300.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">300.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">300.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PvP/Lockdown/Guardian Heal</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">10.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">10.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">15.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">15.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">20.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">20.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">20.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PvP/Lockdown/Guardian Health</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>PC/Defense/Shield/Health/Health Base</name>
+        </scale>
+        <multiplier>1.05</multiplier>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PvP/Lockdown/Recon Health</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Constant">
+        <value>30000.0</value>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PvP/Lockdown/Striker Health</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Constant">
+        <value>3500.0</value>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Status Condition/Base/Damage</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">35.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">10.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">85.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">40.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">180.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">145.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">105.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Status Condition/Base/Health</name>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Derived">
+      <depthScale>
+        <name>Base/Tier Segmented</name>
+        <arguments>
+          <key class="java.lang.String">Tier 1 End</key>
+          <value class="java.lang.Float">180.0</value>
+          <key class="java.lang.String">Tier 1 Start</key>
+          <value class="java.lang.Float">60.0</value>
+          <key class="java.lang.String">Tier 2 End</key>
+          <value class="java.lang.Float">550.0</value>
+          <key class="java.lang.String">Tier 2 Start</key>
+          <value class="java.lang.Float">240.0</value>
+          <key class="java.lang.String">Tier 3 End</key>
+          <value class="java.lang.Float">1040.0</value>
+          <key class="java.lang.String">Tier 3 Mid</key>
+          <value class="java.lang.Float">720.0</value>
+          <key class="java.lang.String">Tier 3 Start</key>
+          <value class="java.lang.Float">540.0</value>
+        </arguments>
+      </depthScale>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Status Condition/Damage Cap Multiplier</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Cap</name>
+        <paths>implementation.root.scale["Cap"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Multiplier</name>
+        <paths>implementation.root.multiplier</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Base/Depth Cap</name>
+          <arguments>
+            <key class="java.lang.String">Cap</key>
+            <value class="java.lang.Integer">30</value>
+            <key class="java.lang.String">Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Status Condition/Base/Damage</name>
+            </value>
+          </arguments>
+        </scale>
+      </root>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Status Condition/Health Cap Multiplier</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Cap</name>
+        <paths>implementation.root.scale["Cap"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Multiplier</name>
+        <paths>implementation.root.multiplier</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Original">
+      <root class="com.threerings.projectx.dungeon.config.DepthScaleConfig$Multiplier">
+        <scale>
+          <name>Base/Depth Cap</name>
+          <arguments>
+            <key class="java.lang.String">Cap</key>
+            <value class="java.lang.Integer">30</value>
+            <key class="java.lang.String">Scale</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Status Condition/Base/Health</name>
+            </value>
+          </arguments>
+        </scale>
+      </root>
+    </implementation>
+  </entry>
+</object>
+</java>

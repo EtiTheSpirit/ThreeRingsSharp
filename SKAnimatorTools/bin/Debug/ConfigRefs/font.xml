@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java class="com.threerings.export.XMLImporter" version="1.0">
+<object class="[Lcom.threerings.opengl.gui.config.FontConfig;">
+  <entry>
+    <name>Arial</name>
+    <implementation class="com.threerings.projectx.config.ProjectXFontConfig$Locale">
+      <file>ui/font/arial.ttf</file>
+      <localeFonts>
+        <entry>
+          <locale>zh</locale>
+          <font>
+            <file>ui/font/wt014.ttf</file>
+            <descentModifier>0.15</descentModifier>
+            <sizeModifier>1</sizeModifier>
+          </font>
+        </entry>
+        <entry>
+          <locale>ko</locale>
+          <font>
+            <file>ui/font/RixBGulim.ttf</file>
+            <heightModifier>1</heightModifier>
+            <allowNegativeSpacing>false</allowNegativeSpacing>
+          </font>
+        </entry>
+      </localeFonts>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Arial Black</name>
+    <implementation class="com.threerings.projectx.config.ProjectXFontConfig$Locale">
+      <file>ui/font/arial_black.ttf</file>
+      <localeFonts>
+        <entry>
+          <locale>zh</locale>
+          <font>
+            <file>ui/font/wt014.ttf</file>
+            <baseStyle>BOLD</baseStyle>
+            <descentModifier>0.15</descentModifier>
+            <sizeModifier>1</sizeModifier>
+          </font>
+        </entry>
+        <entry>
+          <locale>ko</locale>
+          <font>
+            <file>ui/font/RixBGulimExtrabold.ttf</file>
+            <baseStyle>BOLD</baseStyle>
+            <heightModifier>5</heightModifier>
+            <allowNegativeSpacing>false</allowNegativeSpacing>
+          </font>
+        </entry>
+      </localeFonts>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Arial Black (Large KO)</name>
+    <implementation class="com.threerings.projectx.config.ProjectXFontConfig$Locale">
+      <file>ui/font/arial_black.ttf</file>
+      <localeFonts>
+        <entry>
+          <locale>zh</locale>
+          <font>
+            <file>ui/font/wt014.ttf</file>
+            <baseStyle>BOLD</baseStyle>
+            <descentModifier>0.15</descentModifier>
+            <sizeModifier>1</sizeModifier>
+          </font>
+        </entry>
+        <entry>
+          <locale>ko</locale>
+          <font>
+            <file>ui/font/RixBGulimExtrabold.ttf</file>
+            <baseStyle>BOLD</baseStyle>
+            <sizeModifier>4</sizeModifier>
+            <allowNegativeSpacing>false</allowNegativeSpacing>
+          </font>
+        </entry>
+      </localeFonts>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Blackout Midnight</name>
+    <implementation class="com.threerings.projectx.config.ProjectXFontConfig$Locale">
+      <file>ui/font/blackout-midnight.ttf</file>
+      <localeFonts>
+        <entry>
+          <locale>zh</locale>
+          <font>
+            <file>ui/font/wt014.ttf</file>
+            <descentModifier>0.15</descentModifier>
+            <sizeModifier>1</sizeModifier>
+          </font>
+        </entry>
+        <entry>
+          <locale>ko</locale>
+          <font>
+            <file>ui/font/RixBGulim.ttf</file>
+            <allowNegativeSpacing>false</allowNegativeSpacing>
+          </font>
+        </entry>
+      </localeFonts>
+    </implementation>
+  </entry>
+</object>
+</java>

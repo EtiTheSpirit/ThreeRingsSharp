@@ -30,6 +30,11 @@ namespace ThreeRingsSharp.XansData {
 		};
 
 		/// <summary>
+		/// The axis that represents the vertical component. This should be set depending on the program the model will be imported to.
+		/// </summary>
+		public static Axis UpAxis { get; set; } = Axis.Z;
+
+		/// <summary>
 		/// Multiplies the scale of exported models by 100. This is really handy for a lot of models but may cause others to be huge.<para/>
 		/// This is <see langword="true"/> by default since it's used more than it isn't.
 		/// </summary>
@@ -59,6 +64,11 @@ namespace ThreeRingsSharp.XansData {
 		/// If true, then <see cref="Transform"/> has been applied to all <see cref="Vertices"/>.
 		/// </summary>
 		public bool HasDoneTransformation { get; protected internal set; } = false;
+
+		/// <summary>
+		/// The textures tied to this model.
+		/// </summary>
+		public readonly List<string> Textures = new List<string>();
 
 		/// <summary>
 		/// The vertices that make up this 3D model. Generally speaking, this should be used if the model is not rigged.<para/>
@@ -160,13 +170,54 @@ namespace ThreeRingsSharp.XansData {
 		private void ApplyTransform(Transform3D transform) {
 			// Transform the referenced geometry here.
 			for (int idx = 0; idx < Vertices.Count; idx++) {
-				Vertices[idx] = transform.transformPoint(Vertices[idx]);
+				Vector3 vtx = transform.transformPoint(Vertices[idx]);
+				// And now this
+				float x = vtx.X;
+				float y = vtx.Y;
+				float z = vtx.Z;
+				if (UpAxis == Axis.X) {
+					vtx = new Vector3(y, x, z);
+					// } else if (UpAxis == Axis.Y) {
+					// Nothing
+				} else if (UpAxis == Axis.Z) {
+					vtx = new Vector3(x, z, y);
+				}
+				Vertices[idx] = vtx;
+			}
+
+			for (int idx = 0; idx < Normals.Count; idx++) {
+				Vector3 vtx = Normals[idx];
+				// And now this
+				float x = vtx.X;
+				float y = vtx.Y;
+				float z = vtx.Z;
+				if (UpAxis == Axis.X) {
+					vtx = new Vector3(y, x, z);
+					// } else if (UpAxis == Axis.Y) {
+					// Nothing
+				} else if (UpAxis == Axis.Z) {
+					vtx = new Vector3(x, z, y);
+				}
+				Normals[idx] = vtx;
 			}
 
 			foreach (VertexGroup vtxGroup in VertexGroups) {
 				for (int idx = 0; idx < vtxGroup.Vertices.Count; idx++) {
 					Vertex vtx = vtxGroup.Vertices[idx];
 					vtx.Point = transform.transformPoint(vtx.Point);
+
+					// And now this
+					float x = vtx.Point.X;
+					float y = vtx.Point.Y;
+					float z = vtx.Point.Z;
+					if (UpAxis == Axis.X) {
+						vtx.Point = new Vector3(y, x, z);
+					// } else if (UpAxis == Axis.Y) {
+						// Nothing
+					} else if (UpAxis == Axis.Z) {
+						vtx.Point = new Vector3(x, z, y);
+					}
+
 					vtxGroup.Vertices[idx] = vtx;
 				}
 			}
