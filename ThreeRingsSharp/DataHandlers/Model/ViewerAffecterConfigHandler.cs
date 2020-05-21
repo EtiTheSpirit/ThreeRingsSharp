@@ -71,7 +71,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					// In all implementations from the scene viewer, it only uses the x component for a single-float scale.
 					// Why? Ask OOO. This is how it needs to work in seemingly 100% of cases with SK stuff.
 					Transform3D newTrs = new Transform3D(skybox.translationOrigin, Quaternion.IDENTITY, skybox.translationScale.x);
-					newTrs = globalTransform.compose(newTrs);
+					newTrs = newTrs.compose(globalTransform);
 					ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, false, newTrs);
 				}
 			}

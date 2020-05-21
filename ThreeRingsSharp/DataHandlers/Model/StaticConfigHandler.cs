@@ -45,11 +45,14 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			VisibleMesh[] renderedMeshes = meshes.visible;
 
 			int idx = 0;
+			string depth1Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile);
+			string fullDepthName = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile, -1);
 			foreach (VisibleMesh mesh in renderedMeshes) {
-				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry);
-				meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + "-Mesh[" + idx + "]";
-				if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
-				meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(meshes.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
+				string meshTitle = "-Mesh[" + idx + "]";
+
+				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
+				meshToModel.Name = depth1Name + meshTitle;
+				meshToModel.Transform = meshToModel.Transform.compose(globalTransform).compose(new Transform3D(meshes.bounds.getCenter(), Quaternion.IDENTITY, 1f));
 
 				modelCollection.Add(meshToModel);
 				idx++;

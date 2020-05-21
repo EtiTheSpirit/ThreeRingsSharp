@@ -50,6 +50,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			if (!referencedModel.Exists) {
 				throw new ClydeDataReadException($"ConfigReference within model at [{ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile, false, false, '/')}] attempted to reference [{filePathRelativeToRsrc}], but this file could not be found!");
 			}
+
 			List<Model3D> referencedTree = new List<Model3D>();
 			ClydeFileHandler.HandleClydeFile(referencedModel, referencedTree, false, dataTreeParent, false, globalTransform, extraData);
 			if (appendModelsToModelCollection) modelCollection.AddRange(referencedTree);

@@ -67,6 +67,9 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 			SetupCosmeticInformation(staticSet, dataTreeParent, useOnlyTargetModel);
 
+			string depth1Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile);
+			string fullDepthName = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile, -1);
+
 			if (staticSet.meshes != null) {
 				if (useOnlyTargetModel) {
 					// Only one model of the entire set should be used.
@@ -74,8 +77,10 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					VisibleMesh[] meshes = subModel.visible;
 					int idx = 0;
 					foreach (VisibleMesh mesh in meshes) {
-						Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry);
-						meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + "-MeshSets[" + staticSet.model + "].Mesh[" + idx + "]";
+						string meshTitle = "-MeshSets[" + staticSet.model + "].Mesh[" + idx + "]";
+
+						Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
+						meshToModel.Name = depth1Name + meshTitle;
 						if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
 						meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
 
@@ -91,8 +96,10 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						VisibleMesh[] meshes = subModel.visible;
 						int idx = 0;
 						foreach (VisibleMesh mesh in meshes) {
-							Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry);
-							meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + "-MeshSets[" + key.ToString() + "].Mesh[" + idx + "]";
+							string meshTitle = "-MeshSets[" + key.ToString() + "].Mesh[" + idx + "]";
+
+							Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
+							meshToModel.Name = depth1Name + meshTitle;
 							if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
 							meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
 
