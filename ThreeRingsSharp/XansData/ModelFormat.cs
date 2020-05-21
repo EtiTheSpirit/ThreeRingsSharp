@@ -12,30 +12,23 @@ namespace ThreeRingsSharp.XansData {
 	public enum ModelFormat {
 
 		/// <summary>
-		/// The Autodesk FBX Format
-		/// </summary>
-		FBX,
-
-		/// <summary>
-		/// WaveFront OBJ Format
+		/// Format: WaveFront OBJ Format
 		/// </summary>
 		OBJ,
 
 		/// <summary>
-		/// Graphics Library Transmission Format
+		/// Format: Graphics Library Transmission Format
 		/// </summary>
-		GLTF,
+		glTF,
 	}
 	
 	public class ModelFormatUtil {
-	#pragma warning disable CS0612 // Type or member is obsolete
 		/// <summary>
-		/// A binding from <see cref="String"/> to <see cref="ModelFormat"/>, e.g. the string <c>".fbx"</c> translates to <see cref="ModelFormat.FBX"/>.
+		/// A binding from <see cref="string"/> file extensions to <see cref="ModelFormat"/>s, e.g. the string <c>".glb"</c> corresponds to <see cref="ModelFormat.glTF"/>.
 		/// </summary>
 		public static readonly IReadOnlyDictionary<string, ModelFormat> ExtensionToFormatBindings = new Dictionary<string, ModelFormat>() {
-			[".fbx"] = ModelFormat.FBX,
 			[".obj"] = ModelFormat.OBJ,
-			[".glb"] = ModelFormat.GLTF,
+			[".glb"] = ModelFormat.glTF,
 		};
 
 	}
