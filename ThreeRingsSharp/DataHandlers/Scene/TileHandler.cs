@@ -57,7 +57,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 
 				ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, tileCfg.ModelPath, modelCollection, dataTreeParent, globalTransform.compose(trs), extraData: new Dictionary<string, dynamic> { ["TargetModel"] = tileCfg.TargetModel });
 			} catch (KeyNotFoundException) {
-				XanLogger.WriteLine("Unable to find data: " + tile.tile.getName());
+				XanLogger.WriteLine($"Unable to find data for tile [{tile.tile.getName()}]!");
 			}
 		}
 		

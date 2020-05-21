@@ -37,7 +37,7 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			ModelConfig.Implementation implementation = model.implementation;
 			if (implementation == null) {
-				XanLogger.WriteLine("ALERT: Implementation is null! Sending error.");
+				XanLogger.WriteLine("Implementation is null! Sending error.", true);
 				throw new ClydeDataReadException("This specific model does not have an implementation, which is the data for the model itself. The program cannot continue! This generally happens if the implementation is from another game that uses Clyde and has defined its own custom model types (e.g. Spiral Knights does this)", "Can't Read Model", MessageBoxIcon.Error);
 			}
 
@@ -53,48 +53,47 @@ namespace ThreeRingsSharp.DataHandlers {
 			ModelConfigHandler.SetupCosmeticInformation(model, currentDataTreeObject, useImplementation);
 
 			if (implementation is ArticulatedConfig) {
-				//XanLogger.WriteLine("Model is of the type 'ArticulatedConfig'. Accessing handlers...");
+				XanLogger.WriteLine("Model is of the type 'ArticulatedConfig'. Accessing handlers...", true);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Articulated;
 				ArticulatedConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
 
 			} else if (implementation is StaticConfig) {
-				//XanLogger.WriteLine("Model is of the type 'StaticConfig'. Accessing handlers...");
+				XanLogger.WriteLine("Model is of the type 'StaticConfig'. Accessing handlers...", true);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Static;
 				StaticConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
 
 			} else if (implementation is StaticSetConfig) {
-				//XanLogger.WriteLine("Model is of the type 'StaticSetConfig'. Accessing handlers...");
+				XanLogger.WriteLine("Model is of the type 'StaticSetConfig'. Accessing handlers...", true);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.MergedStatic;
-				//string targetDefaultModel = extraData.GetOr
 				StaticSetConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
 
 			} else if (implementation is MergedStaticConfig) {
-				//XanLogger.WriteLine("Model is of type 'MergedStaticConfig'. Accessing handlers...");
+				XanLogger.WriteLine("Model is of type 'MergedStaticConfig'. Accessing handlers...", true);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.ModelSet;
 				MergedStaticConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
 
 			} else if (implementation is CompoundConfig) {
-				//XanLogger.WriteLine("Model is of the type 'CompoundConfig'. Accessing handlers...");
+				XanLogger.WriteLine("Model is of the type 'CompoundConfig'. Accessing handlers...", true);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.ModelSet;
 				CompoundConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
 
 			} else if (implementation is ViewerAffecterConfig) {
-				//XanLogger.WriteLine("Model is of the type 'ViewerAffecterConfig'. Accessing handlers...");
+				XanLogger.WriteLine("Model is of the type 'ViewerAffecterConfig'. Accessing handlers...", true);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.CameraShake;
 				ViewerAffecterConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
 
 			} else if (implementation is ModelConfig.Derived) {
-				//XanLogger.WriteLine("Model is of the type 'ModelConfig::Derived'. Accessing handlers...");
+				XanLogger.WriteLine("Model is of the type 'ModelConfig::Derived'. Accessing handlers...", true);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Derived;
 				ModelConfigHandler.DerivedHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
 
 			} else if (implementation is ModelConfig.Schemed) {
-				//XanLogger.WriteLine("Model is of the type 'ModelConfig::Schemed'. Accessing handlers...");
+				XanLogger.WriteLine("Model is of the type 'ModelConfig::Schemed'. Accessing handlers...", true);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Schemed;
 				ModelConfigHandler.SchemedHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
 
 			} else {
-				XanLogger.WriteLine($"\nERROR: A ModelConfig had an unknown implementation!\n=> Implementation: {implName}\n=> Referenced In: {sourceFile}\n");
+				XanLogger.WriteLine($"\nERROR: A ModelConfig had an unknown implementation!\n=> Implementation: {implName}\n=> Referenced In: {sourceFile}\n", true);
 				// AsyncMessageBox.ShowAsync("This specific implementation is valid, but it has no handler! (There's no code that can translate this data for you :c).\nImplementation: " + implementation.getClass().getTypeName(), "Can't Handle Model", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Generic;
 			}

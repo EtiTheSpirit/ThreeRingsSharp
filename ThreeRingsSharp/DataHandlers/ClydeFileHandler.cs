@@ -66,15 +66,15 @@ namespace ThreeRingsSharp.DataHandlers {
 			ClydeDataReadException errToThrow = null;
 
 			if (!ClydeObjectCache.ContainsKey(clydeFile.FullName)) {
-				XanLogger.WriteLine($"Loading [{clydeFile.FullName}]...");
+				XanLogger.WriteLine($"Loading [{clydeFile.FullName}]...", true);
 				// ProgramLog.Update();
 				if (!VersionInfoScraper.IsValidClydeFile(clydeFile)) {
-					XanLogger.WriteLine("Invalid file. Sending error.");
+					XanLogger.WriteLine("Invalid file. Sending error.", true);
 					// if (isBaseFile) AsyncMessageBox.ShowAsync("This file isn't a valid Clyde file! (Reason: Incorrect header)", "Invalid File", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					throw new ClydeDataReadException("This file isn't a valid Clyde file! (Reason: Incorrect header)");
 				}
 				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(clydeFile);
-				XanLogger.WriteLine($"Read file to grab the raw info.");
+				XanLogger.WriteLine($"Read file to grab the raw info.", true);
 				string modelFullClass = cosmeticInfo.Item3;
 				string[] modelClassInfo = ClassNameStripper.GetSplitClassName(modelFullClass);
 
@@ -85,7 +85,7 @@ namespace ThreeRingsSharp.DataHandlers {
 
 				// Just abort early here.
 				if (modelClass == "ProjectXModelConfig") {
-					XanLogger.WriteLine("User imported a Player Knight model. These are unsupported. Sending warning.");
+					XanLogger.WriteLine("User imported a Player Knight model. These are unsupported. Sending warning.", true);
 					if (isBaseFile && UpdateGUIAction != null) {
 						UpdateGUIAction(null, null, null, "ModelConfig");
 					}
@@ -122,8 +122,12 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			// This is kind of hacky behavior but it (ab)uses the fact that this will only run on the first call for any given chain of .DAT files.
 			// That is, all external referenced files have this value passed in instead of it being null.
-			if (transform == null) transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, Model3D.MultiplyScaleByHundred ? 100f : 1f);
-			// transform.setScale(transform.getScale() * (MultiplyScaleByHundred ? 100f : 1f));
+			if (transform == null) {
+				transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, Model3D.MultiplyScaleByHundred ? 100f : 1f);
+			} else {
+				// If we ever load a new file, give it a fresh transform based on whatever was passed in so that it can be manipulated by this model.
+				transform = transform.Clone();
+			}
 
 			if (obj is null) {
 				if (isBaseFile && UpdateGUIAction != null) {
@@ -189,9 +193,6 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			if (errToThrow != null) throw errToThrow;
 		}
-
-
-		protected internal static bool UseHardcodedConfigRefsPath = true;
 
 		/// <summary>
 		/// Directly handles a <see cref="FileInfo"/> that is expected to be a config reference (that is, stored in <c>rsrc/config/</c>).<para/>
