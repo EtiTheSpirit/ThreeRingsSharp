@@ -1,31 +1,48 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
+
+	/// <summary>
+	/// Provides access to a <see cref="GLTFBufferView"/>.
+	/// </summary>
 	public class GLTFAccessor {
 
-		public int bufferView = 0;
-
-		// public int byteOffset = 0;
-
-		public int componentType = GLTFComponentType.BYTE;
-
-		public int count = 0;
+		/// <summary>
+		/// Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
+		/// </summary>
+		[JsonIgnore]
+		public int ThisIndex = 0;
 
 		/// <summary>
-		/// NOTE: Cast these values into their appropriate type as dictated by <see cref="componentType"/>.
+		/// The <see cref="GLTFBufferView"/> this points to.
 		/// </summary>
-		public List<dynamic> max = new List<dynamic>();
+		[JsonProperty("bufferView")] public int BufferView = 0;
 
 		/// <summary>
-		/// NOTE: Cast these values into their appropriate type as dictated by <see cref="componentType"/>.
+		/// The data type of the value stored in this <see cref="GLTFAccessor"/>.
 		/// </summary>
-		public List<dynamic> min = new List<dynamic>();
+		[JsonProperty("componentType")] public int ComponentType = GLTFComponentType.BYTE;
 
-		public string type = GLTFType.SCALAR;
+		/// <summary>
+		/// The amount of values stored within this object.
+		/// </summary>
+		[JsonProperty("count")] public int Count = 0;
+
+		/// <summary>
+		/// NOTE: Cast these values into their appropriate type as dictated by <see cref="ComponentType"/>.
+		/// </summary>
+		[JsonProperty("max")] public List<dynamic> Max = new List<dynamic>();
+
+		/// <summary>
+		/// NOTE: Cast these values into their appropriate type as dictated by <see cref="ComponentType"/>.
+		/// </summary>
+		[JsonProperty("min")] public List<dynamic> Min = new List<dynamic>();
+
+		/// <summary>
+		/// The type of model data this accessor represents, which determines is size.
+		/// </summary>
+		[JsonProperty("type")] public string Type = GLTFType.SCALAR;
 
 	}
 }

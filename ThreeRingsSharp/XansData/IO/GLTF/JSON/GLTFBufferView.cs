@@ -1,26 +1,36 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
+
+	/// <summary>
+	/// Represents a subsection of a complete data buffer.
+	/// </summary>
 	public class GLTFBufferView {
 
 		/// <summary>
-		///  The ID of the buffer to browse.
+		/// Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
 		/// </summary>
-		public int buffer = 0;
+		[JsonIgnore] public int ThisIndex = 0;
+
+		/// <summary>
+		/// The ID of the buffer to browse.
+		/// </summary>
+		[JsonProperty("buffer")] public int Buffer = 0;
 
 		/// <summary>
 		/// The length of the view in bytes (how many bytes this view "contains")
 		/// </summary>
-		public int byteLength = 0;
+		[JsonProperty("byteLength")] public int ByteLength = 0;
 
 		/// <summary>
 		/// The offset of the first byte in this view
 		/// </summary>
-		public int byteOffset = 0;
+		[JsonProperty("byteOffset")] public int ByteOffset = 0;
 
 		// <summary>
 		// The spacing between the bytes in this view. For types larger than one byte, this represents the spacing between the first bytes (e.g. if I have a buffer of int32s, the stride here would be 4, NOT 1)

@@ -1,4 +1,5 @@
 ﻿using com.samskivert.velocity;
+using com.threerings.math;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,24 +26,26 @@ namespace ThreeRingsSharp.XansData.IO {
 				objBuilder.AppendLine(model.Name ?? "ExportedModel" + modelIndex);
 
 				model.ApplyTransformations();
+				
+				//Transform3D newTrs = model.ApplyUpAxis();
 
-				foreach (Vector3 vertex in model.Vertices) {
+				foreach (Vector3 vertex in model.Mesh.Vertices) {
 					WriteVertex(objBuilder, vertex);
 				}
 
-				foreach (Vector3 normal in model.Normals) {
+				foreach (Vector3 normal in model.Mesh.Normals) {
 					WriteNormal(objBuilder, normal);
 				}
 
-				foreach (Vector2 uv in model.UVs) {
+				foreach (Vector2 uv in model.Mesh.UVs) {
 					WriteUVCoordinate(objBuilder, uv);
 				}
 
-				for (int idx = 0; idx < model.Indices.Count / 3; idx++) {
-					WriteIndexTriplet(objBuilder, model.Indices, idx, indexOffset);
+				for (int idx = 0; idx < model.Mesh.Indices.Count / 3; idx++) {
+					WriteIndexTriplet(objBuilder, model.Mesh.Indices, idx, indexOffset);
 				}
 				modelIndex++;
-				indexOffset += model.Vertices.Count;
+				indexOffset += model.Mesh.Vertices.Count;
 			}
 
 			// Write the file now.

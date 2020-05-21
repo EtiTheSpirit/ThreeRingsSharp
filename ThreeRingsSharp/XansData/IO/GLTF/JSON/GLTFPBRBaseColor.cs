@@ -8,19 +8,19 @@ using System.Threading.Tasks;
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 
 	/// <summary>
-	/// Represents an entire secene.
+	/// Represents the baseColorTexture node in the pbrMetallicRoughness node of materials.
 	/// </summary>
-	public class GLTFScene {
+	public class GLTFPBRBaseColor {
 
 		/// <summary>
-		/// The name of this <see cref="GLTFScene"/>.
+		/// The texture index
 		/// </summary>
-		[JsonProperty("name")] public string Name = "scene";
+		[JsonProperty("index")] public int Index = 0;
 
 		/// <summary>
-		/// The IDs of the nodes included in this <see cref="GLTFScene"/>.
+		/// The UV index
 		/// </summary>
-		[JsonProperty("nodes")] public List<int> Nodes = new List<int>();
+		[JsonProperty("texCoord")] public int TexCoord = 0;
 
 	}
 }

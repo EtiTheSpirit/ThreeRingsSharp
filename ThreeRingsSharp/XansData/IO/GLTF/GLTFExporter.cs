@@ -1,12 +1,15 @@
-﻿using java.nio.channels;
+﻿using com.threerings.math;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.IO.GLTF.JSON;
 using ThreeRingsSharp.XansData.Structs;
 
@@ -17,18 +20,6 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 	/// </summary>
 	public class GLTFExporter : AbstractModelExporter {
 
-		/*
-		/// <summary>
-		/// Initialize camel case serialization.
-		/// </summary>
-		static GLTFExporter() {
-		// I *guess* this is the best place to put this.
-			JsonConvert.DefaultSettings = () => new JsonSerializerSettings {
-				ContractResolver = new CamelCasePropertyNamesContractResolver()
-			};
-		}
-		*/
-
 		/// <summary>
 		/// The unique header ID describing glTF files. This is the ASCII string "glTF".
 		/// </summary>
@@ -38,6 +29,11 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 		/// The glTF spec version.
 		/// </summary>
 		public const uint VERSION = 2;
+
+		/// <summary>
+		/// If <see langword="true"/>, any textures referenced by models will be imported into the glTF file as raw binary data.
+		/// </summary>
+		public static bool EmbedTextures { get; set; } = false;
 
 		/// <summary>
 		/// The JSON data for this glTF file.
@@ -53,6 +49,21 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				jsonString += ' ';
 			}
 			return jsonString;
+		}
+
+		/// <summary>
+		/// Reads an image file and returns its data + mime type
+		/// </summary>
+		/// <param name="imageFile"></param>
+		/// <returns></returns>
+		private (byte[], string) GetImageData(FileInfo imageFile) {
+			Image img = Image.FromFile(imageFile.FullName);
+			ImageConverter conv = new ImageConverter();
+			string mime = "image/jpeg";
+			if (imageFile.Extension.ToLower() == ".png") {
+				mime = "image/png";
+			}
+			return ((byte[])conv.ConvertTo(img, typeof(byte[])), mime);
 		}
 
 		/// <summary>
@@ -74,32 +85,45 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 			binBuffer.AddRange(BitConverter.GetBytes(0));
 			binBuffer.AddRange(BitConverter.GetBytes(0x004E4942));
 
-			// int lastLength = 0;
+			#region Set Up Vars
+			int currentAccessorIndex = 0; // This is identical to currentBufferViewIndex for now, it's just here in case I decide to change this behavior
 			int currentBufferViewIndex = 0;
-			int currentAccessorBaseIndex = 0;
+			int currentMeshIndex = 0;
 			int currentModelIndex = 0;
 			int currentOffset = 0;
 			int totalImageCount = 0;
-			foreach (Model3D model in models) {
-				model.ApplyTransformations();
 
-				// Need to construct a new bufferview for the individual model.
-				// We also need to construct accessors for each overall component type.
+			// A mapping from texture filepath to integer index for textures in the glTF data.
+			Dictionary<string, int> texFileToIndexMap = new Dictionary<string, int>();
+
+			// Store a binding from MeshData to the accessors that point to said mesh data.
+			// In order, this is Mesh, Vertices, Normals, UVs, Indices
+			var meshesToAccessors = new Dictionary<MeshData, (GLTFMesh, GLTFAccessor, GLTFAccessor, GLTFAccessor, GLTFAccessor)>();
+			#endregion
+
+			foreach (MeshData meshData in MeshData.MeshDataBindings.Values) {
 				List<GLTFBufferView> bufferViews = new List<GLTFBufferView>();
 				List<GLTFAccessor> accessors = new List<GLTFAccessor>();
 				List<byte> buffer = new List<byte>();
 
+				// Quick thing beforehand: Change the up axis!
+				// Edit: This is broken, it causes malformed outputs.
+				// meshData.ApplyAxialTransformationMod();
+
+				#region Create Buffer Accessors
+
 				#region Accessor No. 1: Vertices
 				GLTFAccessor vertexAccessor = new GLTFAccessor {
-					bufferView = currentBufferViewIndex,
+					BufferView = currentBufferViewIndex,
+					ThisIndex = currentAccessorIndex,
 					// byteOffset = currentBufferViewSize,
-					componentType = GLTFComponentType.FLOAT,
-					type = GLTFType.VEC3,
-					count = model.Vertices.Count
+					ComponentType = GLTFComponentType.FLOAT,
+					Type = GLTFType.VEC3,
+					Count = meshData.Vertices.Count
 				};
-				vertexAccessor.min.SetListCap(0f, 3);
-				vertexAccessor.max.SetListCap(0f, 3);
-				foreach (Vector3 vertex in model.Vertices) {
+				vertexAccessor.Min.SetListCap(0f, 3);
+				vertexAccessor.Max.SetListCap(0f, 3);
+				foreach (Vector3 vertex in meshData.Vertices) {
 					float x = vertex.X;
 					float y = vertex.Y;
 					float z = vertex.Z;
@@ -108,36 +132,38 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					buffer.AddRange(BitConverter.GetBytes(z));
 
 					// This garbage is weird. But it's required by standards, so..
-					if (x < vertexAccessor.min[0]) vertexAccessor.min[0] = x;
-					if (y < vertexAccessor.min[1]) vertexAccessor.min[1] = y;
-					if (z < vertexAccessor.min[2]) vertexAccessor.min[2] = z;
+					if (x < vertexAccessor.Min[0]) vertexAccessor.Min[0] = x;
+					if (y < vertexAccessor.Min[1]) vertexAccessor.Min[1] = y;
+					if (z < vertexAccessor.Min[2]) vertexAccessor.Min[2] = z;
 
-					if (x > vertexAccessor.max[0]) vertexAccessor.max[0] = x;
-					if (y > vertexAccessor.max[1]) vertexAccessor.max[1] = y;
-					if (z > vertexAccessor.max[2]) vertexAccessor.max[2] = z;
+					if (x > vertexAccessor.Max[0]) vertexAccessor.Max[0] = x;
+					if (y > vertexAccessor.Max[1]) vertexAccessor.Max[1] = y;
+					if (z > vertexAccessor.Max[2]) vertexAccessor.Max[2] = z;
 				}
 				accessors.Add(vertexAccessor);
-				int vertexSize = vertexAccessor.count * 12;
+				int vertexSize = vertexAccessor.Count * 12;
 				bufferViews.Add(new GLTFBufferView {
-					byteLength = vertexSize,
-					byteOffset = currentOffset
+					ThisIndex = currentBufferViewIndex,
+					ByteLength = vertexSize,
+					ByteOffset = currentOffset
 				});
 				currentOffset += vertexSize; // 4 bytes per float * 3 floats
 				currentBufferViewIndex++;
-
+				currentAccessorIndex++;
 				#endregion
 
 				#region Accessor No. 2: Normals
 				GLTFAccessor normalAccessor = new GLTFAccessor {
-					bufferView = currentBufferViewIndex,
+					BufferView = currentBufferViewIndex,
+					ThisIndex = currentAccessorIndex,
 					// byteOffset = currentBufferViewSize,
-					componentType = GLTFComponentType.FLOAT,
-					type = GLTFType.VEC3,
-					count = model.Normals.Count
+					ComponentType = GLTFComponentType.FLOAT,
+					Type = GLTFType.VEC3,
+					Count = meshData.Normals.Count
 				};
-				normalAccessor.min.SetListCap(0f, 3);
-				normalAccessor.max.SetListCap(0f, 3);
-				foreach (Vector3 normal in model.Normals) {
+				normalAccessor.Min.SetListCap(0f, 3);
+				normalAccessor.Max.SetListCap(0f, 3);
+				foreach (Vector3 normal in meshData.Normals) {
 					float x = normal.X;
 					float y = normal.Y;
 					float z = normal.Z;
@@ -146,157 +172,245 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					buffer.AddRange(BitConverter.GetBytes(z));
 
 					// This garbage is weird. But it's required by standards, so..
-					if (x < normalAccessor.min[0]) normalAccessor.min[0] = x;
-					if (y < normalAccessor.min[1]) normalAccessor.min[1] = y;
-					if (z < normalAccessor.min[2]) normalAccessor.min[2] = z;
+					if (x < normalAccessor.Min[0]) normalAccessor.Min[0] = x;
+					if (y < normalAccessor.Min[1]) normalAccessor.Min[1] = y;
+					if (z < normalAccessor.Min[2]) normalAccessor.Min[2] = z;
 
-					if (x > normalAccessor.max[0]) normalAccessor.max[0] = x;
-					if (y > normalAccessor.max[1]) normalAccessor.max[1] = y;
-					if (z > normalAccessor.max[2]) normalAccessor.max[2] = z;
+					if (x > normalAccessor.Max[0]) normalAccessor.Max[0] = x;
+					if (y > normalAccessor.Max[1]) normalAccessor.Max[1] = y;
+					if (z > normalAccessor.Max[2]) normalAccessor.Max[2] = z;
 				}
 				accessors.Add(normalAccessor);
-				int normalSize = normalAccessor.count * 12;
+				int normalSize = normalAccessor.Count * 12;
 				bufferViews.Add(new GLTFBufferView {
-					byteLength = normalSize,
-					byteOffset = currentOffset
+					ThisIndex = currentBufferViewIndex,
+					ByteLength = normalSize,
+					ByteOffset = currentOffset
 				});
 				currentOffset += normalSize; // 4 bytes per float * 3 floats
 				currentBufferViewIndex++;
+				currentAccessorIndex++;
 				#endregion
 
 				#region Accessor No. 3: UVs
 				GLTFAccessor uvAccessor = new GLTFAccessor {
-					bufferView = currentBufferViewIndex,
+					BufferView = currentBufferViewIndex,
+					ThisIndex = currentAccessorIndex,
 					// byteOffset = currentBufferViewSize,
-					componentType = GLTFComponentType.FLOAT,
-					type = GLTFType.VEC2,
-					count = model.UVs.Count
+					ComponentType = GLTFComponentType.FLOAT,
+					Type = GLTFType.VEC2,
+					Count = meshData.UVs.Count
 				};
-				uvAccessor.min.SetListCap(0f, 2);
-				uvAccessor.max.SetListCap(0f, 2);
-				foreach (Vector2 uv in model.UVs) {
+				uvAccessor.Min.SetListCap(0f, 2);
+				uvAccessor.Max.SetListCap(0f, 2);
+				foreach (Vector2 uv in meshData.UVs) {
 					float x = uv.X;
-					float y = uv.Y;
+					float y = 1 - uv.Y; // Do 1 - y because glTF coordinates have (0,0) in the top left rather than the bottom left.
 					buffer.AddRange(BitConverter.GetBytes(x));
 					buffer.AddRange(BitConverter.GetBytes(y));
 
 					// This garbage is weird. But it's required by standards, so..
-					if (x < uvAccessor.min[0]) uvAccessor.min[0] = x;
-					if (y < uvAccessor.min[1]) uvAccessor.min[1] = y;
+					if (x < uvAccessor.Min[0]) uvAccessor.Min[0] = x;
+					if (y < uvAccessor.Min[1]) uvAccessor.Min[1] = y;
 
-					if (x > uvAccessor.max[0]) uvAccessor.max[0] = x;
-					if (y > uvAccessor.max[1]) uvAccessor.max[1] = y;
+					if (x > uvAccessor.Max[0]) uvAccessor.Max[0] = x;
+					if (y > uvAccessor.Max[1]) uvAccessor.Max[1] = y;
 				}
 				accessors.Add(uvAccessor);
-				int uvSize = uvAccessor.count * 8;
+				int uvSize = uvAccessor.Count * 8;
 				bufferViews.Add(new GLTFBufferView {
-					byteLength = uvSize,
-					byteOffset = currentOffset
+					ThisIndex = currentBufferViewIndex,
+					ByteLength = uvSize,
+					ByteOffset = currentOffset
 				});
 				currentOffset += uvSize; // 4 bytes per float * 2 floats
 				currentBufferViewIndex++;
+				currentAccessorIndex++;
 				#endregion
 
 				#region Accessor No. 4: Indices
 				GLTFAccessor indexAccessor = new GLTFAccessor {
-					bufferView = currentBufferViewIndex,
+					BufferView = currentBufferViewIndex,
+					ThisIndex = currentAccessorIndex,
 					// byteOffset = currentBufferViewSize,
-					componentType = GLTFComponentType.SHORT, // OOO models use shorts for indices.
-					type = GLTFType.SCALAR,
-					count = model.Indices.Count
+					ComponentType = GLTFComponentType.SHORT, // OOO models use shorts for indices.
+					Type = GLTFType.SCALAR,
+					Count = meshData.Indices.Count
 				};
-				indexAccessor.min.SetListCap((short)0, 1);
-				indexAccessor.max.SetListCap((short)0, 1);
-				foreach (short index in model.Indices) {
+				indexAccessor.Min.SetListCap((short)0, 1);
+				indexAccessor.Max.SetListCap((short)0, 1);
+				foreach (short index in meshData.Indices) {
 					buffer.AddRange(BitConverter.GetBytes(index));
-					if (index < indexAccessor.min[0]) indexAccessor.min[0] = index;
-					if (index > indexAccessor.max[0]) indexAccessor.max[0] = index;
+					if (index < indexAccessor.Min[0]) indexAccessor.Min[0] = index;
+					if (index > indexAccessor.Max[0]) indexAccessor.Max[0] = index;
 				}
 				accessors.Add(indexAccessor);
-				int indexSize = indexAccessor.count * 2; // 2 bytes per short.
+				int indexSize = indexAccessor.Count * 2; // 2 bytes per short.
 				bufferViews.Add(new GLTFBufferView {
-					byteLength = indexSize,
-					byteOffset = currentOffset
+					ThisIndex = currentBufferViewIndex,
+					ByteLength = indexSize,
+					ByteOffset = currentOffset
 				});
 				currentOffset += indexSize; // 4 bytes per float * 2 floats
 				currentBufferViewIndex++;
+				currentAccessorIndex++;
 				#endregion
 
-				// Now add this + all of the accessors to json.
-				foreach (GLTFBufferView bufferView in bufferViews) JSONData.bufferViews.Add(bufferView);
-				foreach (GLTFAccessor accessor in accessors) JSONData.accessors.Add(accessor);
+				#endregion
 
-				string targetTex = model.Textures.FirstOrDefault();
-				if (targetTex != null) {
-					int imageIndex = -1;
-					int count = 0;
-					foreach (GLTFImage existingImage in JSONData.images) {
-						if (existingImage.uri == targetTex) {
-							imageIndex = count;
-							break;
-						}
-						count++;
-					}
-
-					int placeIntoIndex = imageIndex;
-					if (imageIndex == -1) {
-						GLTFImage image = new GLTFImage() {
-							uri = targetTex
-						};
-						JSONData.images.Add(image);
-						placeIntoIndex = totalImageCount;
-						totalImageCount++;
-					}
-					JSONData.textures.Add(new GLTFTexture() {
-						sampler = 0,
-						source = placeIntoIndex
-					});
-				}
-
+				#region Create Mesh
 				// Make the mesh representation.
 				GLTFMesh mesh = new GLTFMesh {
 					// Primitives has a length of 1 by default so ima use that to my advantage.
-					primitives = new List<GLTFPrimitive>() {
+					ThisIndex = currentMeshIndex,
+					Name = meshData.Name,
+					Primitives = new List<GLTFPrimitive>() {
 						new GLTFPrimitive {
-							indices = currentAccessorBaseIndex + 3,
-							attributes = new GLTFPrimitiveAttribute {
-								NORMAL = currentAccessorBaseIndex + 1,
-								POSITION = currentAccessorBaseIndex,
-								TEXCOORD_0 = currentAccessorBaseIndex + 2
+							Indices = indexAccessor.ThisIndex,
+							Attributes = new GLTFPrimitiveAttribute {
+								Normal = normalAccessor.ThisIndex,
+								Position = vertexAccessor.ThisIndex,
+								TexCoord0 = uvAccessor.ThisIndex
 							}
 						}
 					}
 				};
-				JSONData.meshes.Add(mesh);
-				JSONData.nodes.Add(new GLTFNode {
-					name = model.Name,
-					mesh = currentModelIndex
-				});
-				if (JSONData.textures.Count > 0) JSONData.samplers.Add(new GLTFSampler());
-				
-				binBuffer.AddRange(buffer);
-				currentAccessorBaseIndex += accessors.Count;
-				currentModelIndex++;
+				currentMeshIndex++;
+				#endregion
 
-				// For debug
-				// if (currentModelIndex >= 100) break;
+				#region Register Data
+				// Register all data to the glTF JSON and Binary data.
+				binBuffer.AddRange(buffer);
+				foreach (GLTFBufferView bufferView in bufferViews) JSONData.BufferViews.Add(bufferView);
+				foreach (GLTFAccessor accessor in accessors) JSONData.Accessors.Add(accessor);
+				JSONData.Meshes.Add(mesh);
+				meshesToAccessors[meshData] = (mesh, vertexAccessor, normalAccessor, uvAccessor, indexAccessor);
+				#endregion
+
+			}
+
+			#region Iterate Textures
+			// Now textures may have multiple users from different models. We need to try to create a conglomerate representation of textures.
+			// This is kind of like MeshData compared to Model3D -- multiple Model3Ds may share MeshData.
+
+			foreach (Model3D model in models) {
+				foreach (string texPath in model.Textures) {
+					FileInfo texFile = new FileInfo(texPath);
+					if (texFile.Exists) {
+						// Sometimes these reference stuff like photoshop files, so check if it actually exists.
+						// TODO: Find out how these map out to actual images.
+						if (!texFileToIndexMap.ContainsKey(texPath)) {
+							// New texture. Append it.
+							texFileToIndexMap[texPath] = totalImageCount;
+
+							if (EmbedTextures || true) {
+								if (!EmbedTextures) XanLogger.WriteLine("Texture embedding was off, but this isn't supported yet. It'll be added really soon, I'm just taking a break lol.");
+
+								XanLogger.WriteLine($"Embedding [{texFile.FullName}].", true);
+
+								#region Assign Core Data
+								(byte[], string) iData = GetImageData(texFile);
+
+								#region Create Buffer View & Write Bytes
+								binBuffer.AddRange(iData.Item1);
+								GLTFBufferView imageView = new GLTFBufferView() {
+									ThisIndex = currentBufferViewIndex,
+									ByteLength = iData.Item1.Length,
+									ByteOffset = currentOffset
+								};
+								currentOffset += iData.Item1.Length;
+								currentBufferViewIndex++;
+								#endregion
+
+								#region Create Image & Texture
+								GLTFImage image = new GLTFImage() {
+									ThisIndex = totalImageCount,
+									BufferView = imageView.ThisIndex,
+									MimeType = iData.Item2
+								};
+								GLTFTexture tex = new GLTFTexture() {
+									Source = image.ThisIndex
+								};
+								#endregion
+
+								#endregion
+
+								#region Create Material
+								GLTFMaterial material = new GLTFMaterial() {
+									Name = texFile.Name.Replace(texFile.Extension, "")
+								};
+								material.PbrMetallicRoughness.BaseColorTexture.Index = image.ThisIndex;
+								material.PbrMetallicRoughness.BaseColorTexture.TexCoord = meshesToAccessors[model.Mesh].Item4.ThisIndex;
+								#endregion
+
+								#region Register Data
+								JSONData.BufferViews.Add(imageView);
+								JSONData.Images.Add(image);
+								JSONData.Textures.Add(tex);
+								
+								JSONData.Materials.Add(material);
+								#endregion
+
+							} else {
+								XanLogger.WriteLine($"Not embedding [{texFile.FullName}].", true);
+							}
+							totalImageCount++;
+						}
+					} else {
+						XanLogger.WriteLine($"Attempt to create image [{texFile.FullName}] failed -- File does not exist.", true);
+					}
+				}
+			}
+
+			if (JSONData.Textures.Count > 0) JSONData.Samplers.Add(new GLTFSampler());
+
+			#endregion
+
+
+			foreach (Model3D model in models) {
+
+				#region Append Rigging (WIP)
+
+				#endregion
+
+				#region Append Animations (WIP)
+
+				#endregion
+
+				#region Create Object
+				if (!meshesToAccessors.ContainsKey(model.Mesh)) throw new InvalidOperationException("A Model3D referenced a mesh that was not in the registry! Model: " + model.Name);
+				var meshAndAccessors = meshesToAccessors[model.Mesh];
+
+				GLTFNode node = new GLTFNode {
+					Name = model.Name,
+					Mesh = meshAndAccessors.Item1.ThisIndex
+				};
+				if (JSONData.Materials.Count > 0) {
+					meshAndAccessors.Item1.Primitives[0].Material = texFileToIndexMap[model.Textures.First()];
+				}
+				model.ApplyScaling();
+				node.SetTransform(model.Transform);
+				JSONData.Nodes.Add(node);
+				#endregion
+
+				currentModelIndex++;
 			}
 
 			GLTFScene mainScene = new GLTFScene {
-				name = "Scene",
-				nodes = new List<int>(currentModelIndex)
+				Name = "Scene",
+				Nodes = new List<int>(currentModelIndex)
 			};
 			for (int idx = 0; idx < currentModelIndex; idx++) {
-				mainScene.nodes.Add(idx);
+				mainScene.Nodes.Add(idx);
 			}
-			JSONData.scenes.Add(mainScene);
+			JSONData.Scenes.Add(mainScene);
 
 			int bytesToAdd = binBuffer.Count % 4;
 			for (int idx = 0; idx < bytesToAdd; idx++) binBuffer.Add(0);
 
 			BitConverter.GetBytes(binBuffer.Count - 8).CopyToList(binBuffer, 0);
-			JSONData.buffers.Add(new GLTFBuffer {
-				byteLength = binBuffer.Count - 8
+			JSONData.Buffers.Add(new GLTFBuffer {
+				ByteLength = binBuffer.Count - 8
 			});
 			return binBuffer.ToArray();
 		}
