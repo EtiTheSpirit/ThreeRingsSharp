@@ -105,9 +105,14 @@ namespace ThreeRingsSharp.XansData {
 		public bool HasAppliedScaleCorrections { get; private set; } = false;
 
 		/// <summary>
-		/// The textures tied to this model.
+		/// The textures tied to this model by full filepath.
 		/// </summary>
 		public readonly List<string> Textures = new List<string>();
+
+		/// <summary>
+		/// The texture that this model uses. This is by filename, not full path.
+		/// </summary>
+		public string ActiveTexture { get; set; } = null;
 
 		/// <summary>
 		/// The attached models on this <see cref="Model3D"/>.

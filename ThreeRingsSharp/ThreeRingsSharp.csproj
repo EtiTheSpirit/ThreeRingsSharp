@@ -177,6 +177,7 @@
     <Compile Include="Utility\Interface\DataTreeObject.cs" />
     <Compile Include="Utility\Interface\SilkImage.cs" />
     <Compile Include="Utility\ResourceDirectoryGrabber.cs" />
+    <Compile Include="Utility\TextureGrabber.cs" />
     <Compile Include="Utility\VersionInfoScraper.cs" />
     <Compile Include="Utility\XanLogger.cs" />
     <Compile Include="XansData\Exceptions\ClydeDataReadException.cs" />

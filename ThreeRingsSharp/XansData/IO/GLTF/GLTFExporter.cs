@@ -333,21 +333,20 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 								};
 								#endregion
 
-								#endregion
-
 								#region Create Material
 								GLTFMaterial material = new GLTFMaterial() {
 									Name = texFile.Name.Replace(texFile.Extension, "")
 								};
 								material.PbrMetallicRoughness.BaseColorTexture.Index = image.ThisIndex;
-								material.PbrMetallicRoughness.BaseColorTexture.TexCoord = meshesToAccessors[model.Mesh].Item4.ThisIndex;
+								material.PbrMetallicRoughness.BaseColorTexture.TexCoord = 0;//meshesToAccessors[model.Mesh].Item4.ThisIndex;
+								#endregion
+
 								#endregion
 
 								#region Register Data
 								JSONData.BufferViews.Add(imageView);
 								JSONData.Images.Add(image);
 								JSONData.Textures.Add(tex);
-								
 								JSONData.Materials.Add(material);
 								#endregion
 
@@ -386,7 +385,8 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					Mesh = meshAndAccessors.Item1.ThisIndex
 				};
 				if (JSONData.Materials.Count > 0) {
-					meshAndAccessors.Item1.Primitives[0].Material = texFileToIndexMap[model.Textures.First()];
+					string fullName = model.Textures.Where(texturePath => new FileInfo(texturePath).Name == model.ActiveTexture).FirstOrDefault();
+					if (fullName != null) meshAndAccessors.Item1.Primitives[0].Material = texFileToIndexMap[fullName];
 				}
 				model.ApplyScaling();
 				node.SetTransform(model.Transform);

@@ -83,6 +83,8 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						meshToModel.Name = depth1Name + meshTitle;
 						if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
 						meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
+						meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, staticSet));
+						meshToModel.ActiveTexture = mesh.texture;
 
 						modelCollection.Add(meshToModel);
 						idx++;
@@ -102,6 +104,8 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 							meshToModel.Name = depth1Name + meshTitle;
 							if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
 							meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
+							meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, staticSet));
+							meshToModel.ActiveTexture = mesh.texture;
 
 							modelCollection.Add(meshToModel);
 							idx++;

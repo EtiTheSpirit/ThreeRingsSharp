@@ -14,6 +14,7 @@ using ThreeRingsSharp.XansData;
 using System.IO;
 using com.threerings.math;
 using ThreeRingsSharp.XansData.Exceptions;
+using System.Diagnostics;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
 	public class ModelConfigHandler {
@@ -53,6 +54,27 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				}
 				dataTreeParent.AddSimpleProperty("Textures", materials, SilkImage.Value, SilkImage.Texture, false);
 			}
+		}
+
+		/// <summary>
+		/// Given an <see cref="Implementation"/>, this will extract all textures referenced by it. This will return <see langword="null"/> if the <see cref="Implementation"/> is not <see cref="Imported"/>.
+		/// </summary>
+		/// <param name="sourceFile">The file containing the <see cref="ModelConfig"/> that has defined <paramref name="implementation"/>.</param>
+		/// <param name="implementation">The specific type of model that this is.</param>
+		/// <returns></returns>
+		public static List<string> GetTexturesFromModel(FileInfo sourceFile, Implementation implementation) {
+			if (implementation is Imported imported) {
+				List<string> textures = new List<string>();
+				MaterialMapping[] matMaps = imported.materialMappings;
+				for (int idx = 0; idx < matMaps.Length; idx++) {
+					MaterialMapping mat = matMaps[idx];
+					//string tex = sourceFile.Directory.FullName.Replace("\\", "/") + "/" + matMaps[idx].texture;
+					string tex = TextureGrabber.GetFullTexturePath(sourceFile, mat.texture);
+					if (tex != null) textures.Add(tex);
+				}
+				return textures;
+			}
+			return null;
 		}
 
 		/// <summary>

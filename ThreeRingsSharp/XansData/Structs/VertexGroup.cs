@@ -12,7 +12,7 @@ namespace ThreeRingsSharp.XansData.Structs {
 	public class VertexGroup : ICloneable<VertexGroup> {
 
 		/// <summary>
-		/// All of the vertices stored in this VertexGroup. These ARE unique objects (not unique positions in space) since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="Model3D.Vertices"/>, since these vertices are not affected by transforms which may drastically malform the output.
+		/// All of the vertices stored in this VertexGroup. These ARE unique objects (not unique positions in space) since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="MeshData.Vertices"/>, since these vertices are not affected by transforms which may drastically malform the output.
 		/// </summary>
 		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
 

@@ -67,10 +67,11 @@
             <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="T:com.threerings.math.Transform3D"/>.</param>
             <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodes(System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,System.String)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodes(com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,System.String)">
             <summary>
             A utility function that iterates through all of the nodes recursively, as some may store mesh data.
             </summary>
+            <param name="model">A reference to the <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/> that contains these nodes.</param>
             <param name="sourceFile">The file where the <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/> is stored.</param>
             <param name="parent">The parent node to iterate through.</param>
             <param name="models">The <see cref="T:System.Collections.Generic.List`1"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
@@ -164,6 +165,14 @@
             <param name="model">The model containing other data, such as the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/>.</param>
             <param name="dataTreeParent">This is the instance in the data tree that represents this object in the hierarchy. If null, this method call is skipped.</param>
             <param name="dataTreeNameIsImplementation">If <see langword="true"/>, the name of <paramref name="dataTreeParent"/> is the implementation of the model, so the implementation property will not be added.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.GetTexturesFromModel(System.IO.FileInfo,com.threerings.opengl.model.config.ModelConfig.Implementation)">
+            <summary>
+            Given an <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/>, this will extract all textures referenced by it. This will return <see langword="null"/> if the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/> is not <see cref="T:com.threerings.opengl.model.config.ModelConfig.Imported"/>.
+            </summary>
+            <param name="sourceFile">The file containing the <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> that has defined <paramref name="implementation"/>.</param>
+            <param name="implementation">The specific type of model that this is.</param>
+            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.DerivedHandler">
             <summary>
@@ -883,6 +892,14 @@
             <param name="separator">The character used to separate directories.</param>
             <returns></returns>
             <exception cref="T:System.ArgumentOutOfRangeException">Thrown if depth is 0.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.TextureGrabber.GetFullTexturePath(System.IO.FileInfo,System.String)">
+            <summary>
+            A utility method that, when given the directory of a model file and a texture name, will attempt to locate a given texture.
+            </summary>
+            <param name="sourceFile"></param>
+            <param name="textureName"></param>
+            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.Utility.VersionInfoScraper">
             <summary>
@@ -2103,7 +2120,7 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Vertices">
             <summary>
-            All of the vertices stored in this VertexGroup. These ARE unique objects (not unique positions in space) since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="!:Model3D.Vertices"/>, since these vertices are not affected by transforms which may drastically malform the output.
+            All of the vertices stored in this VertexGroup. These ARE unique objects (not unique positions in space) since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="P:ThreeRingsSharp.XansData.MeshData.Vertices"/>, since these vertices are not affected by transforms which may drastically malform the output.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Indices">
@@ -2201,7 +2218,12 @@
         </member>
         <member name="F:ThreeRingsSharp.XansData.Model3D.Textures">
             <summary>
-            The textures tied to this model.
+            The textures tied to this model by full filepath.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.ActiveTexture">
+            <summary>
+            The texture that this model uses. This is by filename, not full path.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.Attachments">
