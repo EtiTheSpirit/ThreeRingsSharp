@@ -9,7 +9,7 @@ namespace ThreeRingsSharp.XansData.Structs {
 	/// Stores three <see langword="float"/> values that represent a coordinate in 3D space.<para/>
 	/// Unlike <see cref="System.Numerics.Vector2"/>, this does not contain any vector math methods. This is strictly for data storage.
 	/// </summary>
-	public struct Vector2 {
+	public struct Vector2 : IEquatable<Vector2>, ICloneable<Vector2> {
 
 		/// <summary>
 		/// The X component of this <see cref="Vector2"/> which generally represents left or right positions relative to the world.
@@ -45,6 +45,23 @@ namespace ThreeRingsSharp.XansData.Structs {
 				vecs[idx / 2] = new Vector2(values[idx], values[idx + 1]);
 			}
 			return vecs;
+		}
+
+		public Vector2 Clone() {
+			return new Vector2(X, Y);
+		}
+
+		public bool Equals(Vector2 other) {
+			return X == other.X && Y == other.Y;
+		}
+
+		public override bool Equals(object obj) => obj is Vector2 other ? Equals(other) : ReferenceEquals(this, obj);
+
+		public static bool operator ==(Vector2 left, Vector2 right) => left.Equals(right);
+		public static bool operator !=(Vector2 left, Vector2 right) => !left.Equals(right);
+
+		public override int GetHashCode() {
+			return HashCode.Combine(X, Y);
 		}
 
 		/// <summary>

@@ -13,7 +13,7 @@ namespace ThreeRingsSharp.XansData.Structs {
 	/// Stores three <see langword="float"/> values that represent a coordinate in 3D space.<para/>
 	/// Unlike <see cref="System.Numerics.Vector3"/>, this does not contain any vector math methods. This is strictly for data storage.
 	/// </summary>
-	public struct Vector3 : IEquatable<Vector3> {
+	public struct Vector3 : IEquatable<Vector3>, ICloneable<Vector3> {
 
 		/// <summary>
 		/// The X component of this <see cref="Vector3"/> which generally represents left or right positions relative to the world.
@@ -56,6 +56,62 @@ namespace ThreeRingsSharp.XansData.Structs {
 				vecs[idx / 3] = new Vector3(values[idx], values[idx + 1], values[idx + 2]);
 			}
 			return vecs;
+		}
+
+		/// <summary>
+		/// Returns a unit vector in the direction of the given <see cref="Axis"/>.
+		/// </summary>
+		/// <param name="axis">The axis to construct a unit vector from.</param>
+		/// <returns></returns>
+		public static Vector3 FromAxis(Axis axis) {
+			switch (axis) {
+				case Axis.PositiveX:
+					return new Vector3(1, 0, 0);
+				case Axis.PositiveY:
+					return new Vector3(0, 1, 0);
+				case Axis.PositiveZ:
+					return new Vector3(0, 0, 1);
+				case Axis.NegativeX:
+					return new Vector3(-1, 0, 0);
+				case Axis.NegativeY:
+					return new Vector3(0, -1, 0);
+				case Axis.NegativeZ:
+					return new Vector3(0, 0, -1);
+				default:
+					return new Vector3();
+			}
+		}
+
+		/// <summary>
+		/// Returns a copy of this <see cref="Vector3"/> rotated so that, assuming its current state is Y=Up, its up axis is changed to the given <paramref name="newAxis"/>.
+		/// </summary>
+		/// <param name="newAxis"></param>
+		/// <returns></returns>
+		public Vector3 RotateToAxis(Axis newAxis) {
+			Vector3 newVec = Clone();
+			float x = newVec.X;
+			float y = newVec.Y;
+			float z = newVec.Z;
+			if (newAxis == Axis.PositiveY) return newVec;
+
+			if (newAxis == Axis.NegativeY) {
+				newVec.X = -x; // This way it's a rotation rather than an inversion.
+				newVec.Y = -y;
+			} else if (newAxis == Axis.PositiveX) {
+				newVec.X = y;
+				newVec.Y = -x;
+			} else if (newAxis == Axis.NegativeX) {
+				newVec.X = -y;
+				newVec.Y = x;
+			} else if (newAxis == Axis.PositiveZ) {
+				newVec.Y = z;
+				newVec.Z = -y;
+			} else if (newAxis == Axis.NegativeZ) {
+				newVec.Y = -z;
+				newVec.Z = y;
+			}
+
+			return newVec;
 		}
 
 		#region Casts to and from OOO Vector3f to this Vector3
@@ -101,5 +157,9 @@ namespace ThreeRingsSharp.XansData.Structs {
 			return $"{X} {Y} {Z}";
 		}
 		#endregion
+
+		public Vector3 Clone() {
+			return new Vector3(X, Y, Z);
+		}
 	}
 }

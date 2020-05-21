@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.XansData.Structs {
 	/// <summary>
 	/// Represents a vertex, which is effectively identical to a <see cref="Vector3"/> with a Weight value.
 	/// </summary>
-	public struct Vertex : IEquatable<Vertex> {
+	public struct Vertex : IEquatable<Vertex>, ICloneable<Vertex> {
 
 		/// <summary>
 		/// The location of this <see cref="Vertex"/> in 3D space.
@@ -108,5 +108,12 @@ namespace ThreeRingsSharp.XansData.Structs {
 			return $"[Point={Point}, Weight={Weight}f]";
 		}
 		#endregion
+
+		public Vertex Clone() {
+			return new Vertex() {
+				Point = Point.Clone(),
+				Weight = Weight
+			};
+		}
 	}
 }
