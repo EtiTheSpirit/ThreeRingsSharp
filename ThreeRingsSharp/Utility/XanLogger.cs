@@ -22,6 +22,24 @@ namespace ThreeRingsSharp.Utility {
 		private static StringBuilder LogWhileNotUpdating { get; } = new StringBuilder();
 
 		/// <summary>
+		/// If <see langword="true"/>, verbose log entries will be posted in the log. Its default value is equal to <see cref="IsDebugMode"/>, but can be set at any time.
+		/// </summary>
+		public static bool VerboseLogging { get; set; } = IsDebugMode;
+
+#if DEBUG
+		/// <summary>
+		/// Represents whether or not the program is running in Debug mode.<para/>
+		/// Current State: <see langword="true"/>
+		/// </summary>
+		public static readonly bool IsDebugMode = true;
+#else
+		/// <summary>
+		/// Represents whether or not the program is running in Debug mode.<para/>
+		/// Current State: <see langword="false"/>
+		/// </summary>
+		public static readonly bool IsDebugMode = false;
+#endif
+		/// <summary>
 		/// If <see langword="true"/>, the textbox will be updated to display new text the moment it is written. If <see langword="false"/>, <see cref="UpdateLog"/> can be called, which will copy the contents of <see cref="Log"/> and append it to the textbox.<para/>
 		/// Setting this to true will cause <see cref="UpdateLog"/> to run.
 		/// </summary>
@@ -36,9 +54,9 @@ namespace ThreeRingsSharp.Utility {
 
 		/// <summary>
 		/// A reference to a textbox that should store the contents of the log in a GUI application.<para/>
-		/// This should be an instance of <see cref="RTFScrolledBottom"/> for proper function. It can be <see langword="null"/> if there is no GUI.
+		/// This should be an instance of <see cref="RichTextBox"/> for proper function. It can be <see langword="null"/> if there is no GUI.
 		/// </summary>
-		public static RTFScrolledBottom BoxReference { get; set; }
+		public static RichTextBox BoxReference { get; set; }
 
 		/// <summary>
 		/// If true, the box *was* at the bottom before text was appended to it (meaning it should autoscroll)
@@ -51,10 +69,10 @@ namespace ThreeRingsSharp.Utility {
 		public static void UpdateLog() {
 			if (BoxReference == null) return;
 			if (!UpdateAutomatically) {
-				WasAtBottom = BoxReference.IsScrolledToBottom;
+				WasAtBottom = BoxReference.IsScrolledToBottom();
 				BoxReference.AppendText(LogWhileNotUpdating.ToString());
 
-				if (WasAtBottom && !BoxReference.IsScrolledToBottom) {
+				if (WasAtBottom && !BoxReference.IsScrolledToBottom()) {
 					BoxReference.SelectionStart = BoxReference.TextLength;
 					BoxReference.ScrollToCaret();
 				}
@@ -66,33 +84,38 @@ namespace ThreeRingsSharp.Utility {
 		/// <summary>
 		/// Append a new line to the log.
 		/// </summary>
-		public static void WriteLine() => Write("\n");
+		/// <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="VerboseLogging"/> is false.</param>
+		public static void WriteLine(bool isVerbose = false) => Write("\n", isVerbose);
 
 		/// <summary>
 		/// Append the given text to the log and advance by one line.
 		/// </summary>
-		/// <param name="text"></param>
-		/// <exception cref="ArgumentNullException">Thrown if <paramref name="text"/> is <see langword="null"/>.</exception>
-		public static void WriteLine(string text) {
-			if (text == null) text = "null";
-			Write(text + "\n");
+		/// <param name="obj"></param>
+		/// <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="VerboseLogging"/> is false.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
+		public static void WriteLine(object obj, bool isVerbose = false) {
+			Write((obj?.ToString() ?? "null") + "\n", isVerbose);
 		}
 
 		/// <summary>
 		/// Append the given text to the log.
 		/// </summary>
-		/// <param name="text">The text to write to the log.</param>
-		/// <exception cref="ArgumentNullException">Thrown if <paramref name="text"/> is <see langword="null"/>.</exception>
-		public static void Write(string text) {
-			if (text == null) throw new ArgumentNullException("text");
+		/// <param name="obj">The text to write to the log.</param>
+		/// <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="VerboseLogging"/> is false.</param>
+		/// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
+		public static void Write(object obj, bool isVerbose = false) {
+			if (obj == null) throw new ArgumentNullException("obj");
+			if (!VerboseLogging && isVerbose) return;
+
+			string text = obj?.ToString() ?? "null";
 			Log.Append(text);
 			if (BoxReference == null) return;
 
 			if (UpdateAutomatically) {
-				WasAtBottom = BoxReference.IsScrolledToBottom;
+				WasAtBottom = BoxReference.IsScrolledToBottom();
 				BoxReference.AppendText(text);
 
-				if (WasAtBottom && !BoxReference.IsScrolledToBottom) {
+				if (WasAtBottom && !BoxReference.IsScrolledToBottom()) {
 					BoxReference.SelectionStart = BoxReference.TextLength;
 					BoxReference.ScrollToCaret();
 				}
@@ -110,11 +133,7 @@ namespace ThreeRingsSharp.Utility {
 		}
 	}
 
-
-	/// <summary>
-	/// A variant of <see cref="RichTextBox"/> that provides a means of testing if it is scrolled to the bottom.
-	/// </summary>
-	public class RTFScrolledBottom : RichTextBox {
+	public static class RTBScrollUtil {
 		//private const int WM_VSCROLL = 0x115;
 		//private const int WM_MOUSEWHEEL = 0x20A;
 		private const int WM_USER = 0x400;
@@ -129,16 +148,16 @@ namespace ThreeRingsSharp.Utility {
 		private static extern IntPtr SendMessage(IntPtr hWnd, Int32 wMsg, Int32 wParam, ref Point lParam);
 
 		/// <summary>
-		/// True if the component is scrolled as far down as possible.
+		/// Returns <see langword="true"/> if this <see cref="RichTextBox"/> is scrolled to the bottom, and <see langword="false"/> if it is not.
 		/// </summary>
-		public bool IsScrolledToBottom => IsAtMaxScroll();
-
-		private bool IsAtMaxScroll() {
-			GetScrollRange(this.Handle, SB_VERT, out int _, out int maxScroll);
+		/// <param name="box"></param>
+		/// <returns></returns>
+		public static bool IsScrolledToBottom(this RichTextBox box) {
+			GetScrollRange(box.Handle, SB_VERT, out int _, out int maxScroll);
 			Point rtfPoint = Point.Empty;
-			SendMessage(this.Handle, EM_GETSCROLLPOS, 0, ref rtfPoint);
+			SendMessage(box.Handle, EM_GETSCROLLPOS, 0, ref rtfPoint);
 
-			return rtfPoint.Y + this.ClientSize.Height >= maxScroll;
+			return rtfPoint.Y + box.ClientSize.Height >= maxScroll;
 		}
 	}
 }

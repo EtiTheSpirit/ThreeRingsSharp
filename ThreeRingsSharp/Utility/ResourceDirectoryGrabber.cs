@@ -66,17 +66,18 @@ namespace ThreeRingsSharp.Utility {
 		}
 
 		/// <summary>
-		/// Returns a path that uses forward slashes, going <paramref name="depth"/> folders up. A depth of 1 will return the parent directory, a depth of 2 will return the parent of the parent directory, and so on.
+		/// Returns a path that uses forward slashes, going <paramref name="depth"/> folders up. A depth of 1 will return the parent directory, a depth of 2 will return the parent of the parent directory, and so on. A depth of -1 will go all the way to rsrc.
 		/// </summary>
-		/// <param name="fileIn"></param>
-		/// <param name="depth"></param>
+		/// <param name="fileIn">The file that is presumably a descendant of the rsrc directory.</param>
+		/// <param name="depth">How many parent folders to go up.</param>
+		/// <param name="removeExtension">If <see langword="true"/>, the extension to the file given will be removed from the returned string.</param>
+		/// <param name="separator">The character used to separate directories.</param>
 		/// <returns></returns>
-		/// <exception cref="ArgumentOutOfRangeException">Thrown if depth is less than 1.</exception>
-		public static string GetDirectoryDepth(FileInfo fileIn, int depth = 1) {
-			if (depth < 1) throw new ArgumentOutOfRangeException("depth");
-
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if depth is 0.</exception>
+		public static string GetDirectoryDepth(FileInfo fileIn, int depth = 1, bool removeExtension = true, char separator = '.') {
+			if (depth == -1) return GetFormattedPathFromRsrc(fileIn, true, removeExtension, separator);
+			if (depth == 0) throw new ArgumentOutOfRangeException("depth");
 			List<string> parents = new List<string>();
-
 			DirectoryInfo parentDir = fileIn.Directory;
 			for (int i = 0; i < depth; i++) {
 				string dirName = parentDir.Name;
@@ -88,10 +89,13 @@ namespace ThreeRingsSharp.Utility {
 			parents.Reverse();
 			string retn = "";
 			foreach (string str in parents) {
-				retn += str + ".";
+				retn += str + separator;
 			}
-			retn += fileIn.Name.Replace(fileIn.Extension, "");
+			string name = fileIn.Name;
+			if (removeExtension) name = name.Replace(fileIn.Extension, "");
+			retn += name;
 			return retn;
+			
 		}
 
 	}
