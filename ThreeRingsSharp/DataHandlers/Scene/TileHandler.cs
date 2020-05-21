@@ -50,12 +50,21 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 
 			SetupCosmeticInformation(tile, dataTreeParent);
 			try {
+				// Consider tileCfg to be a shitty walmart brand representation of TileConfig.Original and TileConfig.Derived at the same time.
 				ShallowTileConfig tileCfg = ConfigReferenceBootstrapper.References["tile"][tile.tile.getName()];
-				Coord location = tile.getLocation();
-				Transform3D trs = new Transform3D(new Vector3f(location.x, tile.elevation, location.y), new Quaternion().fromAngleAxis((float)(tile.rotation * Math.PI / 2), Vector3f.UNIT_Y), 1f);
-				
 
-				ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, tileCfg.ModelPath, modelCollection, dataTreeParent, globalTransform.compose(trs), extraData: new Dictionary<string, dynamic> { ["TargetModel"] = tileCfg.TargetModel });
+				// Hacky trick: The tile wants a ConfigReference (or a reference to the original object) to get its transform.
+				// Issue is, it only does this so that the original object can proxy to TudeySceneMetrics.
+				// We can cut out this step by directly going there.
+				// The only unfortunate part is that the original object contains info like the tile's width or height.
+				// We have to acquire this from the bootstrapper since that original object can't actually exist
+				// due to Clyde shitting itself when it tries to read the config data from SK (forcing me to bake it into premade XML)
+				// Oh yeah. Kudos to the guy who made DatDec. That shit saved this entire part of the program. +rep.
+				Coord location = tile.getLocation();
+				Transform3D transform = new Transform3D();
+				TudeySceneMetrics.getTileTransform(tileCfg.Width, tileCfg.Height, location.x, location.y, tile.elevation, tile.rotation, transform);
+
+				ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, tileCfg.ModelPath, modelCollection, dataTreeParent, globalTransform.compose(transform), extraData: new Dictionary<string, dynamic> { ["TargetModel"] = tileCfg.TargetModel });
 			} catch (KeyNotFoundException) {
 				XanLogger.WriteLine($"Unable to find data for tile [{tile.tile.getName()}]!");
 			}

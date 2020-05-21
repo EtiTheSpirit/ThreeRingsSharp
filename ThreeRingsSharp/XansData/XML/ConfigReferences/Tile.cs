@@ -32,6 +32,9 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 					bool isDerived = clsName.Length == 2 && clsName[1] == "Derived";
 					string setModelTarget = null;
 
+					XElement widthElement = implNode.Element("width");
+					XElement heightElement = implNode.Element("height");
+
 					if (isDerived) {
 						if (implNode.Element("tile") != null && implNode.Element("tile").Element("name") != null) {
 							refOrMdl = implNode.Element("tile").Element("name").Value;

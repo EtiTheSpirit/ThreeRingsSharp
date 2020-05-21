@@ -35,6 +35,18 @@ namespace ThreeRingsSharp.DataHandlers.Scene.Data {
 		public string TargetModel { get; }
 
 		/// <summary>
+		/// The width of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.
+		/// </summary>
+		public int Width => Derived ? Reference.Width : _Width;
+		private int _Width;
+
+		/// <summary>
+		/// The height of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.
+		/// </summary>
+		public int Height => Derived ? Reference.Height : _Height;
+		private int _Height;
+
+		/// <summary>
 		/// If <see cref="Derived"/> is <see langword="true"/>, this is the <see cref="ShallowTileConfig"/> that this points to to get its model reference.<para/>
 		/// If <see cref="Derived"/> is <see langword="false"/>, this is <see langword="null"/>.<para/>
 		/// Note: It is safe to reference <see cref="ModelPath"/> even if this exists, as it will chain down on its own (so if there's a chain of Derived implementations, it will go down all of them for you). You should reference <see cref="ModelPath"/> if that's the data you want.
@@ -67,7 +79,9 @@ namespace ThreeRingsSharp.DataHandlers.Scene.Data {
 		/// <param name="modelOrPointedName">The path to the model this <see cref="ShallowTileConfig"/> references, or if <paramref name="isDerived"/> is true, the name of the <see cref="ShallowTileConfig"/> that this points to.</param>
 		/// <param name="modelReferenceForSets">If the reference is a <see cref="StaticSetConfig"/>, this dictates the target default model.</param>
 		/// <param name="isDerived">If true, this is a derived <see cref="ShallowTileConfig"/> and points to another instance.</param>
-		private ShallowTileConfig(string name, string modelOrPointedName, string modelReferenceForSets, bool isDerived) {
+		/// <param name="width">The width of this tile, or null if it is not defined.</param>
+		/// <param name="height">The height of this tile, or null if it is not defined.</param>
+		private ShallowTileConfig(string name, string modelOrPointedName, string modelReferenceForSets, bool isDerived, int? width, int? height) {
 			Name = name;
 			TargetModel = modelReferenceForSets;
 			if (isDerived) {
@@ -77,6 +91,8 @@ namespace ThreeRingsSharp.DataHandlers.Scene.Data {
 				_ReferenceName = null;
 				_ModelPath = modelOrPointedName;
 			}
+			_Width = width.GetValueOrDefault(1);
+			_Height = height.GetValueOrDefault(1);
 		}
 
 		/// <summary>
@@ -86,8 +102,10 @@ namespace ThreeRingsSharp.DataHandlers.Scene.Data {
 		/// <param name="modelOrPointedName">The path to the model this <see cref="ShallowTileConfig"/> references, or if <paramref name="isDerived"/> is true, the name of the <see cref="ShallowTileConfig"/> that this points to.</param>
 		/// <param name="modelReferenceForSets">If the reference is a <see cref="StaticSetConfig"/>, this dictates the target default model.</param>
 		/// <param name="isDerived">If true, this is a derived <see cref="ShallowTileConfig"/> and points to another instance.</param>
-		public static ShallowTileConfig FromData(string name, string modelOrPointedName, string modelReferenceForSets = null, bool isDerived = false) {
-			ShallowTileConfig instance = new ShallowTileConfig(name, modelOrPointedName, modelReferenceForSets, isDerived);
+		/// <param name="width">The width of this tile, or null if it is not defined.</param>
+		/// <param name="height">The height of this tile, or null if it is not defined.</param>
+		public static ShallowTileConfig FromData(string name, string modelOrPointedName, string modelReferenceForSets = null, bool isDerived = false, int? width = null, int? height = null) {
+			ShallowTileConfig instance = new ShallowTileConfig(name, modelOrPointedName, modelReferenceForSets, isDerived, width, height);
 			_TileLookup[name] = instance;
 			return instance;
 		}

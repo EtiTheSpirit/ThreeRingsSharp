@@ -249,6 +249,16 @@
             If the reference points to a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, then this dictates which model from the set is being used.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.Width">
+            <summary>
+            The width of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.Height">
+            <summary>
+            The height of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.Reference">
             <summary>
             If <see cref="P:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.Derived"/> is <see langword="true"/>, this is the <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> that this points to to get its model reference.<para/>
@@ -267,7 +277,7 @@
             If <see langword="true"/>, this was declared via a Derived type, and <see cref="P:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.Reference"/> is populated.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.#ctor(System.String,System.String,System.String,System.Boolean)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.#ctor(System.String,System.String,System.String,System.Boolean,System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             Construct a new <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/>.
             </summary>
@@ -275,8 +285,10 @@
             <param name="modelOrPointedName">The path to the model this <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> references, or if <paramref name="isDerived"/> is true, the name of the <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> that this points to.</param>
             <param name="modelReferenceForSets">If the reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, this dictates the target default model.</param>
             <param name="isDerived">If true, this is a derived <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> and points to another instance.</param>
+            <param name="width">The width of this tile, or null if it is not defined.</param>
+            <param name="height">The height of this tile, or null if it is not defined.</param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.FromData(System.String,System.String,System.String,System.Boolean)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.FromData(System.String,System.String,System.String,System.Boolean,System.Nullable{System.Int32},System.Nullable{System.Int32})">
             <summary>
             Construct a new <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> and register it in <see cref="P:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.TileLookup"/>.
             </summary>
@@ -284,6 +296,8 @@
             <param name="modelOrPointedName">The path to the model this <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> references, or if <paramref name="isDerived"/> is true, the name of the <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> that this points to.</param>
             <param name="modelReferenceForSets">If the reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, this dictates the target default model.</param>
             <param name="isDerived">If true, this is a derived <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> and points to another instance.</param>
+            <param name="width">The width of this tile, or null if it is not defined.</param>
+            <param name="height">The height of this tile, or null if it is not defined.</param>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Scene.IEntryHandler.HandleEntry(System.IO.FileInfo,com.threerings.tudey.data.TudeySceneModel.Entry,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D)">
             <summary>
