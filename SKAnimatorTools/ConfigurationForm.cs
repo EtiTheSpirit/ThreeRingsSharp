@@ -9,9 +9,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ThreeRingsSharp.XansData;
+using ThreeRingsSharp.XansData.Structs;
 
 namespace SKAnimatorTools {
 	public partial class ConfigurationForm : Form {
+
+
+		/// <summary>
+		/// A map from <see cref="int"/> to <see cref="Axis"/> values based on their index in the dropdown menu.
+		/// </summary>
+		public static IReadOnlyDictionary<int, Axis> AxisIntMap = new Dictionary<int, Axis>() {
+			[0] = Axis.PositiveX,
+			[1] = Axis.PositiveY,
+			[2] = Axis.PositiveZ,
+			[3] = Axis.NegativeX,
+			[4] = Axis.NegativeY,
+			[5] = Axis.NegativeZ
+		};
 
 		/// <summary>
 		/// True if the values in the UI are all okay and it's safe to save the configuration values.
@@ -38,13 +53,16 @@ namespace SKAnimatorTools {
 			IsOK = true;
 		}
 
-		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale) {
+		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int upAxisIndex, bool embedTextures, bool verboseLogging) {
 			TextBox_DefaultLoadLoc.Text = defaultLoad;
 			TextBox_DefaultSaveLoc.Text = defaultSave;
 			TextBox_RsrcDirectory.Text = defaultRsrc;
 			CheckBox_RememberLastLoad.Checked = rememberLoad;
 			CheckBox_MultiplyScaleByHundred.Checked = scale100;
 			CheckBox_ProtectAgainstZeroScale.Checked = protectZeroScale;
+			Option_UpAxis.SelectedIndex = upAxisIndex;
+			CheckBox_EmbedTextures.Checked = embedTextures;
+			CheckBox_VerboseLogging.Checked = verboseLogging;
 			VerifyAllPathIntegrity();
 		}
 
@@ -59,6 +77,9 @@ namespace SKAnimatorTools {
 			ConfigurationInterface.SetConfigurationValue("RsrcDirectory", TextBox_RsrcDirectory.Text);
 			ConfigurationInterface.SetConfigurationValue("ScaleBy100", CheckBox_MultiplyScaleByHundred.Checked);
 			ConfigurationInterface.SetConfigurationValue("ProtectAgainstZeroScale", CheckBox_ProtectAgainstZeroScale.Checked);
+			ConfigurationInterface.SetConfigurationValue("UpAxisIndex", Option_UpAxis.SelectedIndex);
+			ConfigurationInterface.SetConfigurationValue("EmbedTextures", CheckBox_EmbedTextures.Checked);
+			ConfigurationInterface.SetConfigurationValue("VerboseLogging", CheckBox_VerboseLogging.Checked);
 			ConfigurationInterface.SetConfigurationValue("IsFirstTimeOpening", false);
 			Close();
 		}
@@ -108,6 +129,10 @@ namespace SKAnimatorTools {
 				return true;
 			} catch { }
 			return false;
+		}
+
+		private void NewUpAxisSelected(object sender, EventArgs e) {
+			Model3D.TargetUpAxis = AxisIntMap[Option_UpAxis.SelectedIndex];
 		}
 	}
 }

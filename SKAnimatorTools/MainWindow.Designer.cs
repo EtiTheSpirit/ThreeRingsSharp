@@ -46,7 +46,7 @@
 			this.BtnSaveModel = new System.Windows.Forms.Button();
 			this.BtnOpenModel = new System.Windows.Forms.Button();
 			this.GroupBoxProgramInfo = new System.Windows.Forms.GroupBox();
-			this.ProgramLog = new ThreeRingsSharp.Utility.RTFScrolledBottom();
+			this.ProgramLog = new System.Windows.Forms.RichTextBox();
 			this.BtnConfig = new System.Windows.Forms.Button();
 			this.GroupBoxModelInfo.SuspendLayout();
 			this.GroupBoxProperties.SuspendLayout();
@@ -314,14 +314,14 @@
 			// ProgramLog
 			// 
 			this.ProgramLog.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProgramLog.HideSelection = false;
 			this.ProgramLog.Location = new System.Drawing.Point(3, 16);
 			this.ProgramLog.Name = "ProgramLog";
 			this.ProgramLog.ReadOnly = true;
 			this.ProgramLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-			this.ProgramLog.ShortcutsEnabled = false;
 			this.ProgramLog.Size = new System.Drawing.Size(339, 497);
 			this.ProgramLog.TabIndex = 0;
-			this.ProgramLog.Text = "";
+			this.ProgramLog.Text = "Welcome to ThreeRingsSharp!\n";
 			// 
 			// BtnConfig
 			// 
@@ -384,9 +384,10 @@
 		private System.Windows.Forms.ImageList SilkImages;
 		private System.Windows.Forms.GroupBox GroupBoxProperties;
 		private System.Windows.Forms.TreeView SelectedObjectProperties;
+		//private ThreeRingsSharp.Utility.RTFScrolledBottom ProgramLog;
 		//private System.Windows.Forms.RichTextBox ProgramLog;
-		private ThreeRingsSharp.Utility.RTFScrolledBottom ProgramLog;
 		private System.Windows.Forms.Button BtnConfig;
+		private System.Windows.Forms.RichTextBox ProgramLog;
 	}
 }
 

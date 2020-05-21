@@ -21,6 +21,8 @@ using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
 using SKAnimatorTools.Configuration;
 using ThreeRingsSharp.XansData.Exceptions;
+using com.sun.tools.@internal.ws.processor.model;
+using ThreeRingsSharp.XansData.IO.GLTF;
 
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {
@@ -44,6 +46,9 @@ namespace SKAnimatorTools {
 			bool restoreDirectoryWhenLoading = ConfigurationInterface.GetConfigurationValue("RememberDirectoryAfterOpen", false, true);
 			Model3D.MultiplyScaleByHundred = ConfigurationInterface.GetConfigurationValue("ScaleBy100", true, true);
 			Model3D.ProtectAgainstZeroScale = ConfigurationInterface.GetConfigurationValue("ProtectAgainstZeroScale", true, true);
+			Model3D.TargetUpAxis = ConfigurationForm.AxisIntMap[(int)ConfigurationInterface.GetConfigurationValue("UpAxisIndex", 1, true)];
+			GLTFExporter.EmbedTextures = ConfigurationInterface.GetConfigurationValue("EmbedTextures", false, true);
+			XanLogger.VerboseLogging = ConfigurationInterface.GetConfigurationValue("VerboseLogging", false, true);
 			if (Directory.Exists(loadDir)) {
 				OpenModel.InitialDirectory = loadDir;
 			}
@@ -72,12 +77,21 @@ namespace SKAnimatorTools {
 		private void OnConfigChanged(string configKey, dynamic oldValue, dynamic newValue) {
 			if (configKey == "RememberDirectoryAfterOpen") {
 				OpenModel.RestoreDirectory = newValue;
+				if (newValue == false) {
+					OpenModel.InitialDirectory = ConfigurationInterface.GetConfigurationValue("DefaultLoadDirectory", @"C:\", true);
+				} else {
+					OpenModel.InitialDirectory = string.Empty;
+				}
 			} else if (configKey == "RsrcDirectory") {
 				if (Directory.Exists(newValue)) {
 					ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(newValue);
 				}
 			} else if (configKey == "ScaleBy100") {
 				Model3D.MultiplyScaleByHundred = newValue;
+			} else if (configKey == "VerboseLogging") {
+				XanLogger.VerboseLogging = newValue;
+			} else if (configKey == "EmbedTextures") {
+				GLTFExporter.EmbedTextures = newValue;
 			}
 		}
 
@@ -90,7 +104,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// All models from the latest opened .DAT file.
 		/// </summary>
-		private static List<Model3D> AllModels;
+		private static List<Model3D> AllModels { get; set; }
 
 		private void OpenClicked(object sender, EventArgs e) {
 			DialogResult result = OpenModel.ShowDialog();
@@ -134,6 +148,19 @@ namespace SKAnimatorTools {
 				//BtnSaveModel.Enabled = CurrentBrancher.OK;
 				BtnSaveModel.Enabled = isOK;
 				XanLogger.WriteLine("Number of models loaded: " + AllModels.Count);
+
+				// TODO: Something more efficient.
+				int meshCount = 0;
+				List<MeshData> alreadyCountedMeshes = new List<MeshData>(AllModels.Count);
+				for (int idx = 0; idx < AllModels.Count; idx++) {
+					if (!alreadyCountedMeshes.Contains(AllModels[idx].Mesh)) {
+						meshCount++;
+						alreadyCountedMeshes.Add(AllModels[idx].Mesh);
+					}
+				}
+				alreadyCountedMeshes.Clear();
+
+				XanLogger.WriteLine("Number of unique meshes instantiated: " + meshCount);
 			}
 			XanLogger.UpdateLog();
 			XanLogger.UpdateAutomatically = true;
@@ -180,7 +207,7 @@ namespace SKAnimatorTools {
 				if (propName.DisplaySingleChildInline && propValues.Count == 1) {
 					nodeObj.Text += ": " + propValues[0].Text;
 					if (!propValues[0].CreatedFromProperty) {
-						TreeNode propZeroNode = propValues[0].ToTreeNode();
+						// TreeNode propZeroNode = propValues[0].ToTreeNode();
 						// nodeObj.Nodes.Add(propZeroNode);
 						PopulateTreeNodeForProperties(nodeObj, propValues[0]);
 					}
@@ -215,7 +242,7 @@ namespace SKAnimatorTools {
 				if (propName.DisplaySingleChildInline && propValues.Count == 1) {
 					nodeObj.Text += ": " + propValues[0].Text;
 					if (!propValues[0].CreatedFromProperty) {
-						TreeNode propZeroNode = propValues[0].ToTreeNode();
+						// TreeNode propZeroNode = propValues[0].ToTreeNode();
 						// nodeObj.Nodes.Add(propZeroNode);
 						PopulateTreeNodeForProperties(nodeObj, propValues[0]); 
 					}
@@ -236,7 +263,7 @@ namespace SKAnimatorTools {
 
 		private void OnConfigClicked(object sender, EventArgs e) {
 			ConfigForm = new ConfigurationForm();
-			ConfigForm.SetDataFromConfig(OpenModel.InitialDirectory, SaveModel.InitialDirectory, ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", OpenModel.RestoreDirectory, Model3D.MultiplyScaleByHundred, Model3D.ProtectAgainstZeroScale);
+			ConfigForm.SetDataFromConfig(OpenModel.InitialDirectory, SaveModel.InitialDirectory, ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", OpenModel.RestoreDirectory, Model3D.MultiplyScaleByHundred, Model3D.ProtectAgainstZeroScale, ConfigurationForm.AxisIntMap.KeyOf(Model3D.TargetUpAxis), GLTFExporter.EmbedTextures, XanLogger.VerboseLogging);
 			ConfigForm.Show();
 			ConfigForm.Activate();
 			ConfigForm.FormClosed += OnConfigFormClosed;
