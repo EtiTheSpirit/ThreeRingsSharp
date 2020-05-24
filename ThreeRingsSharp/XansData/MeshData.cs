@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.Structs;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.XansData {
 
@@ -200,7 +201,7 @@ namespace ThreeRingsSharp.XansData {
 				}
 			}
 
-			ApplyAxialTransformationMod();
+			// ApplyAxialTransformationMod();
 
 			HasTransformed = true;
 		}
@@ -209,7 +210,7 @@ namespace ThreeRingsSharp.XansData {
 		/// Rearranges all of the data in this <see cref="MeshData"/> based on <see cref="Model3D.TargetUpAxis"/>.<para/>
 		/// This will do nothing if <see cref="HasAxialTransformed"/> is <see langword="true"/>.
 		/// </summary>
-		// [Obsolete("This causes malformed and incorrect exports to occur.", true)]
+		[Obsolete("This causes malformed and incorrect exports to occur. It's also now set directly when exporting as to not mutate model data.", true)]
 		public void ApplyAxialTransformationMod() {
 			if (HasAxialTransformed) return;
 			

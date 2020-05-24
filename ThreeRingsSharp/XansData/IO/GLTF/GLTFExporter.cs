@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.IO.GLTF.JSON;
 using ThreeRingsSharp.XansData.Structs;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF {
 

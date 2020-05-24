@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.Structs;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	public class GLTFNode {
@@ -96,11 +97,15 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		public void SetScale(float scale) => SetScale(new Vector3(scale, scale, scale));
 
 		/// <summary>
-		/// Sets all applicable transformation-related properties from the given <see cref="Transform3D"/>.
+		/// Sets all applicable transformation-related properties from the given <see cref="Transform3D"/>.<para/>
+		/// This also applies the up axis from <see cref="Model3D.TargetUpAxis"/>.
 		/// </summary>
 		/// <param name="transform"></param>
 		public void SetTransform(Transform3D transform) {
 			(Vector3f, Quaternion, Vector3f, float) transformData = transform.GetAllTransforms();
+
+			transformData.Item1 = ((Vector3)transformData.Item1).RotateToAxis(Model3D.TargetUpAxis);
+			transformData.Item2 = transformData.Item2.RotateToUpAxis(Model3D.TargetUpAxis);
 
 			SetPosition(transformData.Item1);
 			SetRotation(transformData.Item2);

@@ -13,6 +13,7 @@ using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.IO;
 using ThreeRingsSharp.XansData.IO.GLTF;
 using ThreeRingsSharp.XansData.Structs;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.XansData {
 
@@ -60,7 +61,7 @@ namespace ThreeRingsSharp.XansData {
 		/// The current up axis for this model.<para/>
 		/// Default value: <see cref="Axis.PositiveY"/> (in the context that +Y is up, and -Z is forward)
 		/// </summary>
-		public Axis Up { get; set; } = Axis.PositiveY;
+		[Obsolete("This should be uniform for all models. Reference the static TargetUpAxis prop", true)] public Axis Up { get; set; } = Axis.PositiveY;
 
 		/// <summary>
 		/// A reference to the file that the model here came from. This is used to reference textures and other path-dependent extra data.

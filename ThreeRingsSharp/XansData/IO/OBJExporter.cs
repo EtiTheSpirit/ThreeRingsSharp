@@ -29,11 +29,13 @@ namespace ThreeRingsSharp.XansData.IO {
 				
 				//Transform3D newTrs = model.ApplyUpAxis();
 
-				foreach (Vector3 vertex in model.Mesh.Vertices) {
+				foreach (Vector3 vtx in model.Mesh.Vertices) {
+					Vector3 vertex = vtx.RotateToAxis(Model3D.TargetUpAxis);
 					WriteVertex(objBuilder, vertex);
 				}
 
-				foreach (Vector3 normal in model.Mesh.Normals) {
+				foreach (Vector3 nrm in model.Mesh.Normals) {
+					Vector3 normal = nrm.RotateToAxis(Model3D.TargetUpAxis);
 					WriteNormal(objBuilder, normal);
 				}
 
