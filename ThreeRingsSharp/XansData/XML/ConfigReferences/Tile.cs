@@ -7,6 +7,7 @@ using System.Xml;
 using System.Xml.Linq;
 using ThreeRingsSharp.DataHandlers.Scene.Data;
 using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
@@ -64,7 +65,15 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 					// This will be stored in ShallowTileConfig.TileLookup, so no worries about GC.
 					if (refOrMdl != null) {
-						ShallowTileConfig.FromData(name, refOrMdl, setModelTarget, isDerived);
+						int width = 1;
+						int height = 1;
+						if (widthElement != null && widthElement.Value != null) {
+							if (!int.TryParse(widthElement.Value, out width)) width = 1;
+						}
+						if (heightElement != null && heightElement.Value != null) {
+							if (!int.TryParse(heightElement.Value, out height)) height = 1;
+						}
+						ShallowTileConfig.FromData(name, refOrMdl, setModelTarget, isDerived, width, height);
 					}
 				}
 			}

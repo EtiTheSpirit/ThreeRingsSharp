@@ -14,6 +14,7 @@ using ThreeRingsSharp.DataHandlers.Scene.Data;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 using com.threerings.tudey.util;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.DataHandlers.Scene {
 
@@ -57,13 +58,11 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 				// Issue is, it only does this so that the original object can proxy to TudeySceneMetrics.
 				// We can cut out this step by directly going there.
 				// The only unfortunate part is that the original object contains info like the tile's width or height.
-				// We have to acquire this from the bootstrapper since that original object can't actually exist
+				// We have to acquire this from the bootstrapper since that original object can't actually exist-
 				// due to Clyde shitting itself when it tries to read the config data from SK (forcing me to bake it into premade XML)
+				// (See https://youtu.be/Lebv2-ptzWY for more information on what exactly Clyde is doing)
 				// Oh yeah. Kudos to the guy who made DatDec. That shit saved this entire part of the program. +rep.
-				Coord location = tile.getLocation();
-				Transform3D transform = new Transform3D();
-				TudeySceneMetrics.getTileTransform(tileCfg.Width, tileCfg.Height, location.x, location.y, tile.elevation, tile.rotation, transform);
-
+				tile.GetTransformFromShallow(tileCfg, out Transform3D transform);
 				ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, tileCfg.ModelPath, modelCollection, dataTreeParent, globalTransform.compose(transform), extraData: new Dictionary<string, dynamic> { ["TargetModel"] = tileCfg.TargetModel });
 			} catch (KeyNotFoundException) {
 				XanLogger.WriteLine($"Unable to find data for tile [{tile.tile.getName()}]!");

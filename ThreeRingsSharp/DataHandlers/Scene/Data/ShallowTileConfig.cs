@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.DataHandlers.Scene.Data {
 
@@ -35,16 +36,18 @@ namespace ThreeRingsSharp.DataHandlers.Scene.Data {
 		public string TargetModel { get; }
 
 		/// <summary>
-		/// The width of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.
+		/// The width of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.<para/>
+		/// When attempting to place the tile in the 3D world, consider using <c>TileEntryExtensions</c> and calling <see cref="TileEntryExtensions.GetWidth(TudeySceneModel.TileEntry, ShallowTileConfig)"/>, which accounts for rotation.
 		/// </summary>
 		public int Width => Derived ? Reference.Width : _Width;
-		private int _Width;
+		private readonly int _Width;
 
 		/// <summary>
-		/// The height of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.
+		/// The height of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.<para/>
+		/// When attempting to place the tile in the 3D world, consider using <c>TileEntryExtensions</c> and calling <see cref="TileEntryExtensions.GetHeight(TudeySceneModel.TileEntry, ShallowTileConfig)"/>, which accounts for rotation.
 		/// </summary>
 		public int Height => Derived ? Reference.Height : _Height;
-		private int _Height;
+		private readonly int _Height;
 
 		/// <summary>
 		/// If <see cref="Derived"/> is <see langword="true"/>, this is the <see cref="ShallowTileConfig"/> that this points to to get its model reference.<para/>

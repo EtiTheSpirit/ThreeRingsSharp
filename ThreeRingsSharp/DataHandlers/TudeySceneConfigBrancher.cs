@@ -62,7 +62,7 @@ namespace ThreeRingsSharp.DataHandlers {
 				if (entry is TileEntry) {
 					TileHandler.Instance.HandleEntry(sourceFile, entry, models, currentDataTreeObject, transform);
 				//} else if (entry is PlaceableEntry) {
-					//PlaceableHandler.Instance.HandleEntry(sourceFile, entry, models, currentDataTreeObject, transform);
+					// todo
 				}
 			}
 
