@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.XansData.Structs;
 
-namespace ThreeRingsSharp.XansData {
+namespace ThreeRingsSharp.XansData.Extensions {
 	public static class TransformExtensions {
 
 		/// <summary>
@@ -61,6 +61,24 @@ namespace ThreeRingsSharp.XansData {
 		/// <param name="trs"></param>
 		/// <returns></returns>
 		public static Transform3D Clone(this Transform3D trs) => new Transform3D(trs);
+
+		/// <summary>
+		/// Returns a new <see cref="Quaternion"/> which is <paramref name="quat"/> but rotated so that 
+		/// </summary>
+		/// <param name="quat"></param>
+		/// <param name="targetUpAxis"></param>
+		/// <returns></returns>
+		public static Quaternion RotateToUpAxis(this Quaternion quat, Axis targetUpAxis) {
+			if (targetUpAxis == Axis.NegativeY) return quat.mult(new Quaternion().fromAngleAxis((float)Math.PI, new Vector3f(0, 0, 1)));
+
+			if (targetUpAxis == Axis.PositiveX) return quat.mult(new Quaternion().fromAngleAxis(-(float)Math.PI / 2f, new Vector3f(0, 0, 1)));
+			if (targetUpAxis == Axis.NegativeX) return quat.mult(new Quaternion().fromAngleAxis((float)Math.PI / 2f, new Vector3f(0, 0, 1)));
+
+			if (targetUpAxis == Axis.PositiveZ) return quat.mult(new Quaternion().fromAngleAxis(-(float)Math.PI / 2f, new Vector3f(1, 0, 0)));
+			if (targetUpAxis == Axis.NegativeZ) return quat.mult(new Quaternion().fromAngleAxis((float)Math.PI / 2f, new Vector3f(1, 0, 0)));
+
+			return new Quaternion(quat); // pos y and default
+		}
 		
 	}
 }

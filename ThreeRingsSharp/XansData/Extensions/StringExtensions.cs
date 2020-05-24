@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ThreeRingsSharp.XansData {
+namespace ThreeRingsSharp.XansData.Extensions {
 
 	/// <summary>
 	/// Provides some handy extension methods for <see cref="string"/>.
 	/// </summary>
-	public static class StringExtension {
+	public static class StringExtensions {
 		/// <summary>
 		/// Returns a <see langword="string"/> of everything after the first located instance of <paramref name="text"/>. This does not include the sequence. For instance, if the text <c>cool.beans.nice.meme</c> is input and the method is called with a parameter of <c>nice.</c> for <paramref name="text"/>, the return value will be <c>meme</c><para/>
 		/// Returns <see langword="null"/> if <paramref name="text"/> could not be found.

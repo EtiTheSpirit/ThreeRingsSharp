@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.DataHandlers.Model;
 
-namespace ThreeRingsSharp.XansData {
+namespace ThreeRingsSharp.XansData.Extensions {
 
 	/// <summary>
 	/// Provides methods that are nice for <see cref="List{T}"/>
