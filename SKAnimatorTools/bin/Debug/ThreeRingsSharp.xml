@@ -30,6 +30,13 @@
             string type (the base class, e.g. ModelConfig, AnimationConfig, ScriptedConfig)</c>
             </summary>
         </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.GetAppropriateImporter(System.IO.FileInfo)">
+            <summary>
+            Given a <see cref="T:System.IO.FileInfo"/> of a clyde file, this will return the appropriate importer (binary or XML)<para/>
+            Remember to close the importer after you're done using it c:
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.HandleClydeFile(System.IO.FileInfo,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},System.Boolean,System.Object,System.Boolean,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>
             Takes in a <see cref="T:System.IO.FileInfo"/> representing a file that was created with the Clyde library.<para/>
@@ -251,12 +258,14 @@
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.Width">
             <summary>
-            The width of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.
+            The width of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.<para/>
+            When attempting to place the tile in the 3D world, consider using <c>TileEntryExtensions</c> and calling <see cref="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetWidth(com.threerings.tudey.data.TudeySceneModel.TileEntry,ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig)"/>, which accounts for rotation.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.Height">
             <summary>
-            The height of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.
+            The height of this tile. If this is a derived reference, this will point to the width of the lowest level original tile.<para/>
+            When attempting to place the tile in the 3D world, consider using <c>TileEntryExtensions</c> and calling <see cref="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetHeight(com.threerings.tudey.data.TudeySceneModel.TileEntry,ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig)"/>, which accounts for rotation.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.Reference">
@@ -941,7 +950,21 @@
             <summary>
             Returns three <see langword="string"/>, in order, the compression status (as a <see langword="string"/>, "Yes" or "No"), the version name (user friendly), and the implementation.
             </summary>
-            <param name="datFile"></param>
+            <param name="clydeFile"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.GetDat(System.IO.FileInfo)">
+            <summary>
+            Handles the input <see cref="T:System.IO.FileInfo"/> as if it's a binary .DAT file.
+            </summary>
+            <param name="clydeFile"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.GetXML(System.IO.FileInfo)">
+            <summary>
+            Handles the input <see cref="T:System.IO.FileInfo"/> as if it's an XML file.
+            </summary>
+            <param name="clydeFile"></param>
             <returns></returns>
         </member>
         <member name="P:ThreeRingsSharp.Utility.XanLogger.Log">
@@ -1048,6 +1071,232 @@
             <summary>
             An exception thrown when a method that handles an arbitrary class type receives a type that is invalid for the given context (but is otherwise within constraints defined by the language)
             </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetTransformFromShallow(com.threerings.tudey.data.TudeySceneModel.TileEntry,ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig,com.threerings.math.Transform3D@)">
+            <summary>
+            Populates <paramref name="result"/> with the location data from the given <see cref="T:com.threerings.tudey.data.TudeySceneModel.TileEntry"/> and <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> (instead of by trying to reference the original implementation)
+            </summary>
+            <param name="entry"></param>
+            <param name="shallowTile"></param>
+            <param name="result"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetWidth(com.threerings.tudey.data.TudeySceneModel.TileEntry,ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig)">
+            <summary>
+            Gets the width of this tile, but factors in the rotation of the tile too.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetHeight(com.threerings.tudey.data.TudeySceneModel.TileEntry,ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig)">
+            <summary>
+            Gets the height of this tile, but factors in the rotation of the tile too.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Extensions.EnumerableExtension">
+            <summary>
+            Provides methods that are nice for <see cref="T:System.Collections.Generic.List`1"/>
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.KeyOf``2(System.Collections.Generic.Dictionary{``0,``1},``1)">
+            <summary>
+            Returns the key of the given value within <paramref name="dictionary"/>.
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dictionary"></param>
+            <param name="value"></param>
+            <returns></returns>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">If the value does not exist in this dictionary, and by extension, has no associated key.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.KeyOf``2(System.Collections.Generic.IReadOnlyDictionary{``0,``1},``1)">
+            <summary>
+            Returns the key of the given value within <paramref name="dictionary"/>.
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dictionary"></param>
+            <param name="value"></param>
+            <returns></returns>
+            <exception cref="T:System.Collections.Generic.KeyNotFoundException">If the value does not exist in this dictionary, and by extension, has no associated key.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.GetOrDefault``2(System.Collections.Generic.Dictionary{``0,``1},``0,``1)">
+            <summary>
+            Returns the value stored in the <see cref="T:System.Collections.Generic.Dictionary`2"/>, or <paramref name="def"/> if the item could not be found.
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dictionary"></param>
+            <param name="key"></param>
+            <param name="def"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.GetOrDefault``2(System.Collections.Generic.IReadOnlyDictionary{``0,``1},``0,``1)">
+            <summary>
+            Returns the value stored in the <see cref="T:System.Collections.Generic.Dictionary`2"/>, or <paramref name="def"/> if the item could not be found.
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dictionary"></param>
+            <param name="key"></param>
+            <param name="def"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.Remove``2(System.Collections.Generic.Dictionary{``0,``1},``1)">
+            <summary>
+            Removes the given <typeparamref name="TValue"/> (and its associated <typeparamref name="TKey"/>) from the given <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dictionary"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.SetFrom``1(System.Collections.Generic.List{``0},System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Sets the contents of the given <see cref="T:System.Collections.Generic.List`1"/> to the given content.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list"></param>
+            <param name="values"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.CopyToList``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.List{``0},System.Int32)">
+            <summary>
+            Similar to <see cref="M:System.Array.CopyTo(System.Array,System.Int32)"/> but for <see cref="T:System.Collections.Generic.List`1"/>s.<para/>
+            If the offset is larger than the size of the list, the empty space will be filled with <see langword="default"/>.<para/>
+            If the offset is somewhere within the list, it will overwrite elements.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="enumerable"></param>
+            <param name="list"></param>
+            <param name="offset"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.SetListCap``1(System.Collections.Generic.List{System.Object},``0,System.Int32)">
+            <summary>
+            A utility designed exclusively for the glTF exporter which can populate a list with the given default value
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="list"></param>
+            <param name="defaultValue"></param>
+            <param name="values"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.ShallowClone``1(System.Collections.Generic.IEnumerable{``0})">
+            <summary>
+            Clones this <see cref="T:System.Collections.Generic.IEnumerable`1"/> into a new instance.
+            If <typeparamref name="T"/> implements <see cref="T:System.ICloneable"/>, then the 
+            <see cref="M:System.ICloneable.Clone"/> method will be called on each object.<para/>
+            
+            This does not clone nested lists.
+            </summary>
+            <typeparam name="T">The type of the elements contained within the <see cref="T:System.Collections.Generic.List`1"/></typeparam>
+            <param name="original">The list to clone the data from.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.As2D``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
+            <summary>
+            Converts this <see cref="T:System.Collections.Generic.IEnumerable`1"/> into a 2D array of <typeparamref name="T"/>, where the second dimension's size is <paramref name="groupSize"/>. For instance, calling this on an array of 16 items with an argument of 8 will return a 2D array with 2 elements in the first dimension, and 8 in the second dimension.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="enumerable"></param>
+            <param name="groupSize">The size of the second dimension of the array.</param>
+            <returns></returns>
+            <exception cref="T:System.DataMisalignedException">Thrown if the length of the given <paramref name="enumerable"/> is not divisible by <paramref name="groupSize"/>.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.GetSecondDimensionAt``1(``0[0:,0:],System.Int32)">
+            <summary>
+            Given an <paramref name="index"/>, this will return the second dimension of the 2D array. If the 2D array were constructed as an array of arrays, this would be the equivalent to getting array[x] in array[x][y].
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="array2D"></param>
+            <param name="index">The index in the first dimension corresponding to the desired second dimension.</param>
+            <returns></returns>
+            <exception cref="T:System.IndexOutOfRangeException">Thrown if the given index is out of the range fo the array.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.ToIntArray(System.Single[])">
+            <summary>
+            A very specialized method designed specifically for <see cref="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator"/> which converts a float array to an int array.
+            </summary>
+            <param name="floatArray"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Extensions.StringExtensions">
+            <summary>
+            Provides some handy extension methods for <see cref="T:System.String"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.AfterIndexOf(System.String,System.String)">
+            <summary>
+            Returns a <see langword="string"/> of everything after the first located instance of <paramref name="text"/>. This does not include the sequence. For instance, if the text <c>cool.beans.nice.meme</c> is input and the method is called with a parameter of <c>nice.</c> for <paramref name="text"/>, the return value will be <c>meme</c><para/>
+            Returns <see langword="null"/> if <paramref name="text"/> could not be found.
+            </summary>
+            <param name="str">The string to search.</param>
+            <param name="text">The text to locate.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.AfterLastIndexOf(System.String,System.String)">
+            <summary>
+            Returns a <see langword="string"/> of everything after the last located instance of <paramref name="text"/>. This does not include the sequence. For instance, if the text <c>cool.beans.nice.meme</c> is input and the method is called with a parameter of <c>nice.</c> for <paramref name="text"/>, the return value will be <c>meme</c><para/>
+            Returns <see langword="null"/> if <paramref name="text"/> could not be found.
+            </summary>
+            <param name="str">The string to search.</param>
+            <param name="text">The text to locate.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.IsAlphanumeric(System.String)">
+            <summary>
+            Returns true if the string is alphanumeric, or, if it is within the range of a-z, A-Z, and 0-9.
+            </summary>
+            <param name="inp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.WriteASCIIToByteArray(System.String,System.Byte[]@,System.Int32)">
+            <summary>
+            Formats the given string to an ASCII string and then writes it to the array, starting at the given offset.<para/>
+            Throws <see cref="T:System.IndexOutOfRangeException"/> if the array is too short to contain the string.
+            </summary>
+            <param name="str">The string to write.</param>
+            <param name="array">The array to write the string into.</param>
+            <param name="offset">The index to start writing at.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.GetAllTransforms(com.threerings.math.Transform3D)">
+            <summary>
+            Returns all components of this transform in the order of <c>translation, rotation, scale (as Vector3f), scale (as float)</c>.
+            </summary>
+            <param name="trs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.RotateOnAxis(com.threerings.math.Transform3D,ThreeRingsSharp.XansData.Structs.Axis,System.Single)">
+            <summary>
+            Rotates the given <see cref="T:com.threerings.math.Transform3D"/> on the given <paramref name="axis"/> by the given <paramref name="rotation"/> (which is in radians)<para/>
+            Returns the same <see cref="T:com.threerings.math.Transform3D"/> that this was called on for ease in chaining.
+            </summary>
+            <param name="trs">The translation to alter.</param>
+            <param name="axis">The axis to rotate on.</param>
+            <param name="rotation">The amount of radians to rotate.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.RotateOnAxisDegrees(com.threerings.math.Transform3D,ThreeRingsSharp.XansData.Structs.Axis,System.Single)">
+            <summary>
+            Rotates the given <see cref="T:com.threerings.math.Transform3D"/> on the given <paramref name="axis"/> by the given <paramref name="rotation"/> (which is in degrees)<para/>
+            Returns the same <see cref="T:com.threerings.math.Transform3D"/> that this was called on for ease in chaining.
+            </summary>
+            <param name="trs">The translation to alter.</param>
+            <param name="axis">The axis to rotate on.</param>
+            <param name="rotation">The amount of radians to rotate.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.Clone(com.threerings.math.Transform3D)">
+            <summary>
+            Clones this <see cref="T:com.threerings.math.Transform3D"/> into a new instance with the same data.
+            </summary>
+            <param name="trs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.RotateToUpAxis(com.threerings.math.Quaternion,ThreeRingsSharp.XansData.Structs.Axis)">
+            <summary>
+            Returns a new <see cref="T:com.threerings.math.Quaternion"/> which is <paramref name="quat"/> but rotated so that 
+            </summary>
+            <param name="quat"></param>
+            <param name="targetUpAxis"></param>
+            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.XansData.FileUtils">
             <summary>
@@ -1464,7 +1713,8 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.SetTransform(com.threerings.math.Transform3D)">
             <summary>
-            Sets all applicable transformation-related properties from the given <see cref="T:com.threerings.math.Transform3D"/>.
+            Sets all applicable transformation-related properties from the given <see cref="T:com.threerings.math.Transform3D"/>.<para/>
+            This also applies the up axis from <see cref="P:ThreeRingsSharp.XansData.Model3D.TargetUpAxis"/>.
             </summary>
             <param name="transform"></param>
         </member>
@@ -1629,131 +1879,6 @@
             <param name="indices">The list of indices for this 3D model.</param>
             <param name="tripletStartIndex">An index multiplied by 3 to represent where to get a triplet from (so an index of 0 would be indices[0], [1], and [2], and an index of 1 would be [3], [4], and [5])</param>
             <param name="indexOffset">The value to offset geometry indices by.</param>
-        </member>
-        <member name="T:ThreeRingsSharp.XansData.EnumerableExtension">
-            <summary>
-            Provides methods that are nice for <see cref="T:System.Collections.Generic.List`1"/>
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.KeyOf``2(System.Collections.Generic.Dictionary{``0,``1},``1)">
-            <summary>
-            Returns the key of the given value within <paramref name="dictionary"/>.
-            </summary>
-            <typeparam name="TKey"></typeparam>
-            <typeparam name="TValue"></typeparam>
-            <param name="dictionary"></param>
-            <param name="value"></param>
-            <returns></returns>
-            <exception cref="T:System.Collections.Generic.KeyNotFoundException">If the value does not exist in this dictionary, and by extension, has no associated key.</exception>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.KeyOf``2(System.Collections.Generic.IReadOnlyDictionary{``0,``1},``1)">
-            <summary>
-            Returns the key of the given value within <paramref name="dictionary"/>.
-            </summary>
-            <typeparam name="TKey"></typeparam>
-            <typeparam name="TValue"></typeparam>
-            <param name="dictionary"></param>
-            <param name="value"></param>
-            <returns></returns>
-            <exception cref="T:System.Collections.Generic.KeyNotFoundException">If the value does not exist in this dictionary, and by extension, has no associated key.</exception>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.GetOrDefault``2(System.Collections.Generic.Dictionary{``0,``1},``0,``1)">
-            <summary>
-            Returns the value stored in the <see cref="T:System.Collections.Generic.Dictionary`2"/>, or <paramref name="def"/> if the item could not be found.
-            </summary>
-            <typeparam name="TKey"></typeparam>
-            <typeparam name="TValue"></typeparam>
-            <param name="dictionary"></param>
-            <param name="key"></param>
-            <param name="def"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.GetOrDefault``2(System.Collections.Generic.IReadOnlyDictionary{``0,``1},``0,``1)">
-            <summary>
-            Returns the value stored in the <see cref="T:System.Collections.Generic.Dictionary`2"/>, or <paramref name="def"/> if the item could not be found.
-            </summary>
-            <typeparam name="TKey"></typeparam>
-            <typeparam name="TValue"></typeparam>
-            <param name="dictionary"></param>
-            <param name="key"></param>
-            <param name="def"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.Remove``2(System.Collections.Generic.Dictionary{``0,``1},``1)">
-            <summary>
-            Removes the given <typeparamref name="TValue"/> (and its associated <typeparamref name="TKey"/>) from the given <see cref="T:System.Collections.Generic.Dictionary`2"/>.
-            </summary>
-            <typeparam name="TKey"></typeparam>
-            <typeparam name="TValue"></typeparam>
-            <param name="dictionary"></param>
-            <param name="value"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.SetFrom``1(System.Collections.Generic.List{``0},System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Sets the contents of the given <see cref="T:System.Collections.Generic.List`1"/> to the given content.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="list"></param>
-            <param name="values"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.CopyToList``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.List{``0},System.Int32)">
-            <summary>
-            Similar to <see cref="M:System.Array.CopyTo(System.Array,System.Int32)"/> but for <see cref="T:System.Collections.Generic.List`1"/>s.<para/>
-            If the offset is larger than the size of the list, the empty space will be filled with <see langword="default"/>.<para/>
-            If the offset is somewhere within the list, it will overwrite elements.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="enumerable"></param>
-            <param name="list"></param>
-            <param name="offset"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.SetListCap``1(System.Collections.Generic.List{System.Object},``0,System.Int32)">
-            <summary>
-            A utility designed exclusively for the glTF exporter which can populate a list with the given default value
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="list"></param>
-            <param name="defaultValue"></param>
-            <param name="values"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.ShallowClone``1(System.Collections.Generic.IEnumerable{``0})">
-            <summary>
-            Clones this <see cref="T:System.Collections.Generic.IEnumerable`1"/> into a new instance.
-            If <typeparamref name="T"/> implements <see cref="T:System.ICloneable"/>, then the 
-            <see cref="M:System.ICloneable.Clone"/> method will be called on each object.<para/>
-            
-            This does not clone nested lists.
-            </summary>
-            <typeparam name="T">The type of the elements contained within the <see cref="T:System.Collections.Generic.List`1"/></typeparam>
-            <param name="original">The list to clone the data from.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.As2D``1(System.Collections.Generic.IEnumerable{``0},System.Int32)">
-            <summary>
-            Converts this <see cref="T:System.Collections.Generic.IEnumerable`1"/> into a 2D array of <typeparamref name="T"/>, where the second dimension's size is <paramref name="groupSize"/>. For instance, calling this on an array of 16 items with an argument of 8 will return a 2D array with 2 elements in the first dimension, and 8 in the second dimension.
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="enumerable"></param>
-            <param name="groupSize">The size of the second dimension of the array.</param>
-            <returns></returns>
-            <exception cref="T:System.DataMisalignedException">Thrown if the length of the given <paramref name="enumerable"/> is not divisible by <paramref name="groupSize"/>.</exception>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.GetSecondDimensionAt``1(``0[0:,0:],System.Int32)">
-            <summary>
-            Given an <paramref name="index"/>, this will return the second dimension of the 2D array. If the 2D array were constructed as an array of arrays, this would be the equivalent to getting array[x] in array[x][y].
-            </summary>
-            <typeparam name="T"></typeparam>
-            <param name="array2D"></param>
-            <param name="index">The index in the first dimension corresponding to the desired second dimension.</param>
-            <returns></returns>
-            <exception cref="T:System.IndexOutOfRangeException">Thrown if the given index is out of the range fo the array.</exception>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.EnumerableExtension.ToIntArray(System.Single[])">
-            <summary>
-            A very specialized method designed specifically for <see cref="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator"/> which converts a float array to an int array.
-            </summary>
-            <param name="floatArray"></param>
-            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.XansData.MeshData">
             <summary>
@@ -1939,45 +2064,6 @@
             <summary>
             A reference to the singleton instance of this class.
             </summary>
-        </member>
-        <member name="T:ThreeRingsSharp.XansData.StringExtension">
-            <summary>
-            Provides some handy extension methods for <see cref="T:System.String"/>.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.StringExtension.AfterIndexOf(System.String,System.String)">
-            <summary>
-            Returns a <see langword="string"/> of everything after the first located instance of <paramref name="text"/>. This does not include the sequence. For instance, if the text <c>cool.beans.nice.meme</c> is input and the method is called with a parameter of <c>nice.</c> for <paramref name="text"/>, the return value will be <c>meme</c><para/>
-            Returns <see langword="null"/> if <paramref name="text"/> could not be found.
-            </summary>
-            <param name="str">The string to search.</param>
-            <param name="text">The text to locate.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.StringExtension.AfterLastIndexOf(System.String,System.String)">
-            <summary>
-            Returns a <see langword="string"/> of everything after the last located instance of <paramref name="text"/>. This does not include the sequence. For instance, if the text <c>cool.beans.nice.meme</c> is input and the method is called with a parameter of <c>nice.</c> for <paramref name="text"/>, the return value will be <c>meme</c><para/>
-            Returns <see langword="null"/> if <paramref name="text"/> could not be found.
-            </summary>
-            <param name="str">The string to search.</param>
-            <param name="text">The text to locate.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.StringExtension.IsAlphanumeric(System.String)">
-            <summary>
-            Returns true if the string is alphanumeric, or, if it is within the range of a-z, A-Z, and 0-9.
-            </summary>
-            <param name="inp"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.StringExtension.WriteASCIIToByteArray(System.String,System.Byte[]@,System.Int32)">
-            <summary>
-            Formats the given string to an ASCII string and then writes it to the array, starting at the given offset.<para/>
-            Throws <see cref="T:System.IndexOutOfRangeException"/> if the array is too short to contain the string.
-            </summary>
-            <param name="str">The string to write.</param>
-            <param name="array">The array to write the string into.</param>
-            <param name="offset">The index to start writing at.</param>
         </member>
         <member name="T:ThreeRingsSharp.XansData.Structs.Axis">
             <summary>
@@ -2300,40 +2386,6 @@
             <param name="targetFile"></param>
             <param name="targetFormat"></param>
             <param name="models"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.TransformExtensions.GetAllTransforms(com.threerings.math.Transform3D)">
-            <summary>
-            Returns all components of this transform in the order of <c>translation, rotation, scale (as Vector3f), scale (as float)</c>.
-            </summary>
-            <param name="trs"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.TransformExtensions.RotateOnAxis(com.threerings.math.Transform3D,ThreeRingsSharp.XansData.Structs.Axis,System.Single)">
-            <summary>
-            Rotates the given <see cref="T:com.threerings.math.Transform3D"/> on the given <paramref name="axis"/> by the given <paramref name="rotation"/> (which is in radians)<para/>
-            Returns the same <see cref="T:com.threerings.math.Transform3D"/> that this was called on for ease in chaining.
-            </summary>
-            <param name="trs">The translation to alter.</param>
-            <param name="axis">The axis to rotate on.</param>
-            <param name="rotation">The amount of radians to rotate.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.TransformExtensions.RotateOnAxisDegrees(com.threerings.math.Transform3D,ThreeRingsSharp.XansData.Structs.Axis,System.Single)">
-            <summary>
-            Rotates the given <see cref="T:com.threerings.math.Transform3D"/> on the given <paramref name="axis"/> by the given <paramref name="rotation"/> (which is in degrees)<para/>
-            Returns the same <see cref="T:com.threerings.math.Transform3D"/> that this was called on for ease in chaining.
-            </summary>
-            <param name="trs">The translation to alter.</param>
-            <param name="axis">The axis to rotate on.</param>
-            <param name="rotation">The amount of radians to rotate.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.TransformExtensions.Clone(com.threerings.math.Transform3D)">
-            <summary>
-            Clones this <see cref="T:com.threerings.math.Transform3D"/> into a new instance with the same data.
-            </summary>
-            <param name="trs"></param>
-            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper">
             <summary>
