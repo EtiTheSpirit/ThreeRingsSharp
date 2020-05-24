@@ -15,6 +15,7 @@ using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Exceptions;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.DataHandlers {
 
@@ -39,6 +40,18 @@ namespace ThreeRingsSharp.DataHandlers {
 		/// string type (the base class, e.g. ModelConfig, AnimationConfig, ScriptedConfig)</c>
 		/// </summary>
 		public static Action<string, string, string, string> UpdateGUIAction { get; set; } = null;
+
+		/// <summary>
+		/// Given a <see cref="FileInfo"/> of a clyde file, this will return the appropriate importer (binary or XML)<para/>
+		/// Remember to close the importer after you're done using it c:
+		/// </summary>
+		/// <returns></returns>
+		private static Importer GetAppropriateImporter(FileInfo clydeFile) {
+			DataInputStream dataInput = new DataInputStream(new FileInputStream(clydeFile.FullName));
+			return clydeFile.Extension.ToLower() == ".dat" ? (Importer)new BinaryImporter(dataInput) : (Importer)new XMLImporter(dataInput);
+			// Cast ^ says it's redundant, but this isn't C# 9.0 so it goes apeshit because it can't cast between BinaryImporter and XMLImporter.
+			// (C# 9.0 added the capibility for ternary operators to have different return types should they share the same base class or use a keyword that allows for it)
+		}
 
 		/// <summary>
 		/// Takes in a <see cref="FileInfo"/> representing a file that was created with the Clyde library.<para/>
@@ -103,11 +116,15 @@ namespace ThreeRingsSharp.DataHandlers {
 					UpdateGUIAction(clydeFile.Name, cosmeticInfo.Item1, cosmeticInfo.Item2, "Processing...");
 				}
 
-				DataInputStream dataInput = new DataInputStream(new FileInputStream(clydeFile.FullName));
-				BinaryImporter importer = new BinaryImporter(dataInput);
-				obj = importer.readObject();
-				ClydeObjectCache[clydeFile.FullName] = obj;
-				ModelInfoCache[clydeFile.FullName] = cosmeticInfo;
+				Importer targetImporter = GetAppropriateImporter(clydeFile);
+				try {
+					obj = targetImporter.readObject();
+					ClydeObjectCache[clydeFile.FullName] = obj;
+					ModelInfoCache[clydeFile.FullName] = cosmeticInfo;
+				} catch (Exception ex) {
+					targetImporter.close();
+					throw;
+				}
 			} else {
 				obj = ClydeObjectCache[clydeFile.FullName];
 				(string, string, string) cosmeticInfo = ModelInfoCache[clydeFile.FullName];

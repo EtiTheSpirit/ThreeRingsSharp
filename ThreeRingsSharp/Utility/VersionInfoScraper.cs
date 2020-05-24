@@ -15,6 +15,7 @@ using java.util.zip;
 using System.IO.Compression;
 using sun.misc;
 using com.google.common.io;
+using System.Xml;
 
 namespace ThreeRingsSharp.Utility {
 
@@ -62,6 +63,7 @@ namespace ThreeRingsSharp.Utility {
 		/// <param name="datFile"></param>
 		/// <returns></returns>
 		public static bool IsValidClydeFile(FileInfo datFile) {
+			if (datFile.Extension.ToLower() != ".dat") return true; // This is lazy, but it gives us the benefit of the doubt.
 			using (FileStream inp = datFile.OpenRead()) {
 				byte[] header = new byte[4];
 				inp.Read(header, 0, 4);
@@ -73,12 +75,21 @@ namespace ThreeRingsSharp.Utility {
 		/// <summary>
 		/// Returns three <see langword="string"/>, in order, the compression status (as a <see langword="string"/>, "Yes" or "No"), the version name (user friendly), and the implementation.
 		/// </summary>
-		/// <param name="datFile"></param>
+		/// <param name="clydeFile"></param>
 		/// <returns></returns>
-		public static (string, string, string) GetCosmeticInformation(FileInfo datFile) {
+		public static (string, string, string) GetCosmeticInformation(FileInfo clydeFile) {
+			return clydeFile.Extension.ToLower() == ".dat" ? GetDat(clydeFile) : GetXML(clydeFile);
+		}
+
+		/// <summary>
+		/// Handles the input <see cref="FileInfo"/> as if it's a binary .DAT file.
+		/// </summary>
+		/// <param name="clydeFile"></param>
+		/// <returns></returns>
+		private static (string, string, string) GetDat(FileInfo clydeFile) {
 			string isCompressed;
 			string version;
-			FileInputStream fileIn = new FileInputStream(datFile.FullName);
+			FileInputStream fileIn = new FileInputStream(clydeFile.FullName);
 			DataInputStream dataInput = new DataInputStream(fileIn);
 			dataInput.readInt();
 			int v = dataInput.readUnsignedShort();
@@ -93,7 +104,32 @@ namespace ThreeRingsSharp.Utility {
 			}
 			bool compressedFormatFlag = dataInput.readUnsignedShort() == 0x1000;
 			isCompressed = compressedFormatFlag ? "Yes" : "No";
-			return (isCompressed, version, HackyGetImplementation(datFile, compressedFormatFlag));
+			return (isCompressed, version, HackyGetImplementation(clydeFile, compressedFormatFlag));
+		}
+
+		/// <summary>
+		/// Handles the input <see cref="FileInfo"/> as if it's an XML file.
+		/// </summary>
+		/// <param name="clydeFile"></param>
+		/// <returns></returns>
+		private static (string, string, string) GetXML(FileInfo clydeFile) {
+			string version = null;
+			string impl = null;
+			using (XmlReader reader = XmlReader.Create(clydeFile.FullName)) {
+				while (reader.Read()) {
+					if (reader.Name == "java") {
+						version = reader.GetAttribute("version") ?? "Unknown";
+					}
+					if (reader.Name == "implementation") {
+						impl = reader.GetAttribute("class") ?? "ERR_NO_IMPL";
+					}
+
+					if (version != null && impl != null) {
+						break;
+					}
+				}
+			}
+			return ("N/A", version, impl);
 		}
 	}
 }

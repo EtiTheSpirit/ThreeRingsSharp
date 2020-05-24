@@ -23,6 +23,7 @@ using SKAnimatorTools.Configuration;
 using ThreeRingsSharp.XansData.Exceptions;
 using com.sun.tools.@internal.ws.processor.model;
 using ThreeRingsSharp.XansData.IO.GLTF;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {

@@ -64,7 +64,7 @@
 			// OpenModel
 			// 
 			this.OpenModel.FileName = "model.dat";
-			this.OpenModel.Filter = "Clyde Data Files|*.dat";
+			this.OpenModel.Filter = "Clyde Binary|*.dat|Clyde XML|*.xml";
 			this.OpenModel.InitialDirectory = "E:\\Steam Games\\steamapps\\common\\Spiral Knights\\rsrc";
 			// 
 			// ModelStructureTree
@@ -241,9 +241,9 @@
 			this.LabelType_Left.AutoSize = true;
 			this.LabelType_Left.Location = new System.Drawing.Point(3, 60);
 			this.LabelType_Left.Name = "LabelType_Left";
-			this.LabelType_Left.Size = new System.Drawing.Size(61, 13);
+			this.LabelType_Left.Size = new System.Drawing.Size(59, 13);
 			this.LabelType_Left.TabIndex = 6;
-			this.LabelType_Left.Text = "Base Type:";
+			this.LabelType_Left.Text = "Core Type:";
 			this.LabelType_Left.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// LabelType
