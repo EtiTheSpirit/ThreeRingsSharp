@@ -15,6 +15,7 @@ using ThreeRingsSharp.XansData.Exceptions;
 using System.Runtime.CompilerServices;
 using System.IO;
 using System.Diagnostics;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
 

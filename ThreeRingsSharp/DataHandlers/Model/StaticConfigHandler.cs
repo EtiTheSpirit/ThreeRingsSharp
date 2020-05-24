@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
+using ThreeRingsSharp.XansData.Extensions;
 using static com.threerings.opengl.model.config.ModelConfig;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
@@ -54,6 +55,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				meshToModel.Name = depth1Name + meshTitle;
 				meshToModel.Transform = meshToModel.Transform.compose(globalTransform).compose(new Transform3D(meshes.bounds.getCenter(), Quaternion.IDENTITY, 1f));
 				meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
+				//meshToModel.Textures.SetFrom(new List<string>() { mesh.texture });
 				meshToModel.ActiveTexture = mesh.texture;
 
 				modelCollection.Add(meshToModel);

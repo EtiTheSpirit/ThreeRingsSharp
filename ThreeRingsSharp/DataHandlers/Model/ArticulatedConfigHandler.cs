@@ -10,6 +10,7 @@ using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Structs;
+using ThreeRingsSharp.XansData.Extensions;
 using static com.threerings.opengl.model.config.ArticulatedConfig;
 using static com.threerings.opengl.model.config.ModelConfig;
 using static com.threerings.opengl.model.config.ModelConfig.Imported;
