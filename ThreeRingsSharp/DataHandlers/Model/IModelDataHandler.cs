@@ -27,6 +27,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// <param name="globalTransform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy should have this transform applied to them.</param>
 		/// <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
 		void HandleModelConfig(FileInfo sourceFile, ModelConfig baseModel, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null, Dictionary<string, dynamic> extraData = null);
+		// TODO: Deprecate extraData parameter?
 
 	}
 }

@@ -14,6 +14,7 @@ using ThreeRingsSharp.XansData.Extensions;
 using static com.threerings.opengl.model.config.ArticulatedConfig;
 using static com.threerings.opengl.model.config.ModelConfig;
 using static com.threerings.opengl.model.config.ModelConfig.Imported;
+using ThreeRingsSharp.DataHandlers.Properties;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
 	class ArticulatedConfigHandler : Singleton<ArticulatedConfigHandler>, IModelDataHandler, IDataTreeInterface<ArticulatedConfig> {
@@ -46,7 +47,9 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
 				meshToModel.Name = depth1Name + meshTitle;
 				if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
-				meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
+				//meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
+				meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
+
 				meshToModel.ActiveTexture = mesh.texture;
 
 				/*
@@ -64,48 +67,57 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				// ConfigReferenceUtil.HandleConfigReference(sourceFile, attachment.model, modelCollection, dataTreeParent, globalTransform);
 			//}
 
-			RecursivelyIterateNodes(model, sourceFile, model.root, modelCollection, globalTransform, fullDepthName);
+			RecursivelyIterateNodes(baseModel, model, sourceFile, model.root, modelCollection, globalTransform, fullDepthName);
 		}
 
 		/// <summary>
 		/// A utility function that iterates through all of the nodes recursively, as some may store mesh data.
 		/// </summary>
+		/// <param name="baseModel">The <see cref="ModelConfig"/> that contained this <see cref="ArticulatedConfig"/>.</param>
 		/// <param name="model">A reference to the <see cref="ArticulatedConfig"/> that contains these nodes.</param>
 		/// <param name="sourceFile">The file where the <see cref="ArticulatedConfig"/> is stored.</param>
 		/// <param name="parent">The parent node to iterate through.</param>
 		/// <param name="models">The <see cref="List{T}"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
 		/// <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
 		/// <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
-		private void RecursivelyIterateNodes(ArticulatedConfig model, FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform, string fullDepthName) {
+		private void RecursivelyIterateNodes(ModelConfig baseModel, ArticulatedConfig model, FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform, string fullDepthName) {
 			foreach (Node node in parent.children) {
 				// Transform3D newTransform = latestTransform;
 
 				if (node is MeshNode meshNode) {
 					VisibleMesh mesh = meshNode.visible;
-					Transform3D modifiedTransform = node.invRefTransform.invert().compose(node.transform);
-					//Transform3D modifiedTransform = node.transform.compose(node.invRefTransform.invert());
-					string meshTitle = "-Nodes[\"" + node.name + "\"]";
+					if (mesh != null) {
+						// "Let's use a node designed to store meshes for something that doesn't contain meshes!"
+						//		-- Some knucklehead at OOO.
 
-					Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
-					meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + meshTitle;
-					meshToModel.Transform = meshToModel.Transform.compose(latestTransform).compose(modifiedTransform);
-					meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
-					meshToModel.ActiveTexture = mesh.texture;
+						// No offense.
 
-					/*
-					string tex = sourceFile.Directory.FullName.Replace("\\", "/") + "/" + mesh.texture;
-					meshToModel.Textures.Add(tex);
-					XanLogger.WriteLine($"Added texture {tex} to model {meshToModel.Name}");
-					*/
+						Transform3D modifiedTransform = node.invRefTransform.invert().compose(node.transform);
+						//Transform3D modifiedTransform = node.transform.compose(node.invRefTransform.invert());
+						string meshTitle = "-Nodes[\"" + node.name + "\"]";
 
-					models.Add(meshToModel);
+						Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
+						meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + meshTitle;
+						meshToModel.Transform = meshToModel.Transform.compose(latestTransform).compose(modifiedTransform);
+						//meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
+						meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
+						meshToModel.ActiveTexture = mesh.texture;
+
+						/*
+						string tex = sourceFile.Directory.FullName.Replace("\\", "/") + "/" + mesh.texture;
+						meshToModel.Textures.Add(tex);
+						XanLogger.WriteLine($"Added texture {tex} to model {meshToModel.Name}");
+						*/
+
+						models.Add(meshToModel);
+					}
 				}
 
 				//VertexGroup group = new VertexGroup();
 				//group.Name = node.name;
 
 				if (node.children.Length > 0) {
-					RecursivelyIterateNodes(model, sourceFile, node, models, latestTransform, fullDepthName);
+					RecursivelyIterateNodes(baseModel, model, sourceFile, node, models, latestTransform, fullDepthName);
 				}
 			}
 		}

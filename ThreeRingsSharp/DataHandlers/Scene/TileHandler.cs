@@ -15,6 +15,8 @@ using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 using com.threerings.tudey.util;
 using ThreeRingsSharp.XansData.Extensions;
+using System.Diagnostics;
+using com.threerings.tudey.config;
 
 namespace ThreeRingsSharp.DataHandlers.Scene {
 
@@ -29,19 +31,35 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			// This method returns a property, but this is just a stock object (it was created this way in TudeySceneConfigBrancher)
 			List<DataTreeObject> values = dataTreeParent.Properties[dataTreeParent.FindSimpleProperty("Entries")];
 			DataTreeObject prop = values.First();
-			DataTreeObject container = new DataTreeObject() {
+			DataTreeObject existingTileCtr = prop.FindSimpleProperty("Tiles");
+			if (existingTileCtr != null) {
+				// Yes, there is a reason you call find twice. The implicit cast from property to object on existingTileCtr creates a new object
+				// as such, casting it back for use in this lookup is a different key.
+				existingTileCtr = prop.Properties[prop.FindSimpleProperty("Tiles")].FirstOrDefault();
+			}
+			DataTreeObject tilesContainer = existingTileCtr ?? new DataTreeObject() {
+				Text = "Tiles",
+				ImageKey = SilkImage.Tile
+			};
+
+			if (existingTileCtr == null) {
+				// We made a new one. Add it.
+				prop.AddSimpleProperty("Tiles", tilesContainer);
+			}
+
+			DataTreeObject individualTileDataContainer = new DataTreeObject() {
 				Text = data.tile.getName(),
 				// ImageKey = SilkImage.Tile
 			};
 
 
 			Coord location = data.getLocation();
-			Transform3D trs = new Transform3D(new Vector3f(location.x, data.elevation, location.y), new Quaternion().fromAngleAxis((float)(data.rotation * Math.PI / 2), Vector3f.UNIT_Y), 1f);
-			//container.AddSimpleProperty("Elevation", data.elevation);
-			//container.AddSimpleProperty("Rotation", data.rotation);
-			container.AddSimpleProperty("Transform", trs, SilkImage.Matrix);
-			container.AddSimpleProperty("Tile Reference", data.tile?.getName(), SilkImage.Reference);
-			prop.AddSimpleProperty("Entry", container, SilkImage.Tile);
+			//Transform3D trs = new Transform3D(new Vector3f(location.x, data.elevation, location.y), new Quaternion().fromAngleAxis((float)(data.rotation * Math.PI / 2), Vector3f.UNIT_Y), 1f);
+			individualTileDataContainer.AddSimpleProperty("Elevation", data.elevation);
+			individualTileDataContainer.AddSimpleProperty("Rotation (Deg)", data.rotation * 90);
+			individualTileDataContainer.AddSimpleProperty("Coordinate", $"[{location.x}, {location.y}]", SilkImage.Matrix);
+			individualTileDataContainer.AddSimpleProperty("Tile Reference", data.tile?.getName(), SilkImage.Reference);
+			tilesContainer.AddSimpleProperty("Entry", individualTileDataContainer, SilkImage.Tile);
 		}
 
 		public void HandleEntry(FileInfo sourceFile, Entry entry, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null) {
@@ -50,23 +68,22 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			//tile.getTransform(tile.getConfig(scene.getConfigManager()), trs);
 
 			SetupCosmeticInformation(tile, dataTreeParent);
-			try {
-				// Consider tileCfg to be a shitty walmart brand representation of TileConfig.Original and TileConfig.Derived at the same time.
-				ShallowTileConfig tileCfg = ConfigReferenceBootstrapper.References["tile"][tile.tile.getName()];
-
-				// Hacky trick: The tile wants a ConfigReference (or a reference to the original object) to get its transform.
-				// Issue is, it only does this so that the original object can proxy to TudeySceneMetrics.
-				// We can cut out this step by directly going there.
-				// The only unfortunate part is that the original object contains info like the tile's width or height.
-				// We have to acquire this from the bootstrapper since that original object can't actually exist-
-				// due to Clyde shitting itself when it tries to read the config data from SK (forcing me to bake it into premade XML)
-				// (See https://youtu.be/Lebv2-ptzWY for more information on what exactly Clyde is doing)
-				// Oh yeah. Kudos to the guy who made DatDec. That shit saved this entire part of the program. +rep.
-				tile.GetTransformFromShallow(tileCfg, out Transform3D transform);
-				ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, tileCfg.ModelPath, modelCollection, dataTreeParent, globalTransform.compose(transform), extraData: new Dictionary<string, dynamic> { ["TargetModel"] = tileCfg.TargetModel });
-			} catch (KeyNotFoundException) {
+			TileConfig[] tileCfgs = (TileConfig[])ConfigReferenceBootstrapper.ConfigReferences["tile"];
+			TileConfig tileCfg = (TileConfig)tileCfgs.GetEntryByName(tile.tile.getName());
+			if (tileCfg == null) {
 				XanLogger.WriteLine($"Unable to find data for tile [{tile.tile.getName()}]!");
+				return;
 			}
+
+			//tile.GetTransformFromShallow(tileCfg, out Transform3D transform);
+			//FileInfo modelRef = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + tileCfg.ModelPath);
+			//ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, tileCfg.ModelPath, modelCollection, dataTreeParent, globalTransform.compose(transform), extraData: new Dictionary<string, dynamic> { ["TargetModel"] = tileCfg.TargetModel });
+
+			TileConfig.Original originalImpl = tileCfg.getOriginal(tileCfg.getConfigManager());
+			Transform3D transform = new Transform3D();
+			tile.getTransform(originalImpl, transform);
+			string relativeModelPath = originalImpl.model.getName();
+			ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, relativeModelPath, modelCollection, dataTreeParent, globalTransform.compose(transform));
 		}
 		
 	}

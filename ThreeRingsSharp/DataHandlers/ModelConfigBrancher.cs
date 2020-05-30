@@ -41,7 +41,7 @@ namespace ThreeRingsSharp.DataHandlers {
 				throw new ClydeDataReadException("This specific model does not have an implementation, which is the data for the model itself. The program cannot continue! This generally happens if the implementation is from another game that uses Clyde and has defined its own custom model types (e.g. Spiral Knights does this)", "Can't Read Model", MessageBoxIcon.Error);
 			}
 
-			string implName = (ClassNameStripper.GetWholeClassName(implementation.getClass()) ?? implementation.getClass().getTypeName()).Replace("$", "::");
+			string implName = (JavaClassNameStripper.GetWholeClassName(implementation.getClass()) ?? implementation.getClass().getTypeName()).Replace("$", "::");
 			if (currentDataTreeObject != null) {
 				if (useImplementation) {
 					currentDataTreeObject.Text = implName;

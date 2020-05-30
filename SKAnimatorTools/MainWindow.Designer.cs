@@ -60,6 +60,7 @@
 			// 
 			this.SaveModel.Filter = "gLTF 2.0 Binary|*.glb|WaveFront OBJ|*.obj";
 			this.SaveModel.RestoreDirectory = true;
+			this.SaveModel.FileOk += new System.ComponentModel.CancelEventHandler(this.SaveModel_PromptFileExport);
 			// 
 			// OpenModel
 			// 
@@ -117,7 +118,8 @@
 			this.SilkImages.Images.SetKeyName(31, "Tile");
 			this.SilkImages.Images.SetKeyName(32, "Matrix");
 			this.SilkImages.Images.SetKeyName(33, "Missing");
-			this.SilkImages.Images.SetKeyName(34, "None");
+			this.SilkImages.Images.SetKeyName(34, "Tag");
+			this.SilkImages.Images.SetKeyName(35, "None");
 			// 
 			// GroupBoxModelInfo
 			// 

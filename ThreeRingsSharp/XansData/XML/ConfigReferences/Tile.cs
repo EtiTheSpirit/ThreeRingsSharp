@@ -14,7 +14,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 	/// <summary>
 	/// Handles iterating through tile elements.
 	/// </summary>
-	public class Tile {
+	[Obsolete] public class Tile {
 
 		/// <summary>
 		/// Go through all of the tile data and get its entries.
@@ -29,7 +29,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 					string name = nameNode.Value;
 					string impl = implNode.Attribute("class").Value;
 					string refOrMdl = null;
-					string[] clsName = ClassNameStripper.GetSplitClassName(impl);
+					string[] clsName = JavaClassNameStripper.GetSplitClassName(impl);
 					bool isDerived = clsName.Length == 2 && clsName[1] == "Derived";
 					string setModelTarget = null;
 

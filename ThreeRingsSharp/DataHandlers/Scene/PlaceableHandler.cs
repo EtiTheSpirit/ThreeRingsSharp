@@ -10,6 +10,11 @@ using System.IO;
 using com.threerings.math;
 using System.Runtime.CompilerServices;
 using ThreeRingsSharp.DataHandlers.Model;
+using com.threerings.tudey.config;
+using ThreeRingsSharp.XansData.XML.ConfigReferences;
+using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.Utility;
+using com.threerings.config;
 
 namespace ThreeRingsSharp.DataHandlers.Scene {
 
@@ -22,18 +27,79 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			if (dataTreeParent == null) return;
 			Transform3D transform = GetTransform(data);
 
-			dataTreeParent.AddSimpleProperty("Transform", transform.toString(), SilkImage.Matrix);
-			dataTreeParent.AddSimpleProperty("Object", data.placeable.getName(), SilkImage.Reference);
+			// This method returns a property, but this is just a stock object (it was created this way in TudeySceneConfigBrancher)
+			List<DataTreeObject> values = dataTreeParent.Properties[dataTreeParent.FindSimpleProperty("Entries")];
+			DataTreeObject prop = values.First();
+			DataTreeObject existingPlaceableCtr = prop.FindSimpleProperty("Placeable Objects");
+			if (existingPlaceableCtr != null) {
+				// Yes, there is a reason you call find twice. The implicit cast from property to object on existingTileCtr creates a new object
+				// as such, casting it back for use in this lookup is a different key.
+				existingPlaceableCtr = prop.Properties[prop.FindSimpleProperty("Placeable Objects")].FirstOrDefault();
+			}
+			DataTreeObject placeableContainer = existingPlaceableCtr ?? new DataTreeObject() {
+				Text = "Placeable Objects",
+				ImageKey = SilkImage.Variant
+			};
+
+			if (existingPlaceableCtr == null) {
+				// We made a new one. Add it.
+				prop.AddSimpleProperty("Placeable Objects", placeableContainer);
+			}
+
+			DataTreeObject individualPlacementCtr = new DataTreeObject() {
+				Text = data.placeable.getName()
+			};
+
+			individualPlacementCtr.AddSimpleProperty("Transform", transform.toString(), SilkImage.Matrix);
+			individualPlacementCtr.AddSimpleProperty("Reference", data.getReference()?.getName() ?? "null", SilkImage.Reference);
+			placeableContainer.AddSimpleProperty("Entry", individualPlacementCtr);
 		}
 
 		public void HandleEntry(FileInfo sourceFile, Entry entry, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null) {
 			PlaceableEntry placeable = (PlaceableEntry)entry;
+			SetupCosmeticInformation(placeable, dataTreeParent);
 
 			// TODO: Why the hell does referencing the transform field treat it like a method?
 			// Is this some really stupid inheritence problem? I didn't even know this was possible.
 			// EDIT: Yeah it is. Entry has a method called "transform", but placeable has a field called "transform". Great.
 			// This may have been caused by the transpiler, which is to be expected. I'm actually quite suprised that I've not run into any errors until now.
-			ConfigReferenceUtil.HandleConfigReference(sourceFile, placeable.placeable, modelCollection, dataTreeParent, globalTransform.compose(GetTransform(placeable)));
+
+			// TEST: Is this, by some slim chance, a file ref? (This can happen!)
+			FileInfo refFile = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + placeable.getReference().getName());
+			if (!refFile.Exists) {
+				PlaceableConfig[] placeableCfgs = (PlaceableConfig[])ConfigReferenceBootstrapper.ConfigReferences["placeable"];
+				PlaceableConfig placeableCfg = (PlaceableConfig)placeableCfgs.GetEntryByName(placeable.getReference().getName());
+				if (placeableCfg == null) {
+					XanLogger.WriteLine($"Unable to find data for placeable [{placeable.getReference().getName()}]!");
+					return;
+				}
+
+			GETIMPL:
+				PlaceableConfig.Original originalImpl;
+				if (placeableCfg.getConfigManager() != null) {
+					originalImpl = placeableCfg.getOriginal(placeableCfg.getConfigManager());
+				} else {
+					if (placeableCfg.implementation is PlaceableConfig.Original org) {
+						originalImpl = org;
+					} else if (placeableCfg.implementation is PlaceableConfig.Derived der) {
+						placeableCfg = (PlaceableConfig)placeableCfgs.GetEntryByName(der.placeable.getName());
+						goto GETIMPL;
+					} else {
+						originalImpl = null;
+					}
+				}
+				if (originalImpl != null) {
+					Transform3D transform = GetTransform(placeable);
+					string relativeModelPath = originalImpl.model.getName();
+					ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, relativeModelPath, modelCollection, dataTreeParent, globalTransform.compose(transform));
+				} else {
+					XanLogger.WriteLine($"Implementation for placeable [{placeable.getReference().getName()}] does not exist!");
+				}
+				return;
+			}
+
+			Transform3D trs = GetTransform(placeable);
+			ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, placeable.getReference().getName(), modelCollection, dataTreeParent, globalTransform.compose(trs));
 		}
 
 		/// <summary>

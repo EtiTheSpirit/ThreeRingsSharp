@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.XansData.Extensions;
 using ThreeRingsSharp.XansData.Structs;
 
 namespace ThreeRingsSharp.XansData.IO {
@@ -21,7 +22,16 @@ namespace ThreeRingsSharp.XansData.IO {
 
 			int modelIndex = 0;
 			int indexOffset = 0;
+
+			int numModelsSkipped = 0;
+
 			foreach (Model3D model in models) {
+				bool skip = (bool)model.ExtraData.GetOrDefault("SkipExport", false);
+				if (skip) {
+					numModelsSkipped++;
+					continue; // Go to the next iteration.
+				}
+
 				objBuilder.Append("\n\no ");
 				objBuilder.AppendLine(model.Name ?? "ExportedModel" + modelIndex);
 
@@ -49,6 +59,8 @@ namespace ThreeRingsSharp.XansData.IO {
 				modelIndex++;
 				indexOffset += model.Mesh.Vertices.Count;
 			}
+
+			XanLogger.WriteLine($"OBJ Exporter instantiated {modelIndex} models (skipped {numModelsSkipped} models).");
 
 			// Write the file now.
 			File.WriteAllText(toFile.FullName, objBuilder.ToString());

@@ -149,6 +149,7 @@
   <ItemGroup>
     <Compile Include="DataHandlers\AnimationConfigBrancher.cs" />
     <Compile Include="DataHandlers\ClydeFileHandler.cs" />
+    <Compile Include="DataHandlers\Properties\ModelPropertyUtility.cs" />
     <Compile Include="DataHandlers\ModelConfigBrancher.cs" />
     <Compile Include="DataHandlers\Model\ArticulatedConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\CompoundConfigHandler.cs" />
@@ -176,12 +177,14 @@
     <Compile Include="Utility\Interface\AsyncMessageBox.cs" />
     <Compile Include="Utility\Interface\DataTreeObject.cs" />
     <Compile Include="Utility\Interface\SilkImage.cs" />
+    <Compile Include="Utility\ReferenceRoot.cs" />
     <Compile Include="Utility\ResourceDirectoryGrabber.cs" />
     <Compile Include="Utility\TextureGrabber.cs" />
     <Compile Include="Utility\VersionInfoScraper.cs" />
     <Compile Include="Utility\XanLogger.cs" />
     <Compile Include="XansData\Exceptions\ClydeDataReadException.cs" />
     <Compile Include="XansData\Exceptions\InvalidTypeException.cs" />
+    <Compile Include="XansData\Extensions\ChoiceExtensions.cs" />
     <Compile Include="XansData\Extensions\TileEntryExtensions.cs" />
     <Compile Include="XansData\FileUtils.cs" />
     <Compile Include="XansData\ICloneable.cs" />
@@ -220,6 +223,7 @@
     <Compile Include="XansData\Structs\VertexGroup.cs" />
     <Compile Include="XansData\Extensions\TransformExtensions.cs" />
     <Compile Include="XansData\XML\ConfigReferences\ConfigReferenceBootstrapper.cs" />
+    <Compile Include="XansData\XML\ConfigReferences\ConfigReferenceContainer.cs" />
     <Compile Include="XansData\XML\ConfigReferences\Tile.cs" />
     <Compile Include="XansData\XML\XMLExtension.cs" />
   </ItemGroup>

@@ -37,7 +37,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// Takes in a <see cref="string"/> filepath and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="Model3D"/> instances.
 		/// </summary>
 		/// <param name="sourceFile">The original base-level file that contains the reference.</param>
-		/// <param name="filePathRelativeToRsrc">The direct filepath.</param>
+		/// <param name="filePathRelativeToRsrc">The path of the referenced file, relative to the rsrc directory.</param>
 		/// <param name="modelCollection">A list of every model that has been loaded recursively.</param>
 		/// <param name="dataTreeParent">For cases where the GUI is used, this is the data tree representation.</param>
 		/// <param name="globalTransform">The transformation to apply to all loaded models.</param>
@@ -58,7 +58,8 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		}
 
 		/// <summary>
-		/// Takes in a <see cref="ComponentModel"/> and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="Model3D"/> instances.
+		/// Takes in a <see cref="ComponentModel"/> and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="Model3D"/> instances.<para/>
+		/// WARNING: This will return <see langword="null"/> if the configreference does not reference anything!
 		/// </summary>
 		/// <param name="sourceFile">The original base-level file that contains the reference.</param>
 		/// <param name="model">The reference itself, stored within a <see cref="ComponentModel"/>.</param>
@@ -69,6 +70,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
 		public static List<Model3D> HandleComponentModel(FileInfo sourceFile, ComponentModel model, List<Model3D> modelCollection, DataTreeObject dataTreeParent, Transform3D globalTransform, bool appendModelsToModelCollection = true, Dictionary<string, dynamic> extraData = null) {
 			if (model == null) return null;
+			if (model.model?.getName() == null) return null;
 
 			// This needs to be kept here since it has transform data.
 

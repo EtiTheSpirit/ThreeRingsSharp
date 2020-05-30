@@ -12,7 +12,7 @@ namespace ThreeRingsSharp.Utility {
 	/// <summary>
 	/// A utility dedicated to taking in Java classnames and breaking them down into parts.
 	/// </summary>
-	public static class ClassNameStripper {
+	public static class JavaClassNameStripper {
 
 		/// <summary>
 		/// Returns a <see cref="string"/> array of the class name. This array always has a very specific structure:<para/>
@@ -77,6 +77,26 @@ namespace ThreeRingsSharp.Utility {
 			string[] cls = GetSplitClassName(className);
 			if (cls == null) return null;
 			return cls[0];
+		}
+
+		/// <summary>
+		/// Given a classname with signatures included, this will remove the signature.<para/>
+		/// This only works on classes that extend <see cref="java.lang.Object"/>, NOT primitive types!
+		/// </summary>
+		/// <param name="className"></param>
+		/// <returns></returns>
+		public static string RemoveSignature(string className) {
+			while (className.First() == '[') {
+				// This assumes we aren't using primitives. This will brick under primitives.
+				// Objects use Lsomething.something.classhere
+				// Arrays use [ at the start, multidimensional arrays use multiple [s.
+				// Primitives are just a letter (e.g. B for bool) and that's why it'll brick, because
+				// [B; will be used to denote an array of bools. No classname there!
+				className = className.Substring(1);
+			}
+			className = className.Substring(1);
+
+			return className.Substring(0, className.Length - 1); // Get rid of the trailing ;
 		}
 
 	}

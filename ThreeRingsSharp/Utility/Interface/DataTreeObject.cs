@@ -378,6 +378,7 @@ namespace ThreeRingsSharp.Utility.Interface {
 		}
 
 		public static explicit operator DataTreeObjectProperty(DataTreeObject obj) {
+			if (obj is null) return null;
 			return new DataTreeObjectProperty(obj.Text, obj.ImageKey, obj.DisplaySingleChildInline) {
 				CreatedFromFullObject = !obj.CreatedFromProperty
 			};
@@ -433,6 +434,7 @@ namespace ThreeRingsSharp.Utility.Interface {
 		}
 
 		public static implicit operator DataTreeObject(DataTreeObjectProperty prop) {
+			if (prop is null) return null;
 			return new DataTreeObject() {
 				Text = prop.Text,
 				ImageKey = prop.ImageKey,

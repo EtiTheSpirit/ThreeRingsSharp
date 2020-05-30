@@ -1,10 +1,13 @@
-﻿using System;
+﻿using com.threerings.config;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.DataHandlers.Model;
+using ThreeRingsSharp.Utility;
 
 namespace ThreeRingsSharp.XansData.Extensions {
 
@@ -83,6 +86,44 @@ namespace ThreeRingsSharp.XansData.Extensions {
 			if (dictionary.ContainsKey(key)) return dictionary[key];
 			return def;
 		}
+		#endregion
+
+		#region ContainsValueOfType
+
+		/// <summary>
+		/// Returns <see langword="true"/> if the given <see cref="Dictionary{TKey, TValue}"/> contains a value whose type is assignable to (can be cast into) <paramref name="valueType"/>, and <see langword="false"/> if it does not.
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="dictionary"></param>
+		/// <param name="valueType"></param>
+		/// <returns></returns>
+		public static bool ContainsValueOfType<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, Type valueType) {
+			foreach (TValue value in dictionary.Values) {
+				if (valueType.IsAssignableFrom(value.GetType())) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Returns <see langword="true"/> if the given <see cref="IReadOnlyDictionary{TKey, TValue}"/> contains a value whose type is assignable to (can be cast into) <paramref name="valueType"/>, and <see langword="false"/> if it does not.
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="dictionary"></param>
+		/// <param name="valueType"></param>
+		/// <returns></returns>
+		public static bool ContainsValueOfType<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dictionary, Type valueType) {
+			foreach (TValue value in dictionary.Values) {
+				if (valueType.IsAssignableFrom(value.GetType())) {
+					return true;
+				}
+			}
+			return false;
+		}
+
 		#endregion
 
 		/// <summary>
@@ -221,6 +262,20 @@ namespace ThreeRingsSharp.XansData.Extensions {
 			}
 			return retn;
 		}
+
+		/// <summary>
+		/// Finds the instance in the array of <see cref="ManagedConfig"/> instances with the given name by calling their <see cref="ManagedConfig.getName()"/> method.
+		/// </summary>
+		/// <param name="array"></param>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public static ManagedConfig GetEntryByName(this ManagedConfig[] array, string name) {
+			try {
+				return array.Where(obj => obj.getName() == name).FirstOrDefault();
+			} catch { }
+			return null;
+		}
+
 		#endregion
 
 	}

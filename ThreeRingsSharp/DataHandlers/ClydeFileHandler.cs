@@ -89,7 +89,7 @@ namespace ThreeRingsSharp.DataHandlers {
 				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(clydeFile);
 				XanLogger.WriteLine($"Read file to grab the raw info.", true);
 				string modelFullClass = cosmeticInfo.Item3;
-				string[] modelClassInfo = ClassNameStripper.GetSplitClassName(modelFullClass);
+				string[] modelClassInfo = JavaClassNameStripper.GetSplitClassName(modelFullClass);
 
 				if (modelClassInfo != null) {
 					modelClass = modelClassInfo[0];
@@ -121,7 +121,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					obj = targetImporter.readObject();
 					ClydeObjectCache[clydeFile.FullName] = obj;
 					ModelInfoCache[clydeFile.FullName] = cosmeticInfo;
-				} catch (Exception ex) {
+				} catch {
 					targetImporter.close();
 					throw;
 				}
@@ -129,7 +129,7 @@ namespace ThreeRingsSharp.DataHandlers {
 				obj = ClydeObjectCache[clydeFile.FullName];
 				(string, string, string) cosmeticInfo = ModelInfoCache[clydeFile.FullName];
 				string modelFullClass = cosmeticInfo.Item3;
-				string[] modelClassInfo = ClassNameStripper.GetSplitClassName(modelFullClass);
+				string[] modelClassInfo = JavaClassNameStripper.GetSplitClassName(modelFullClass);
 
 				if (modelClassInfo != null) {
 					modelClass = modelClassInfo[0];

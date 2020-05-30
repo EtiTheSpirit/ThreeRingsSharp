@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 
 namespace ThreeRingsSharp.Utility {
-	public class XanLogger {
+	public static class XanLogger {
 
 		/// <summary>
 		/// Intended for exporting the log to a text file. This <see cref="StringBuilder"/> will contain the entire log.
@@ -19,7 +19,7 @@ namespace ThreeRingsSharp.Utility {
 		/// <summary>
 		/// The log while <see cref="UpdateAutomatically"/> is false and it's written to (this is used to append all of the data when <see cref="UpdateLog"/> is called)
 		/// </summary>
-		private static StringBuilder LogWhileNotUpdating { get; } = new StringBuilder();
+		private static List<(string, bool)> LogWhileNotUpdating { get; } = new List<(string, bool)>();
 
 		/// <summary>
 		/// If <see langword="true"/>, verbose log entries will be posted in the log. Its default value is equal to <see cref="IsDebugMode"/>, but can be set at any time.
@@ -70,7 +70,10 @@ namespace ThreeRingsSharp.Utility {
 			if (BoxReference == null) return;
 			if (!UpdateAutomatically) {
 				WasAtBottom = BoxReference.IsScrolledToBottom();
-				BoxReference.AppendText(LogWhileNotUpdating.ToString());
+				foreach ((string, bool) logEntry in LogWhileNotUpdating) {
+					BoxReference.AppendText(logEntry.Item1, logEntry.Item2 ? Color.Gray : BoxReference.ForeColor);
+				}
+				
 
 				if (WasAtBottom && !BoxReference.IsScrolledToBottom()) {
 					BoxReference.SelectionStart = BoxReference.TextLength;
@@ -78,6 +81,7 @@ namespace ThreeRingsSharp.Utility {
 				}
 
 				LogWhileNotUpdating.Clear();
+				BoxReference.Update();
 			}
 		}
 
@@ -113,14 +117,16 @@ namespace ThreeRingsSharp.Utility {
 
 			if (UpdateAutomatically) {
 				WasAtBottom = BoxReference.IsScrolledToBottom();
-				BoxReference.AppendText(text);
+				BoxReference.AppendText(text, isVerbose ? Color.Gray : BoxReference.ForeColor);
 
 				if (WasAtBottom && !BoxReference.IsScrolledToBottom()) {
 					BoxReference.SelectionStart = BoxReference.TextLength;
 					BoxReference.ScrollToCaret();
 				}
+
+				BoxReference.Update();
 			} else {
-				LogWhileNotUpdating.Append(text);
+				LogWhileNotUpdating.Add((text, isVerbose));
 			}
 		}
 
@@ -133,7 +139,7 @@ namespace ThreeRingsSharp.Utility {
 		}
 	}
 
-	public static class RTBScrollUtil {
+	public static class RichTextBoxUtil {
 		//private const int WM_VSCROLL = 0x115;
 		//private const int WM_MOUSEWHEEL = 0x20A;
 		private const int WM_USER = 0x400;
@@ -158,6 +164,31 @@ namespace ThreeRingsSharp.Utility {
 			SendMessage(box.Handle, EM_GETSCROLLPOS, 0, ref rtfPoint);
 
 			return rtfPoint.Y + box.ClientSize.Height >= maxScroll;
+		}
+
+		/// <summary>
+		/// Appends colored text to the box.
+		/// </summary>
+		/// <param name="box"></param>
+		/// <param name="text"></param>
+		/// <param name="color"></param>
+		public static void AppendText(this RichTextBox box, string text, Color color) {
+			if (color == box.ForeColor) {
+				// Skip if it has no actual coor change.
+				box.AppendText(text);
+				return;
+			}
+
+			int oldSelStart = box.SelectionStart;
+			int oldSelLength = box.SelectionLength;
+			box.SelectionStart = box.TextLength;
+			box.SelectionLength = 0;
+
+			box.SelectionColor = color;
+			box.AppendText(text);
+			box.SelectionColor = box.ForeColor;
+			box.SelectionStart = oldSelStart;
+			box.SelectionLength = oldSelLength;
 		}
 	}
 }

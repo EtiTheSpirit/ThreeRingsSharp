@@ -186,6 +186,11 @@ namespace ThreeRingsSharp.Utility.Interface {
 		Missing,
 
 		/// <summary>
+		/// A tag, like a cardboard price tag that hangs off of an object.
+		/// </summary>
+		Tag,
+
+		/// <summary>
 		/// A transparent space.
 		/// </summary>
 		[Obsolete("Using an empty icon is not advised. Consider using SilkImage.Generic instead.")] None

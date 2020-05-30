@@ -27,6 +27,7 @@ using ThreeRingsSharp.XansData.Extensions;
 
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {
+
 		public MainWindow() {
 			InitializeComponent();
 			XanLogger.BoxReference = ProgramLog;
@@ -50,6 +51,7 @@ namespace SKAnimatorTools {
 			Model3D.TargetUpAxis = ConfigurationForm.AxisIntMap[(int)ConfigurationInterface.GetConfigurationValue("UpAxisIndex", 1, true)];
 			GLTFExporter.EmbedTextures = ConfigurationInterface.GetConfigurationValue("EmbedTextures", false, true);
 			XanLogger.VerboseLogging = ConfigurationInterface.GetConfigurationValue("VerboseLogging", false, true);
+			StaticSetExportMode = (int)ConfigurationInterface.GetConfigurationValue("StaticSetModeIndex", 0L, true);
 			if (Directory.Exists(loadDir)) {
 				OpenModel.InitialDirectory = loadDir;
 			}
@@ -69,6 +71,14 @@ namespace SKAnimatorTools {
 
 			XanLogger.UpdateAutomatically = false;
 		}
+
+		/// <summary>
+		/// The mode to use when dealing with <see cref="StaticSetConfig"/> instances in the export.<para/>
+		/// <c>0 = Prompt Me</c><para/>
+		/// <c>1 = All</c><para/>
+		/// <c>2 = One</c><para/>
+		/// </summary>
+		public int StaticSetExportMode { get; set; } = 0;
 
 		/// <summary>
 		/// The current configuration form, if it exists.
@@ -93,6 +103,8 @@ namespace SKAnimatorTools {
 				XanLogger.VerboseLogging = newValue;
 			} else if (configKey == "EmbedTextures") {
 				GLTFExporter.EmbedTextures = newValue;
+			} else if (configKey == "StaticSetModeIndex") {
+				StaticSetExportMode = newValue;
 			}
 		}
 
@@ -105,7 +117,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// All models from the latest opened .DAT file.
 		/// </summary>
-		private static List<Model3D> AllModels { get; set; }
+		private static List<Model3D> AllModels { get; set; } = new List<Model3D>();
 
 		private void OpenClicked(object sender, EventArgs e) {
 			DialogResult result = OpenModel.ShowDialog();
@@ -117,7 +129,7 @@ namespace SKAnimatorTools {
 
 
 				FileInfo clydeFile = new FileInfo(OpenModel.FileName);
-				AllModels = new List<Model3D>();
+				AllModels.Clear();
 				bool isOK = true;
 				XanLogger.UpdateAutomatically = false;
 				try {
@@ -126,29 +138,32 @@ namespace SKAnimatorTools {
 					ClydeFileHandler.HandleClydeFile(clydeFile, AllModels, true, ModelStructureTree);
 				} catch (ClydeDataReadException exc) {
 					XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message);
-					AsyncMessageBox.Show(exc.Message, exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
+					AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
 					isOK = false;
+					throw;
 				} catch (TypeInitializationException tExc) {
 					System.Exception err = tExc.InnerException;
 					if (err is ClydeDataReadException exc) {
 						XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message);
-						AsyncMessageBox.Show(exc.Message, exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
+						AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
 						isOK = false;
 					} else {
 						XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}");
-						AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}", "Oh no!", icon: MessageBoxIcon.Error);
+						AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
 						isOK = false;
 					}
+					throw;
 				} catch (System.Exception err) {
 					XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}");
-					AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}", "Oh no!", icon: MessageBoxIcon.Error);
+					AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
 					isOK = false;
+					throw;
 				}
 
 				if (ModelStructureTree.Nodes.Count != 0 && ModelStructureTree.Nodes[0] != null) SetPropertiesMenu(DataTreeObjectEventMarshaller.GetDataObjectOf(ModelStructureTree.Nodes[0]));
 				//BtnSaveModel.Enabled = CurrentBrancher.OK;
 				BtnSaveModel.Enabled = isOK;
-				XanLogger.WriteLine("Number of models loaded: " + AllModels.Count);
+				XanLogger.WriteLine($"Number of models loaded: {AllModels.Count} ({AllModels.Where(model => model.ExtraData.ContainsKey("UnselectedStaticSetModel")).Count()} as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)");
 
 				// TODO: Something more efficient.
 				int meshCount = 0;
@@ -264,7 +279,7 @@ namespace SKAnimatorTools {
 
 		private void OnConfigClicked(object sender, EventArgs e) {
 			ConfigForm = new ConfigurationForm();
-			ConfigForm.SetDataFromConfig(OpenModel.InitialDirectory, SaveModel.InitialDirectory, ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", OpenModel.RestoreDirectory, Model3D.MultiplyScaleByHundred, Model3D.ProtectAgainstZeroScale, ConfigurationForm.AxisIntMap.KeyOf(Model3D.TargetUpAxis), GLTFExporter.EmbedTextures, XanLogger.VerboseLogging);
+			ConfigForm.SetDataFromConfig(OpenModel.InitialDirectory, SaveModel.InitialDirectory, ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", OpenModel.RestoreDirectory, Model3D.MultiplyScaleByHundred, Model3D.ProtectAgainstZeroScale, ConfigurationForm.AxisIntMap.KeyOf(Model3D.TargetUpAxis), GLTFExporter.EmbedTextures, XanLogger.VerboseLogging, StaticSetExportMode);
 			ConfigForm.Show();
 			ConfigForm.Activate();
 			ConfigForm.FormClosed += OnConfigFormClosed;
@@ -277,6 +292,45 @@ namespace SKAnimatorTools {
 		private void OnMainWindowFocused(object sender, EventArgs e) {
 			if (ConfigForm == null) return;
 			ConfigForm.Activate();
+		}
+
+		private void SaveModel_PromptFileExport(object sender, CancelEventArgs e) {
+			bool hasStaticSetConfig = AllModels.Where(model => model.ExtraData.ContainsKey("UnselectedStaticSetModel")).Count() > 0;
+			if (!hasStaticSetConfig) return; // Skip this entire method if there's no staticsets.
+
+			// NEW: If their model includes a StaticSetConfig, we need to give them the choice to export all or one model.
+			DialogResult saveAllStaticSetModels = DialogResult.Cancel;
+			if (StaticSetExportMode == 0) {
+				saveAllStaticSetModels = MessageBox.Show(
+					"The model you're saving contains one or more StaticSetConfigs! " +
+					"This type of model is used like a variant selection (it provides " +
+					"a set of variants, and it's intended that only one of the models " +
+					"is actually used by the system.\n\n" +
+					"In some cases, you might want all variants (for instance, if you " +
+					"want to get a subtype of a gun such as the Antigua, you would export " +
+					"all of the models in the set and then pick the one you want in your " +
+					"3D editor). Likewise, there are cases in which " +
+					"you may want only one variant, for instance, in a CompoundConfig " +
+					"for a scene where it's using the set to select a specific tile or " +
+					"prop.\n\n" +
+					"Would you like to export ALL of the models within the StaticSetConfigs?",
+					"Export All StaticSetConfig components?",
+					MessageBoxButtons.YesNoCancel,
+					MessageBoxIcon.Information
+				);
+				if (saveAllStaticSetModels == DialogResult.Cancel) {
+					e.Cancel = true;
+				}
+			} else {
+				if (StaticSetExportMode == 1) saveAllStaticSetModels = DialogResult.Yes;
+				if (StaticSetExportMode == 2) saveAllStaticSetModels = DialogResult.No;
+			}
+			foreach (Model3D model in AllModels) {
+				if ((bool)model.ExtraData.GetOrDefault("UnselectedStaticSetModel", false) == true) {
+					model.ExtraData["SkipExport"] = saveAllStaticSetModels == DialogResult.No;
+					// If we select no, we want to skip models that aren't the selected ones.
+				}
+			}
 		}
 	}
 }

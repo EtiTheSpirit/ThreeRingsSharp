@@ -41,6 +41,37 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
+		/// Looks for the first instance of text between square brackets [like this] and returns that string, or <see langword="null"/> if it couldn't be found.
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		public static string BetweenBrackets(this string str) {
+			int openBracket = str.IndexOf('[');
+			if (openBracket == -1) return null;
+			int closeBracket = str.IndexOf(']', openBracket);
+			if (closeBracket == -1) return null;
+
+			return str.Substring(openBracket + 1, closeBracket - openBracket - 1);
+		}
+
+		/// <summary>
+		/// Converts a snake_case_string to a camelCaseString
+		/// </summary>
+		/// <param name="snakeCaseString"></param>
+		/// <returns></returns>
+		public static string SnakeToCamel(this string snakeCaseString) {
+			string[] parts = snakeCaseString.Split('_');
+			if (parts.Length == 1) return parts[0];
+			string retn = parts[0];
+			foreach (string part in parts.Skip(1)) {
+				// wtf lol
+				retn += part.First().ToString().ToUpper();
+				retn += part.Substring(1);
+			}
+			return retn;
+		}
+
+		/// <summary>
 		/// Returns true if the string is alphanumeric, or, if it is within the range of a-z, A-Z, and 0-9.
 		/// </summary>
 		/// <param name="inp"></param>

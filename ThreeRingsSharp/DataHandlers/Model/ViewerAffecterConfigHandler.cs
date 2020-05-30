@@ -23,7 +23,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		public void SetupCosmeticInformation(ViewerAffecterConfig model, DataTreeObject dataTreeParent) {
 			if (dataTreeParent == null) return;
 			ViewerEffectConfig effect = model.effect;
-			string cls = ClassNameStripper.GetWholeClassName(effect.getClass());
+			string cls = JavaClassNameStripper.GetWholeClassName(effect.getClass());
 			if (cls == null) {
 				XanLogger.WriteLine("WARNING: Attempt to get class of ViewerEffectConfig failed!");
 				return;

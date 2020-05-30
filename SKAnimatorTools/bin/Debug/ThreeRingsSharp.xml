@@ -57,6 +57,90 @@
             </summary>
             <param name="clydeFile"></param>
         </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility">
+            <summary>
+            Specialized methods to pull specific data out of models via their directs.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.TraverseDirectPath(System.Object,System.String)">
+            <summary>
+            Navigates through <paramref name="cfg"/> with the given <paramref name="path"/> as a direct.<para/>
+            This returns the end value at the path, as well as the value one element up from the bottom of the path (since this can often be used for context)
+            </summary>
+            <param name="cfg"></param>
+            <param name="path"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper">
+            <summary>
+            Provides aliases to get fields or indices of objects via reflection.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.Get(System.Object,System.String)">
+            <summary>
+            Returns the value of the given instance field.
+            </summary>
+            <param name="obj"></param>
+            <param name="field"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.Set(System.Object,System.String,System.Object)">
+            <summary>
+            Sets the value of the given instance field.
+            </summary>
+            <param name="obj"></param>
+            <param name="field"></param>
+            <param name="value"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.Index(System.Object,System.Int32)">
+            <summary>
+            Assuming <paramref name="obj"/> is an array, this returns <paramref name="obj"/>[<paramref name="idx"/>]
+            </summary>
+            <param name="obj"></param>
+            <param name="idx"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.GetPaths(System.Object)">
+            <summary>
+            An alias that returns the <c>paths</c> field as a <see langword="string"/>[], of course, intended to be called on a <see cref="T:com.threerings.config.Parameter.Direct"/>
+            </summary>
+            <param name="direct"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.GetOOOConfigAndParameter(System.Object,System.String,System.String)">
+            <summary>
+            In the context of config maps, a <see cref="T:com.threerings.config.ConfigReference"/> returns a path relative to an OOO config file.<para/>
+            This method will attempt to resolve that path when given a <see cref="T:com.threerings.config.ConfigReference"/> and a configuration index (which is the name of one of the xml files in the spiral knights/config directory, e.g. "material" or "tile")<para/>
+            Assuming <paramref name="fromObj"/> is a <see cref="T:com.threerings.config.ConfigReference"/>, this will call its <c>getName()</c> method (which returns its path), resolve the config data via <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>, and return the object with the given name.<para/>
+            Given <paramref name="directName"/>, it will attempt to call the <c>getParameter()</c> method on the returned config with an argument of this name, which should return the <see cref="T:com.threerings.config.Parameter"/> it's pointing to.<para/>
+            The first return value is the <see cref="T:com.threerings.config.ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="T:com.threerings.opengl.material.config.MaterialConfig"/>), and the second value is the <see cref="T:com.threerings.config.Parameter"/> returned by ^.
+            </summary>
+            <param name="fromObj"></param>
+            <param name="directName"></param>
+            <param name="threeRingsConfigName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.GetOOOConfigAndParameter(System.Object,System.String,System.Type)">
+            <summary>
+            In the context of config maps, a <see cref="T:com.threerings.config.ConfigReference"/> returns a path relative to an OOO config file.<para/>
+            This method will attempt to resolve that path when given a <see cref="T:com.threerings.config.ConfigReference"/> and a configuration index (which is the name of one of the xml files in the spiral knights/config directory, e.g. "material" or "tile")<para/>
+            Assuming <paramref name="fromObj"/> is a <see cref="T:com.threerings.config.ConfigReference"/>, this will call its <c>getName()</c> method (which returns its path), resolve the config data via <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>, and return the object with the given name.<para/>
+            Given <paramref name="directName"/>, it will attempt to call the <c>getParameter()</c> method on the returned config with an argument of this name, which should return the <see cref="T:com.threerings.config.Parameter"/> it's pointing to.<para/>
+            The first return value is the <see cref="T:com.threerings.config.ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="T:com.threerings.opengl.material.config.MaterialConfig"/>), and the second value is the <see cref="T:com.threerings.config.Parameter"/> returned by ^.
+            </summary>
+            <param name="fromObj"></param>
+            <param name="directName"></param>
+            <param name="threeRingsConfigType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.GetOOOConfigAndParameter(System.Object,System.String)">
+            <summary>
+            Gets a <see cref="T:com.threerings.config.ConfigReference"/> of the given name. Unlike the alternatives to this method, this one will iterate through all config refs (and by extension, does not require a direct config group name).
+            </summary>
+            <param name="fromObj"></param>
+            <param name="directName"></param>
+            <returns></returns>
+        </member>
         <member name="T:ThreeRingsSharp.DataHandlers.ModelConfigBrancher">
             <summary>
             A class that takes in a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>, determines its subtype (e.g. <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/>, <see cref="T:com.threerings.opengl.model.config.StaticConfig"/>, etc.), and handles the data appropriately.
@@ -74,10 +158,11 @@
             <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="T:com.threerings.math.Transform3D"/>.</param>
             <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodes(com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,System.String)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodes(com.threerings.opengl.model.config.ModelConfig,com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,System.String)">
             <summary>
             A utility function that iterates through all of the nodes recursively, as some may store mesh data.
             </summary>
+            <param name="baseModel">The <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> that contained this <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/>.</param>
             <param name="model">A reference to the <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/> that contains these nodes.</param>
             <param name="sourceFile">The file where the <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/> is stored.</param>
             <param name="parent">The parent node to iterate through.</param>
@@ -102,7 +187,7 @@
             Takes in a <see cref="T:System.String"/> filepath and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances.
             </summary>
             <param name="sourceFile">The original base-level file that contains the reference.</param>
-            <param name="filePathRelativeToRsrc">The direct filepath.</param>
+            <param name="filePathRelativeToRsrc">The path of the referenced file, relative to the rsrc directory.</param>
             <param name="modelCollection">A list of every model that has been loaded recursively.</param>
             <param name="dataTreeParent">For cases where the GUI is used, this is the data tree representation.</param>
             <param name="globalTransform">The transformation to apply to all loaded models.</param>
@@ -111,7 +196,8 @@
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil.HandleComponentModel(System.IO.FileInfo,com.threerings.opengl.model.config.CompoundConfig.ComponentModel,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>
-            Takes in a <see cref="T:com.threerings.opengl.model.config.CompoundConfig.ComponentModel"/> and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances.
+            Takes in a <see cref="T:com.threerings.opengl.model.config.CompoundConfig.ComponentModel"/> and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances.<para/>
+            WARNING: This will return <see langword="null"/> if the configreference does not reference anything!
             </summary>
             <param name="sourceFile">The original base-level file that contains the reference.</param>
             <param name="model">The reference itself, stored within a <see cref="T:com.threerings.opengl.model.config.CompoundConfig.ComponentModel"/>.</param>
@@ -277,7 +363,7 @@
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.ModelPath">
             <summary>
-            This is equivalent to the return value of <see cref="M:com.threerings.config.ConfigReference.getName"/>.<para/>
+            This is equivalent to the return value of <see cref="M:com.threerings.config.ConfigReference.getName"/>, which generally returns a filepath relative to the spiral knights rsrc directory (in the case of this property, this is exactly what it does).<para/>
             This is always populated even if <see cref="P:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig.Derived"/> is true (derived implementations don't contain their own model path), because this climbs down any derived chains until it finds an instance of <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> where this is set.
             </summary>
         </member>
@@ -352,12 +438,12 @@
             <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name. Additionally, it will not have its implementation property.</param>
             <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="T:com.threerings.math.Transform3D"/>.</param>
         </member>
-        <member name="T:ThreeRingsSharp.Utility.ClassNameStripper">
+        <member name="T:ThreeRingsSharp.Utility.JavaClassNameStripper">
             <summary>
             A utility dedicated to taking in Java classnames and breaking them down into parts.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.ClassNameStripper.GetSplitClassName(java.lang.Class)">
+        <member name="M:ThreeRingsSharp.Utility.JavaClassNameStripper.GetSplitClassName(java.lang.Class)">
             <summary>
             Returns a <see cref="T:System.String"/> array of the class name. This array always has a very specific structure:<para/>
             [0]=Class Name<para/>
@@ -367,7 +453,7 @@
             <param name="cls">The <see cref="T:java.lang.Class"/> to get the name of.</param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.ClassNameStripper.GetWholeClassName(java.lang.Class)">
+        <member name="M:ThreeRingsSharp.Utility.JavaClassNameStripper.GetWholeClassName(java.lang.Class)">
             <summary>
             Returns a <see cref="T:System.String"/> that contains everything after the last index of <c>.</c>. This does not filter out subclasses (e.g. <c>MyClass0$MySubclass0</c>) and will return the string containing the $ and everything.<para/>
             Returns <see langword="null"/> if the string does not have a locatable instance of '<c>.</c>'
@@ -375,14 +461,14 @@
             <param name="cls">The <see cref="T:java.lang.Class"/> to get the name of.</param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.ClassNameStripper.GetBaseClassName(java.lang.Class)">
+        <member name="M:ThreeRingsSharp.Utility.JavaClassNameStripper.GetBaseClassName(java.lang.Class)">
             <summary>
-            An alias method that calls <see cref="M:ThreeRingsSharp.Utility.ClassNameStripper.GetSplitClassName(System.String)"/> and returns the first index (the base class name), or <see langword="null"/> if '<c>.</c>' could not be found in the <see cref="T:System.String"/>.
+            An alias method that calls <see cref="M:ThreeRingsSharp.Utility.JavaClassNameStripper.GetSplitClassName(System.String)"/> and returns the first index (the base class name), or <see langword="null"/> if '<c>.</c>' could not be found in the <see cref="T:System.String"/>.
             </summary>
             <param name="cls">The <see cref="T:java.lang.Class"/> to get the name of.</param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.ClassNameStripper.GetSplitClassName(System.String)">
+        <member name="M:ThreeRingsSharp.Utility.JavaClassNameStripper.GetSplitClassName(System.String)">
             <summary>
             Returns a <see cref="T:System.String"/> array of the class name. This array always has a very specific structure:<para/>
             [0]=Class Name<para/>
@@ -392,7 +478,7 @@
             <param name="className">The classname to parse.</param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.ClassNameStripper.GetWholeClassName(System.String)">
+        <member name="M:ThreeRingsSharp.Utility.JavaClassNameStripper.GetWholeClassName(System.String)">
             <summary>
             Returns a <see cref="T:System.String"/> that contains everything after the last index of <c>.</c>. This does not filter out subclasses (e.g. <c>MyClass0$MySubclass0</c>) and will return the string containing the $ and everything.<para/>
             Returns <see langword="null"/> if the string does not have a locatable instance of '<c>.</c>'
@@ -400,11 +486,19 @@
             <param name="className">The classname to parse.</param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.ClassNameStripper.GetBaseClassName(System.String)">
+        <member name="M:ThreeRingsSharp.Utility.JavaClassNameStripper.GetBaseClassName(System.String)">
             <summary>
-            An alias method that calls <see cref="M:ThreeRingsSharp.Utility.ClassNameStripper.GetSplitClassName(System.String)"/> and returns the first index (the base class name), or <see langword="null"/> if '<c>.</c>' could not be found in the <see cref="T:System.String"/>.
+            An alias method that calls <see cref="M:ThreeRingsSharp.Utility.JavaClassNameStripper.GetSplitClassName(System.String)"/> and returns the first index (the base class name), or <see langword="null"/> if '<c>.</c>' could not be found in the <see cref="T:System.String"/>.
             </summary>
             <param name="className">The classname to parse.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.JavaClassNameStripper.RemoveSignature(System.String)">
+            <summary>
+            Given a classname with signatures included, this will remove the signature.<para/>
+            This only works on classes that extend <see cref="T:java.lang.Object"/>, NOT primitive types!
+            </summary>
+            <param name="className"></param>
             <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.Utility.Interface.AsyncMessageBox">
@@ -874,6 +968,11 @@
             A transparent red building brick intended to represent a missing asset.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.SilkImage.Tag">
+            <summary>
+            A tag, like a cardboard price tag that hangs off of an object.
+            </summary>
+        </member>
         <member name="F:ThreeRingsSharp.Utility.Interface.SilkImage.None">
             <summary>
             A transparent space.
@@ -1037,12 +1136,20 @@
             Clears all text from the log. This also wipes <see cref="P:ThreeRingsSharp.Utility.XanLogger.Log"/>.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.RTBScrollUtil.IsScrolledToBottom(System.Windows.Forms.RichTextBox)">
+        <member name="M:ThreeRingsSharp.Utility.RichTextBoxUtil.IsScrolledToBottom(System.Windows.Forms.RichTextBox)">
             <summary>
             Returns <see langword="true"/> if this <see cref="T:System.Windows.Forms.RichTextBox"/> is scrolled to the bottom, and <see langword="false"/> if it is not.
             </summary>
             <param name="box"></param>
             <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.RichTextBoxUtil.AppendText(System.Windows.Forms.RichTextBox,System.String,System.Drawing.Color)">
+            <summary>
+            Appends colored text to the box.
+            </summary>
+            <param name="box"></param>
+            <param name="text"></param>
+            <param name="color"></param>
         </member>
         <member name="T:ThreeRingsSharp.XansData.Exceptions.ClydeDataReadException">
             <summary>
@@ -1071,6 +1178,27 @@
             <summary>
             An exception thrown when a method that handles an arbitrary class type receives a type that is invalid for the given context (but is otherwise within constraints defined by the language)
             </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Extensions.ChoiceExtensions">
+            <summary>
+            As mentioned in <see cref="M:com.threerings.config.Parameter.Choice.getChoiceOptions"/>'s customized error, IKVM was unable to correctly convert this method.<para/>
+            This static class houses an extension method that fixes this.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ChoiceExtensions.GetChoiceOptions(com.threerings.config.Parameter.Choice)">
+            <summary>
+            A patched variant of <see cref="M:com.threerings.config.Parameter.Choice.getChoiceOptions"/> that doesn't commit <see href="https://www.youtube.com/watch?v=Lebv2-ptzWY"/> when you call it.<para/>
+            This returns a string array of every option name that displays in the dropdown menu of the ThreeRings Model Editor, should there be a multi-choice option on a model.
+            </summary>
+            <param name="choice"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ChoiceExtensions.GetDefaultOption(com.threerings.config.Parameter.Choice)">
+            <summary>
+            Returns the default option of this choice.
+            </summary>
+            <param name="choice"></param>
+            <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetTransformFromShallow(com.threerings.tudey.data.TudeySceneModel.TileEntry,ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig,com.threerings.math.Transform3D@)">
             <summary>
@@ -1139,6 +1267,26 @@
             <param name="dictionary"></param>
             <param name="key"></param>
             <param name="def"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.ContainsValueOfType``2(System.Collections.Generic.Dictionary{``0,``1},System.Type)">
+            <summary>
+            Returns <see langword="true"/> if the given <see cref="T:System.Collections.Generic.Dictionary`2"/> contains a value whose type is assignable to (can be cast into) <paramref name="valueType"/>, and <see langword="false"/> if it does not.
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dictionary"></param>
+            <param name="valueType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.ContainsValueOfType``2(System.Collections.Generic.IReadOnlyDictionary{``0,``1},System.Type)">
+            <summary>
+            Returns <see langword="true"/> if the given <see cref="T:System.Collections.Generic.IReadOnlyDictionary`2"/> contains a value whose type is assignable to (can be cast into) <paramref name="valueType"/>, and <see langword="false"/> if it does not.
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dictionary"></param>
+            <param name="valueType"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.Remove``2(System.Collections.Generic.Dictionary{``0,``1},``1)">
@@ -1217,6 +1365,14 @@
             <param name="floatArray"></param>
             <returns></returns>
         </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.GetEntryByName(com.threerings.config.ManagedConfig[],System.String)">
+            <summary>
+            Finds the instance in the array of <see cref="T:com.threerings.config.ManagedConfig"/> instances with the given name by calling their <see cref="M:com.threerings.config.ManagedConfig.getName"/> method.
+            </summary>
+            <param name="array"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.Extensions.StringExtensions">
             <summary>
             Provides some handy extension methods for <see cref="T:System.String"/>.
@@ -1238,6 +1394,20 @@
             </summary>
             <param name="str">The string to search.</param>
             <param name="text">The text to locate.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.BetweenBrackets(System.String)">
+            <summary>
+            Looks for the first instance of text between square brackets [like this] and returns that string, or <see langword="null"/> if it couldn't be found.
+            </summary>
+            <param name="str"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.SnakeToCamel(System.String)">
+            <summary>
+            Converts a snake_case_string to a camelCaseString
+            </summary>
+            <param name="snakeCaseString"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.IsAlphanumeric(System.String)">
@@ -2029,14 +2199,14 @@
             Format: WaveFront OBJ Format
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.ModelFormat.glTF">
+        <member name="F:ThreeRingsSharp.XansData.ModelFormat.GLTF">
             <summary>
             Format: Graphics Library Transmission Format
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.ModelFormatUtil.ExtensionToFormatBindings">
             <summary>
-            A binding from <see cref="T:System.String"/> file extensions to <see cref="T:ThreeRingsSharp.XansData.ModelFormat"/>s, e.g. the string <c>".glb"</c> corresponds to <see cref="F:ThreeRingsSharp.XansData.ModelFormat.glTF"/>.
+            A binding from <see cref="T:System.String"/> file extensions to <see cref="T:ThreeRingsSharp.XansData.ModelFormat"/>s, e.g. the string <c>".glb"</c> corresponds to <see cref="F:ThreeRingsSharp.XansData.ModelFormat.GLTF"/>.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.ModelGroup">
@@ -2285,12 +2455,6 @@
             The display name for this model, used in exporting (i.e. this is the name that will show up in Blender or any other modelling software.)
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.XansData.Model3D.Up">
-            <summary>
-            The current up axis for this model.<para/>
-            Default value: <see cref="F:ThreeRingsSharp.XansData.Structs.Axis.PositiveY"/> (in the context that +Y is up, and -Z is forward)
-            </summary>
-        </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.Source">
             <summary>
             A reference to the file that the model here came from. This is used to reference textures and other path-dependent extra data.
@@ -2316,9 +2480,9 @@
             If true, <see cref="M:ThreeRingsSharp.XansData.Model3D.ApplyScaling"/> has already been called and cannot be called again. This applies transformations like the zero-scale check and the x100 scale prefs.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.Model3D.Textures">
+        <member name="P:ThreeRingsSharp.XansData.Model3D.Textures">
             <summary>
-            The textures tied to this model by full filepath.
+            The textures tied to this model relative to the rsrc directory.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.ActiveTexture">
@@ -2329,6 +2493,11 @@
         <member name="P:ThreeRingsSharp.XansData.Model3D.Attachments">
             <summary>
             The attached models on this <see cref="T:ThreeRingsSharp.XansData.Model3D"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.ExtraData">
+            <summary>
+            Any extra information attached to this <see cref="T:ThreeRingsSharp.XansData.Model3D"/> that should be attached as arbitrary data.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Model3D.Export(System.IO.FileInfo,ThreeRingsSharp.XansData.ModelFormat)">
@@ -2350,30 +2519,6 @@
             Applies the scale modifiers to this <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> as defined by user prefs. This can only be called once (subsequent calls will do nothing.)
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Model3D.ApplyUpAxis">
-            <summary>
-            Alters <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> by rotating it so that the given axis is treated as the vertical axis, then returns the modified <see cref="T:com.threerings.math.Transform3D"/> (this will not edit the internal model's <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/>).<para/>
-            <see cref="P:ThreeRingsSharp.XansData.Model3D.Up"/> will be set to <see cref="P:ThreeRingsSharp.XansData.Model3D.TargetUpAxis"/> when this is called.<para/>
-            All axis are treated as left-handed.<para/>
-            This should only be called after all transformations have been applied! It can only be called once. If this is called again, an <see cref="T:System.InvalidOperationException"/> will be thrown.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Model3D.ApplyUpAxis(ThreeRingsSharp.XansData.Structs.Axis)">
-            <summary>
-            Alters <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> by rotating it so that the given axis is treated as the vertical axis, then returns the modified <see cref="T:com.threerings.math.Transform3D"/> (this will not edit the internal model's <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/>).<para/>
-            /// <see cref="P:ThreeRingsSharp.XansData.Model3D.Up"/> will be set to <paramref name="newUpAxis"/> when this is called.<para/>
-            All axis are treated as left-handed.<para/>
-            This should only be called after all transformations have been applied! It can only be called once. If this is called again, an <see cref="T:System.InvalidOperationException"/> will be thrown.
-            </summary>
-            <param name="newUpAxis">The new <see cref="T:ThreeRingsSharp.XansData.Structs.Axis"/> that should be treated as the verical axis.</param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Model3D.Rotate180OnAxis(com.threerings.math.Transform3D,ThreeRingsSharp.XansData.Structs.Axis)">
-            <summary>
-            Rotates the given <see cref="T:com.threerings.math.Transform3D"/> by 180 degrees on the given axis.
-            </summary>
-            <param name="trs"></param>
-            <param name="axis"></param>
-        </member>
         <member name="M:ThreeRingsSharp.XansData.Model3D.Dispose">
             <summary>
             Frees all information used by this <see cref="T:ThreeRingsSharp.XansData.Model3D"/>.
@@ -2392,15 +2537,124 @@
             Loads all of the XML config reference files and stores their data.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.References">
+        <member name="F:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.MERGED_FILE_VERSION">
             <summary>
-            A read-only map from a given type (e.g. "tile", "placeable") to a <see cref="T:System.Collections.Generic.IReadOnlyDictionary`2"/> of its own lookup (e.g. a lookup of tile IDs to actual tile references)
+            The current version of the MergedConfigReferences file.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.#cctor">
+        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.ConfigReferences">
             <summary>
-            Initializes all config references.
+            A read-only map from a given type name (e.g. "tile", "placeable", or "material") to an object representing its implementation in the Clyde format itself.<para/>
+            Configs should be referenced like an array: <c>ConfigReferences["tile"]</c><para/>
+            It can be indexed via a string name, which is the name of the file without .dat or .xml<para/>
+            It can also be indexed via type, such as via <c>ConfigReferences[<see langword="typeof"/>(<see cref="T:com.threerings.opengl.material.config.MaterialConfig"/>)]</c>
             </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PopulateConfigRefs">
+            <summary>
+            Initializes all config references together.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.GetConfigReferenceFromName(System.String)">
+            <summary>
+            Accesses <c>MergedConfigReferences.bin</c> and pulls the data from the specific named entry, or null if the merged binary file doesn't exist, is out of date, or the object couldn't be found.
+            </summary>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.GetConfigReferenceFromType(System.Type)">
+            <summary>
+            Accesses <c>MergedConfigReferences.bin</c> and pulls the data from the specific typed entry, or null if the merged binary file doesn't exist, is out of date, or the object couldn't be found.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.GetConfigReferenceNames">
+            <summary>
+            Returns all of the legal names for config references, or null if the merged binary file doesn't exist or is out of date.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.ReadFromRawConfigRefs">
+            <summary>
+            If the merged binary stuff doesn't exist, then this will try to find a ConfigRefs folder.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PruneXMLAndMakeBinaries">
+            <summary>
+            Populates a list of XML Configs from the existing default config refs that don't include entries referencing classes that don't exist (e.g. SK-specific stuff).<para/>
+            This then translates them to binary files so that loading is considerably faster.<para/>
+            Returns whether or not to skip populating the config refs dictionary (<see langword="true"/> if it should be skipped).
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.HasLegalClasses(System.Xml.Linq.XElement)">
+            <summary>
+            Returns <see langword="true"/> if this <see cref="T:System.Xml.Linq.XElement"/> only has class references that can be resolved.<para/>
+            Returns <see langword="false"/> if this <see cref="T:System.Xml.Linq.XElement"/> contains class references that cannot be resolved.
+            </summary>
+            <param name="rootEntry"></param>
+            <returns></returns>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.OOOLib">
+            <summary>
+            A reference to the OOOLibAndDeps.dll assembly.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.DoesClassExistCache">
+            <summary>
+            A cache representing whether or not certain classes exist.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer">
+            <summary>
+            A container for config references. This behaves like a <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.References">
+            <summary>
+            All of the existing references.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.ReferencesByType">
+            <summary>
+            All of the existing references, but indexed by their type.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.ReferencesByEntryName">
+            <summary>
+            A cache from the literal config entry name to the corresponding object. The returned value could be any reference type.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.ValidNames">
+            <summary>
+            An array of all of the names that are valid config containers.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.Item(System.String)">
+            <summary>
+            Get the configuration data for the given name, which should be identical to the config dat file name without its extension (e.g. "tile").<para/>
+            Throws an <see cref="T:System.ArgumentException"/> if the given name isn't valid, and an <see cref="T:System.ArgumentNullException"/> if the given name is <see langword="null"/>.
+            </summary>
+            <param name="cfgName">The name of the configuration, identical to its dat name without the extension (e.g. "tile")</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentException">If the name isn't correct.</exception>
+            <exception cref="T:System.ArgumentNullException">If the name is null.</exception>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.Item(System.Type)">
+            <summary>
+            Given a <see cref="T:System.Type"/> representing a specific config (e.g. <see cref="T:com.threerings.opengl.material.config.MaterialConfig"/>), the container for this config and all of its instances will be returned.
+            </summary>
+            <param name="cfgType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.TryGetReferenceFromName(System.String)">
+            <summary>
+            When given the name of a specific entry, this will iterate through ALL configs and try to find it.<para/>
+            Warning: This will be slow in general. It will cache what results it gets however.<para/>
+            Returns <see langword="null"/> if the reference could not be found.
+            </summary>
+            <param name="targetName"></param>
+            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.XansData.XML.ConfigReferences.Tile">
             <summary>
@@ -2412,6 +2666,14 @@
             Go through all of the tile data and get its entries.
             </summary>
             <param name="reader"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.XMLExtension.ElementsNamed(System.Xml.XmlReader,System.String)">
+            <summary>
+            Iterates through all of the XML elements with the given <paramref name="elementName"/>.
+            </summary>
+            <param name="reader">The <see cref="T:System.Xml.XmlReader"/> to grab data from.</param>
+            <param name="elementName">The name of the elements that should be returned.</param>
+            <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.XML.XMLExtension.ElementsNamed(System.Xml.XmlReader,System.String,System.Int32[])">
             <summary>

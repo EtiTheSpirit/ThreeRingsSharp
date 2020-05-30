@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThreeRingsSharp.DataHandlers.Properties;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
@@ -54,7 +55,8 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
 				meshToModel.Name = depth1Name + meshTitle;
 				meshToModel.Transform = meshToModel.Transform.compose(globalTransform).compose(new Transform3D(meshes.bounds.getCenter(), Quaternion.IDENTITY, 1f));
-				meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
+				//meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
+				meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
 				//meshToModel.Textures.SetFrom(new List<string>() { mesh.texture });
 				meshToModel.ActiveTexture = mesh.texture;
 

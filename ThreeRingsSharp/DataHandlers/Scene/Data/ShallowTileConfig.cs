@@ -64,7 +64,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene.Data {
 		private readonly string _ReferenceName;
 
 		/// <summary>
-		/// This is equivalent to the return value of <see cref="ConfigReference.getName()"/>.<para/>
+		/// This is equivalent to the return value of <see cref="ConfigReference.getName()"/>, which generally returns a filepath relative to the spiral knights rsrc directory (in the case of this property, this is exactly what it does).<para/>
 		/// This is always populated even if <see cref="Derived"/> is true (derived implementations don't contain their own model path), because this climbs down any derived chains until it finds an instance of <see cref="ShallowTileConfig"/> where this is set.
 		/// </summary>
 		public string ModelPath => Derived ? Reference.ModelPath : _ModelPath;

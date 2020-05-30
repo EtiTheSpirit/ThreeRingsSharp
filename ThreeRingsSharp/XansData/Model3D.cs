@@ -30,7 +30,7 @@ namespace ThreeRingsSharp.XansData {
 		/// </summary>
 		private static readonly IReadOnlyDictionary<ModelFormat, dynamic> ExporterBindings = new Dictionary<ModelFormat, dynamic>() {
 			[ModelFormat.OBJ] = new ModelExporterFactory<OBJExporter>(),
-			[ModelFormat.glTF] = new ModelExporterFactory<GLTFExporter>()
+			[ModelFormat.GLTF] = new ModelExporterFactory<GLTFExporter>()
 		};
 
 		/// <summary>
@@ -56,12 +56,6 @@ namespace ThreeRingsSharp.XansData {
 		/// The display name for this model, used in exporting (i.e. this is the name that will show up in Blender or any other modelling software.)
 		/// </summary>
 		public string Name { get; set; } = null;
-
-		/// <summary>
-		/// The current up axis for this model.<para/>
-		/// Default value: <see cref="Axis.PositiveY"/> (in the context that +Y is up, and -Z is forward)
-		/// </summary>
-		[Obsolete("This should be uniform for all models. Reference the static TargetUpAxis prop", true)] public Axis Up { get; set; } = Axis.PositiveY;
 
 		/// <summary>
 		/// A reference to the file that the model here came from. This is used to reference textures and other path-dependent extra data.
@@ -106,9 +100,9 @@ namespace ThreeRingsSharp.XansData {
 		public bool HasAppliedScaleCorrections { get; private set; } = false;
 
 		/// <summary>
-		/// The textures tied to this model by full filepath.
+		/// The textures tied to this model relative to the rsrc directory.
 		/// </summary>
-		public readonly List<string> Textures = new List<string>();
+		public List<string> Textures { get; } = new List<string>();
 
 		/// <summary>
 		/// The texture that this model uses. This is by filename, not full path.
@@ -120,6 +114,11 @@ namespace ThreeRingsSharp.XansData {
 		/// </summary>
 		[Obsolete("Feature isn't ready, does nothing.")] public List<Model3D> Attachments { get; set; } = new List<Model3D>();
 
+		/// <summary>
+		/// Any extra information attached to this <see cref="Model3D"/> that should be attached as arbitrary data.
+		/// </summary>
+		public Dictionary<string, object> ExtraData { get; } = new Dictionary<string, object>();
+
 		public Model3D() { }
 
 		/// <summary>
@@ -127,7 +126,7 @@ namespace ThreeRingsSharp.XansData {
 		/// </summary>
 		/// <param name="targetFile">The file that will be written to.</param>
 		/// <param name="targetFormat">The file format to use for the 3D model.</param>
-		public void Export(FileInfo targetFile, ModelFormat targetFormat = ModelFormat.glTF) {
+		public void Export(FileInfo targetFile, ModelFormat targetFormat = ModelFormat.GLTF) {
 			var factory = ExporterBindings[targetFormat];
 			AbstractModelExporter exporter = factory.NewInstance();
 			exporter.Export(new Model3D[] { this }, targetFile);
@@ -156,7 +155,7 @@ namespace ThreeRingsSharp.XansData {
 		/// </summary>
 		public void ApplyScaling() {
 			if (HasAppliedScaleCorrections) return;
-			// TODO: Is this necessary? Probably.
+			// TODO: Is zero-scale protection even necessary? Probably not!
 			if (ProtectAgainstZeroScale) {
 				float fScale = Transform.getScale();
 				Vector3f vScale = Transform.extractScale();
@@ -176,150 +175,8 @@ namespace ThreeRingsSharp.XansData {
 				}
 			}
 
-			// This was removed because new transformations created when loading files already performs a 100x scale.
-			/*
-			if (MultiplyScaleByHundred) {
-				Transform.setScale(Transform.getScale() * 100f);
-			}
-			*/
 			HasAppliedScaleCorrections = true;
 		}
-
-		/// <summary>
-		/// Alters <see cref="Transform"/> by rotating it so that the given axis is treated as the vertical axis, then returns the modified <see cref="Transform3D"/> (this will not edit the internal model's <see cref="Transform"/>).<para/>
-		/// <see cref="Up"/> will be set to <see cref="TargetUpAxis"/> when this is called.<para/>
-		/// All axis are treated as left-handed.<para/>
-		/// This should only be called after all transformations have been applied! It can only be called once. If this is called again, an <see cref="InvalidOperationException"/> will be thrown.
-		/// </summary>
-		[Obsolete("Overcomplicated.", true)] public Transform3D ApplyUpAxis() => ApplyUpAxis(TargetUpAxis);
-
-		/// <summary>
-		/// Alters <see cref="Transform"/> by rotating it so that the given axis is treated as the vertical axis, then returns the modified <see cref="Transform3D"/> (this will not edit the internal model's <see cref="Transform"/>).<para/>
-		/// /// <see cref="Up"/> will be set to <paramref name="newUpAxis"/> when this is called.<para/>
-		/// All axis are treated as left-handed.<para/>
-		/// This should only be called after all transformations have been applied! It can only be called once. If this is called again, an <see cref="InvalidOperationException"/> will be thrown.
-		/// </summary>
-		/// <param name="newUpAxis">The new <see cref="Axis"/> that should be treated as the verical axis.</param>
-		[Obsolete("Overcomplicated.", true)] public Transform3D ApplyUpAxis(Axis newUpAxis) {
-			// Dupe the old transform.
-			Transform3D newTrs = new Transform3D(Transform);
-			if (Up == newUpAxis) return newTrs; // Skip any math since there's no change.
-			
-			// First off: The easy stuff.
-			int currentDir = (int)Up;
-			bool isOpposite = currentDir == (int)newUpAxis * -1;
-			// The enum is programmed to have X,Y,Z as 1,2,3, and -X,-Y-,Z as -1,-2,-3.
-			if (isOpposite) {
-				// Rotate 180 on an axis.
-
-				// In all cases, -Z is forward.
-				int absCurrentDir = Math.Abs(currentDir);
-				if (absCurrentDir == 1) {
-					// X is up.
-					// Rotate on Y by 180 degrees.
-					Rotate180OnAxis(newTrs, Axis.PositiveY);
-				} else if (absCurrentDir == 2) {
-					// Y is up.
-					// Rotate on Z by 180 degrees.
-					Rotate180OnAxis(newTrs, Axis.PositiveZ);
-				} else if (absCurrentDir == 3) {
-					// Z is up.
-					// Rotate on X by 180 degrees.
-					Rotate180OnAxis(newTrs, Axis.PositiveX);
-				}
-			} else {
-				// And now the not easy stuff.
-				// When visualizing, imagine a block with its six faces colored for each axis.
-				// You want to rotate this block. How do you do it *relative to the BLOCK, not the existing axis?*
-
-				if (Up == Axis.PositiveX) {
-					if (newUpAxis == Axis.PositiveY) {
-						// Facing forward, rotate clockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, -90);
-					} else if (newUpAxis == Axis.NegativeY) {
-						// Facing forward, rotate counterclockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, 90);
-					} else if (newUpAxis == Axis.PositiveZ) {
-						// Facing right, rotate counterclockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, 90);
-					} else if (newUpAxis == Axis.NegativeZ) {
-						// Facing right, rotate clockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, -90);
-					}
-				} else if (Up == Axis.PositiveY) {
-					if (newUpAxis == Axis.PositiveX) {
-						// Facing forward, rotate counterclockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, 90);
-					} else if (newUpAxis == Axis.NegativeX) {
-						// Facing forward, rotate clockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, -90);
-					} else if (newUpAxis == Axis.PositiveZ) {
-						// Facing right, rotate clockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, -90);
-					} else if (newUpAxis == Axis.NegativeZ) {
-						// Facing right, rotate counterclockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, 90);
-					}
-				} else if (Up == Axis.PositiveZ) {
-					if (newUpAxis == Axis.PositiveX) {
-						// Facing forward, rotate counterclockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, 90);
-					} else if (newUpAxis == Axis.NegativeX) {
-						// Facing forward, rotate clockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, -90);
-					} else if (newUpAxis == Axis.PositiveY) {
-						// Facing right, rotate clockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, -90);
-					} else if (newUpAxis == Axis.NegativeY) {
-						// Facing right, rotate counterclockwise by 90 degrees.
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, 90);
-					}
-
-				// All of these are identical to ^ but opposite
-				} else if (Up == Axis.NegativeX) {
-					if (newUpAxis == Axis.PositiveY) {
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, -90);
-					} else if (newUpAxis == Axis.NegativeY) {
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, 90);
-					} else if (newUpAxis == Axis.PositiveZ) {
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, 90);
-					} else if (newUpAxis == Axis.NegativeZ) {
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, -90);
-					}
-				} else if (Up == Axis.NegativeY) {
-					if (newUpAxis == Axis.PositiveX) {
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, -90);
-					} else if (newUpAxis == Axis.NegativeX) {
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, 90);
-					} else if (newUpAxis == Axis.PositiveZ) {
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, 90);
-					} else if (newUpAxis == Axis.NegativeZ) {
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, -90);
-					}
-				} else if (Up == Axis.NegativeZ) {
-					if (newUpAxis == Axis.PositiveX) {
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, -90);
-					} else if (newUpAxis == Axis.NegativeX) {
-						newTrs.RotateOnAxisDegrees(Axis.NegativeZ, 90);
-					} else if (newUpAxis == Axis.PositiveY) {
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, 90);
-					} else if (newUpAxis == Axis.NegativeY) {
-						newTrs.RotateOnAxisDegrees(Axis.PositiveX, -90);
-					}
-				}
-			}
-
-			Up = newUpAxis;
-			return newTrs;
-		}
-
-		/// <summary>
-		/// Rotates the given <see cref="Transform3D"/> by 180 degrees on the given axis.
-		/// </summary>
-		/// <param name="trs"></param>
-		/// <param name="axis"></param>
-		[Obsolete("Overcomplicated.", true)] private static void Rotate180OnAxis(Transform3D trs, Axis axis) => trs.RotateOnAxis(axis, (float)Math.PI);
-		
 
 		/// <summary>
 		/// Frees all information used by this <see cref="Model3D"/>.
@@ -339,7 +196,7 @@ namespace ThreeRingsSharp.XansData {
 		/// <param name="targetFile"></param>
 		/// <param name="targetFormat"></param>
 		/// <param name="models"></param>
-		public static void ExportIntoOne(FileInfo targetFile, ModelFormat targetFormat = ModelFormat.glTF, params Model3D[] models) {
+		public static void ExportIntoOne(FileInfo targetFile, ModelFormat targetFormat = ModelFormat.GLTF, params Model3D[] models) {
 			var factory = ExporterBindings[targetFormat];
 			AbstractModelExporter exporter = factory.NewInstance();
 			exporter.Export(models, targetFile);

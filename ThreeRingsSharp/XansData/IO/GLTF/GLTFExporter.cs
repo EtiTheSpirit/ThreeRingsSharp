@@ -13,6 +13,7 @@ using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.IO.GLTF.JSON;
 using ThreeRingsSharp.XansData.Structs;
 using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.XansData.Exceptions;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF {
 
@@ -60,9 +61,14 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 		private (byte[], string) GetImageData(FileInfo imageFile) {
 			Image img = Image.FromFile(imageFile.FullName);
 			ImageConverter conv = new ImageConverter();
-			string mime = "image/jpeg";
+			string mime = null;
 			if (imageFile.Extension.ToLower() == ".png") {
 				mime = "image/png";
+			} else if (imageFile.Extension.ToLower() == ".jpg" || imageFile.Extension.ToLower() == ".jpeg") {
+				mime = "image/jpeg";
+			}
+			if (mime == null) {
+				throw new InvalidTypeException("Attempted to process an image file for glTF inclusion that isn't a jpeg or png!");
 			}
 			return ((byte[])conv.ConvertTo(img, typeof(byte[])), mime);
 		}
@@ -85,6 +91,9 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 			List<byte> binBuffer = new List<byte>();
 			binBuffer.AddRange(BitConverter.GetBytes(0));
 			binBuffer.AddRange(BitConverter.GetBytes(0x004E4942));
+
+			int numModelsSkipped = 0;
+			int numModelsCreated = 0;
 
 			#region Set Up Vars
 			int currentAccessorIndex = 0; // This is identical to currentBufferViewIndex for now, it's just here in case I decide to change this behavior
@@ -368,6 +377,12 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 
 
 			foreach (Model3D model in models) {
+				bool skip = (bool)model.ExtraData.GetOrDefault("SkipExport", false);
+				if (skip) {
+					numModelsSkipped++;
+					continue; // Go to the next iteration.
+				}
+				numModelsCreated++;
 
 				#region Append Rigging (WIP)
 
@@ -413,6 +428,9 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 			JSONData.Buffers.Add(new GLTFBuffer {
 				ByteLength = binBuffer.Count - 8
 			});
+
+			XanLogger.WriteLine($"glTF Exporter instantiated {numModelsCreated} models (skipped {numModelsSkipped} models).");
+
 			return binBuffer.ToArray();
 		}
 

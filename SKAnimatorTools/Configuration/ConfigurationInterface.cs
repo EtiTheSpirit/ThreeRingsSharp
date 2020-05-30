@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.XansData.Structs;
 
 namespace SKAnimatorTools.Configuration {
 

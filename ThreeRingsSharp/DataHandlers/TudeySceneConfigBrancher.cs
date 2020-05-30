@@ -46,7 +46,7 @@ namespace ThreeRingsSharp.DataHandlers {
 			SetupCosmeticData(scene, currentDataTreeObject);
 			XanLogger.WriteLine("Iterating through scene entries...", true);
 
-			string implName = (ClassNameStripper.GetWholeClassName(scene.getClass()) ?? scene.getClass().getTypeName()).Replace("$", "::");
+			string implName = (JavaClassNameStripper.GetWholeClassName(scene.getClass()) ?? scene.getClass().getTypeName()).Replace("$", "::");
 			if (currentDataTreeObject != null) {
 				if (useImplementation) {
 					currentDataTreeObject.Text = implName;
@@ -61,8 +61,8 @@ namespace ThreeRingsSharp.DataHandlers {
 				Entry entry = (Entry)entryObj;
 				if (entry is TileEntry) {
 					TileHandler.Instance.HandleEntry(sourceFile, entry, models, currentDataTreeObject, transform);
-				//} else if (entry is PlaceableEntry) {
-					// todo
+				} else if (entry is PlaceableEntry) {
+					PlaceableHandler.Instance.HandleEntry(sourceFile, entry, models, currentDataTreeObject, transform);
 				}
 			}
 

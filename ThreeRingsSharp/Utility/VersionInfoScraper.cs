@@ -25,6 +25,7 @@ namespace ThreeRingsSharp.Utility {
 	/// </summary>
 	public class VersionInfoScraper {
 
+		// TODO: Not use this.
 		private const string IMPLEMENTATION_TAG = "com.threerings.opengl.model.config.ModelConfig$Implementation";
 
 

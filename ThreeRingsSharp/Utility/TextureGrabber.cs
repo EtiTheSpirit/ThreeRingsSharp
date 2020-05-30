@@ -7,6 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.Utility {
+
+	[Obsolete("This method of getting textures is incorrect. Use ModelPropertyUtility.FindTexturesFromDirects instead.", true)]
 	public class TextureGrabber {
 
 		/// <summary>

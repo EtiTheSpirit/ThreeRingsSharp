@@ -2,10 +2,12 @@
 using com.threerings.opengl.model.config;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThreeRingsSharp.DataHandlers.Properties;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
@@ -20,9 +22,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// </summary>
 		public static StaticSetConfigHandler Instance { get; } = new StaticSetConfigHandler();
 
-		public void SetupCosmeticInformation(StaticSetConfig model, DataTreeObject dataTreeParent) => SetupCosmeticInformation(model, dataTreeParent, false);
-
-		public void SetupCosmeticInformation(StaticSetConfig model, DataTreeObject dataTreeParent, bool useOnlyTargetModel) {
+		public void SetupCosmeticInformation(StaticSetConfig model, DataTreeObject dataTreeParent) {
 			if (dataTreeParent == null) return;
 
 			// So a note to self: Static sets have the 'meshes' container which is a map of other model files.
@@ -30,7 +30,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			// Instead, model represents the *default selection*. There may be more models. Iterate through the keys like damn lol.
 
 			dataTreeParent.AddSimpleProperty("Target Model", model.model);
-			if (useOnlyTargetModel) dataTreeParent.AddSimpleProperty("Special Directive", "Only export target model", SilkImage.Scripted);
+			// if (useOnlyTargetModel) dataTreeParent.AddSimpleProperty("Special Directive", "Only export target model", SilkImage.Scripted);
 
 			List<object> objects = new List<object>();
 			if (model.meshes != null) {
@@ -63,15 +63,29 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			StaticSetConfig staticSet = (StaticSetConfig)baseModel.implementation;
 
 			// Some unique stuff
+			/*
 			bool useOnlyTargetModel = extraData?.ContainsKey("TargetModel") ?? false; // If we explicitly define this then we only want one of the meshes.
-			if (useOnlyTargetModel) staticSet.model = extraData.GetOrDefault("TargetModel", staticSet.model);
-
-			SetupCosmeticInformation(staticSet, dataTreeParent, useOnlyTargetModel);
+			if (useOnlyTargetModel) {
+				if (staticSet.meshes.containsKey(extraData["TargetModel"])) {
+					staticSet.model = extraData["TargetModel"];
+				} else {
+					staticSet.model = (string)staticSet.meshes.firstEntry().getKey();
+					XanLogger.WriteLine($"WARNING: StaticSet attempted to reference model [{ extraData["TargetModel"] }] but this model is not one that it contains!");
+				}
+			}
+			*/
+			//SetupCosmeticInformation(staticSet, dataTreeParent, useOnlyTargetModel);
+			SetupCosmeticInformation(staticSet, dataTreeParent);
 
 			string depth1Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile);
 			string fullDepthName = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile, -1);
 
 			if (staticSet.meshes != null) {
+
+				// TODO: Clean this garbage up.
+				
+
+				/*
 				if (useOnlyTargetModel) {
 					// Only one model of the entire set should be used.
 					MeshSet subModel = (MeshSet)staticSet.meshes.get(staticSet.model);
@@ -92,28 +106,35 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						idx++;
 					}
 
-				} else {
+				} else {*/
 					// Export them all!
-					object[] keys = staticSet.meshes.keySet().toArray();
-					foreach (object key in keys) {
-						MeshSet subModel = (MeshSet)staticSet.meshes.get(key);
-						VisibleMesh[] meshes = subModel.visible;
-						int idx = 0;
-						foreach (VisibleMesh mesh in meshes) {
-							string meshTitle = "-MeshSets[" + key.ToString() + "].Mesh[" + idx + "]";
+				object[] keys = staticSet.meshes.keySet().toArray();
+				foreach (object key in keys) {
+					bool isSelectedModel = (string)key == staticSet.model; // Whether or not this specific mesh is the one selected by the set.
+					MeshSet subModel = (MeshSet)staticSet.meshes.get(key);
+					VisibleMesh[] meshes = subModel.visible;
+					int idx = 0;
+					foreach (VisibleMesh mesh in meshes) {
+						string meshTitle = "-MeshSets[" + key.ToString() + "].Mesh[" + idx + "]";
 
-							Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
-							meshToModel.Name = depth1Name + meshTitle;
-							if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
-							meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
-							meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, staticSet));
-							meshToModel.ActiveTexture = mesh.texture;
-
-							modelCollection.Add(meshToModel);
-							idx++;
+						Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
+						meshToModel.Name = depth1Name + meshTitle;
+						if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
+						meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
+						//meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, staticSet));
+						meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
+						meshToModel.ActiveTexture = mesh.texture;
+						if (!isSelectedModel) {
+							// Tell the model's extradata that this model is part of a StaticSetConfig and it's NOT the selected variant.
+							// This is used by the confirmation dialog on the exporter.
+							meshToModel.ExtraData["UnselectedStaticSetModel"] = true;
 						}
+
+						modelCollection.Add(meshToModel);
+						idx++;
 					}
 				}
+				//}
 			}
 		}
 	}

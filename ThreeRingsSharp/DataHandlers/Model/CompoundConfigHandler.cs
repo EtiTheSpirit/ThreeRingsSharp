@@ -1,4 +1,5 @@
-﻿using com.threerings.math;
+﻿using com.threerings.config;
+using com.threerings.math;
 using com.threerings.opengl.model.config;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Exceptions;
+using com.threerings.editor;
 using static com.threerings.opengl.model.config.CompoundConfig;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
@@ -19,7 +21,8 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			ComponentModel[] componentModels = model.models;
 			List<object> refs = new List<object>();
 			foreach (ComponentModel mdl in componentModels) {
-				refs.Add(mdl.model.getName());
+				// Yes, there are cases where this is null.
+				if (mdl.model?.getName() != null) refs.Add(mdl.model.getName());
 			}
 			dataTreeParent.AddSimpleProperty(componentModels.Length + " model references", refs.ToArray(), SilkImage.Reference, SilkImage.Reference, false);
 		}
@@ -29,9 +32,15 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			CompoundConfig compound = (CompoundConfig)baseModel.implementation;
 			SetupCosmeticInformation(compound, dataTreeParent);
 
+			// NEW: Some stuff uses this trick to pick a specific model out of a compound
+			// Parameters contain three key bits of data:
+			// 1: Directs (short for Directives) -- These store the values that each option edits.
+			// 2: Options -- These are the actual options you can pick, and contain a value for each direct that's been defined for this param
+			// 3: Choice -- The currently selected option (or default option)
+
 			ComponentModel[] componentModels = compound.models;
 			foreach (ComponentModel model in componentModels) {
-				ConfigReferenceUtil.HandleComponentModel(sourceFile, model, modelCollection, dataTreeParent, globalTransform);
+				ConfigReferenceUtil.HandleComponentModel(sourceFile, model, modelCollection, dataTreeParent, globalTransform, true, extraData);
 			}
 		}
 	}

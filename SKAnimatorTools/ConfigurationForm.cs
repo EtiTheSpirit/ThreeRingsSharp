@@ -1,4 +1,5 @@
-﻿using SKAnimatorTools.Configuration;
+﻿using com.sun.tools.javac.main;
+using SKAnimatorTools.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -53,7 +54,7 @@ namespace SKAnimatorTools {
 			IsOK = true;
 		}
 
-		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int upAxisIndex, bool embedTextures, bool verboseLogging) {
+		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int upAxisIndex, bool embedTextures, bool verboseLogging, int exportStaticSetMode) {
 			TextBox_DefaultLoadLoc.Text = defaultLoad;
 			TextBox_DefaultSaveLoc.Text = defaultSave;
 			TextBox_RsrcDirectory.Text = defaultRsrc;
@@ -63,6 +64,7 @@ namespace SKAnimatorTools {
 			Option_UpAxis.SelectedIndex = upAxisIndex;
 			CheckBox_EmbedTextures.Checked = embedTextures;
 			CheckBox_VerboseLogging.Checked = verboseLogging;
+			Option_StaticSetExportMode.SelectedIndex = exportStaticSetMode;
 			VerifyAllPathIntegrity();
 		}
 
@@ -74,12 +76,12 @@ namespace SKAnimatorTools {
 			ConfigurationInterface.SetConfigurationValue("DefaultLoadDirectory", TextBox_DefaultLoadLoc.Text);
 			ConfigurationInterface.SetConfigurationValue("LastSaveDirectory", TextBox_DefaultSaveLoc.Text);
 			ConfigurationInterface.SetConfigurationValue("RememberDirectoryAfterOpen", CheckBox_RememberLastLoad.Checked);
-			ConfigurationInterface.SetConfigurationValue("RsrcDirectory", TextBox_RsrcDirectory.Text);
 			ConfigurationInterface.SetConfigurationValue("ScaleBy100", CheckBox_MultiplyScaleByHundred.Checked);
 			ConfigurationInterface.SetConfigurationValue("ProtectAgainstZeroScale", CheckBox_ProtectAgainstZeroScale.Checked);
-			ConfigurationInterface.SetConfigurationValue("UpAxisIndex", Option_UpAxis.SelectedIndex);
+			ConfigurationInterface.SetConfigurationValue("ExportUpAxisIndex", Option_UpAxis.SelectedIndex);
 			ConfigurationInterface.SetConfigurationValue("EmbedTextures", CheckBox_EmbedTextures.Checked);
 			ConfigurationInterface.SetConfigurationValue("VerboseLogging", CheckBox_VerboseLogging.Checked);
+			ConfigurationInterface.SetConfigurationValue("StaticSetExportMode", Option_StaticSetExportMode.SelectedIndex);
 			ConfigurationInterface.SetConfigurationValue("IsFirstTimeOpening", false);
 			Close();
 		}
