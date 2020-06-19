@@ -12,3 +12,5 @@ This repository effectively represents "Spiral Knights Animator Tools 2".
 
 # Licensing Notice
 All referenced DLL files that have been converted with IKVM are, for obvious reasons, not included in the MIT license associated with ThreeRingsSharp. The license included strictly applies to the code I have authored in this project.
+
+The licenses for the referenced code can be located in [_LICENSES_EXTERNAL.MD](https://github.com/XanTheDragon/ThreeRingsSharp/blob/master/_LICENSES_EXTERNAL.MD)
