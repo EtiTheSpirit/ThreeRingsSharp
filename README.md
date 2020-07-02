@@ -10,6 +10,20 @@ The collective library is referred to as "ThreeRingsSharp" and provides access t
 
 This repository effectively represents "Spiral Knights Animator Tools 2".
 
+# Images
+
+## Data Trees!
+
+![Data Tree](https://i.imgur.com/cDCoaNM.png)
+
+## Configuration!
+
+![Config](https://i.imgur.com/sJi2phV.png)
+
+## Scene Exports!!!
+
+![Export Scenes](https://i.imgur.com/oEmLAsj.png)
+
 # Licensing Notice
 All referenced DLL files that have been converted with IKVM are, for obvious reasons, not included in the MIT license associated with ThreeRingsSharp. The license included strictly applies to the code I have authored in this project.
 
