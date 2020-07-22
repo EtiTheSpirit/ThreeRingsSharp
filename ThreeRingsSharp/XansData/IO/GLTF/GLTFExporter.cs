@@ -538,7 +538,8 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 
 			foreach (Model3D model in models) {
 				foreach (string texPath in model.Textures) {
-					FileInfo texFile = new FileInfo(texPath);
+					
+					FileInfo texFile = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + texPath);
 					if (texFile.Exists) {
 						// Sometimes these reference stuff like photoshop files, so check if it actually exists.
 						// TODO: Find out how these map out to actual images.

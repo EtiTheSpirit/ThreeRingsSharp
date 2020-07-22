@@ -105,7 +105,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		}
 
 		/// <summary>
-		/// When given the name of a specific entry, this will iterate through ALL configs and try to find it.<para/>
+		/// When given the name of a specific entry (acquired via <see cref="ConfigReference.getName"/>), this will iterate through ALL configs and try to find it.<para/>
 		/// Warning: This will be slow in general. It will cache what results it gets however.<para/>
 		/// Returns <see langword="null"/> if the reference could not be found.
 		/// </summary>

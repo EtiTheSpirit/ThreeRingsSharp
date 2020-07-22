@@ -46,6 +46,16 @@ namespace ThreeRingsSharp.Utility {
 		}
 
 		/// <summary>
+		/// An alias to call getParameter on an object that is presumably a <see cref="ParameterizedConfig"/>.
+		/// </summary>
+		/// <param name="from"></param>
+		/// <param name="parameterName"></param>
+		/// <returns></returns>
+		[Obsolete("Cast the object to ParameterizedConfig and just call the method itself.")] public static object GetParameter(object from, string parameterName) {
+			return from.GetType().GetMethod("getParameter", new Type[] { typeof(string) }).Invoke(from, new object[] { parameterName });
+		}
+
+		/// <summary>
 		/// An alias that returns the <c>paths</c> field as a <see langword="string"/>[], of course, intended to be called on a <see cref="Parameter.Direct"/>
 		/// </summary>
 		/// <param name="direct"></param>

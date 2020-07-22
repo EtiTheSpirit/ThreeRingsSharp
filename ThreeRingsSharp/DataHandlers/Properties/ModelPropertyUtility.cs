@@ -16,6 +16,7 @@ using System.Reflection;
 using ThreeRingsSharp.Utility;
 using com.threerings.tudey.config;
 using java.io;
+using static ThreeRingsSharp.DataHandlers.Properties.WrappedDirect;
 
 namespace ThreeRingsSharp.DataHandlers.Properties {
 
@@ -24,41 +25,50 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 	/// </summary>
 	public class ModelPropertyUtility {
 
+		/// <summary>
+		/// Assuming this is a <see cref="ModelConfig"/> storing textures, this will try to find the textures from its parameters.
+		/// </summary>
+		/// <param name="cfg"></param>
+		/// <returns></returns>
 		public static List<string> FindTexturesFromDirects(ModelConfig cfg) {
 			List<string> retn = new List<string>();
 
 			foreach (Parameter param in cfg.parameters) {
 				if (param is Parameter.Choice choice) {
-					foreach (Parameter.Direct direct in choice.directs) {
-						// This will get the object pointed to by the first direct.
-						(object, object) directData = TraverseDirectPath(cfg, direct.paths[0]);
-						//object directPtr = directData.Item1;
-						object directPtrParent = directData.Item2;
+					WrappedChoice wChoice = new WrappedChoice(cfg, choice);
+					Parameter.Direct[] rawDirects = wChoice.BaseChoice.directs;
 
-						if (directPtrParent is TextureConfig.Original2D.ImageFile) {
-							// In this very specific context, we now have 100% confirmation that this direct is undeniably a texture.
-							// This is required because if, for whatever reason, someone goes ham with config names and gives some completely
-							// random config reference an unfitting name (e.g. they name a tile config container "Texture"), and if I were
-							// to directly read the string, it would cause a read error.
+					// Filter out the directs that deal with materials.
+					// We only want the ones that actually do stuff with materials.
+					bool isMaterialChoice = false;
+					foreach (Parameter.Direct direct in rawDirects) {
+						WrappedDirect wrapped = new WrappedDirect(cfg, direct, wChoice);
+						foreach (DirectEndReference endRef in wrapped.EndReferences) {
+							if (endRef.Object is WrappedDirect subDir) {
+								if (subDir.Config is MaterialConfig mtl) {
+									isMaterialChoice = true;
+									break;
+								}
+							}
+						}
+						if (isMaterialChoice) break;
+					}
 
-							// The basic gist is that this is guaranteed to support any stock clyde behavior. It's extra, but if someone sandboxes
-							// SK or something and uses their own naming convention, this is a MUST.
-							// Even something as simple as a different name would wreak havoc on the converter if I hardcoded the reference.
-
-							foreach (Parameter.Choice.Option option in choice.options) {
-								// n.b. _arguments isn't exposed normally, I edited the IL to expose it as a public member.
-								// this code won't work in another setup. if it's java, you need to use reflection
-								// if it's C#, you're screwed unless you modify the IL
-								// - because it's marked as protected internal which removes it from reflection.
-								ArgumentMap args = option._arguments;
-								string texture = (string)args.get(direct.name); // Get the argument for the given direct.
-
-								// Now one important thing here is that this is relative to rsrc so...
-								retn.Add(ResourceDirectoryGrabber.ResourceDirectoryPath + texture);
-								// Add the rest of the path.
+					if (isMaterialChoice) {
+						// This choice corresponds to a material!
+						// This is stupidly lazy but it works.
+						foreach (Parameter.Choice.Option option in wChoice.BaseChoice.options) {
+							if (option._arguments.containsKey("Texture")) {
+								if (option._arguments.get("Texture") is string tex) {
+									if (tex.StartsWith("/")) {
+										tex = tex.Substring(1);
+									}
+									retn.Add(tex);
+								}
 							}
 						}
 					}
+					
 				}
 			}
 

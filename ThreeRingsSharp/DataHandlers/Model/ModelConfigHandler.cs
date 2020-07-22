@@ -54,12 +54,21 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				if (imported.influences.projections) influences.Add(new DataTreeObjectProperty("Projections", SilkImage.Texture));
 				if (influences.Count > 0) dataTreeParent.AddSimpleProperty("Influenced By...", influences.ToArray(), displaySinglePropertiesInline: false);
 
+				/*
 				MaterialMapping[] matMaps = imported.materialMappings;
-				object[] materials = new object[matMaps.Length];
-				for (int idx = 0; idx < materials.Length; idx++) {
-					materials[idx] = matMaps[idx].texture;
+				object[] materialProperties = new object[matMaps.Length];
+				for (int idx = 0; idx < materialProperties.Length; idx++) {
+					ConfigReference mtlRef = matMaps[idx].material;
+					ConfigReference texCfg = (ConfigReference)mtlRef.getArguments().getOrDefault("Texture", null);
+					if (texCfg != null) {
+						string texFile = (string)texCfg.getArguments().getOrDefault("File", "?");
+						materialProperties[idx] = new DataTreeObjectProperty(texFile, SilkImage.Reference, false);
+					} else {
+						materialProperties[idx] = matMaps[idx].texture;
+					}
 				}
-				dataTreeParent.AddSimpleProperty("Textures", materials, SilkImage.Value, SilkImage.Texture, false);
+				dataTreeParent.AddSimpleProperty("Textures", materialProperties, SilkImage.Value, SilkImage.Texture, false);
+				*/
 			}
 			List<object> parameters = new List<object>();
 			foreach (Parameter prop in model.parameters) {
