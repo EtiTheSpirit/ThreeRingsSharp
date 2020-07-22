@@ -178,13 +178,13 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
-		/// A utility designed exclusively for the glTF exporter which can populate a list with the given default value
+		/// A utility designed exclusively for the glTF exporter which can populate a list with exactly (<paramref name="values"/>) instances of the given <paramref name="defaultValue"/>.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <param name="list"></param>
 		/// <param name="defaultValue"></param>
 		/// <param name="values"></param>
-		public static void SetListCap<T>(this List<dynamic> list, T defaultValue, int values) {
+		public static void SetListCap<T>(this List<T> list, T defaultValue, int values) {
 			list.Clear();
 			list.Capacity = values;
 			for (int idx = 0; idx < values; idx++) {

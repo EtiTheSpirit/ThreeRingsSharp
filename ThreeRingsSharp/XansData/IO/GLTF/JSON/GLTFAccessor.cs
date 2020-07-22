@@ -30,12 +30,14 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		[JsonProperty("count")] public int Count = 0;
 
 		/// <summary>
-		/// NOTE: Cast these values into their appropriate type as dictated by <see cref="ComponentType"/>.
+		/// NOTE: Cast these values into their appropriate type as dictated by <see cref="ComponentType"/>.<para/>
+		/// Set the count to zero to skip writing this data.
 		/// </summary>
 		[JsonProperty("max")] public List<dynamic> Max = new List<dynamic>();
 
 		/// <summary>
-		/// NOTE: Cast these values into their appropriate type as dictated by <see cref="ComponentType"/>.
+		/// NOTE: Cast these values into their appropriate type as dictated by <see cref="ComponentType"/>.<para/>
+		/// Set the count to zero to skip writing this data.
 		/// </summary>
 		[JsonProperty("min")] public List<dynamic> Min = new List<dynamic>();
 
@@ -43,6 +45,16 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// The type of model data this accessor represents, which determines is size.
 		/// </summary>
 		[JsonProperty("type")] public string Type = GLTFType.SCALAR;
+
+		#region Newtonsoft Field Write Conditions
+		// These are referenced by newtonsoft during runtime.
+		// Format: ShouldSerialize...
+		// Replace ... with the name of the field.
+
+		public bool ShouldSerializeMin() => Min.Count > 0;
+
+		public bool ShouldSerializeMax() => Max.Count > 0;
+		#endregion
 
 	}
 }

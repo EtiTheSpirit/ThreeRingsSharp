@@ -89,16 +89,18 @@ namespace ThreeRingsSharp.Utility {
 		/// Append a new line to the log.
 		/// </summary>
 		/// <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="VerboseLogging"/> is false.</param>
-		public static void WriteLine(bool isVerbose = false) => Write("\n", isVerbose);
+		/// <param name="color">The color of the text in the log.</param>
+		public static void WriteLine(bool isVerbose = false, Color? color = null) => Write("\n", isVerbose, color);
 
 		/// <summary>
 		/// Append the given text to the log and advance by one line.
 		/// </summary>
 		/// <param name="obj"></param>
 		/// <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="VerboseLogging"/> is false.</param>
+		/// <param name="color">The color of the text in the log.</param>
 		/// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
-		public static void WriteLine(object obj, bool isVerbose = false) {
-			Write((obj?.ToString() ?? "null") + "\n", isVerbose);
+		public static void WriteLine(object obj, bool isVerbose = false, Color? color = null) {
+			Write((obj?.ToString() ?? "null") + "\n", isVerbose, color);
 		}
 
 		/// <summary>
@@ -106,8 +108,9 @@ namespace ThreeRingsSharp.Utility {
 		/// </summary>
 		/// <param name="obj">The text to write to the log.</param>
 		/// <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="VerboseLogging"/> is false.</param>
+		/// <param name="color">The color of the text in the log.</param>
 		/// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
-		public static void Write(object obj, bool isVerbose = false) {
+		public static void Write(object obj, bool isVerbose = false, Color? color = null) {
 			if (obj == null) throw new ArgumentNullException("obj");
 			if (!VerboseLogging && isVerbose) return;
 
@@ -115,9 +118,12 @@ namespace ThreeRingsSharp.Utility {
 			Log.Append(text);
 			if (BoxReference == null) return;
 
+			Color defColor = isVerbose ? Color.Gray : BoxReference.ForeColor;
+			Color writeColor = color.GetValueOrDefault(defColor);
+
 			if (UpdateAutomatically) {
 				WasAtBottom = BoxReference.IsScrolledToBottom();
-				BoxReference.AppendText(text, isVerbose ? Color.Gray : BoxReference.ForeColor);
+				BoxReference.AppendText(text, writeColor);
 
 				if (WasAtBottom && !BoxReference.IsScrolledToBottom()) {
 					BoxReference.SelectionStart = BoxReference.TextLength;

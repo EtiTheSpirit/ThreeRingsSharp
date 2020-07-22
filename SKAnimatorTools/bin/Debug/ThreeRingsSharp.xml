@@ -71,75 +71,26 @@
             <param name="path"></param>
             <returns></returns>
         </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper">
+        <member name="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect">
             <summary>
-            Provides aliases to get fields or indices of objects via reflection.
+            Represents a <see cref="T:com.threerings.config.Parameter.Direct"/> in a different manner that allows directly
+            accessing the object or data it points to.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.Get(System.Object,System.String)">
+        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.Config">
             <summary>
-            Returns the value of the given instance field.
+            The reference to the Clyde object associated with this direct.
             </summary>
-            <param name="obj"></param>
-            <param name="field"></param>
-            <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.Set(System.Object,System.String,System.Object)">
+        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.Paths">
             <summary>
-            Sets the value of the given instance field.
+            The raw text-based paths for this direct.
             </summary>
-            <param name="obj"></param>
-            <param name="field"></param>
-            <param name="value"></param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.Index(System.Object,System.Int32)">
+        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.ConfigReferenceContainer">
             <summary>
-            Assuming <paramref name="obj"/> is an array, this returns <paramref name="obj"/>[<paramref name="idx"/>]
+            If this direct references a ConfigReference, and if that ConfigReference points to one of the packed configs, this is the name of the packed config (e.g. <c>"material"</c>)
             </summary>
-            <param name="obj"></param>
-            <param name="idx"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.GetPaths(System.Object)">
-            <summary>
-            An alias that returns the <c>paths</c> field as a <see langword="string"/>[], of course, intended to be called on a <see cref="T:com.threerings.config.Parameter.Direct"/>
-            </summary>
-            <param name="direct"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.GetOOOConfigAndParameter(System.Object,System.String,System.String)">
-            <summary>
-            In the context of config maps, a <see cref="T:com.threerings.config.ConfigReference"/> returns a path relative to an OOO config file.<para/>
-            This method will attempt to resolve that path when given a <see cref="T:com.threerings.config.ConfigReference"/> and a configuration index (which is the name of one of the xml files in the spiral knights/config directory, e.g. "material" or "tile")<para/>
-            Assuming <paramref name="fromObj"/> is a <see cref="T:com.threerings.config.ConfigReference"/>, this will call its <c>getName()</c> method (which returns its path), resolve the config data via <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>, and return the object with the given name.<para/>
-            Given <paramref name="directName"/>, it will attempt to call the <c>getParameter()</c> method on the returned config with an argument of this name, which should return the <see cref="T:com.threerings.config.Parameter"/> it's pointing to.<para/>
-            The first return value is the <see cref="T:com.threerings.config.ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="T:com.threerings.opengl.material.config.MaterialConfig"/>), and the second value is the <see cref="T:com.threerings.config.Parameter"/> returned by ^.
-            </summary>
-            <param name="fromObj"></param>
-            <param name="directName"></param>
-            <param name="threeRingsConfigName"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.GetOOOConfigAndParameter(System.Object,System.String,System.Type)">
-            <summary>
-            In the context of config maps, a <see cref="T:com.threerings.config.ConfigReference"/> returns a path relative to an OOO config file.<para/>
-            This method will attempt to resolve that path when given a <see cref="T:com.threerings.config.ConfigReference"/> and a configuration index (which is the name of one of the xml files in the spiral knights/config directory, e.g. "material" or "tile")<para/>
-            Assuming <paramref name="fromObj"/> is a <see cref="T:com.threerings.config.ConfigReference"/>, this will call its <c>getName()</c> method (which returns its path), resolve the config data via <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>, and return the object with the given name.<para/>
-            Given <paramref name="directName"/>, it will attempt to call the <c>getParameter()</c> method on the returned config with an argument of this name, which should return the <see cref="T:com.threerings.config.Parameter"/> it's pointing to.<para/>
-            The first return value is the <see cref="T:com.threerings.config.ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="T:com.threerings.opengl.material.config.MaterialConfig"/>), and the second value is the <see cref="T:com.threerings.config.Parameter"/> returned by ^.
-            </summary>
-            <param name="fromObj"></param>
-            <param name="directName"></param>
-            <param name="threeRingsConfigType"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.ReflectionHelper.GetOOOConfigAndParameter(System.Object,System.String)">
-            <summary>
-            Gets a <see cref="T:com.threerings.config.ConfigReference"/> of the given name. Unlike the alternatives to this method, this one will iterate through all config refs (and by extension, does not require a direct config group name).
-            </summary>
-            <param name="fromObj"></param>
-            <param name="directName"></param>
-            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.ModelConfigBrancher">
             <summary>
@@ -222,7 +173,7 @@
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.GetFromShortBuffer(java.nio.ShortBuffer)">
             <summary>
-            Since the given buffer may not have an array, this will automatically perform necessary edits to get a <see cref="T:System.Int16"/> array.
+            Since the given buffer may not have an array, this will automatically perform necessary edits to get a <see cref="T:System.UInt16"/> array (this uses ushort because of how java handles datatypes)
             </summary>
             <param name="buffer"></param>
             <returns></returns>
@@ -978,6 +929,76 @@
             A transparent space.
             </summary>
         </member>
+        <member name="T:ThreeRingsSharp.Utility.ReflectionHelper">
+            <summary>
+            Provides aliases to get fields or indices of objects via reflection.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.ReflectionHelper.Get(System.Object,System.String)">
+            <summary>
+            Returns the value of the given instance field for the specified object.
+            </summary>
+            <param name="obj">The object to get the data of.</param>
+            <param name="field">The name of the field to access.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.ReflectionHelper.Set(System.Object,System.String,System.Object)">
+            <summary>
+            Sets the value of the given instance field for the specified object.
+            </summary>
+            <param name="obj">The object to get the data of.</param>
+            <param name="field">The name of the field to access.</param>
+            <param name="value">The new value to set this field to.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.ReflectionHelper.Index(System.Object,System.Int32)">
+            <summary>
+            Assuming <paramref name="obj"/> is an array, this returns <paramref name="obj"/>[<paramref name="idx"/>]
+            </summary>
+            <param name="obj">The object to get the data of, which should be an array.</param>
+            <param name="idx">The index within the given array object to access.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.ReflectionHelper.GetPaths(System.Object)">
+            <summary>
+            An alias that returns the <c>paths</c> field as a <see langword="string"/>[], of course, intended to be called on a <see cref="T:com.threerings.config.Parameter.Direct"/>
+            </summary>
+            <param name="direct"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.ReflectionHelper.GetOOOConfigAndParameter(System.Object,System.String,System.String)">
+            <summary>
+            In the context of config maps, a <see cref="T:com.threerings.config.ConfigReference"/> returns a path relative to an OOO config file.<para/>
+            This method will attempt to resolve that path when given a <see cref="T:com.threerings.config.ConfigReference"/> and a configuration index (which is the name of one of the xml files in the spiral knights/config directory, e.g. "material" or "tile")<para/>
+            Assuming <paramref name="fromObj"/> is a <see cref="T:com.threerings.config.ConfigReference"/>, this will call its <c>getName()</c> method (which returns its path), resolve the config data via <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>, and return the object with the given name.<para/>
+            Given <paramref name="directName"/>, it will attempt to call the <c>getParameter()</c> method on the returned config with an argument of this name, which should return the <see cref="T:com.threerings.config.Parameter"/> it's pointing to.<para/>
+            The first return value is the <see cref="T:com.threerings.config.ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="!:MaterialConfig"/>), and the second value is the <see cref="T:com.threerings.config.Parameter"/> returned by ^.
+            </summary>
+            <param name="fromObj"></param>
+            <param name="directName"></param>
+            <param name="threeRingsConfigName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.ReflectionHelper.GetOOOConfigAndParameter(System.Object,System.String,System.Type)">
+            <summary>
+            In the context of config maps, a <see cref="T:com.threerings.config.ConfigReference"/> returns a path relative to an OOO config file.<para/>
+            This method will attempt to resolve that path when given a <see cref="T:com.threerings.config.ConfigReference"/> and a configuration index (which is the name of one of the xml files in the spiral knights/config directory, e.g. "material" or "tile")<para/>
+            Assuming <paramref name="fromObj"/> is a <see cref="T:com.threerings.config.ConfigReference"/>, this will call its <c>getName()</c> method (which returns its path), resolve the config data via <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>, and return the object with the given name.<para/>
+            Given <paramref name="directName"/>, it will attempt to call the <c>getParameter()</c> method on the returned config with an argument of this name, which should return the <see cref="T:com.threerings.config.Parameter"/> it's pointing to.<para/>
+            The first return value is the <see cref="T:com.threerings.config.ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="!:MaterialConfig"/>), and the second value is the <see cref="T:com.threerings.config.Parameter"/> returned by ^.
+            </summary>
+            <param name="fromObj"></param>
+            <param name="directName"></param>
+            <param name="threeRingsConfigType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.ReflectionHelper.GetOOOConfigAndParameter(System.Object,System.String)">
+            <summary>
+            Gets a <see cref="T:com.threerings.config.ConfigReference"/> of the given name. Unlike the alternatives to this method, this one will iterate through all config refs (and by extension, does not require a direct config group name).
+            </summary>
+            <param name="fromObj"></param>
+            <param name="directName"></param>
+            <returns></returns>
+        </member>
         <member name="T:ThreeRingsSharp.Utility.ResourceDirectoryGrabber">
             <summary>
             A utility class that looks at directory information to try to find the rsrc folder.
@@ -1109,26 +1130,29 @@
             Manually update the contents of <see cref="P:ThreeRingsSharp.Utility.XanLogger.BoxReference"/>. Only works if <see cref="P:ThreeRingsSharp.Utility.XanLogger.UpdateAutomatically"/> is <see langword="false"/>, and of course, if <see cref="P:ThreeRingsSharp.Utility.XanLogger.BoxReference"/> is not <see langword="null"/>.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.XanLogger.WriteLine(System.Boolean)">
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.WriteLine(System.Boolean,System.Nullable{System.Drawing.Color})">
             <summary>
             Append a new line to the log.
             </summary>
             <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="P:ThreeRingsSharp.Utility.XanLogger.VerboseLogging"/> is false.</param>
+            <param name="color">The color of the text in the log.</param>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.XanLogger.WriteLine(System.Object,System.Boolean)">
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.WriteLine(System.Object,System.Boolean,System.Nullable{System.Drawing.Color})">
             <summary>
             Append the given text to the log and advance by one line.
             </summary>
             <param name="obj"></param>
             <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="P:ThreeRingsSharp.Utility.XanLogger.VerboseLogging"/> is false.</param>
+            <param name="color">The color of the text in the log.</param>
             <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.XanLogger.Write(System.Object,System.Boolean)">
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.Write(System.Object,System.Boolean,System.Nullable{System.Drawing.Color})">
             <summary>
             Append the given text to the log.
             </summary>
             <param name="obj">The text to write to the log.</param>
             <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="P:ThreeRingsSharp.Utility.XanLogger.VerboseLogging"/> is false.</param>
+            <param name="color">The color of the text in the log.</param>
             <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
         </member>
         <member name="M:ThreeRingsSharp.Utility.XanLogger.Clear">
@@ -1150,6 +1174,21 @@
             <param name="box"></param>
             <param name="text"></param>
             <param name="color"></param>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.DevelopmentFlags">
+            <summary>
+            A class containing values to toggle various features. Generally speaking, if a feature is disabled, it is broken.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.DevelopmentFlags.FLAG_DO_BONE_EXPORTS">
+            <summary>
+            If <see langword="true"/>, glTF will export bones. If <see langword="false"/>, glTF will export solid meshes only.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.DevelopmentFlags.FLAG_ALWAYS_EMBED_TEXTURES">
+            <summary>
+            If <see langword="true"/>, texture files will always be imported into glTF even if it's set to reference in the program's configuration.
+            </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.Exceptions.ClydeDataReadException">
             <summary>
@@ -1317,9 +1356,9 @@
             <param name="list"></param>
             <param name="offset"></param>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.SetListCap``1(System.Collections.Generic.List{System.Object},``0,System.Int32)">
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.SetListCap``1(System.Collections.Generic.List{``0},``0,System.Int32)">
             <summary>
-            A utility designed exclusively for the glTF exporter which can populate a list with the given default value
+            A utility designed exclusively for the glTF exporter which can populate a list with exactly (<paramref name="values"/>) instances of the given <paramref name="defaultValue"/>.
             </summary>
             <typeparam name="T"></typeparam>
             <param name="list"></param>
@@ -1482,13 +1521,13 @@
         </member>
         <member name="T:ThreeRingsSharp.XansData.ICloneable`1">
             <summary>
-            Represents an <see langword="object"/> or <see langword="struct"/> that can be cloned into a new instance with all-new data.
+            Represents an <see langword="object"/> or <see langword="struct"/> that can be cloned into a new instance.
             </summary>
-            <typeparam name="T"></typeparam>
+            <typeparam name="T">The type of the object that will be returned by the <see cref="M:ThreeRingsSharp.XansData.ICloneable`1.Clone"/> method.</typeparam>
         </member>
         <member name="M:ThreeRingsSharp.XansData.ICloneable`1.Clone">
             <summary>
-            Clone this object into a new instance of the same type where all contained data is completely separate from the original object.
+            Clone this object into a new instance of the same type. All of the data in the new object will be identical to the original object, but it will be under a different reference.
             </summary>
             <returns></returns>
         </member>
@@ -1609,14 +1648,14 @@
             If <see langword="true"/>, any textures referenced by models will be imported into the glTF file as raw binary data.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.JSONData">
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.JSONData">
             <summary>
             The JSON data for this glTF file.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.GetPaddedJSONData">
             <summary>
-            Converts <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.JSONData"/> into a JSON String using <see cref="T:Newtonsoft.Json.JsonConvert"/>, and then ensures it's aligned to a four-byte boundary as mandated by glTF 2.0 standards.
+            Converts <see cref="P:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.JSONData"/> into a JSON String using <see cref="T:Newtonsoft.Json.JsonConvert"/>, and then ensures it's aligned to a four-byte boundary of spaces as mandated by glTF 2.0 standards.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.GetImageData(System.IO.FileInfo)">
@@ -1630,6 +1669,13 @@
             <summary>
             Returns the fully-formatted JSON data buffer, ready to be written into the file.
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.GetBinaryData(ThreeRingsSharp.XansData.Model3D[])">
+            <summary>
+            Returns the GLB portion of the file, which stores all of the necessary data. This also populates the json.
+            </summary>
+            <param name="models"></param>
             <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor">
@@ -1659,12 +1705,14 @@
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.Max">
             <summary>
-            NOTE: Cast these values into their appropriate type as dictated by <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.ComponentType"/>.
+            NOTE: Cast these values into their appropriate type as dictated by <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.ComponentType"/>.<para/>
+            Set the count to zero to skip writing this data.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.Min">
             <summary>
-            NOTE: Cast these values into their appropriate type as dictated by <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.ComponentType"/>.
+            NOTE: Cast these values into their appropriate type as dictated by <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.ComponentType"/>.<para/>
+            Set the count to zero to skip writing this data.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.Type">
@@ -1727,6 +1775,11 @@
             Represents an image, usually for a texture.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFImage.URI">
+            <summary>
+            The path to the image. If this is set (not <see langword="null"/>), <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFImage.BufferView"/> and <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFImage.MimeType"/> will be ignored and this will be used instead.
+            </summary>
+        </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFImage.ThisIndex">
             <summary>
             Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
@@ -1735,6 +1788,11 @@
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFImage.BufferView">
             <summary>
             The location of this image in the buffer.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFImage.MimeType">
+            <summary>
+            The type of the embedded data.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFJSONRoot">
@@ -1792,6 +1850,11 @@
             A list of materials.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFJSONRoot.Skins">
+            <summary>
+            A list of the skins in this model, which determines rigging and allows for animation.
+            </summary>
+        </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFJSONRoot.Scene">
             <summary>
             The scene to use. Points to an entry in <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFJSONRoot.Scenes"/>.
@@ -1837,19 +1900,24 @@
             The index of the mesh reference that this node points to.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Skin">
+            <summary>
+            The index of the skin referenced by this node.
+            </summary>
+        </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Translation">
             <summary>
-            The position of this object expressed as a 3D point <c>x, y, z</c>
+            The position of this object expressed as a 3D point <c>[x, y, z]</c>
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Rotation">
             <summary>
-            The rotation of this object expressed as a Quaternion: <c>x, y, z, w</c>
+            The rotation of this object expressed as a Quaternion: <c>[x, y, z, w]</c>
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Scale">
             <summary>
-            The scale of this object expressed as a 3D point <c>x, y, z</c>
+            The scale of this object expressed as a 3D point <c>[x, y, z]</c>
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Matrix">
@@ -1963,9 +2031,34 @@
             The id of the <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> containing the normals for this primitive.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFPrimitiveAttribute.Tangent">
+            <summary>
+            XYZW vertex tangents where the w component is a sign value (-1 or +1) indicating handedness of the tangent basis.
+            </summary>
+        </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFPrimitiveAttribute.TexCoord0">
             <summary>
             The id of the <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> containing the UVs for this primitive.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFPrimitiveAttribute.TexCoord1">
+            <summary>
+            The id of the <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> containing the alternate UVs for this primitive. It will likely go unused.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFPrimitiveAttribute.Color">
+            <summary>
+            The id of the <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> containing the vertex colors for this primitive, either RGB (VEC3) or RGBA (VEC4)
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFPrimitiveAttribute.Joints">
+            <summary>
+            The ID of the <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> containing the joints for this skinned primitive.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFPrimitiveAttribute.Weights">
+            <summary>
+            The ID of the <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> containing the weights for this skinned primitive.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFSampler">
@@ -1986,6 +2079,26 @@
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFScene.Nodes">
             <summary>
             The IDs of the nodes included in this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFScene"/>.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFSkin.InverseBindMatrices">
+            <summary>
+            The index of the accessor containing the floating-point 4x4 inverse-bind matrices. The default is that each matrix is a 4x4 identity matrix, which implies that inverse-bind matrices were pre-applied.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFSkin.Skeleton">
+            <summary>
+            The index of the node used as a skeleton root.	
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFSkin.Joints">
+            <summary>
+            Indices of skeleton nodes, used as joints in this skin.	
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFSkin.Name">
+            <summary>
+            The user-defined name of this object.	
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFTexture">
@@ -2041,7 +2154,7 @@
             <param name="objBuilder">A reference to the <see cref="T:System.Text.StringBuilder"/> which is being used to construct the OBJ file.</param>
             <param name="uv">The <see cref="T:ThreeRingsSharp.XansData.Structs.Vector2"/> to write as a UV Coordinate</param>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.IO.OBJExporter.WriteIndexTriplet(System.Text.StringBuilder,System.Collections.Generic.List{System.Int16},System.Int32,System.Int32)">
+        <member name="M:ThreeRingsSharp.XansData.IO.OBJExporter.WriteIndexTriplet(System.Text.StringBuilder,System.Collections.Generic.List{System.UInt16},System.Int32,System.Int32)">
             <summary>
             Writes the given indices to the given <see cref="T:System.Text.StringBuilder"/>. This adds 1 to all of the indices so that they are compliant with OBJ standards.
             </summary>
@@ -2129,12 +2242,12 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.HasTransformed">
             <summary>
-            If true, <see cref="M:ThreeRingsSharp.XansData.MeshData.ApplyTransform(com.threerings.math.Transform3D)"/> has already been called.
+            If <see langword="true"/>, <see cref="M:ThreeRingsSharp.XansData.MeshData.ApplyTransform(com.threerings.math.Transform3D)"/> has already been called.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.HasAxialTransformed">
             <summary>
-            If true, <see cref="M:ThreeRingsSharp.XansData.MeshData.ApplyAxialTransformationMod"/> has already been called. Axial transformations change the up axis based on <see cref="P:ThreeRingsSharp.XansData.Model3D.TargetUpAxis"/>.
+            If <see langword="true"/>, <see cref="M:ThreeRingsSharp.XansData.MeshData.ApplyAxialTransformationMod"/> has already been called. Axial transformations change the up axis based on <see cref="P:ThreeRingsSharp.XansData.Model3D.TargetUpAxis"/>.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.#ctor">
@@ -2242,7 +2355,7 @@
         </member>
         <member name="T:ThreeRingsSharp.XansData.Structs.Vector2">
             <summary>
-            Stores three <see langword="float"/> values that represent a coordinate in 3D space.<para/>
+            Stores two <see langword="float"/> values that represent a coordinate in 3D space.<para/>
             Unlike <see cref="T:System.Numerics.Vector2"/>, this does not contain any vector math methods. This is strictly for data storage.
             </summary>
         </member>
@@ -2336,7 +2449,7 @@
         </member>
         <member name="T:ThreeRingsSharp.XansData.Structs.Vertex">
             <summary>
-            Represents a vertex, which is effectively identical to a <see cref="T:ThreeRingsSharp.XansData.Structs.Vector3"/> with a Weight value.
+            Represents a vertex, which contains a <see cref="T:ThreeRingsSharp.XansData.Structs.Vector3"/> Point, a <see cref="T:System.Single"/> Weight, a <see cref="T:ThreeRingsSharp.XansData.Structs.Vector3"/> Normal, and a <see cref="T:ThreeRingsSharp.XansData.Structs.Vector2"/> UV coordinate.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.Structs.Vertex.Point">
@@ -2349,7 +2462,17 @@
             The weight of this <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> in the context of bone groups.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Structs.Vertex.#ctor(System.Single,System.Single,System.Single,System.Single)">
+        <member name="F:ThreeRingsSharp.XansData.Structs.Vertex.Normal">
+            <summary>
+            The normal of this <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/>.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.Structs.Vertex.UV">
+            <summary>
+            The UV coordinate of this <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Structs.Vertex.#ctor(System.Single,System.Single,System.Single,System.Single,ThreeRingsSharp.XansData.Structs.Vector3,ThreeRingsSharp.XansData.Structs.Vector2)">
             <summary>
             Construct a new <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> with the given X, Y, and Z coordinates and weight.
             </summary>
@@ -2357,31 +2480,17 @@
             <param name="y">The Y component of this Vector3.</param>
             <param name="z">The Z component of this Vector3.</param>
             <param name="weight">The weight of this vertex in the context of any associated bone data.</param>
+            <param name="normal">The normal of this vertex.</param>
+            <param name="uv">The UV coordinate of this vertex.</param>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Structs.Vertex.#ctor(ThreeRingsSharp.XansData.Structs.Vector3,System.Single)">
+        <member name="M:ThreeRingsSharp.XansData.Structs.Vertex.#ctor(ThreeRingsSharp.XansData.Structs.Vector3,System.Single,ThreeRingsSharp.XansData.Structs.Vector3,ThreeRingsSharp.XansData.Structs.Vector2)">
             <summary>
             Construct a new <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> from the given point and weight.
             </summary>
             <param name="point">The location of this <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> in 3D space.</param>
             <param name="weight">The weight of this <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> in the context of any associated bone data.</param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Structs.Vertex.FromFloatArray(System.Single[],System.Single)">
-            <summary>
-            Returns a list of <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/>s composed of the given float array, taking each value out in triplets. The weight of each <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> will be set to <paramref name="defaultWeight"/>.<para/>
-            Throws <see cref="T:System.DataMisalignedException"/> if the float array's length is not divisible by three.
-            </summary>
-            <param name="values">The float array to be translated into a <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> array.</param>
-            <param name="defaultWeight">The weight to give to each vertex, which is used in the context of bone information.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Structs.Vertex.FromFloatArray(System.Single[],System.Single[])">
-            <summary>
-            Returns a list of <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/>s composed of the given float array, taking each value out in triplets.<para/>
-            Throws <see cref="T:System.DataMisalignedException"/> if the float array's length is not divisible by three, or if the length of the weight array isn't the same as the result <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> array.
-            </summary>
-            <param name="values">The float array to be translated into a <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> array.</param>
-            <param name="weights">A list of the weights to give the resulting <see cref="T:ThreeRingsSharp.XansData.Structs.Vertex"/> instances.</param>
-            <returns></returns>
+            <param name="normal">The normal of this vertex.</param>
+            <param name="uv">The UV coordinate of this vertex.</param>
         </member>
         <member name="T:ThreeRingsSharp.XansData.Structs.VertexGroup">
             <summary>
@@ -2390,13 +2499,12 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Vertices">
             <summary>
-            All of the vertices stored in this VertexGroup. These ARE unique objects (not unique positions in space) since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="P:ThreeRingsSharp.XansData.MeshData.Vertices"/>, since these vertices are not affected by transforms which may drastically malform the output.
+            All of the vertices stored in this VertexGroup, which all correspond to a specific bone. These ARE unique objects (not unique positions in space) since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="P:ThreeRingsSharp.XansData.MeshData.Vertices"/>. Do note that Weights are stored within vertices.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Indices">
             <summary>
-            The indices in this vertex group. These refer to the triangles in this <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/>, but are the indices used by the whole model otherwise.<para/>
-            Please note that certain indices in this array may be duplicated (or, the same exact index will appear up to 4 times in a row). If this is the case, ignore subsequent instances of the same number. For instance, this array may contain <c>1 2 2 2 3 3 4</c>, and should turn into <c>1 2 3 4</c> after you trim it yourself.
+            The indices in this vertex group. These form triangles in this <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/>.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Name">
@@ -2550,7 +2658,28 @@
             It can also be indexed via type, such as via <c>ConfigReferences[<see langword="typeof"/>(<see cref="T:com.threerings.opengl.material.config.MaterialConfig"/>)]</c>
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PopulateConfigRefs">
+        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.HasPopulatedConfigs">
+            <summary>
+            This will be <see langword="true"/> if all of the config references have loaded.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.OnConfigsPopulatedAction">
+            <summary>
+            An <see cref="T:System.Action"/> to run when configs are populated.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.UISyncContext">
+            <summary>
+            A reference to the GUI thread's <see cref="T:System.Threading.SynchronizationContext"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PopulateConfigRefsAsync">
+            <summary>
+            An asynchronous variant of <see cref="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PopulateConfigRefs(System.Boolean)"/>. This should be called when the program starts so that it can load data in the background.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PopulateConfigRefs(System.Boolean)">
             <summary>
             Initializes all config references together.
             </summary>
@@ -2575,7 +2704,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.ReadFromRawConfigRefs">
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.ReadFromRawConfigRefs(System.Boolean)">
             <summary>
             If the merged binary stuff doesn't exist, then this will try to find a ConfigRefs folder.
             </summary>
@@ -2607,7 +2736,8 @@
         </member>
         <member name="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer">
             <summary>
-            A container for config references. This behaves like a <see cref="T:System.Collections.Generic.Dictionary`2"/>.
+            A container for config references. This behaves like a <see cref="T:System.Collections.Generic.Dictionary`2"/> where keys are the name of the config file, and values are their corresponding container object.<para/>
+            For a crude example, indexing this class <c>myConfigReferenceContainer["material"]</c> will return the Clyde data within material.xml
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.References">
@@ -2633,7 +2763,8 @@
         <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.Item(System.String)">
             <summary>
             Get the configuration data for the given name, which should be identical to the config dat file name without its extension (e.g. "tile").<para/>
-            Throws an <see cref="T:System.ArgumentException"/> if the given name isn't valid, and an <see cref="T:System.ArgumentNullException"/> if the given name is <see langword="null"/>.
+            Throws an <see cref="T:System.ArgumentException"/> if the given name isn't valid, and an <see cref="T:System.ArgumentNullException"/> if the given name is <see langword="null"/>.<para/>
+            In many cases this will be an <see cref="T:System.Array"/> type, but this is not guaranteed.
             </summary>
             <param name="cfgName">The name of the configuration, identical to its dat name without the extension (e.g. "tile")</param>
             <returns></returns>
@@ -2642,7 +2773,8 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.Item(System.Type)">
             <summary>
-            Given a <see cref="T:System.Type"/> representing a specific config (e.g. <see cref="T:com.threerings.opengl.material.config.MaterialConfig"/>), the container for this config and all of its instances will be returned.
+            Given a <see cref="T:System.Type"/> representing a specific config (e.g. <see cref="T:com.threerings.opengl.material.config.MaterialConfig"/>), the container for this config and all of its instances will be returned.<para/>
+            In many cases this will be an <see cref="T:System.Array"/> type, but this is not guaranteed.
             </summary>
             <param name="cfgType"></param>
             <returns></returns>

@@ -78,6 +78,7 @@ namespace ThreeRingsSharp.DataHandlers {
 			// Since I want to tie up some UI stuff before throwing the error, I'll store it for later.
 			ClydeDataReadException errToThrow = null;
 
+			// Cache models we've already read. This isn't really important for single models, but for loading stuff like scenes, this speeds up load speed incredibly.
 			if (!ClydeObjectCache.ContainsKey(clydeFile.FullName)) {
 				XanLogger.WriteLine($"Loading [{clydeFile.FullName}]...", true);
 				// ProgramLog.Update();
@@ -138,7 +139,7 @@ namespace ThreeRingsSharp.DataHandlers {
 			}
 
 			// This is kind of hacky behavior but it (ab)uses the fact that this will only run on the first call for any given chain of .DAT files.
-			// That is, all external referenced files have this value passed in instead of it being null.
+			// That is, all external referenced files by this .dat have this value passed into the method we're in right now instead of it being null.
 			if (transform == null) {
 				transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, Model3D.MultiplyScaleByHundred ? 100f : 1f);
 			} else {
@@ -151,10 +152,10 @@ namespace ThreeRingsSharp.DataHandlers {
 					UpdateGUIAction(null, null, null, "Unknown");
 				}
 				if (rootDataTreeObject != null) {
-					rootDataTreeObject.Text = "Unknown Implementation";
-					rootDataTreeObject.ImageKey = SilkImage.Object;
+					rootDataTreeObject.Text = "Unknown Base";
+					rootDataTreeObject.ImageKey = SilkImage.Generic;
 				}
-				errToThrow = new ClydeDataReadException("This implementation is null!\nThis usually happens if the implementation is from an outside source that uses Clyde (e.g. Spiral Knights itself) has its own custom classes that are not part of Clyde.\n\nAs a result of this issue, the program is unfortunately unable to extract its data type name.", "Unsupported Implementation");
+				errToThrow = new ClydeDataReadException("The root type of this data is null!\nThis usually happens if the implementation is from an outside source that uses Clyde (e.g. Spiral Knights itself) has its own custom classes that are not part of Clyde.\n\nAs a result of this issue, the program is unfortunately unable to extract any meaningful information from this file.", "Unsupported Implementation");
 			}
 
 			if (obj is ModelConfig model) {

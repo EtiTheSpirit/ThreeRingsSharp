@@ -89,8 +89,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					if (mesh != null) {
 						// "Let's use a node designed to store meshes for something that doesn't contain meshes!"
 						//		-- Some knucklehead at OOO.
-
-						// No offense.
+						// ...No offense.
 
 						Transform3D modifiedTransform = node.invRefTransform.invert().compose(node.transform);
 						//Transform3D modifiedTransform = node.transform.compose(node.invRefTransform.invert());

@@ -103,8 +103,8 @@ namespace ThreeRingsSharp.XansData.IO {
 		/// <param name="indices">The list of indices for this 3D model.</param>
 		/// <param name="tripletStartIndex">An index multiplied by 3 to represent where to get a triplet from (so an index of 0 would be indices[0], [1], and [2], and an index of 1 would be [3], [4], and [5])</param>
 		/// <param name="indexOffset">The value to offset geometry indices by.</param>
-		private static void WriteIndexTriplet(StringBuilder objBuilder, List<short> indices, int tripletStartIndex, int indexOffset) {
-			IEnumerable<short> skippedIndices = indices.Skip(tripletStartIndex * 3);
+		private static void WriteIndexTriplet(StringBuilder objBuilder, List<ushort> indices, int tripletStartIndex, int indexOffset) {
+			IEnumerable<ushort> skippedIndices = indices.Skip(tripletStartIndex * 3);
 			if (skippedIndices.Count() < 3) {
 				XanLogger.WriteLine("WARNING: Index count is not a multiple of 3!");
 				return;

@@ -22,7 +22,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 	/// <summary>
 	/// Specialized methods to pull specific data out of models via their directs.
 	/// </summary>
-	public class ModelPropertyUtility { 
+	public class ModelPropertyUtility {
 
 		public static List<string> FindTexturesFromDirects(ModelConfig cfg) {
 			List<string> retn = new List<string>();
@@ -65,6 +65,8 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 			return retn;
 		}
 
+		#region Old Stuff
+
 		/// <summary>
 		/// Navigates through <paramref name="cfg"/> with the given <paramref name="path"/> as a direct.<para/>
 		/// This returns the end value at the path, as well as the value one element up from the bottom of the path (since this can often be used for context)
@@ -86,10 +88,10 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 			string lastName = null;
 			object directOnLastStep = null;
 			int currentStep = 0;
-			
+
 			foreach (string s in steps) {
 				string step = s.SnakeToCamel();
-				
+
 				// Brackets either denote an index to an array or a reference to a parameter, so they get special handling.
 				if (s.StartsWith("[") && s.EndsWith("]")) {
 					step = step.BetweenBrackets(); // Get the text between the brackets.
@@ -104,6 +106,11 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 							// The proper method would be to create a map from every xml to its root type, and then actually look at the property
 							// - of the object and grab the config reference by type.
 
+							if (last == null) {
+								XanLogger.WriteLine("Alert: Unable to locate the data for " + path, false, System.Drawing.Color.DarkGoldenrod);
+								return (null, null);
+							}
+
 							(object, object) data;
 							if (ConfigReferenceBootstrapper.ConfigReferences.ValidNames.Contains(lastName ?? "")) {
 								// Explicit name grab.
@@ -114,11 +121,11 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 							}
 
 							object referencedConfigInstance = data.Item1; // This is the instance of whatever OOO Config was selected.
-							// ^ In the context of the direct pointing to something, e.g. texture.xml, this is the specific texture config
-							// (since the xml contains dozens of them)
-							
+																		  // ^ In the context of the direct pointing to something, e.g. texture.xml, this is the specific texture config
+																		  // (since the xml contains dozens of them)
+
 							object parameter = data.Item2; // This is the parameter with the given name (lastName) in referencedConfigInstance
-							// This specific data is acquired via calling referencedConfigInstance.getParameter(lastName);
+														   // This specific data is acquired via calling referencedConfigInstance.getParameter(lastName);
 
 							last = referencedConfigInstance;
 							directOnLastStep = parameter;
@@ -128,6 +135,11 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 							string firstPath = paths.FirstOrDefault();
 							(object, object) nextPathData = TraverseDirectPath(last, firstPath);
 							object endOfNextPath = nextPathData.Item1;
+							if (endOfNextPath == null) {
+								// Something wasn't able to be located.
+								XanLogger.WriteLine("Alert: Unable to locate the data for " + path, false, System.Drawing.Color.DarkGoldenrod);
+								return (null, null);
+							}
 							// Now in this context, we've just traversed a path in a chain of references.
 							// In the case of materials, this looks a bit like ["Texture"]["File"]
 							// Now do note, this case is a bit odd since when we make it here, we're actually on "File", but this references Texture
@@ -156,7 +168,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 								data = ReflectionHelper.GetOOOConfigAndParameter(endOfNextPath, step.Substring(1, step.Length - 2));
 							}
 
-							
+
 							object referencedConfigInstance = data.Item1;
 							// ^ This is the instance of whatever OOO Config was selected.
 							// In the context of the direct pointing to something, e.g. texture.xml, this is the specific texture config
@@ -187,10 +199,14 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 						last = ReflectionHelper.Index(last, int.Parse(step));
 						directOnLastStep = null;
 					}
-					
+
 				} else {
 					// This is a field.
 					beforeLast = last;
+					if (last == null) {
+						// Catch case: The object ceased to exist. Can't get the data.
+						return (null, null);
+					}
 					last = ReflectionHelper.Get(last, step);
 					directOnLastStep = null;
 				}
@@ -201,133 +217,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 			return (last, beforeLast);
 		}
 
-
-		/// <summary>
-		/// Provides aliases to get fields or indices of objects via reflection.
-		/// </summary>
-		private static class ReflectionHelper {
-
-			/// <summary>
-			/// Returns the value of the given instance field.
-			/// </summary>
-			/// <param name="obj"></param>
-			/// <param name="field"></param>
-			/// <returns></returns>
-			public static object Get(object obj, string field) {
-				return obj.GetType().GetField(field).GetValue(obj);
-			}
-
-			/// <summary>
-			/// Sets the value of the given instance field.
-			/// </summary>
-			/// <param name="obj"></param>
-			/// <param name="field"></param>
-			/// <param name="value"></param>
-			public static void Set(object obj, string field, object value) {
-				obj.GetType().GetField(field).SetValue(obj, value);
-			}
-
-			/// <summary>
-			/// Assuming <paramref name="obj"/> is an array, this returns <paramref name="obj"/>[<paramref name="idx"/>]
-			/// </summary>
-			/// <param name="obj"></param>
-			/// <param name="idx"></param>
-			/// <returns></returns>
-			public static object Index(object obj, int idx) {
-				return ((Array)obj).GetValue(idx);
-			}
-
-			/// <summary>
-			/// An alias that returns the <c>paths</c> field as a <see langword="string"/>[], of course, intended to be called on a <see cref="Parameter.Direct"/>
-			/// </summary>
-			/// <param name="direct"></param>
-			/// <returns></returns>
-			public static string[] GetPaths(object direct) {
-				return (string[])Get(direct, "paths");
-			}
-
-			/// <summary>
-			/// In the context of config maps, a <see cref="ConfigReference"/> returns a path relative to an OOO config file.<para/>
-			/// This method will attempt to resolve that path when given a <see cref="ConfigReference"/> and a configuration index (which is the name of one of the xml files in the spiral knights/config directory, e.g. "material" or "tile")<para/>
-			/// Assuming <paramref name="fromObj"/> is a <see cref="ConfigReference"/>, this will call its <c>getName()</c> method (which returns its path), resolve the config data via <see cref="ConfigReferenceBootstrapper"/>, and return the object with the given name.<para/>
-			/// Given <paramref name="directName"/>, it will attempt to call the <c>getParameter()</c> method on the returned config with an argument of this name, which should return the <see cref="Parameter"/> it's pointing to.<para/>
-			/// The first return value is the <see cref="ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="MaterialConfig"/>), and the second value is the <see cref="Parameter"/> returned by ^.
-			/// </summary>
-			/// <param name="fromObj"></param>
-			/// <param name="directName"></param>
-			/// <param name="threeRingsConfigName"></param>
-			/// <returns></returns>
-			public static (object, object) GetOOOConfigAndParameter(object fromObj, string directName, string threeRingsConfigName) {
-				MethodInfo getNameMethod = fromObj.GetType().GetMethod("getName");
-				if (getNameMethod != null) {
-					string name = (string)getNameMethod.Invoke(fromObj, new object[0]);
-					// Sanity check:
-					if (System.IO.File.Exists(ResourceDirectoryGrabber.ResourceDirectoryPath + name)) {
-						// This isn't a config reference, this is an actual direct model reference!
-						return (null, null);
-					}
-
-					ManagedConfig[] refs = (ManagedConfig[])ConfigReferenceBootstrapper.ConfigReferences[threeRingsConfigName];
-					object refObj = refs.GetEntryByName(name);
-					return (refObj, refObj.GetType().GetMethod("getParameter", new Type[] { typeof(string) }).Invoke(refObj, new object[] { directName }));
-				}
-				return (null, null);
-			}
-
-			/// <summary>
-			/// In the context of config maps, a <see cref="ConfigReference"/> returns a path relative to an OOO config file.<para/>
-			/// This method will attempt to resolve that path when given a <see cref="ConfigReference"/> and a configuration index (which is the name of one of the xml files in the spiral knights/config directory, e.g. "material" or "tile")<para/>
-			/// Assuming <paramref name="fromObj"/> is a <see cref="ConfigReference"/>, this will call its <c>getName()</c> method (which returns its path), resolve the config data via <see cref="ConfigReferenceBootstrapper"/>, and return the object with the given name.<para/>
-			/// Given <paramref name="directName"/>, it will attempt to call the <c>getParameter()</c> method on the returned config with an argument of this name, which should return the <see cref="Parameter"/> it's pointing to.<para/>
-			/// The first return value is the <see cref="ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="MaterialConfig"/>), and the second value is the <see cref="Parameter"/> returned by ^.
-			/// </summary>
-			/// <param name="fromObj"></param>
-			/// <param name="directName"></param>
-			/// <param name="threeRingsConfigType"></param>
-			/// <returns></returns>
-			public static (object, object) GetOOOConfigAndParameter(object fromObj, string directName, Type threeRingsConfigType) {
-				MethodInfo getNameMethod = fromObj.GetType().GetMethod("getName");
-				if (getNameMethod != null) {
-					string name = (string)getNameMethod.Invoke(fromObj, new object[0]);
-					// Sanity check:
-					if (System.IO.File.Exists(ResourceDirectoryGrabber.ResourceDirectoryPath + name)) {
-						// This isn't a config reference, this is an actual direct model reference!
-						return (null, null);
-					}
-
-					ManagedConfig[] refs = (ManagedConfig[])ConfigReferenceBootstrapper.ConfigReferences[threeRingsConfigType];
-					object refObj = refs.GetEntryByName(name);
-					return (refObj, refObj.GetType().GetMethod("getParameter", new Type[] { typeof(string) }).Invoke(refObj, new object[] { directName }));
-				}
-				return (null, null);
-			}
-
-			/// <summary>
-			/// Gets a <see cref="ConfigReference"/> of the given name. Unlike the alternatives to this method, this one will iterate through all config refs (and by extension, does not require a direct config group name).
-			/// </summary>
-			/// <param name="fromObj"></param>
-			/// <param name="directName"></param>
-			/// <returns></returns>
-			public static (object, object) GetOOOConfigAndParameter(object fromObj, string directName) {
-				
-				MethodInfo getNameMethod = fromObj.GetType().GetMethod("getName");
-				if (getNameMethod != null) {
-					string name = (string)getNameMethod.Invoke(fromObj, new object[0]);
-					// Sanity check:
-					if (System.IO.File.Exists(ResourceDirectoryGrabber.ResourceDirectoryPath + name)) {
-						// This isn't a config reference, this is an actual direct model reference!
-						return (null, null);
-					}
-
-					object refObj = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(name);
-					return (refObj, refObj.GetType().GetMethod("getParameter", new Type[] { typeof(string) }).Invoke(refObj, new object[] { directName }));
-				}
-				return (null, null);
-			}
-
-		}
+		#endregion
 
 	}
-
-	
 }

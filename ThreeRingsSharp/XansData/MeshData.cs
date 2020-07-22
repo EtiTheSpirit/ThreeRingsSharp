@@ -61,7 +61,7 @@ namespace ThreeRingsSharp.XansData {
 		/// <summary>
 		/// The indices that define triangles.
 		/// </summary>
-		public List<short> Indices { get; set; } = new List<short>();
+		public List<ushort> Indices { get; set; } = new List<ushort>();
 
 		/// <summary>
 		/// All of the vertex groups in this model, represented as a list of indices. These indices reference <see cref="Vertices"/>.
@@ -84,6 +84,9 @@ namespace ThreeRingsSharp.XansData {
 		// This means that every *other* index is actually subtracted by 1 to get the position in their vanilla bone name list.
 		// Not here. You just have null at the start of the list then everything else corresponds linearly. No -1.
 
+		// Thankfully, glTF 2.0 standard says that the limit is 4 bones per vertex.
+		// Incidentally, that is exactly how OOO does it. That means the support is literally perfect.
+
 		/// <summary>
 		/// The weights for bones.<para/>
 		/// If you need to find the weight of a vertex for a given bone, search <see cref="VertexGroups"/> instead.
@@ -97,12 +100,12 @@ namespace ThreeRingsSharp.XansData {
 		public bool HasBoneData { get; set; } = false;
 
 		/// <summary>
-		/// If true, <see cref="ApplyTransform(Transform3D)"/> has already been called.
+		/// If <see langword="true"/>, <see cref="ApplyTransform(Transform3D)"/> has already been called.
 		/// </summary>
 		public bool HasTransformed { get; private set; } = false;
 
 		/// <summary>
-		/// If true, <see cref="ApplyAxialTransformationMod"/> has already been called. Axial transformations change the up axis based on <see cref="Model3D.TargetUpAxis"/>.
+		/// If <see langword="true"/>, <see cref="ApplyAxialTransformationMod"/> has already been called. Axial transformations change the up axis based on <see cref="Model3D.TargetUpAxis"/>.
 		/// </summary>
 		public bool HasAxialTransformed { get; private set; } = false;
 
@@ -141,17 +144,18 @@ namespace ThreeRingsSharp.XansData {
 		public void ConstructGroups() {
 			if (Disposed) throw new ObjectDisposedException("MeshData");
 			if (!HasBoneData) return;
+			VertexGroups.Clear(); // Just in case its a second+ call
 			// To reiterate this from GeometryConfigTranslater since this is where looking back at the program is going to get confusing...
 
 			// Consider it literally: boneIndices and boneWeights for bones are vertex *attribute* arrays.
 			// This means that we iterate through the indices of the model itself, then...
-			// The vertex at vertices[index] is part of up to four bone groups.
+			// The vertex at vertices[index] is part of up to four bone groups (which are defined as a group of 4 values at boneIndices[index])
 			// Why four? Bone indices are quadruplets. The returned indices point to a bone name in the name array.
 			// A bone index of 0 means "no associated bone".
 			// A note to self: SkinnedIndexedStored geometry contains a bone name list. You have altered this list so that [0] is null, then everything else starts at [1] and after.
 			// You did this so that you could check if the returned bone name was null.
 
-			// Apparently, this concept went way over my head in SK Animator Tools and it was a disaster. Part of why the code was so horrifying.
+			// Apparently, this concept went way over my head in SK Animator Tools and it was a disaster. Part of why the code was so horrifying there.
 
 			foreach (string boneName in BoneNames) {
 				if (boneName != null) {
@@ -159,10 +163,12 @@ namespace ThreeRingsSharp.XansData {
 				}
 			}
 
-			foreach (short index in Indices) {
+			foreach (ushort index in Indices) {
 				int[] boneIndices = BoneIndices.GetSecondDimensionAt(index);
 				float[] boneWeights = BoneWeights.GetSecondDimensionAt(index);
 				Vector3 point = Vertices[index];
+				Vector3 normal = Normals[index];
+				Vector2 uv = UVs[index];
 
 				// Iterate 4x because again, quadruplets.
 				for (int idx = 0; idx < 4; idx++) {
@@ -173,7 +179,7 @@ namespace ThreeRingsSharp.XansData {
 					VertexGroup groupForBone = GetVertexGroupByName(boneName);
 
 					// Populate the group.
-					groupForBone.Vertices.Add(new Vertex(point, boneWeight));
+					groupForBone.Vertices.Add(new Vertex(point, boneWeight, normal, uv));
 					groupForBone.Indices.Add(index);
 				}
 			}

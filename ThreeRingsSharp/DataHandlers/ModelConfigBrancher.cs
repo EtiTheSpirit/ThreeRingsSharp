@@ -38,7 +38,11 @@ namespace ThreeRingsSharp.DataHandlers {
 			ModelConfig.Implementation implementation = model.implementation;
 			if (implementation == null) {
 				XanLogger.WriteLine("Implementation is null! Sending error.", true);
-				throw new ClydeDataReadException("This specific model does not have an implementation, which is the data for the model itself. The program cannot continue! This generally happens if the implementation is from another game that uses Clyde and has defined its own custom model types (e.g. Spiral Knights does this)", "Can't Read Model", MessageBoxIcon.Error);
+				if (currentDataTreeObject != null) {
+					currentDataTreeObject.Text = "Unknown Implementation";
+					currentDataTreeObject.ImageKey = SilkImage.Generic;
+				}
+				throw new ClydeDataReadException("This specific model does not have an implementation, which is the data for the model itself. This generally happens if the implementation is from another game that uses Clyde and has defined its own custom model types (e.g. Spiral Knights does this). As a result, the program cannot extract any information from this file. Sorry!", "Can't Read Model", MessageBoxIcon.Error);
 			}
 
 			string implName = (JavaClassNameStripper.GetWholeClassName(implementation.getClass()) ?? implementation.getClass().getTypeName()).Replace("$", "::");

@@ -15,13 +15,17 @@ using com.threerings.export.tools;
 using com.google.common.io;
 using com.threerings.opengl.material.config;
 using ThreeRingsSharp.XansData.Extensions;
+using System.Drawing;
+using System.Threading;
+using com.threerings.opengl.model.config;
+using System.ComponentModel;
 
 namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 	/// <summary>
 	/// Loads all of the XML config reference files and stores their data.
 	/// </summary>
-	public class ConfigReferenceBootstrapper {
+	public static class ConfigReferenceBootstrapper {
 
 		/// <summary>
 		/// The current version of the MergedConfigReferences file.
@@ -44,25 +48,60 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		private static readonly ConfigReferenceContainer _ConfigReferences = new ConfigReferenceContainer();
 
 
-		private static bool HasPopulatedConfigs { get; set; } = false;
+		/// <summary>
+		/// This will be <see langword="true"/> if all of the config references have loaded.
+		/// </summary>
+		public static bool HasPopulatedConfigs {
+			get => _HasPopulatedConfigs;
+			set {
+				_HasPopulatedConfigs = value;
+				if (value) {
+					UISyncContext?.Send(callback => {
+						OnConfigsPopulatedAction?.Invoke();
+					}, null);
+				}
+			}
+		}
+		private static bool _HasPopulatedConfigs = false;
 		private static readonly string CurrentExeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).Replace("\\", "/");
+
+		/// <summary>
+		/// An <see cref="Action"/> to run when configs are populated.
+		/// </summary>
+		public static Action OnConfigsPopulatedAction { get; set; } = null;
+
+		/// <summary>
+		/// A reference to the GUI thread's <see cref="SynchronizationContext"/>.
+		/// </summary>
+		public static SynchronizationContext UISyncContext { get; set; } = null;
 
 		static ConfigReferenceBootstrapper() {
 			if (!CurrentExeDir.EndsWith("/")) CurrentExeDir += '/';
 		}
 
 		/// <summary>
+		/// An asynchronous variant of <see cref="PopulateConfigRefs"/>. This should be called when the program starts so that it can load data in the background.
+		/// </summary>
+		/// <returns></returns>
+		public static async Task PopulateConfigRefsAsync() {
+			if (HasPopulatedConfigs) return;
+			await Task.Run(() => PopulateConfigRefs(true));
+		}
+
+		/// <summary>
 		/// Initializes all config references together.
 		/// </summary>
-		private static void PopulateConfigRefs() {
+		private static void PopulateConfigRefs(bool runningInSeparateTask = false) {
 			if (HasPopulatedConfigs) return;
-			XanLogger.WriteLine("Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!");
+			if (!runningInSeparateTask) XanLogger.WriteLine("Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!", true);
 			FileInfo mergedBinFile = new FileInfo(CurrentExeDir + "MergedConfigReferences.bin");
 
 			if (!mergedBinFile.Exists) {
-				XanLogger.WriteLine("Special merged binary file doesn't exist! Manually iterating through ConfigRefs...");
-				XanLogger.UpdateLog();
-				ReadFromRawConfigRefs();
+				if (!runningInSeparateTask) {
+					XanLogger.WriteLine("Special merged binary file doesn't exist! Manually iterating through ConfigRefs...", true);
+					XanLogger.UpdateLog();
+				}
+				ReadFromRawConfigRefs(runningInSeparateTask);
 				return;
 			}
 
@@ -81,7 +120,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 						BinaryImporter importer = new BinaryImporter(ByteSource.wrap(dat).openStream());
 						object obj = importer.readObject();
-						if (obj == null) {
+						if (obj == null && !runningInSeparateTask) {
 							XanLogger.WriteLine("WARNING: Reference for [" + name + "] returned null!");
 							XanLogger.UpdateLog();
 						}
@@ -91,18 +130,24 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 						_ConfigReferences[name] = (obj, type);
 
 						importer.close();
-						XanLogger.WriteLine("Populated [" + name + "].", true);
-						XanLogger.UpdateLog();
+						if (!runningInSeparateTask) {
+							XanLogger.WriteLine("Populated [" + name + "].", true);
+							XanLogger.UpdateLog();
+						}
 					}
 				} else {
-					XanLogger.WriteLine("Special merged binary file is out of date! Manually iterating through ConfigRefs...");
-					XanLogger.UpdateLog();
-					ReadFromRawConfigRefs();
+					if (!runningInSeparateTask) {
+						XanLogger.WriteLine("Special merged binary file is out of date! Manually iterating through ConfigRefs...", true);
+						XanLogger.UpdateLog();
+					}
+					ReadFromRawConfigRefs(runningInSeparateTask);
 				}
 			}
 
-			XanLogger.WriteLine("Done! Config data is populated.");
-			XanLogger.UpdateLog();
+			if (!runningInSeparateTask) {
+				XanLogger.WriteLine("Config data has been populated.");
+				XanLogger.UpdateLog();
+			}
 			HasPopulatedConfigs = true;
 		}
 
@@ -209,7 +254,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		/// <summary>
 		/// If the merged binary stuff doesn't exist, then this will try to find a ConfigRefs folder.
 		/// </summary>
-		private static void ReadFromRawConfigRefs() {
+		private static void ReadFromRawConfigRefs(bool runningInSeparateTask = false) {
 			// Get a reference to the current EXE directory.
 			DirectoryInfo configRefsDir = new DirectoryInfo(CurrentExeDir + "ConfigRefs/");
 			if (!configRefsDir.Exists) {
@@ -227,7 +272,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				//XMLImporter importer = new XMLImporter(cfgStream);
 				BinaryImporter importer = new BinaryImporter(cfgStream);
 				object obj = importer.readObject();
-				if (obj == null) {
+				if (obj == null && !runningInSeparateTask) {
 					XanLogger.WriteLine("WARNING: Reference for [" + fName + "] returned null!");
 					XanLogger.UpdateLog();
 				}
@@ -235,8 +280,10 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				if (type.IsArray) type = type.GetElementType();
 				_ConfigReferences[fName] = (obj, type);
 				importer.close();
-				XanLogger.WriteLine("Populated [" + fName + "].", true);
-				XanLogger.UpdateLog();
+				if (!runningInSeparateTask) {
+					XanLogger.WriteLine("Populated [" + fName + "].", true);
+					XanLogger.UpdateLog();
+				}
 			}
 		}
 
@@ -441,7 +488,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		/// <summary>
 		/// A reference to the OOOLibAndDeps.dll assembly.
 		/// </summary>
-		private static readonly Assembly OOOLib = AppDomain.CurrentDomain.GetAssemblies().Where(assembly => assembly.FullName.Contains("OOOLibAndDeps")).First();
+		private static readonly Assembly OOOLib = typeof(ModelConfig).Assembly; // This is kind of a weird way of doing it, but it works.
 
 		/// <summary>
 		/// A cache representing whether or not certain classes exist.

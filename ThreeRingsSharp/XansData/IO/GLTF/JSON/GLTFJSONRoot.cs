@@ -63,6 +63,11 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		[JsonProperty("materials")] public List<GLTFMaterial> Materials = new List<GLTFMaterial>();
 
 		/// <summary>
+		/// A list of the skins in this model, which determines rigging and allows for animation.
+		/// </summary>
+		[JsonProperty("skins")] public List<GLTFSkin> Skins = new List<GLTFSkin>();
+
+		/// <summary>
 		/// The scene to use. Points to an entry in <see cref="Scenes"/>.
 		/// </summary>
 		[JsonProperty("scene")] public int Scene = 0;

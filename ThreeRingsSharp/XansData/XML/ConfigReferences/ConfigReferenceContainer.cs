@@ -12,7 +12,8 @@ using ThreeRingsSharp.XansData.Extensions;
 namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 	/// <summary>
-	/// A container for config references. This behaves like a <see cref="Dictionary{TKey, TValue}"/>.
+	/// A container for config references. This behaves like a <see cref="Dictionary{TKey, TValue}"/> where keys are the name of the config file, and values are their corresponding container object.<para/>
+	/// For a crude example, indexing this class <c>myConfigReferenceContainer["material"]</c> will return the Clyde data within material.xml
 	/// </summary>
 	public class ConfigReferenceContainer {
 
@@ -52,7 +53,8 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 		/// <summary>
 		/// Get the configuration data for the given name, which should be identical to the config dat file name without its extension (e.g. "tile").<para/>
-		/// Throws an <see cref="ArgumentException"/> if the given name isn't valid, and an <see cref="ArgumentNullException"/> if the given name is <see langword="null"/>.
+		/// Throws an <see cref="ArgumentException"/> if the given name isn't valid, and an <see cref="ArgumentNullException"/> if the given name is <see langword="null"/>.<para/>
+		/// In many cases this will be an <see cref="Array"/> type, but this is not guaranteed.
 		/// </summary>
 		/// <param name="cfgName">The name of the configuration, identical to its dat name without the extension (e.g. "tile")</param>
 		/// <returns></returns>
@@ -83,7 +85,8 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		}
 
 		/// <summary>
-		/// Given a <see cref="Type"/> representing a specific config (e.g. <see cref="MaterialConfig"/>), the container for this config and all of its instances will be returned.
+		/// Given a <see cref="Type"/> representing a specific config (e.g. <see cref="MaterialConfig"/>), the container for this config and all of its instances will be returned.<para/>
+		/// In many cases this will be an <see cref="Array"/> type, but this is not guaranteed.
 		/// </summary>
 		/// <param name="cfgType"></param>
 		/// <returns></returns>
@@ -116,6 +119,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				foreach (dynamic obj in container) {
 					if (obj is ManagedConfig cfg && cfg.getName() == targetName) {
 						ReferencesByEntryName.Add(targetName, obj);
+						XanLogger.WriteLine("Resolved " + targetName + " as " + obj.GetType().FullName);
 						return obj;
 					}
 				}

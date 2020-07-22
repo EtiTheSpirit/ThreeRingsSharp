@@ -16,6 +16,7 @@ using System.Runtime.CompilerServices;
 using System.IO;
 using System.Diagnostics;
 using ThreeRingsSharp.XansData.Extensions;
+using System.Drawing;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
 
@@ -48,7 +49,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				float[] vertices;
 				float[] uvs;
 				float[] normals;
-				short[] indices;
+				ushort[] indices;
 				int[,] boneIndices = new int[0, 0];
 				float[,] boneWeights = new float[0, 0];
 				string[] boneNames = new string[0];
@@ -61,7 +62,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 					// Also need to handle skinning.
 					if (skinnedIndexedStored.mode != Mode.TRIANGLES) {
-						XanLogger.WriteLine("WARNING: This Articulated model may not export properly! Its mode isn't TRIANGLES, and other behaviors (e.g. TRIANGLESTRIP) haven't been coded in yet! The method used for TRIANGLES will be applied anyway just to try.");
+						XanLogger.WriteLine("WARNING: This Articulated model may not export properly! Its mode isn't TRIANGLES, and other behaviors (e.g. TRIANGLESTRIP) haven't been coded in yet! The method used for TRIANGLES will be applied anyway just to try something.", false, Color.DarkGoldenrod);
 					}
 					AttributeArrayConfig[] allArrays = skinnedIndexedStored.vertexAttribArrays;
 					AttributeArrayConfig boneIndicesAttr = GetArrayByName(allArrays, "boneIndices");
@@ -93,14 +94,16 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					uvs = indexedStored.getFloatArray(false, indexedStored.texCoordArrays);
 					normals = indexedStored.getFloatArray(false, indexedStored.normalArray);
 					indices = GetFromShortBuffer(indexedStored.indices);
+					meshData.HasBoneData = false;
 				} else if (geometry is Stored stored) {
 					vertices = stored.getFloatArray(false, stored.vertexArray);
 					uvs = stored.getFloatArray(false, stored.texCoordArrays);
 					normals = stored.getFloatArray(false, stored.normalArray);
-					indices = new short[vertices.Length];
-					for (short i = 0; i < indices.Length; i++) {
+					indices = new ushort[vertices.Length];
+					for (ushort i = 0; i < indices.Length; i++) {
 						indices[i] = i;
 					}
+					meshData.HasBoneData = false;
 				} else {
 					throw new InvalidOperationException("The GeometryConfig type is unknown! Type: " + geometry.getClass().getName());
 				}
@@ -121,15 +124,16 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		}
 
 		/// <summary>
-		/// Since the given buffer may not have an array, this will automatically perform necessary edits to get a <see cref="short"/> array.
+		/// Since the given buffer may not have an array, this will automatically perform necessary edits to get a <see cref="ushort"/> array (this uses ushort because of how java handles datatypes)
 		/// </summary>
 		/// <param name="buffer"></param>
 		/// <returns></returns>
-		private static short[] GetFromShortBuffer(ShortBuffer buffer) {
-			if (buffer.hasArray()) return buffer.array();
-			List<short> data = new List<short>();
+		private static ushort[] GetFromShortBuffer(ShortBuffer buffer) {
+			List<ushort> data = new List<ushort>();
 			while (buffer.hasRemaining()) {
-				data.Add(buffer.get());
+				short v = buffer.get();
+				// This is kinda expensive ngl
+				data.Add(BitConverter.ToUInt16(BitConverter.GetBytes(v), 0));
 			}
 			return data.ToArray();
 		}

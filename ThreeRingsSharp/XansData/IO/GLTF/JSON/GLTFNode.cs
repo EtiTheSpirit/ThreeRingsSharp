@@ -24,24 +24,29 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		[JsonProperty("mesh")] public int Mesh;
 
 		/// <summary>
-		/// The position of this object expressed as a 3D point <c>x, y, z</c>
+		/// The index of the skin referenced by this node.
+		/// </summary>
+		[JsonProperty("skin")] public int Skin = -1;
+
+		/// <summary>
+		/// The position of this object expressed as a 3D point <c>[x, y, z]</c>
 		/// </summary>
 		[JsonProperty("translation")] public float[] Translation = new float[3] { 0, 0, 0 };
 
 		/// <summary>
-		/// The rotation of this object expressed as a Quaternion: <c>x, y, z, w</c>
+		/// The rotation of this object expressed as a Quaternion: <c>[x, y, z, w]</c>
 		/// </summary>
 		[JsonProperty("rotation")] public float[] Rotation = new float[4] { 0, 0, 0, 1 };
 
 		/// <summary>
-		/// The scale of this object expressed as a 3D point <c>x, y, z</c>
+		/// The scale of this object expressed as a 3D point <c>[x, y, z]</c>
 		/// </summary>
 		[JsonProperty("scale")] public float[] Scale = new float[3] { 1, 1, 1 };
 
 		/// <summary>
 		/// A transformation matrix representing the position, size, and scale of this <see cref="GLTFNode"/>.
 		/// </summary>
-		[JsonIgnore] [JsonProperty("matrix")] public float[] Matrix = new float[16] {
+		[Obsolete] [JsonIgnore] [JsonProperty("matrix")] public float[] Matrix = new float[16] {
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, 0,
@@ -52,7 +57,6 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// Sets <see cref="Translation"/> to the given <see cref="Vector3"/>.
 		/// </summary>
 		/// <param name="translation">The <see cref="Vector3"/> to set <see cref="Translation"/> to.</param>
-		//[Obsolete]
 		public void SetPosition(Vector3 translation) {
 			Translation = new float[3];
 			Translation[0] = translation.X;
@@ -64,12 +68,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// Sets <see cref="Rotation"/> to the given <see cref="Quaternion"/>.
 		/// </summary>
 		/// <param name="rotation">The <see cref="Quaternion"/> to set <see cref="Rotation"/> to.</param>
-		//[Obsolete]
 		public void SetRotation(Quaternion rotation) {
-
-			// EXPERIMENTAL: There seems to be an odd mixup where Y is assigned to Z, and -Z is assigned to Y
-			// What happens if I do that too?
-
 			Rotation = new float[4];
 			Rotation[0] = rotation.x;
 			Rotation[1] = rotation.y;
@@ -82,7 +81,6 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// Sets <see cref="Scale"/> to the given <see cref="Vector3"/>.
 		/// </summary>
 		/// <param name="scale">The <see cref="Vector3"/> to set <see cref="Scale"/> to.</param>
-		//[Obsolete]
 		public void SetScale(Vector3 scale) {
 			Scale = new float[3];
 			Scale[0] = scale.X;
@@ -111,6 +109,14 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 			SetRotation(transformData.Item2);
 			SetScale(transformData.Item3);
 		}
+
+		#region Newtonsoft Field Write Conditions
+		// These are referenced by newtonsoft during runtime.
+		// Format: ShouldSerialize...
+		// Replace ... with the name of the field.
+
+		public bool ShouldSerializeSkin() => Skin >= 0;
+		#endregion
 
 	}
 }

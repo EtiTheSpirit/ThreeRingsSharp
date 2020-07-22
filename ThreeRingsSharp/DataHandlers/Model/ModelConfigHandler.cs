@@ -71,6 +71,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					int idx = 0;
 					foreach (string path in direct.paths) {
 						paths.AddSimpleProperty("Path " + idx, path);
+						idx++;
 					}
 					parameters.Add(paths);
 				} else if (prop is Parameter.Choice choice) {
@@ -93,6 +94,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						int idx = 0;
 						foreach (string path in dir.paths) {
 							dirObj.AddSimpleProperty("Path " + idx, path);
+							idx++;
 						}
 						subDirects.Add(dirObj);
 					}

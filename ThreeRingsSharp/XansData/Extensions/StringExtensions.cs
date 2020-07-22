@@ -48,7 +48,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		public static string BetweenBrackets(this string str) {
 			int openBracket = str.IndexOf('[');
 			if (openBracket == -1) return null;
-			int closeBracket = str.IndexOf(']', openBracket);
+			int closeBracket = str.IndexOf(']', openBracket + 1);
 			if (closeBracket == -1) return null;
 
 			return str.Substring(openBracket + 1, closeBracket - openBracket - 1);

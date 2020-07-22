@@ -28,22 +28,22 @@
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.LabelDefaultPath = new System.Windows.Forms.Label();
 			this.LabelSaveLocation = new System.Windows.Forms.Label();
-			this.CheckBox_RememberLastLoad = new System.Windows.Forms.CheckBox();
 			this.TextBox_DefaultLoadLoc = new System.Windows.Forms.TextBox();
 			this.TextBox_DefaultSaveLoc = new System.Windows.Forms.TextBox();
 			this.LabelRsrcDir = new System.Windows.Forms.Label();
 			this.TextBox_RsrcDirectory = new System.Windows.Forms.TextBox();
-			this.CheckBox_ProtectAgainstZeroScale = new System.Windows.Forms.CheckBox();
 			this.Option_UpAxis = new System.Windows.Forms.ComboBox();
 			this.LabelUpAxis = new System.Windows.Forms.Label();
-			this.CheckBox_MultiplyScaleByHundred = new System.Windows.Forms.CheckBox();
-			this.CheckBox_EmbedTextures = new System.Windows.Forms.CheckBox();
 			this.CheckBox_VerboseLogging = new System.Windows.Forms.CheckBox();
+			this.CheckBox_EmbedTextures = new System.Windows.Forms.CheckBox();
+			this.CheckBox_MultiplyScaleByHundred = new System.Windows.Forms.CheckBox();
+			this.CheckBox_ProtectAgainstZeroScale = new System.Windows.Forms.CheckBox();
+			this.CheckBox_RememberLastLoad = new System.Windows.Forms.CheckBox();
+			this.Option_StaticSetExportMode = new System.Windows.Forms.ComboBox();
+			this.LabelStaticSetExportMode = new System.Windows.Forms.Label();
 			this.MainTooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.BtnCancel = new System.Windows.Forms.Button();
 			this.BtnSave = new System.Windows.Forms.Button();
-			this.Option_StaticSetExportMode = new System.Windows.Forms.ComboBox();
-			this.LabelStaticSetExportMode = new System.Windows.Forms.Label();
 			this.tableLayoutPanel1.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -109,21 +109,6 @@
 			this.LabelSaveLocation.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.MainTooltip.SetToolTip(this.LabelSaveLocation, "When exporting files, the program will go here by default.");
 			// 
-			// CheckBox_RememberLastLoad
-			// 
-			this.CheckBox_RememberLastLoad.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.CheckBox_RememberLastLoad.AutoSize = true;
-			this.CheckBox_RememberLastLoad.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.CheckBox_RememberLastLoad.Location = new System.Drawing.Point(220, 123);
-			this.CheckBox_RememberLastLoad.Name = "CheckBox_RememberLastLoad";
-			this.CheckBox_RememberLastLoad.Size = new System.Drawing.Size(230, 18);
-			this.CheckBox_RememberLastLoad.TabIndex = 6;
-			this.CheckBox_RememberLastLoad.Text = "Remember Last Load Directory (In Session)";
-			this.MainTooltip.SetToolTip(this.CheckBox_RememberLastLoad, "If enabled, opening multiple .DAT files separately will not cause you go to back " +
-        "to /rsrc/ every time.");
-			this.CheckBox_RememberLastLoad.UseVisualStyleBackColor = true;
-			// 
 			// TextBox_DefaultLoadLoc
 			// 
 			this.TextBox_DefaultLoadLoc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -175,23 +160,6 @@
 			this.TextBox_RsrcDirectory.WordWrap = false;
 			this.TextBox_RsrcDirectory.Validating += new System.ComponentModel.CancelEventHandler(this.VerifyRsrcDirectoryIntegrity);
 			// 
-			// CheckBox_ProtectAgainstZeroScale
-			// 
-			this.CheckBox_ProtectAgainstZeroScale.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.CheckBox_ProtectAgainstZeroScale.AutoSize = true;
-			this.CheckBox_ProtectAgainstZeroScale.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.CheckBox_ProtectAgainstZeroScale.Checked = true;
-			this.CheckBox_ProtectAgainstZeroScale.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.CheckBox_ProtectAgainstZeroScale.Location = new System.Drawing.Point(297, 147);
-			this.CheckBox_ProtectAgainstZeroScale.Name = "CheckBox_ProtectAgainstZeroScale";
-			this.CheckBox_ProtectAgainstZeroScale.Size = new System.Drawing.Size(153, 18);
-			this.CheckBox_ProtectAgainstZeroScale.TabIndex = 7;
-			this.CheckBox_ProtectAgainstZeroScale.Text = "Protect Against Zero Scale";
-			this.MainTooltip.SetToolTip(this.CheckBox_ProtectAgainstZeroScale, "If enabled, any models that have transforms stating they should have zero scale w" +
-        "ill have their scale set to 1 instead.");
-			this.CheckBox_ProtectAgainstZeroScale.UseVisualStyleBackColor = true;
-			// 
 			// Option_UpAxis
 			// 
 			this.Option_UpAxis.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -228,6 +196,37 @@
 			this.MainTooltip.SetToolTip(this.LabelUpAxis, "The axis to treat as up when exporting. This should be set depending on the tool " +
         "you use to model.");
 			// 
+			// CheckBox_VerboseLogging
+			// 
+			this.CheckBox_VerboseLogging.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.CheckBox_VerboseLogging.AutoSize = true;
+			this.CheckBox_VerboseLogging.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.CheckBox_VerboseLogging.Location = new System.Drawing.Point(308, 219);
+			this.CheckBox_VerboseLogging.Name = "CheckBox_VerboseLogging";
+			this.CheckBox_VerboseLogging.Size = new System.Drawing.Size(142, 21);
+			this.CheckBox_VerboseLogging.TabIndex = 10;
+			this.CheckBox_VerboseLogging.Text = "Enable Verbose Logging";
+			this.MainTooltip.SetToolTip(this.CheckBox_VerboseLogging, "If enabled, more detailed log entries will be shown. This may slow down processin" +
+        "g, as the program has to wait until it has written to the textbox before it can " +
+        "continue.");
+			this.CheckBox_VerboseLogging.UseVisualStyleBackColor = true;
+			// 
+			// CheckBox_EmbedTextures
+			// 
+			this.CheckBox_EmbedTextures.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.CheckBox_EmbedTextures.AutoSize = true;
+			this.CheckBox_EmbedTextures.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.CheckBox_EmbedTextures.Location = new System.Drawing.Point(312, 195);
+			this.CheckBox_EmbedTextures.Name = "CheckBox_EmbedTextures";
+			this.CheckBox_EmbedTextures.Size = new System.Drawing.Size(138, 18);
+			this.CheckBox_EmbedTextures.TabIndex = 9;
+			this.CheckBox_EmbedTextures.Text = "Embed Textures in glTF";
+			this.MainTooltip.SetToolTip(this.CheckBox_EmbedTextures, "If enabled, texture references from models will be encoded into the glb files you" +
+        " export. This will increase filesize.");
+			this.CheckBox_EmbedTextures.UseVisualStyleBackColor = true;
+			// 
 			// CheckBox_MultiplyScaleByHundred
 			// 
 			this.CheckBox_MultiplyScaleByHundred.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -245,60 +244,37 @@
         " models are absurdly tiny.");
 			this.CheckBox_MultiplyScaleByHundred.UseVisualStyleBackColor = true;
 			// 
-			// CheckBox_EmbedTextures
+			// CheckBox_ProtectAgainstZeroScale
 			// 
-			this.CheckBox_EmbedTextures.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.CheckBox_ProtectAgainstZeroScale.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.CheckBox_EmbedTextures.AutoSize = true;
-			this.CheckBox_EmbedTextures.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.CheckBox_EmbedTextures.Location = new System.Drawing.Point(312, 195);
-			this.CheckBox_EmbedTextures.Name = "CheckBox_EmbedTextures";
-			this.CheckBox_EmbedTextures.Size = new System.Drawing.Size(138, 18);
-			this.CheckBox_EmbedTextures.TabIndex = 9;
-			this.CheckBox_EmbedTextures.Text = "Embed Textures in glTF";
-			this.MainTooltip.SetToolTip(this.CheckBox_EmbedTextures, "If enabled, texture references from models will be encoded into the glb files you" +
-        " export. This will increase filesize.");
-			this.CheckBox_EmbedTextures.UseVisualStyleBackColor = true;
+			this.CheckBox_ProtectAgainstZeroScale.AutoSize = true;
+			this.CheckBox_ProtectAgainstZeroScale.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.CheckBox_ProtectAgainstZeroScale.Checked = true;
+			this.CheckBox_ProtectAgainstZeroScale.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.CheckBox_ProtectAgainstZeroScale.Location = new System.Drawing.Point(297, 147);
+			this.CheckBox_ProtectAgainstZeroScale.Name = "CheckBox_ProtectAgainstZeroScale";
+			this.CheckBox_ProtectAgainstZeroScale.Size = new System.Drawing.Size(153, 18);
+			this.CheckBox_ProtectAgainstZeroScale.TabIndex = 7;
+			this.CheckBox_ProtectAgainstZeroScale.Text = "Protect Against Zero Scale";
+			this.MainTooltip.SetToolTip(this.CheckBox_ProtectAgainstZeroScale, "If enabled, any models that have transforms stating they should have zero scale w" +
+        "ill have their scale set to 1 instead.");
+			this.CheckBox_ProtectAgainstZeroScale.UseVisualStyleBackColor = true;
 			// 
-			// CheckBox_VerboseLogging
+			// CheckBox_RememberLastLoad
 			// 
-			this.CheckBox_VerboseLogging.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.CheckBox_RememberLastLoad.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.CheckBox_VerboseLogging.AutoSize = true;
-			this.CheckBox_VerboseLogging.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.CheckBox_VerboseLogging.Location = new System.Drawing.Point(308, 219);
-			this.CheckBox_VerboseLogging.Name = "CheckBox_VerboseLogging";
-			this.CheckBox_VerboseLogging.Size = new System.Drawing.Size(142, 21);
-			this.CheckBox_VerboseLogging.TabIndex = 10;
-			this.CheckBox_VerboseLogging.Text = "Enable Verbose Logging";
-			this.MainTooltip.SetToolTip(this.CheckBox_VerboseLogging, "If enabled, more detailed log entries will be shown. This may slow down processin" +
-        "g, as the program has to wait until it has written to the textbox before it can " +
-        "continue.");
-			this.CheckBox_VerboseLogging.UseVisualStyleBackColor = true;
-			// 
-			// BtnCancel
-			// 
-			this.BtnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.BtnCancel.Location = new System.Drawing.Point(10, 262);
-			this.BtnCancel.Name = "BtnCancel";
-			this.BtnCancel.Size = new System.Drawing.Size(75, 23);
-			this.BtnCancel.TabIndex = 11;
-			this.BtnCancel.Text = "Cancel";
-			this.MainTooltip.SetToolTip(this.BtnCancel, "Undo all changes and close this form.");
-			this.BtnCancel.UseVisualStyleBackColor = true;
-			this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
-			// 
-			// BtnSave
-			// 
-			this.BtnSave.Enabled = false;
-			this.BtnSave.Location = new System.Drawing.Point(363, 262);
-			this.BtnSave.Name = "BtnSave";
-			this.BtnSave.Size = new System.Drawing.Size(103, 23);
-			this.BtnSave.TabIndex = 12;
-			this.BtnSave.Text = "Save and Close";
-			this.MainTooltip.SetToolTip(this.BtnSave, "Save your current values and close this form.");
-			this.BtnSave.UseVisualStyleBackColor = true;
-			this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
+			this.CheckBox_RememberLastLoad.AutoSize = true;
+			this.CheckBox_RememberLastLoad.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.CheckBox_RememberLastLoad.Location = new System.Drawing.Point(220, 123);
+			this.CheckBox_RememberLastLoad.Name = "CheckBox_RememberLastLoad";
+			this.CheckBox_RememberLastLoad.Size = new System.Drawing.Size(230, 18);
+			this.CheckBox_RememberLastLoad.TabIndex = 6;
+			this.CheckBox_RememberLastLoad.Text = "Remember Last Load Directory (In Session)";
+			this.MainTooltip.SetToolTip(this.CheckBox_RememberLastLoad, "If enabled, opening multiple .DAT files separately will not cause you go to back " +
+        "to /rsrc/ every time.");
+			this.CheckBox_RememberLastLoad.UseVisualStyleBackColor = true;
 			// 
 			// Option_StaticSetExportMode
 			// 
@@ -328,6 +304,30 @@
 			this.LabelStaticSetExportMode.Text = "StaticSet Export Mode";
 			this.LabelStaticSetExportMode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			this.MainTooltip.SetToolTip(this.LabelStaticSetExportMode, "What to do when exporting models containing StaticSetConfigs.");
+			// 
+			// BtnCancel
+			// 
+			this.BtnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+			this.BtnCancel.Location = new System.Drawing.Point(10, 262);
+			this.BtnCancel.Name = "BtnCancel";
+			this.BtnCancel.Size = new System.Drawing.Size(75, 23);
+			this.BtnCancel.TabIndex = 11;
+			this.BtnCancel.Text = "Cancel";
+			this.MainTooltip.SetToolTip(this.BtnCancel, "Undo all changes and close this form.");
+			this.BtnCancel.UseVisualStyleBackColor = true;
+			this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
+			// 
+			// BtnSave
+			// 
+			this.BtnSave.Enabled = false;
+			this.BtnSave.Location = new System.Drawing.Point(363, 262);
+			this.BtnSave.Name = "BtnSave";
+			this.BtnSave.Size = new System.Drawing.Size(103, 23);
+			this.BtnSave.TabIndex = 12;
+			this.BtnSave.Text = "Save and Close";
+			this.MainTooltip.SetToolTip(this.BtnSave, "Save your current values and close this form.");
+			this.BtnSave.UseVisualStyleBackColor = true;
+			this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
 			// 
 			// ConfigurationForm
 			// 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ThreeRingsSharp.XansData.Structs {
 
 	/// <summary>
-	/// Represents a vertex, which is effectively identical to a <see cref="Vector3"/> with a Weight value.
+	/// Represents a vertex, which contains a <see cref="Vector3"/> Point, a <see cref="float"/> Weight, a <see cref="Vector3"/> Normal, and a <see cref="Vector2"/> UV coordinate.
 	/// </summary>
 	public struct Vertex : IEquatable<Vertex>, ICloneable<Vertex> {
 
@@ -23,15 +23,29 @@ namespace ThreeRingsSharp.XansData.Structs {
 		public float Weight;
 
 		/// <summary>
+		/// The normal of this <see cref="Vertex"/>.
+		/// </summary>
+		public Vector3 Normal;
+
+		/// <summary>
+		/// The UV coordinate of this <see cref="Vertex"/>.
+		/// </summary>
+		public Vector2 UV;
+
+		/// <summary>
 		/// Construct a new <see cref="Vertex"/> with the given X, Y, and Z coordinates and weight.
 		/// </summary>
 		/// <param name="x">The X component of this Vector3.</param>
 		/// <param name="y">The Y component of this Vector3.</param>
 		/// <param name="z">The Z component of this Vector3.</param>
 		/// <param name="weight">The weight of this vertex in the context of any associated bone data.</param>
-		public Vertex(float x = 0f, float y = 0f, float z = 0f, float weight = 1f) {
+		/// <param name="normal">The normal of this vertex.</param>
+		/// <param name="uv">The UV coordinate of this vertex.</param>
+		public Vertex(float x = 0f, float y = 0f, float z = 0f, float weight = 1f, Vector3 normal = default, Vector2 uv = default) {
 			Point = new Vector3(x, y, z);
 			Weight = weight;
+			Normal = normal;
+			UV = uv;
 		}
 
 		/// <summary>
@@ -39,44 +53,13 @@ namespace ThreeRingsSharp.XansData.Structs {
 		/// </summary>
 		/// <param name="point">The location of this <see cref="Vertex"/> in 3D space.</param>
 		/// <param name="weight">The weight of this <see cref="Vertex"/> in the context of any associated bone data.</param>
-		public Vertex(Vector3 point, float weight = 1f) {
+		/// <param name="normal">The normal of this vertex.</param>
+		/// <param name="uv">The UV coordinate of this vertex.</param>
+		public Vertex(Vector3 point, float weight = 1f, Vector3 normal = default, Vector2 uv = default) {
 			Point = point;
 			Weight = weight;
-		}
-
-		/// <summary>
-		/// Returns a list of <see cref="Vertex"/>s composed of the given float array, taking each value out in triplets. The weight of each <see cref="Vertex"/> will be set to <paramref name="defaultWeight"/>.<para/>
-		/// Throws <see cref="DataMisalignedException"/> if the float array's length is not divisible by three.
-		/// </summary>
-		/// <param name="values">The float array to be translated into a <see cref="Vertex"/> array.</param>
-		/// <param name="defaultWeight">The weight to give to each vertex, which is used in the context of bone information.</param>
-		/// <returns></returns>
-		public static Vertex[] FromFloatArray(float[] values, float defaultWeight = 1f) {
-			int lenDiv3 = values.Length / 3;
-			if (values.Length % 3 != 0) throw new DataMisalignedException("Failed to convert float[] to Vertex[] -- Float array does not have a length divisible by 3!");
-			Vertex[] vecs = new Vertex[lenDiv3];
-			for (int idx = 0; idx < values.Length; idx += 3) {
-				vecs[idx / 3] = new Vertex(values[idx], values[idx + 1], values[idx + 2], defaultWeight);
-			}
-			return vecs;
-		}
-
-		/// <summary>
-		/// Returns a list of <see cref="Vertex"/>s composed of the given float array, taking each value out in triplets.<para/>
-		/// Throws <see cref="DataMisalignedException"/> if the float array's length is not divisible by three, or if the length of the weight array isn't the same as the result <see cref="Vertex"/> array.
-		/// </summary>
-		/// <param name="values">The float array to be translated into a <see cref="Vertex"/> array.</param>
-		/// <param name="weights">A list of the weights to give the resulting <see cref="Vertex"/> instances.</param>
-		/// <returns></returns>
-		public static Vertex[] FromFloatArray(float[] values, float[] weights) {
-			int lenDiv3 = values.Length / 3;
-			if (values.Length % 3 != 0) throw new DataMisalignedException("Failed to convert float[] to Vertex[] -- Float array does not have a length divisible by 3!");
-			if (weights.Length != lenDiv3) throw new DataMisalignedException("Failed to convert float[] to Vertex[] -- Weight array does not have the same length as the result Vertex array."); 
-			Vertex[] vecs = new Vertex[lenDiv3];
-			for (int idx = 0; idx < values.Length; idx += 3) {
-				vecs[idx / 3] = new Vertex(values[idx], values[idx + 1], values[idx + 2], weights[idx / 3]);
-			}
-			return vecs;
+			Normal = normal;
+			UV = uv;
 		}
 
 		#region Equality: Vertex to Vertex
@@ -112,7 +95,9 @@ namespace ThreeRingsSharp.XansData.Structs {
 		public Vertex Clone() {
 			return new Vertex() {
 				Point = Point.Clone(),
-				Weight = Weight
+				Weight = Weight,
+				Normal = Normal.Clone(),
+				UV = UV.Clone()
 			};
 		}
 	}

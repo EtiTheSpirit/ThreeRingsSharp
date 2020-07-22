@@ -15,21 +15,23 @@ using java.io;
 using com.threerings.export;
 using System.Diagnostics;
 using com.threerings.opengl.model.config;
-using java.awt;
 using ThreeRingsSharp.DataHandlers;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
 using SKAnimatorTools.Configuration;
 using ThreeRingsSharp.XansData.Exceptions;
-using com.sun.tools.@internal.ws.processor.model;
 using ThreeRingsSharp.XansData.IO.GLTF;
 using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.XansData.XML.ConfigReferences;
+using System.Threading;
 
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {
 
 		public MainWindow() {
 			InitializeComponent();
+			ConfigReferenceBootstrapper.UISyncContext = SynchronizationContext.Current;
+
 			XanLogger.BoxReference = ProgramLog;
 			// ClydeFileHandler.GetRootDataTreeObject = () => RootDataTreeObject;
 			ClydeFileHandler.UpdateGUIAction = (string fileName, string isCompressed, string formatVersion, string type) => {
@@ -63,6 +65,14 @@ namespace SKAnimatorTools {
 			}
 			OpenModel.RestoreDirectory = restoreDirectoryWhenLoading;
 
+			//BtnOpenModel.Tag = BtnOpenModel.Text;
+			//BtnOpenModel.Enabled = false;
+			//BtnOpenModel.Text = "Loading Configs. Hold up...";
+
+			// ConfigReferenceBootstrapper.OnConfigsPopulated += OnConfigReferencesPopulated;
+
+			_ = ConfigReferenceBootstrapper.PopulateConfigRefsAsync();
+
 			ConfigurationInterface.OnConfigurationChanged += OnConfigChanged;
 			if (isFreshLoad) {
 				MessageBox.Show("Welcome to ThreeRingsSharp! Before you can use the program, you need to set up your configuration so that the program knows where to look for game data.", "ThreeRingsSharp Setup", MessageBoxButtons.OK);
@@ -71,6 +81,12 @@ namespace SKAnimatorTools {
 
 			XanLogger.UpdateAutomatically = false;
 		}
+
+		/*
+		private void OnConfigReferencesPopulated() {
+			BtnOpenModel.Enabled = true;
+			ConfigReferenceBootstrapper.OnConfigsPopulated -= OnConfigReferencesPopulated;
+		}*/
 
 		/// <summary>
 		/// The mode to use when dealing with <see cref="StaticSetConfig"/> instances in the export.<para/>
@@ -119,67 +135,92 @@ namespace SKAnimatorTools {
 		/// </summary>
 		private static List<Model3D> AllModels { get; set; } = new List<Model3D>();
 
+		/// <summary>
+		/// This will be true of we've opened a model before configs were loaded. This is used to prevent two delays at once.
+		/// </summary>
+		private static bool IsYieldingForModel = false;
+
 		private void OpenClicked(object sender, EventArgs e) {
+			if (IsYieldingForModel) return;
 			DialogResult result = OpenModel.ShowDialog();
 			if (result == DialogResult.OK) {
-				DataTreeObjectEventMarshaller.ClearAllNodeBindings();
-				RootDataTreeObject.ClearAllChildren();
-				RootDataTreeObject.Properties.Clear();
-				ModelStructureTree.Nodes.Clear();
 
-
-				FileInfo clydeFile = new FileInfo(OpenModel.FileName);
-				AllModels.Clear();
-				bool isOK = true;
-				XanLogger.UpdateAutomatically = false;
-				try {
-					XanLogger.WriteLine("Working. This might take a bit...");
+				if (!ConfigReferenceBootstrapper.HasPopulatedConfigs) {
+					XanLogger.WriteLine("Just a second! I'm still loading up the config references. The model will load once that's done.");
 					XanLogger.UpdateLog();
-					ClydeFileHandler.HandleClydeFile(clydeFile, AllModels, true, ModelStructureTree);
-				} catch (ClydeDataReadException exc) {
-					XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message);
+					IsYieldingForModel = true;
+					BtnOpenModel.Enabled = false;
+					ConfigReferenceBootstrapper.OnConfigsPopulatedAction = new Action(OnConfigsPopulated);
+					return;
+				}
+
+				LoadOpenedModel();
+			}
+		}
+
+		private void LoadOpenedModel() {
+			DataTreeObjectEventMarshaller.ClearAllNodeBindings();
+			RootDataTreeObject.ClearAllChildren();
+			RootDataTreeObject.Properties.Clear();
+			ModelStructureTree.Nodes.Clear();
+
+			FileInfo clydeFile = new FileInfo(OpenModel.FileName);
+			AllModels.Clear();
+			bool isOK = true;
+			XanLogger.UpdateAutomatically = false;
+			try {
+				XanLogger.WriteLine("Working. This might take a bit...");
+				XanLogger.UpdateLog();
+				ClydeFileHandler.HandleClydeFile(clydeFile, AllModels, true, ModelStructureTree);
+			} catch (ClydeDataReadException exc) {
+				XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, false, Color.IndianRed);
+				AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
+				isOK = false;
+				throw;
+			} catch (TypeInitializationException tExc) {
+				System.Exception err = tExc.InnerException;
+				if (err is ClydeDataReadException exc) {
+					XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, false, Color.IndianRed);
 					AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
 					isOK = false;
-					throw;
-				} catch (TypeInitializationException tExc) {
-					System.Exception err = tExc.InnerException;
-					if (err is ClydeDataReadException exc) {
-						XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message);
-						AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
-						isOK = false;
-					} else {
-						XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}");
-						AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
-						isOK = false;
-					}
-					throw;
-				} catch (System.Exception err) {
-					XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}");
+				} else {
+					XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", false, Color.IndianRed);
 					AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
 					isOK = false;
-					throw;
 				}
-
-				if (ModelStructureTree.Nodes.Count != 0 && ModelStructureTree.Nodes[0] != null) SetPropertiesMenu(DataTreeObjectEventMarshaller.GetDataObjectOf(ModelStructureTree.Nodes[0]));
-				//BtnSaveModel.Enabled = CurrentBrancher.OK;
-				BtnSaveModel.Enabled = isOK;
-				XanLogger.WriteLine($"Number of models loaded: {AllModels.Count} ({AllModels.Where(model => model.ExtraData.ContainsKey("UnselectedStaticSetModel")).Count()} as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)");
-
-				// TODO: Something more efficient.
-				int meshCount = 0;
-				List<MeshData> alreadyCountedMeshes = new List<MeshData>(AllModels.Count);
-				for (int idx = 0; idx < AllModels.Count; idx++) {
-					if (!alreadyCountedMeshes.Contains(AllModels[idx].Mesh)) {
-						meshCount++;
-						alreadyCountedMeshes.Add(AllModels[idx].Mesh);
-					}
-				}
-				alreadyCountedMeshes.Clear();
-
-				XanLogger.WriteLine("Number of unique meshes instantiated: " + meshCount);
+				throw;
+			} catch (System.Exception err) {
+				XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", false, Color.IndianRed);
+				AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
+				isOK = false;
+				throw;
 			}
-			XanLogger.UpdateLog();
+
+			if (ModelStructureTree.Nodes.Count != 0 && ModelStructureTree.Nodes[0] != null) SetPropertiesMenu(DataTreeObjectEventMarshaller.GetDataObjectOf(ModelStructureTree.Nodes[0]));
+			//BtnSaveModel.Enabled = CurrentBrancher.OK;
+			BtnSaveModel.Enabled = isOK;
 			XanLogger.UpdateAutomatically = true;
+			XanLogger.WriteLine($"Number of models loaded: {AllModels.Count} ({AllModels.Where(model => model.ExtraData.ContainsKey("UnselectedStaticSetModel")).Count()} as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)");
+
+			// TODO: Something more efficient.
+			int meshCount = 0;
+			List<MeshData> alreadyCountedMeshes = new List<MeshData>(AllModels.Count);
+			for (int idx = 0; idx < AllModels.Count; idx++) {
+				if (!alreadyCountedMeshes.Contains(AllModels[idx].Mesh)) {
+					meshCount++;
+					alreadyCountedMeshes.Add(AllModels[idx].Mesh);
+				}
+			}
+			alreadyCountedMeshes.Clear();
+
+			XanLogger.WriteLine("Number of unique meshes instantiated: " + meshCount);
+		}
+
+		private void OnConfigsPopulated() {
+			LoadOpenedModel();
+			IsYieldingForModel = false;
+			BtnOpenModel.Enabled = true;
+			ConfigReferenceBootstrapper.OnConfigsPopulatedAction = null;
 		}
 
 		private void SaveClicked(object sender, EventArgs e) {
@@ -206,7 +247,7 @@ namespace SKAnimatorTools {
 			if (associatedDataTreeObject != null) {
 				SetPropertiesMenu(associatedDataTreeObject);
 			} else {
-				Debug.WriteLine("Warning: Props is null!");
+				Debug.WriteLine("Warning: Props is null!", false, Color.DarkGoldenrod);
 			}
 		}
 
