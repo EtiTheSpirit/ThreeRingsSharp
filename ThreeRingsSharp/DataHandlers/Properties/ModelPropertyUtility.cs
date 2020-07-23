@@ -46,44 +46,29 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 
 			List<string> retn = new List<string>();
 
-
 			foreach (Parameter param in cfg.parameters) {
 				if (param is Parameter.Choice choice) {
 					WrappedChoice wChoice = new WrappedChoice(cfg, choice);
-					Parameter.Direct[] rawDirects = wChoice.BaseChoice.directs;
-
-					// Filter out the directs that deal with materials.
-					// We only want the ones that actually do stuff with materials.
-					bool isMaterialChoice = false;
-					foreach (Parameter.Direct direct in rawDirects) {
-						WrappedDirect wrapped = new WrappedDirect(cfg, direct, wChoice);
-						foreach (DirectEndReference endRef in wrapped.EndReferences) {
-							if (endRef.Object is WrappedDirect subDir) {
-								if (subDir.Config is MaterialConfig mtl) {
-									isMaterialChoice = true;
-									break;
-								}
+					ParameterizedConfig[] variants = wChoice.CreateVariantsFromOptions();
+					foreach (ParameterizedConfig variant in variants) {
+						// Each variant is now a dupe of cfg with the given variant information applied to it.
+						if (variant is ModelConfig mdlVariant) {
+							// This should always be true but it's just here for sanity checking.
+							if (mdlVariant.implementation is Imported imported) {
+								retn.AddRange(GetDefaultTextures(imported));
 							}
 						}
-						if (isMaterialChoice) break;
-					}
 
-					if (isMaterialChoice) {
-						foreach (WrappedChoiceOption option in wChoice.Options) {
-							foreach (WrappedDirect direct in option.Directs) {
-								DirectEndReference endRef = direct.EndReferences[0];
-								// This will probably be a ConfigReference
-								// Gotta resolve it.
-								if (endRef.Object is ConfigReference textureRef) {
-									ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(textureRef.getName());
-								}
-							}
-						}
+
+						/*
+						if (variant is TextureConfig texture && texture.implementation is TextureConfig.Original2D texture2D && texture2D.contents is TextureConfig.Original2D.ImageFile imageFile) {
+							retn.Add(imageFile.file);
+						}*/
 					}
 				}
 			}
 
-				/*
+			/*
 			foreach (Parameter param in cfg.parameters) {
 				if (param is Parameter.Choice choice) {
 					WrappedChoice wChoice = new WrappedChoice(cfg, choice);
@@ -125,6 +110,33 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 
 			return retn;
 		}
+
+		/*
+		public static void RecurseWrappedDirects(WrappedDirect direct, List<string> retn) {
+			foreach (DirectEndReference endRef in direct.EndReferences) {
+				if (endRef.Object is WrappedDirect wDir) {
+					RecurseWrappedDirects(wDir, retn);
+				} else if (endRef.Object is ConfigReference cfgRef) {
+					PopulateIntoTexture(cfgRef, retn);
+				}
+			}
+		}
+
+		public static void PopulateIntoTexture(ConfigReference textureRef, List<string> retn) {
+			// Gotta resolve it.
+			ManagedConfig mgTexture = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(textureRef.getName());
+			if (mgTexture is TextureConfig texCfg) {
+				// I expect a parameter named "File"
+				// texCfg is a ParameterizedConfig which means I can use my extension.
+				texCfg.ApplyArguments(textureRef.getArguments());
+				if (texCfg.implementation is TextureConfig.Original2D original2D) {
+					if (original2D.contents is TextureConfig.Original2D.ImageFile imageFile) {
+						retn.Add(imageFile.file);
+					}
+				}
+			}
+		}
+		*/
 
 		/// <summary>
 		/// Returns the currently active textures for each of the <see cref="MaterialMapping"/>s within this <see cref="ModelConfig"/>.<para/>

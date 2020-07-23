@@ -35,14 +35,18 @@ namespace ThreeRingsSharp.Utility {
 			obj.GetType().GetField(field).SetValue(obj, value);
 		}
 
+		public static void SetArray(object arrayObj, int index, object value) {
+			((Array)arrayObj).SetValue(value, index);
+		}
+
 		/// <summary>
-		/// Assuming <paramref name="obj"/> is an array, this returns <paramref name="obj"/>[<paramref name="idx"/>]
+		/// Assuming <paramref name="arrayObj"/> is an array, this returns <paramref name="arrayObj"/>[<paramref name="idx"/>]
 		/// </summary>
-		/// <param name="obj">The object to get the data of, which should be an array.</param>
+		/// <param name="arrayObj">The object to get the data of, which should be an array.</param>
 		/// <param name="idx">The index within the given array object to access.</param>
 		/// <returns></returns>
-		public static object Index(object obj, int idx) {
-			return ((Array)obj).GetValue(idx);
+		public static object Index(object arrayObj, int idx) {
+			return ((Array)arrayObj).GetValue(idx);
 		}
 
 		/// <summary>

@@ -99,5 +99,21 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 			return null;
 		}
 
+		/// <summary>
+		/// Clones this <see cref="Config"/> for each entry in <see cref="Options"/>, and applies that option's data to the cloned <see cref="ParameterizedConfig"/>.<para/>
+		/// This returns an array of these duplicated <see cref="ParameterizedConfig"/>s. The indices are parallel to <see cref="Options"/> (so indexing [1] on the return value of this method will return the data applied by Options[1])
+		/// </summary>
+		/// <returns></returns>
+		public ParameterizedConfig[] CreateVariantsFromOptions() {
+			ParameterizedConfig[] cfgArray = new ParameterizedConfig[Options.Length];
+			for (int idx = 0; idx < cfgArray.Length; idx++) {
+				WrappedChoiceOption option = Options[idx];
+				ParameterizedConfig dupe = (ParameterizedConfig)Config.clone();
+				dupe.ApplyArguments(option.Arguments, BaseChoice.name);
+				cfgArray[idx] = dupe;
+			}
+			return cfgArray;
+		}
+
 	}
 }

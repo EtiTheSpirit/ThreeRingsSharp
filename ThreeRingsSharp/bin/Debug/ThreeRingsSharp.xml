@@ -151,6 +151,13 @@
             <param name="choice"></param>
             <returns></returns>
         </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.CreateVariantsFromOptions">
+            <summary>
+            Clones this <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Config"/> for each entry in <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Options"/>, and applies that option's data to the cloned <see cref="T:com.threerings.config.ParameterizedConfig"/>.<para/>
+            This returns an array of these duplicated <see cref="T:com.threerings.config.ParameterizedConfig"/>s. The indices are parallel to <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Options"/> (so indexing [1] on the return value of this method will return the data applied by Options[1])
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption">
             <summary>
             An option within a <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/>.<para/>
@@ -236,12 +243,41 @@
             Some of these objects may be other <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/>s or <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/>s. See <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference"/> for more information on how to handle this.
             </summary>
         </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.GetValue">
+            <summary>
+            Since Directs always point to a specific value, it is possible to get this value.<para/>
+            Some directs may branch into more than one sub-direct, but since it is not possible to select which branch is traversed, all values are the same.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.ApplyArgs">
+            <summary>
+            Assuming this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/> has arguments, this will apply the arguments to <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.Config"/>.
+            </summary>
+        </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.TraverseDirectPath(System.String)">
             <summary>
             Given a full path from a <see cref="T:com.threerings.config.Parameter.Direct"/>, this will traverse it and acquire the data at the end.<para/>
             This will stop if it runs into another direct and instantiate a new <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/>. This will occur if there is a reference chain, for instance, in many textures it references material["Texture"] (a direct) followed by a second direct ["File"]. Since each may have multiple paths, it's best to reference a new <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/>.
             </summary>
             <param name="path"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.SetDataOn(com.threerings.config.ParameterizedConfig,System.String[],System.Object,System.Boolean)">
+            <summary>
+            Given a <see cref="T:com.threerings.config.ParameterizedConfig"/> and a set of paths from a direct as well as a target value, this will modify the <see cref="T:com.threerings.config.ParameterizedConfig"/> so that its fields reflect the given value.
+            </summary>
+            <param name="config"></param>
+            <param name="paths"></param>
+            <param name="argValue"></param>
+            <param name="setToNull">If true, and if argValue is null, the property will actually be set to null (if this is false, it will skip applying it)</param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.SetDataOn(com.threerings.config.ParameterizedConfig,System.String,System.Object,System.Boolean)">
+            <summary>
+            Given a <see cref="T:com.threerings.config.ParameterizedConfig"/> and a path from a direct as well as a target value, this will modify the <see cref="T:com.threerings.config.ParameterizedConfig"/> so that its fields reflect the given value.
+            </summary>
+            <param name="config"></param>
+            <param name="path"></param>
+            <param name="argValue"></param>
+            <param name="setToNull">If true, and if argValue is null, the property will actually be set to null (if this is false, it will skip applying it)</param>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference">
             <summary>
@@ -637,6 +673,22 @@
             This only works on classes that extend <see cref="T:java.lang.Object"/>, NOT primitive types!
             </summary>
             <param name="className"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.ConfigReferenceConstructor.MakeConfigReferenceTo(com.threerings.config.ParameterizedConfig)">
+            <summary>
+            Creates a new <see cref="T:com.threerings.config.ConfigReference"/> pointing to the given <see cref="T:com.threerings.config.ParameterizedConfig"/> and automatically populates the <see cref="T:com.threerings.config.ConfigReference"/>'s arguments with the data defined by the <see cref="T:com.threerings.config.ParameterizedConfig"/>.
+            </summary>
+            <param name="cfg"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.ConfigReferenceConstructor.NewConfigReference(System.String,com.threerings.config.ArgumentMap)">
+            <summary>
+            Creates a new <see cref="T:com.threerings.config.ConfigReference"/> from the given name and <see cref="T:com.threerings.config.ArgumentMap"/><para/>
+            For some reason, OOO doesn't offer a constructor to ConfigReference that takes in an <see cref="T:com.threerings.config.ArgumentMap"/>.
+            </summary>
+            <param name="name"></param>
+            <param name="args"></param>
             <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.Utility.Interface.AsyncMessageBox">
@@ -1139,9 +1191,9 @@
         </member>
         <member name="M:ThreeRingsSharp.Utility.ReflectionHelper.Index(System.Object,System.Int32)">
             <summary>
-            Assuming <paramref name="obj"/> is an array, this returns <paramref name="obj"/>[<paramref name="idx"/>]
+            Assuming <paramref name="arrayObj"/> is an array, this returns <paramref name="arrayObj"/>[<paramref name="idx"/>]
             </summary>
-            <param name="obj">The object to get the data of, which should be an array.</param>
+            <param name="arrayObj">The object to get the data of, which should be an array.</param>
             <param name="idx">The index within the given array object to access.</param>
             <returns></returns>
         </member>
@@ -1433,6 +1485,14 @@
             </summary>
             <param name="choice"></param>
             <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ParameterizedConfigExtension.ApplyArguments(com.threerings.config.ParameterizedConfig,com.threerings.config.ArgumentMap,System.String)">
+            <summary>
+            Applies arguments to a <see cref="T:com.threerings.config.ParameterizedConfig"/>. This <see cref="T:com.threerings.config.ParameterizedConfig"/> is expected to have come from a <see cref="T:com.threerings.config.ConfigReference"/>. This same <see cref="T:com.threerings.config.ConfigReference"/> is expected to be the source of <paramref name="args"/>.
+            </summary>
+            <param name="config"></param>
+            <param name="args"></param>
+            <param name="parentChoiceName">If non-null, this will traverse into a parameter with this name (which is presumably a Choice) and access the choice's directs to apply the args.</param>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetTransformFromShallow(com.threerings.tudey.data.TudeySceneModel.TileEntry,ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig,com.threerings.math.Transform3D@)">
             <summary>

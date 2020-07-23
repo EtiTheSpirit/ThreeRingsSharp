@@ -178,6 +178,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
     <Compile Include="Utility\ClassNameStripper.cs" />
+    <Compile Include="Utility\ConfigReferenceConstructor.cs" />
     <Compile Include="Utility\Interface\AsyncMessageBox.cs" />
     <Compile Include="Utility\Interface\DataTreeObject.cs" />
     <Compile Include="Utility\Interface\SilkImage.cs" />
@@ -191,6 +192,7 @@
     <Compile Include="XansData\Exceptions\ClydeDataReadException.cs" />
     <Compile Include="XansData\Exceptions\InvalidTypeException.cs" />
     <Compile Include="XansData\Extensions\ChoiceExtensions.cs" />
+    <Compile Include="XansData\Extensions\ParameterizedConfigExtension.cs" />
     <Compile Include="XansData\Extensions\TileEntryExtensions.cs" />
     <Compile Include="XansData\FileUtils.cs" />
     <Compile Include="XansData\ICloneable.cs" />
