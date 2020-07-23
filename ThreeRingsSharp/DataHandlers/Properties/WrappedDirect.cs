@@ -11,6 +11,8 @@ using static com.threerings.opengl.model.config.ModelConfig.Imported;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 using System.Diagnostics;
 using com.threerings.opengl.renderer.config;
+using System.IO;
+//using java.io;
 
 namespace ThreeRingsSharp.DataHandlers.Properties {
 
@@ -87,6 +89,13 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 		}
 
 		/// <summary>
+		/// Sets the value of all items this Direct affects (in <see cref="Config"/>) to the given value.
+		/// </summary>
+		public void SetValue(object value) {
+			SetDataOn(Config, BaseDirect.paths, value, true);
+		}
+
+		/// <summary>
 		/// Assuming this <see cref="WrappedDirect"/> has arguments, this will apply the arguments to <see cref="Config"/>.
 		/// </summary>
 		public void ApplyArgs() {
@@ -122,7 +131,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 					// The simple way to test this is that if it's a numeric index, it's an array index.
 					if (int.TryParse(betweenBrackets, out int arrayIndex)) {
 						// Access this array index. It is a number in brackets like [0]
-						latestObject = ReflectionHelper.Index(latestObject, arrayIndex);
+						latestObject = ReflectionHelper.GetArray(latestObject, arrayIndex);
 					} else {
 						// Access the config reference. This is branching from a config reference and accesses a parameter ["Parameter Name"]
 						ConfigReference latestAsCfg = (ConfigReference)latestObject;
@@ -130,6 +139,13 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 
 						// First things first: Resolve the config reference (AND CLONE IT. Don't edit the template object!)
 						string configRefPath = latestAsCfg.getName();
+
+						if (!latestAsCfg.IsRealReference()) {
+							// Catch case: This isn't actually pointing to a *configuration*, rather a direct object reference.
+							_EndReferences.Add(new DirectEndReference(configRefPath));
+							return;
+						}
+
 						ParameterizedConfig referencedConfig = (ParameterizedConfig)ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(configRefPath).clone();
 
 						ArgumentMap args = latestAsCfg.getArguments();
@@ -151,11 +167,11 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 			}
 
 			// Now here's something important: Does an argument override this?
-			if (Arguments != null && Arguments.containsKey(Name)) {
+			if (Arguments != null && Arguments.containsKey(Name) && latestObject != null) {
 				// This direct is included as an argument...
 				// And if we're down here, then we're not referencing another direct, we're referencing a property.
 				// But as a final sanity check:
-				if (latestObject.GetType() == Arguments.get(Name).GetType()) {
+				if (latestObject.GetType() == Arguments.get(Name)?.GetType()) {
 					// Yep! Our argument is the same type as the latestObject.
 					// Let's set latestObject to that argument.
 					latestObject = Arguments.get(Name);
@@ -165,28 +181,35 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 		}
 
 		/// <summary>
-		/// Given a <see cref="ParameterizedConfig"/> and a set of paths from a direct as well as a target value, this will modify the <see cref="ParameterizedConfig"/> so that its fields reflect the given value.
+		/// Given a <see cref="ParameterizedConfig"/> and a set of paths from a direct as well as a target value, this will modify the <see cref="ParameterizedConfig"/> so that its fields reflect the given value.<para/>
+		/// Returns an array where the indices of given <see cref="ConfigReference"/>s correspond to the indices of the <paramref name="paths"/>, or <see langword="null"/> if there were no returned <see cref="ConfigReference"/>s due to a direct chain.
 		/// </summary>
 		/// <param name="config"></param>
 		/// <param name="paths"></param>
 		/// <param name="argValue"></param>
 		/// <param name="setToNull">If true, and if argValue is null, the property will actually be set to null (if this is false, it will skip applying it)</param>
-		public static void SetDataOn(ParameterizedConfig config, string[] paths, object argValue, bool setToNull = false) {
-			if (argValue == null && !setToNull) return;
-			foreach (string path in paths) {
-				SetDataOn(config, path, argValue, setToNull);
+		public static ConfigReference[] SetDataOn(ParameterizedConfig config, string[] paths, object argValue, bool setToNull = false) {
+			if (argValue == null && !setToNull) return null;
+
+			List<ConfigReference> refs = new List<ConfigReference>();
+			for (int index = 0; index < paths.Length; index++) {
+				string path = paths[index];
+				refs.Add(SetDataOn(config, path, argValue, setToNull));
 			}
+			
+			return refs.Count > 0 ? refs.ToArray() : null;
 		}
 
 		/// <summary>
-		/// Given a <see cref="ParameterizedConfig"/> and a path from a direct as well as a target value, this will modify the <see cref="ParameterizedConfig"/> so that its fields reflect the given value.
+		/// Given a <see cref="ParameterizedConfig"/> and a path from a direct as well as a target value, this will modify the <see cref="ParameterizedConfig"/> so that its fields reflect the given value.<para/>
+		/// If this data cannot be set due to it being on a direct chain (the end value is a <see cref="ConfigReference"/>), that <see cref="ConfigReference"/> will be returned 
 		/// </summary>
 		/// <param name="config"></param>
 		/// <param name="path"></param>
 		/// <param name="argValue"></param>
 		/// <param name="setToNull">If true, and if argValue is null, the property will actually be set to null (if this is false, it will skip applying it)</param>
-		public static void SetDataOn(ParameterizedConfig config, string path, object argValue, bool setToNull = false) {
-			if (argValue == null && !setToNull) return;
+		public static ConfigReference SetDataOn(ParameterizedConfig config, string path, object argValue, bool setToNull = false) {
+			if (argValue == null && !setToNull) return null;
 			// implementation.material_mappings[0].material["Texture"]["File"]
 
 			// A bit of a hack to make splitting this path easier:
@@ -212,8 +235,8 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 					// The simple way to test this is that if it's a numeric index, it's an array index.
 					if (int.TryParse(betweenBrackets, out int arrayIndex)) {
 						// Access this array index. It is a number in brackets like [0]
-						latestObject = ReflectionHelper.Index(latestObject, arrayIndex);
 						previousObject = latestObject;
+						latestObject = ReflectionHelper.GetArray(latestObject, arrayIndex);
 					} else {
 						// Access the config reference. This is branching from a config reference and accesses a parameter ["Parameter Name"]
 						ConfigReference latestAsCfg = (ConfigReference)latestObject;
@@ -224,25 +247,56 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 
 						// cloning this is super important as the tryget method will return a template object.
 						// Do not edit the template!
+						if (!latestAsCfg.IsRealReference()) {
+							// Catch case: This isn't actually pointing to a *configuration*, rather a direct object reference.
+							latestAsCfg.getArguments().put(parameterName, argValue);
+							return null;
+						}
 						ParameterizedConfig referencedConfig = (ParameterizedConfig)ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(configRefPath).clone();
 
 						// So there's our reference. Now we need to get a parameter from it.
 						Parameter referencedParam = referencedConfig.getParameter(parameterName);
 						if (referencedParam is Parameter.Direct referencedDirect) {
-							SetDataOn(referencedConfig, referencedDirect.paths, argValue);
+							ConfigReference[] chainRefs = SetDataOn(referencedConfig, referencedDirect.paths, argValue);
+							if (chainRefs != null) {
+								// We're pointing to other ConfigReferences which means that this is a direct chain. Oh brother.
+								foreach (ConfigReference reference in chainRefs) {
+									if (reference != null) {
+										if (File.Exists(ResourceDirectoryGrabber.ResourceDirectoryPath + configRefPath)) {
+											// Catch case: This isn't actually pointing to a *configuration*, rather a direct object reference.
+											latestAsCfg.getArguments().put(parameterName, argValue);
+										} else {
+											ParameterizedConfig forwardRefConfig = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(reference.getName()) as ParameterizedConfig;
+											// Using as because it might be null.
+											if (forwardRefConfig != null) {
+												foreach (Parameter subRefParam in forwardRefConfig.parameters) {
+													if (subRefParam is Parameter.Direct subRefDirect) {
+														WrappedDirect wrappedSubRefDir = new WrappedDirect(forwardRefConfig, subRefDirect);
+														wrappedSubRefDir.SetValue(argValue);
+													}
+												}
 
-							// This is by far one of the most hacky methods I've ever done in OOO stuff.
-							// So basically, a model has a property for something like say, materials.
-							// This property is a ConfigReference to a material object, and that ConfigReference has arguments in it
-							//    that tell the referenced material what it should be.
-							// Rather than trying to traverse that ConfigReference and set the data on the remote object (PAINFUL), I 
-							//    instead decided to write a system that can wrap any ParameterizedConfig into a ConfigReference and just
-							//    call it a day.
-							ReflectionHelper.Set(previousObject, previousIndex, ConfigReferenceConstructor.MakeConfigReferenceTo(referencedConfig));
+												latestAsCfg.getArguments().put(parameterName, ConfigReferenceConstructor.MakeConfigReferenceTo(forwardRefConfig));
+											} else {
+												throw new InvalidOperationException();
+											}
+										}
+									}
+								}
+							} else {
+								// This is by far one of the most hacky methods I've ever done in OOO stuff.
+								// So basically, a model has a property for something like say, materials.
+								// This property is a ConfigReference to a material object, and that ConfigReference has arguments in it
+								//    that tell the referenced material what it should be.
+								// Rather than trying to traverse that ConfigReference and set the data on the remote object (PAINFUL), I 
+								//    instead decided to write a system that can wrap any ParameterizedConfig into a ConfigReference and just
+								//    call it a day.
+								ReflectionHelper.Set(previousObject, previousIndex, ConfigReferenceConstructor.MakeConfigReferenceTo(referencedConfig));
+							}
 						} else {
 							throw new NotImplementedException("Cannot set data on referenced parameters that are not Directs (yet).");
 						}
-						return;
+						return null;
 					}
 				} else {
 					// This is referencing a property.
@@ -252,25 +306,66 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 						// Let's manually find that field and set it
 						if (currentIndex.BetweenBrackets() == null) {
 							// We're good here.
-							object ptr = ReflectionHelper.Get(previousObject, currentIndex);
-							if (ptr is ConfigReference cfgRef) {
-								// Special handling. argValue goes to a property on the config reference
-								ManagedConfig mgCfg = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(cfgRef.getName());
-									
-								if (mgCfg is TextureConfig texCfg) {
-									// Special handling for textures. System wants to set the ConfigReference to a string of the file path.
-									// Instead of this, I will create the new object (via the bootstrapper), set its data, and then set the texture to that.
-									if (texCfg.implementation is TextureConfig.Original2D image2d && image2d.contents is TextureConfig.Original2D.ImageFile) {
-										cfgRef.getArguments().put("File", argValue);
-										return;
+							if (argValue is ConfigReference argValueCfg) {
+								// There's some cases when a variant wants to set a config reference.
+								// In these cases, we need to make sure the property is also a config reference so we know it's safe to set.
+								// ... But before that, catch case: Not actually a config.
+								if (argValueCfg.IsRealReference()) {
+									object ptr = ReflectionHelper.Get(previousObject, previousIndex);
+									if (ptr is ConfigReference) {
+										ReflectionHelper.Set(previousObject, previousIndex, argValueCfg);
+									} else {
+										if (ReflectionHelper.GetTypeOfField(latestObject, currentIndex) == argValueCfg.GetType()) {
+											ReflectionHelper.Set(latestObject, currentIndex, argValueCfg);
+											return null;
+										} else {
+											throw new NotImplementedException();
+										}
 									}
 								} else {
-									throw new NotImplementedException("Not sure how to handle this data yet. Sorry!");
+									if (ReflectionHelper.GetTypeOfField(latestObject, currentIndex) == argValueCfg.GetType()) {
+										ReflectionHelper.Set(latestObject, currentIndex, argValueCfg);
+										return null;
+									} else {
+										throw new NotImplementedException();
+									}
 								}
-								
+							} else {
+								// Contrary to the oddball case above, if the result value at the end of this direct is a ConfigReference
+								// then we need to return it so that whatever called this knows that it has more to traverse.
+								// Ideally, this is only returned in the nested call above.
+								string targetIndex = previousIndex;
+								/*if (int.TryParse(previousIndex.BetweenBrackets(), out int _)) {
+									// The previous index was an array accessor. This means we want to actually reference the CURRENT index
+									// on the PREVIOUS object. A bit odd but it's intentional.
+									// This is done because the previous object will be the result of that indexer, which is identical
+									// to the current object. As such, we need to use the current index to reference it.
+									targetIndex = currentIndex;
+								}*/
+								object ptr = ReflectionHelper.Get(previousObject, targetIndex);
+								if (ptr is ConfigReference cfgRef) {
+									// Special handling. argValue goes to a property on the config reference
+									return cfgRef;
+								}
+
+								if (ptr.GetType() == argValue.GetType()) {
+									ReflectionHelper.Set(previousObject, targetIndex, argValue);
+								} else {
+									// In some cases, the object it's pointing to isn't the same time.
+									// In cases where the previous index is used, this *might* mean we need to step forward like so:
+									if (ReflectionHelper.GetTypeOfField(ptr, currentIndex) == argValue.GetType()) {
+										ReflectionHelper.Set(ptr, currentIndex, argValue);
+									} else {
+										// But in other cases, it's not pointing to a prop up ahead.
+										if (ReflectionHelper.Get(ptr, currentIndex) is ConfigReference cfgRefLow) {
+											return cfgRefLow;
+										} else {
+											throw new InvalidOperationException();
+										}
+									}
+								}
+								return null;
 							}
-							ReflectionHelper.Set(previousObject, currentIndex, argValue);
-							return;
 						}
 					}
 					if (previousIndex != null) {
@@ -278,7 +373,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 							if (currentIndex.BetweenBrackets() == null) {
 								// We're good here.
 								ReflectionHelper.Set(previousObject, previousIndex, argValue);
-								return;
+								return null;
 							}
 						}
 					}
@@ -287,6 +382,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 				}
 				previousIndex = currentIndex;
 			}
+			return null;
 		}
 
 		/// <summary>

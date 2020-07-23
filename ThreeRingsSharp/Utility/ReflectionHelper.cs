@@ -16,13 +16,26 @@ namespace ThreeRingsSharp.Utility {
 	public static class ReflectionHelper {
 
 		/// <summary>
-		/// Returns the value of the given instance field for the specified object.
+		/// Returns the value of the given instance field for the specified object.<para/>
 		/// </summary>
 		/// <param name="obj">The object to get the data of.</param>
 		/// <param name="field">The name of the field to access.</param>
 		/// <returns></returns>
 		public static object Get(object obj, string field) {
+			if (int.TryParse(field.BetweenBrackets(), out int idx)) {
+				return GetArray(obj, idx);
+			}
 			return obj.GetType().GetField(field).GetValue(obj);
+		}
+
+		/// <summary>
+		/// Assuming <paramref name="arrayObj"/> is an array, this returns <paramref name="arrayObj"/>[<paramref name="idx"/>]
+		/// </summary>
+		/// <param name="arrayObj">The object to get the data of, which should be an array.</param>
+		/// <param name="idx">The index within the given array object to access.</param>
+		/// <returns></returns>
+		public static object GetArray(object arrayObj, int idx) {
+			return ((Array)arrayObj).GetValue(idx);
 		}
 
 		/// <summary>
@@ -32,21 +45,31 @@ namespace ThreeRingsSharp.Utility {
 		/// <param name="field">The name of the field to access.</param>
 		/// <param name="value">The new value to set this field to.</param>
 		public static void Set(object obj, string field, object value) {
+			if (int.TryParse(field.BetweenBrackets(), out int idx)) {
+				SetArray(obj, idx, value);
+				return;
+			}
 			obj.GetType().GetField(field).SetValue(obj, value);
 		}
 
+		/// <summary>
+		/// Sets the element at <paramref name="index"/> in <paramref name="arrayObj"/> to <paramref name="value"/>.
+		/// </summary>
+		/// <param name="arrayObj"></param>
+		/// <param name="index"></param>
+		/// <param name="value"></param>
 		public static void SetArray(object arrayObj, int index, object value) {
 			((Array)arrayObj).SetValue(value, index);
 		}
 
 		/// <summary>
-		/// Assuming <paramref name="arrayObj"/> is an array, this returns <paramref name="arrayObj"/>[<paramref name="idx"/>]
+		/// Returns the type of the field. Unlike GetType(), this will work even if the object is null.
 		/// </summary>
-		/// <param name="arrayObj">The object to get the data of, which should be an array.</param>
-		/// <param name="idx">The index within the given array object to access.</param>
+		/// <param name="obj"></param>
+		/// <param name="field"></param>
 		/// <returns></returns>
-		public static object Index(object arrayObj, int idx) {
-			return ((Array)arrayObj).GetValue(idx);
+		public static Type GetTypeOfField(object obj, string field) {
+			return obj.GetType().GetField(field).FieldType;
 		}
 
 		/// <summary>
@@ -55,7 +78,8 @@ namespace ThreeRingsSharp.Utility {
 		/// <param name="from"></param>
 		/// <param name="parameterName"></param>
 		/// <returns></returns>
-		[Obsolete("Cast the object to ParameterizedConfig and just call the method itself.")] public static object GetParameter(object from, string parameterName) {
+		[Obsolete("Cast the object to ParameterizedConfig and just call the method itself.")]
+		public static object GetParameter(object from, string parameterName) {
 			return from.GetType().GetMethod("getParameter", new Type[] { typeof(string) }).Invoke(from, new object[] { parameterName });
 		}
 
@@ -64,6 +88,7 @@ namespace ThreeRingsSharp.Utility {
 		/// </summary>
 		/// <param name="direct"></param>
 		/// <returns></returns>
+		[Obsolete]
 		public static string[] GetPaths(object direct) {
 			return (string[])Get(direct, "paths");
 		}
@@ -80,6 +105,7 @@ namespace ThreeRingsSharp.Utility {
 		/// <param name="directName"></param>
 		/// <param name="threeRingsConfigName"></param>
 		/// <returns></returns>
+		[Obsolete]
 		public static (object, object) GetOOOConfigAndParameter(object fromObj, string directName, string threeRingsConfigName) {
 			MethodInfo getNameMethod = fromObj.GetType().GetMethod("getName");
 			if (getNameMethod != null) {
@@ -108,6 +134,7 @@ namespace ThreeRingsSharp.Utility {
 		/// <param name="directName"></param>
 		/// <param name="threeRingsConfigType"></param>
 		/// <returns></returns>
+		[Obsolete]
 		public static (object, object) GetOOOConfigAndParameter(object fromObj, string directName, Type threeRingsConfigType) {
 			MethodInfo getNameMethod = fromObj.GetType().GetMethod("getName");
 			if (getNameMethod != null) {
@@ -131,6 +158,7 @@ namespace ThreeRingsSharp.Utility {
 		/// <param name="fromObj"></param>
 		/// <param name="directName"></param>
 		/// <returns></returns>
+		[Obsolete]
 		public static (object, object) GetOOOConfigAndParameter(object fromObj, string directName) {
 
 			MethodInfo getNameMethod = fromObj.GetType().GetMethod("getName");

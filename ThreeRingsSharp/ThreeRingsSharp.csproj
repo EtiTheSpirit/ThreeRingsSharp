@@ -192,6 +192,7 @@
     <Compile Include="XansData\Exceptions\ClydeDataReadException.cs" />
     <Compile Include="XansData\Exceptions\InvalidTypeException.cs" />
     <Compile Include="XansData\Extensions\ChoiceExtensions.cs" />
+    <Compile Include="XansData\Extensions\ConfigReferenceExtension.cs" />
     <Compile Include="XansData\Extensions\ParameterizedConfigExtension.cs" />
     <Compile Include="XansData\Extensions\TileEntryExtensions.cs" />
     <Compile Include="XansData\FileUtils.cs" />

@@ -287,7 +287,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 					} else {
 						// This is an index.
 						beforeLast = last;
-						last = ReflectionHelper.Index(last, int.Parse(step));
+						last = ReflectionHelper.GetArray(last, int.Parse(step));
 						directOnLastStep = null;
 					}
 
