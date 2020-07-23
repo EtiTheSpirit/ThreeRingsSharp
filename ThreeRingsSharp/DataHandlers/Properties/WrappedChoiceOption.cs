@@ -45,12 +45,13 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 		/// </summary>
 		/// <param name="choice"></param>
 		/// <param name="option"></param>
-		public WrappedChoiceOption(WrappedChoice choice, Parameter.Choice.Option option) {
+		/// <param name="args"></param>
+		public WrappedChoiceOption(WrappedChoice choice, Parameter.Choice.Option option, ArgumentMap args = null) {
 			Name = option.name;
 			ParentChoice = choice;
 			BaseOption = option;
-			Arguments = option._arguments; // iirc I exposed this manually in IL. This is not possible under normal clyde.
-										   // Direct = new WrappedDirect(choice.Config, choice.BaseChoice.directs.Where(direct => direct.name == option.name).First(), choice, Arguments);
+			Arguments = args ?? option._arguments; // _arguments was exposed via an IL edit that I did. This is not possible under normal OOO behavior.
+
 			List<WrappedDirect> newDirects = new List<WrappedDirect>();
 			foreach (Parameter.Direct direct in choice.BaseChoice.directs) {
 				Parameter.Direct newDirect = (Parameter.Direct)direct.clone(); // Thank god for their DeepObject class.

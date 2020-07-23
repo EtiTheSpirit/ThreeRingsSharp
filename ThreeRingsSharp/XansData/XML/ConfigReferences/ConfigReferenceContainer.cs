@@ -20,17 +20,17 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		/// <summary>
 		/// All of the existing references.
 		/// </summary>
-		internal protected readonly Dictionary<string, object> References = new Dictionary<string, object>();
+		internal protected readonly Dictionary<string, ManagedConfig[]> References = new Dictionary<string, ManagedConfig[]>();
 
 		/// <summary>
 		/// All of the existing references, but indexed by their type.
 		/// </summary>
-		internal protected readonly Dictionary<Type, object> ReferencesByType = new Dictionary<Type, object>();
+		internal protected readonly Dictionary<Type, ManagedConfig[]> ReferencesByType = new Dictionary<Type, ManagedConfig[]>();
 
 		/// <summary>
 		/// A cache from the literal config entry name to the corresponding object. The returned value could be any reference type.
 		/// </summary>
-		internal protected readonly Dictionary<string, object> ReferencesByEntryName = new Dictionary<string, object>();
+		internal protected readonly Dictionary<string, ManagedConfig> ReferencesByEntryName = new Dictionary<string, ManagedConfig>();
 
 		/// <summary>
 		/// An array of all of the names that are valid config containers.
@@ -52,6 +52,11 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		private string[] _ValidNames = null;
 
 		/// <summary>
+		/// A lookup from entry name (e.g. "Texture/2D/Default") to its container config reference's name ("texture"),
+		/// </summary>
+		protected internal Dictionary<string, string> ConfigEntryToContainerName = new Dictionary<string, string>();
+
+		/// <summary>
 		/// Get the configuration data for the given name, which should be identical to the config dat file name without its extension (e.g. "tile").<para/>
 		/// Throws an <see cref="ArgumentException"/> if the given name isn't valid, and an <see cref="ArgumentNullException"/> if the given name is <see langword="null"/>.<para/>
 		/// In many cases this will be an <see cref="Array"/> type, but this is not guaranteed.
@@ -60,7 +65,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		/// <returns></returns>
 		/// <exception cref="ArgumentException">If the name isn't correct.</exception>
 		/// <exception cref="ArgumentNullException">If the name is null.</exception>
-		public object this[string cfgName] {
+		public ManagedConfig[] this[string cfgName] {
 			get {
 				if (cfgName == null) throw new ArgumentNullException("cfgName");
 				cfgName = cfgName.ToLower();
@@ -73,14 +78,9 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				XanLogger.UpdateLog(); // UpdateLog call is here since auto-logging might be off here, and this is a status update message
 									   // people get antsy when things take time, so it's good to tell them.
 
-				object reference = ConfigReferenceBootstrapper.GetConfigReferenceFromName(cfgName);
+				ManagedConfig[] reference = ConfigReferenceBootstrapper.GetConfigReferenceFromName(cfgName);
 				// ^ calls the setter down here.
 				return reference;
-			}
-			protected internal set {
-				(object, Type) objAndTypeName = ((object, Type))value;
-				References[cfgName] = objAndTypeName.Item1;
-				ReferencesByType[objAndTypeName.Item2] = cfgName;
 			}
 		}
 
@@ -90,7 +90,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		/// </summary>
 		/// <param name="cfgType"></param>
 		/// <returns></returns>
-		public object this[Type cfgType] {
+		public ManagedConfig[] this[Type cfgType] {
 			get {
 				if (ReferencesByType.ContainsKey(cfgType)) return ReferencesByType[cfgType];
 
@@ -98,31 +98,44 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				XanLogger.UpdateLog(); // UpdateLog call is here since auto-logging might be off here, and this is a status update message
 									   // people get antsy when things take time, so it's good to tell them.
 
-				object reference = ConfigReferenceBootstrapper.GetConfigReferenceFromType(cfgType);
+				ManagedConfig[] reference = ConfigReferenceBootstrapper.GetConfigReferenceFromType(cfgType);
 				// ^ calls the setter on the name variant (which sets the type too)
 				return reference;
 			}
 		}
 
+		protected internal void Put(string cfgName, (ManagedConfig[], Type) objAndTypeName) {
+			References[cfgName] = objAndTypeName.Item1;
+			ReferencesByType[objAndTypeName.Item2] = objAndTypeName.Item1;
+		}
+
 		/// <summary>
 		/// When given the name of a specific entry (acquired via <see cref="ConfigReference.getName"/>), this will iterate through ALL configs and try to find it.<para/>
 		/// Warning: This will be slow in general. It will cache what results it gets however.<para/>
-		/// Returns <see langword="null"/> if the reference could not be found.
+		/// Returns <see langword="null"/> if the reference could not be found.<para/>
+		/// Note: This will not have any arguments applied and will be populated with default data! You need to make sure you apply the arguments to this.
 		/// </summary>
 		/// <param name="targetName"></param>
 		/// <returns></returns>
-		public object TryGetReferenceFromName(string targetName) {
+		public ManagedConfig TryGetReferenceFromName(string targetName) {
 			if (ReferencesByEntryName.ContainsKey(targetName)) return ReferencesByEntryName[targetName];
 			foreach (string cfgName in ValidNames) {
 				Array configContainer = (Array)this[cfgName];
-				IEnumerable<dynamic> container = configContainer.OfType<dynamic>();
-				foreach (dynamic obj in container) {
-					if (obj is ManagedConfig cfg && cfg.getName() == targetName) {
-						ReferencesByEntryName.Add(targetName, obj);
-						XanLogger.WriteLine("Resolved " + targetName + " as " + obj.GetType().FullName);
-						return obj;
+				ManagedConfig[] container = configContainer.OfType<ManagedConfig>().ToArray();
+				foreach (ManagedConfig cfg in container) {
+					if (cfg.getName() == targetName) {
+						ReferencesByEntryName.Add(targetName, cfg);
+						XanLogger.WriteLine("Resolved " + targetName + " as " + cfg.GetType().FullName);
+						return cfg;
 					}
 				}
+			}
+			return null;
+		}
+
+		public string GetCategoryFromEntryName(string entryName) {
+			if (ConfigEntryToContainerName.ContainsKey(entryName)) {
+				return ConfigEntryToContainerName[entryName];
 			}
 			return null;
 		}

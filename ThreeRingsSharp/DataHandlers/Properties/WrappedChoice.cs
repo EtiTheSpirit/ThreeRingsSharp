@@ -58,7 +58,8 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 		/// </summary>
 		/// <param name="cfg"></param>
 		/// <param name="choice"></param>
-		public WrappedChoice(ParameterizedConfig cfg, Parameter.Choice choice) {
+		/// <param name="args"></param>
+		public WrappedChoice(ParameterizedConfig cfg, Parameter.Choice choice, ArgumentMap args = null) {
 			_Choice = choice.choice;
 			DefaultChoice = choice.GetDefaultOption().name;
 			Config = cfg;
@@ -66,7 +67,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 			
 			List<WrappedChoiceOption> options = new List<WrappedChoiceOption>();
 			foreach (Parameter.Choice.Option option in choice.options) {
-				WrappedChoiceOption wrappedChoice = new WrappedChoiceOption(this, option);
+				WrappedChoiceOption wrappedChoice = new WrappedChoiceOption(this, option, args);
 				options.Add(wrappedChoice);
 			}
 			Options = options.ToArray();

@@ -38,7 +38,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 		/// <summary>
 		/// If this direct references a ConfigReference, and if that ConfigReference points to one of the packed configs, this is the name of the packed config (e.g. <c>"material"</c>)
 		/// </summary>
-		public string ConfigReferenceContainer { get; }
+		public string ConfigReferenceContainerName { get; private set; }
 
 		/// <summary>
 		/// If this is non-null, this is a reference to the parent <see cref="Parameter.Choice"/> that contains this <see cref="WrappedDirect"/>.
@@ -111,19 +111,22 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 						ParameterizedConfig referencedConfig = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(configRefPath) as ParameterizedConfig;
 
 						ArgumentMap args = latestAsCfg.getArguments();
+						/*
 						if (Arguments != null) {
 							object[] keys = Arguments.keySet().toArray();
 							foreach (object key in keys) {
 								args.put(key, Arguments.get(key)); // Inherit the args.
 							}
 						}
-						
+						*/
+
 						// So there's our reference. Now we need to get a parameter from it.
+						ConfigReferenceContainerName = ConfigReferenceBootstrapper.ConfigReferences.GetCategoryFromEntryName(configRefPath);
 						Parameter referencedParam = referencedConfig.getParameter(parameterName);
 						if (referencedParam is Parameter.Direct referencedDirect) {
 							_EndReferences.Add(new DirectEndReference(new WrappedDirect(referencedConfig, referencedDirect, null, args)));
 						} else if (referencedParam is Parameter.Choice referencedChoice) {
-							_EndReferences.Add(new DirectEndReference(new WrappedChoice(referencedConfig, referencedChoice)));
+							_EndReferences.Add(new DirectEndReference(new WrappedChoice(referencedConfig, referencedChoice, args)));
 						}
 						return;
 					}
@@ -145,7 +148,6 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 				}
 			}
 			_EndReferences.Add(new DirectEndReference(latestObject));
-
 		}
 
 		/// <summary>

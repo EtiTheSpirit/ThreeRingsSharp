@@ -124,12 +124,13 @@
             The actual options in this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/>.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.#ctor(com.threerings.config.ParameterizedConfig,com.threerings.config.Parameter.Choice)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.#ctor(com.threerings.config.ParameterizedConfig,com.threerings.config.Parameter.Choice,com.threerings.config.ArgumentMap)">
             <summary>
             Construct a new <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/> from the underlying Clyde object and the given <see cref="T:com.threerings.config.Parameter.Choice"/>.
             </summary>
             <param name="cfg"></param>
             <param name="choice"></param>
+            <param name="args"></param>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.CurrentSelectedChoice">
             <summary>
@@ -183,12 +184,13 @@
             The arguments associated with this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/> that dictate what it does to the object it is tied to.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption.#ctor(ThreeRingsSharp.DataHandlers.Properties.WrappedChoice,com.threerings.config.Parameter.Choice.Option)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption.#ctor(ThreeRingsSharp.DataHandlers.Properties.WrappedChoice,com.threerings.config.Parameter.Choice.Option,com.threerings.config.ArgumentMap)">
             <summary>
             Construct a new <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption"/> from the given parent <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/> and the given option within said choice.
             </summary>
             <param name="choice"></param>
             <param name="option"></param>
+            <param name="args"></param>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect">
             <summary>
@@ -213,7 +215,7 @@
             The raw text-based paths for this direct.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.ConfigReferenceContainer">
+        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.ConfigReferenceContainerName">
             <summary>
             If this direct references a ConfigReference, and if that ConfigReference points to one of the packed configs, this is the name of the packed config (e.g. <c>"material"</c>)
             </summary>
@@ -2953,6 +2955,11 @@
             An array of all of the names that are valid config containers.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.ConfigEntryToContainerName">
+            <summary>
+            A lookup from entry name (e.g. "Texture/2D/Default") to its container config reference's name ("texture"),
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.Item(System.String)">
             <summary>
             Get the configuration data for the given name, which should be identical to the config dat file name without its extension (e.g. "tile").<para/>
@@ -2976,7 +2983,8 @@
             <summary>
             When given the name of a specific entry (acquired via <see cref="M:com.threerings.config.ConfigReference.getName"/>), this will iterate through ALL configs and try to find it.<para/>
             Warning: This will be slow in general. It will cache what results it gets however.<para/>
-            Returns <see langword="null"/> if the reference could not be found.
+            Returns <see langword="null"/> if the reference could not be found.<para/>
+            Note: This will not have any arguments applied and will be populated with default data! You need to make sure you apply the arguments to this.
             </summary>
             <param name="targetName"></param>
             <returns></returns>

@@ -46,6 +46,44 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 
 			List<string> retn = new List<string>();
 
+
+			foreach (Parameter param in cfg.parameters) {
+				if (param is Parameter.Choice choice) {
+					WrappedChoice wChoice = new WrappedChoice(cfg, choice);
+					Parameter.Direct[] rawDirects = wChoice.BaseChoice.directs;
+
+					// Filter out the directs that deal with materials.
+					// We only want the ones that actually do stuff with materials.
+					bool isMaterialChoice = false;
+					foreach (Parameter.Direct direct in rawDirects) {
+						WrappedDirect wrapped = new WrappedDirect(cfg, direct, wChoice);
+						foreach (DirectEndReference endRef in wrapped.EndReferences) {
+							if (endRef.Object is WrappedDirect subDir) {
+								if (subDir.Config is MaterialConfig mtl) {
+									isMaterialChoice = true;
+									break;
+								}
+							}
+						}
+						if (isMaterialChoice) break;
+					}
+
+					if (isMaterialChoice) {
+						foreach (WrappedChoiceOption option in wChoice.Options) {
+							foreach (WrappedDirect direct in option.Directs) {
+								DirectEndReference endRef = direct.EndReferences[0];
+								// This will probably be a ConfigReference
+								// Gotta resolve it.
+								if (endRef.Object is ConfigReference textureRef) {
+									ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(textureRef.getName());
+								}
+							}
+						}
+					}
+				}
+			}
+
+				/*
 			foreach (Parameter param in cfg.parameters) {
 				if (param is Parameter.Choice choice) {
 					WrappedChoice wChoice = new WrappedChoice(cfg, choice);
@@ -81,9 +119,9 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 							}
 						}
 					}
-					
+
 				}
-			}
+			}*/
 
 			return retn;
 		}

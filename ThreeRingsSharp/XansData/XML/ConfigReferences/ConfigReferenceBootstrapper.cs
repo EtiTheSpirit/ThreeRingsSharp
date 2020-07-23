@@ -19,6 +19,8 @@ using System.Drawing;
 using System.Threading;
 using com.threerings.opengl.model.config;
 using System.ComponentModel;
+using com.threerings.config;
+using System.Diagnostics;
 
 namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
@@ -123,11 +125,17 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 						if (obj == null && !runningInSeparateTask) {
 							XanLogger.WriteLine("WARNING: Reference for [" + name + "] returned null!");
 							XanLogger.UpdateLog();
+							continue;
 						}
-						Type type = obj.GetType();
-						if (type.IsArray) type = type.GetElementType();
+						Type type = obj.GetType().GetElementType(); // Always an array
 
-						_ConfigReferences[name] = (obj, type);
+						Array objArr = obj as Array;
+						ManagedConfig[] cfgs = objArr.OfType<ManagedConfig>().ToArray();
+						_ConfigReferences.Put(name, (cfgs, type));
+
+						foreach (ManagedConfig cfgObj in cfgs) {
+							_ConfigReferences.ConfigEntryToContainerName[cfgObj.getName()] = name;
+						}
 
 						importer.close();
 						if (!runningInSeparateTask) {
@@ -156,7 +164,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		/// </summary>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		internal static object GetConfigReferenceFromName(string name) {
+		internal static ManagedConfig[] GetConfigReferenceFromName(string name) {
 			FileInfo mergedBinFile = new FileInfo(CurrentExeDir + "MergedConfigReferences.bin");
 			if (!mergedBinFile.Exists) return null;
 			// I need to split these merged binary files into their individual dat components.
@@ -176,12 +184,14 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 					if (entryName == name) {
 						BinaryImporter importer = new BinaryImporter(ByteSource.wrap(dat).openStream());
 						object obj = importer.readObject();
+						Array objArr = obj as Array;
+						ManagedConfig[] cfgs = objArr.OfType<ManagedConfig>().ToArray();
 						Type type = obj.GetType();
 						if (type.IsArray) type = type.GetElementType();
 
-						_ConfigReferences[entryName] = (obj, type);
+						_ConfigReferences.Put(entryName, (cfgs, type));
 						importer.close();
-						return obj;
+						return cfgs;
 					}
 				}
 			}
@@ -193,7 +203,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		/// </summary>
 		/// <param name="type"></param>
 		/// <returns></returns>
-		internal static object GetConfigReferenceFromType(Type type) {
+		internal static ManagedConfig[] GetConfigReferenceFromType(Type type) {
 			FileInfo mergedBinFile = new FileInfo(CurrentExeDir + "MergedConfigReferences.bin");
 			if (!mergedBinFile.Exists) return null;
 
@@ -214,10 +224,12 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 					if (typeName == name) {
 						BinaryImporter importer = new BinaryImporter(ByteSource.wrap(dat).openStream());
 						object obj = importer.readObject();
-						_ConfigReferences[entryName] = (obj, type);
+						Array objArr = obj as Array;
+						ManagedConfig[] cfgs = objArr.OfType<ManagedConfig>().ToArray();
+						_ConfigReferences.Put(entryName, (cfgs, type));
 
 						importer.close();
-						return obj;
+						return cfgs;
 					}
 				}
 			}
@@ -275,10 +287,18 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				if (obj == null && !runningInSeparateTask) {
 					XanLogger.WriteLine("WARNING: Reference for [" + fName + "] returned null!");
 					XanLogger.UpdateLog();
+					continue;
 				}
-				Type type = obj.GetType();
-				if (type.IsArray) type = type.GetElementType();
-				_ConfigReferences[fName] = (obj, type);
+				Array objArr = obj as Array;
+				ManagedConfig[] cfgs = objArr.OfType<ManagedConfig>().ToArray();
+
+				Type type = obj.GetType().GetElementType(); // Always an array
+				_ConfigReferences.Put(fName, (cfgs, type));
+				
+				foreach (ManagedConfig cfgObj in cfgs) {
+					_ConfigReferences.ConfigEntryToContainerName[cfgObj.getName()] = fName;
+				}
+				
 				importer.close();
 				if (!runningInSeparateTask) {
 					XanLogger.WriteLine("Populated [" + fName + "].", true);
@@ -413,10 +433,12 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				if (obj == null) {
 					XanLogger.WriteLine("WARNING: Reference for [" + fName + "] returned null!");
 					XanLogger.UpdateLog();
+					continue;
 				}
-				Type type = obj.GetType();
-				if (type.IsArray) type = type.GetElementType();
-				_ConfigReferences[fName] = (obj, type);
+				Type type = obj.GetType().GetElementType(); // Always an array
+				Array objArr = obj as Array;
+				ManagedConfig[] cfgs = objArr.OfType<ManagedConfig>().ToArray();
+				_ConfigReferences.Put(fName, (cfgs, type));
 
 				importer.close();
 				XanLogger.WriteLine("Populated [" + fName + "].", true);
