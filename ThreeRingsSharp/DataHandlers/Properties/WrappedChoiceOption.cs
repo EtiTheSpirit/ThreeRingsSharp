@@ -6,6 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.DataHandlers.Properties {
+
+	/// <summary>
+	/// An option within a <see cref="WrappedChoice"/>.<para/>
+	/// <para/>
+	/// WARNING: Object not functional entirely.
+	/// </summary>
 	public class WrappedChoiceOption {
 
 		/// <summary>

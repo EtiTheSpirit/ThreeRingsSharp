@@ -14,7 +14,9 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 
 	/// <summary>
 	/// Represents a <see cref="Parameter.Direct"/> in a different manner that allows directly
-	/// accessing the object or data it points to.
+	/// accessing the object or data it points to.<para/>
+	/// <para/>
+	/// WARNING: Object not functional entirely.
 	/// </summary>
 	public class WrappedDirect {
 
@@ -89,8 +91,6 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 				latestObject = ReflectionHelper.Get(latestObject, "implementation");
 				pathSegments = pathSegments.Skip(1).ToArray();
 			}
-
-			
 
 			for (int idx = 0; idx < pathSegments.Length; idx++) {
 				string currentIndex = pathSegments[idx].SnakeToCamel();

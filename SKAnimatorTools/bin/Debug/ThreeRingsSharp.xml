@@ -62,11 +62,24 @@
             Specialized methods to pull specific data out of models via their directs.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.TryGettingAllTextures">
+            <summary>
+            Set by the main code. If this is <see langword="true"/>, the directs on a given model will be traversed to try to find its textures. If false, only the active materials will be used.
+            </summary>
+        </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.FindTexturesFromDirects(com.threerings.opengl.model.config.ModelConfig)">
             <summary>
             Assuming this is a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> storing textures, this will try to find the textures from its parameters.
             </summary>
             <param name="cfg"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.GetDefaultTextures(com.threerings.opengl.model.config.ModelConfig.Imported)">
+            <summary>
+            Returns the currently active textures for each of the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Imported.MaterialMapping"/>s within this <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.<para/>
+            This will only pull the textures actively in use by the model. Any other variants will not be acquired.
+            </summary>
+            <param name="model"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.TraverseDirectPath(System.Object,System.String)">
@@ -81,7 +94,9 @@
         <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Choice">
             <summary>
             The string choice that is currently selected. To get the <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/> that is associated with this choice, consider calling <see cref="!:CurrentSelectedChoiceDirect"/>.<para/>
-            This property's <see langword="setter"/> will throw an <see cref="T:System.ArgumentException"/> if the given <see cref="T:System.String"/> is not included in <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.PossibleChoices"/>. If the given <see cref="T:System.String"/> is <see langword="null"/>, it will be replaced with <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.DefaultChoice"/>.
+            This property's <see langword="setter"/> will throw an <see cref="T:System.ArgumentException"/> if the given <see cref="T:System.String"/> is not included in <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.PossibleChoices"/>. If the given <see cref="T:System.String"/> is <see langword="null"/>, it will be replaced with <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.DefaultChoice"/>.<para/>
+            <para/>
+            WARNING: Object not functional entirely.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.DefaultChoice">
@@ -135,6 +150,13 @@
             <param name="choice"></param>
             <returns></returns>
         </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption">
+            <summary>
+            An option within a <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/>.<para/>
+            <para/>
+            WARNING: Object not functional entirely.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption.ParentChoice">
             <summary>
             The <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/> that contains this as one of its options.
@@ -171,7 +193,9 @@
         <member name="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect">
             <summary>
             Represents a <see cref="T:com.threerings.config.Parameter.Direct"/> in a different manner that allows directly
-            accessing the object or data it points to.
+            accessing the object or data it points to.<para/>
+            <para/>
+            WARNING: Object not functional entirely.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.Config">

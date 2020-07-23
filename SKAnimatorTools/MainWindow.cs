@@ -24,6 +24,7 @@ using ThreeRingsSharp.XansData.IO.GLTF;
 using ThreeRingsSharp.XansData.Extensions;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 using System.Threading;
+using ThreeRingsSharp.DataHandlers.Properties;
 
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {
@@ -54,6 +55,7 @@ namespace SKAnimatorTools {
 			GLTFExporter.EmbedTextures = ConfigurationInterface.GetConfigurationValue("EmbedTextures", false, true);
 			XanLogger.VerboseLogging = ConfigurationInterface.GetConfigurationValue("VerboseLogging", false, true);
 			StaticSetExportMode = (int)ConfigurationInterface.GetConfigurationValue("StaticSetModeIndex", 0L, true);
+			ModelPropertyUtility.TryGettingAllTextures = ConfigurationInterface.GetConfigurationValue("GetAllTextures", true, true);
 			if (Directory.Exists(loadDir)) {
 				OpenModel.InitialDirectory = loadDir;
 			}
@@ -121,6 +123,8 @@ namespace SKAnimatorTools {
 				GLTFExporter.EmbedTextures = newValue;
 			} else if (configKey == "StaticSetModeIndex") {
 				StaticSetExportMode = newValue;
+			} else if (configKey == "GetAllTextures") {
+				ModelPropertyUtility.TryGettingAllTextures = newValue;
 			}
 		}
 
@@ -320,7 +324,8 @@ namespace SKAnimatorTools {
 
 		private void OnConfigClicked(object sender, EventArgs e) {
 			ConfigForm = new ConfigurationForm();
-			ConfigForm.SetDataFromConfig(OpenModel.InitialDirectory, SaveModel.InitialDirectory, ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", OpenModel.RestoreDirectory, Model3D.MultiplyScaleByHundred, Model3D.ProtectAgainstZeroScale, ConfigurationForm.AxisIntMap.KeyOf(Model3D.TargetUpAxis), GLTFExporter.EmbedTextures, XanLogger.VerboseLogging, StaticSetExportMode);
+			// todo: better method of doing this
+			ConfigForm.SetDataFromConfig(OpenModel.InitialDirectory, SaveModel.InitialDirectory, ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", OpenModel.RestoreDirectory, Model3D.MultiplyScaleByHundred, Model3D.ProtectAgainstZeroScale, ConfigurationForm.AxisIntMap.KeyOf(Model3D.TargetUpAxis), GLTFExporter.EmbedTextures, XanLogger.VerboseLogging, StaticSetExportMode, ModelPropertyUtility.TryGettingAllTextures);
 			ConfigForm.Show();
 			ConfigForm.Activate();
 			ConfigForm.FormClosed += OnConfigFormClosed;

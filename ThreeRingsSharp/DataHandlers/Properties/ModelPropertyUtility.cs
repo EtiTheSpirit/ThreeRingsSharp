@@ -26,11 +26,24 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 	public class ModelPropertyUtility {
 
 		/// <summary>
+		/// Set by the main code. If this is <see langword="true"/>, the directs on a given model will be traversed to try to find its textures. If false, only the active materials will be used.
+		/// </summary>
+		public static bool TryGettingAllTextures { get; set; } = true;
+
+		/// <summary>
 		/// Assuming this is a <see cref="ModelConfig"/> storing textures, this will try to find the textures from its parameters.
 		/// </summary>
 		/// <param name="cfg"></param>
 		/// <returns></returns>
 		public static List<string> FindTexturesFromDirects(ModelConfig cfg) {
+			if (!TryGettingAllTextures) {
+				if (cfg.implementation is Imported importedModel) {
+					return GetDefaultTextures(importedModel).ToList();
+				} else {
+					return new List<string>(); // Can't grab anything from this.
+				}
+			}
+
 			List<string> retn = new List<string>();
 
 			foreach (Parameter param in cfg.parameters) {
@@ -75,6 +88,24 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 			return retn;
 		}
 
+		/// <summary>
+		/// Returns the currently active textures for each of the <see cref="MaterialMapping"/>s within this <see cref="ModelConfig"/>.<para/>
+		/// This will only pull the textures actively in use by the model. Any other variants will not be acquired.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <returns></returns>
+		public static string[] GetDefaultTextures(Imported model) {
+			string[] textures = new string[model.materialMappings.Length];
+			for (int index = 0; index < model.materialMappings.Length; index++) {
+				MaterialMapping mapping = model.materialMappings[index];
+				ConfigReference texRef = (ConfigReference)mapping.material.getArguments().getOrDefault("Texture", null);
+				if (texRef != null) {
+					textures[index] = (string)texRef.getArguments().getOrDefault("File", null);
+				}
+			}
+			return textures;
+		}
+
 		#region Old Stuff
 
 		/// <summary>
@@ -84,7 +115,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 		/// <param name="cfg"></param>
 		/// <param name="path"></param>
 		/// <returns></returns>
-		public static (object, object) TraverseDirectPath(object cfg, string path) {
+		[Obsolete("Use WrappedDirect instead.")] public static (object, object) TraverseDirectPath(object cfg, string path) {
 			// TODO: Make the second return value a chain, like an ordered list of everywhere that we've traversed.
 			// The second to last object is very specific and likely only works in certain limited contexts.
 

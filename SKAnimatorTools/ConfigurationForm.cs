@@ -44,6 +44,21 @@ namespace SKAnimatorTools {
 		/// </summary>
 		private static readonly Color YellowColor = Color.FromArgb(255, 255, 127);
 
+		/// <summary>
+		/// An image of a green circle with a white checkmark.
+		/// </summary>
+		private static readonly Bitmap Accepted = Properties.Resources.accept;
+
+		/// <summary>
+		/// An image of a yellow triangle with an exclamation point.
+		/// </summary>
+		private static readonly Bitmap Warning = Properties.Resources.error;
+
+		/// <summary>
+		/// An image of a red circle with an exclamation point.
+		/// </summary>
+		private static readonly Bitmap Error = Properties.Resources.exclamation;
+
 		public ConfigurationForm() {
 			InitializeComponent();
 			MainTooltip.ShowAlways = true;
@@ -54,7 +69,7 @@ namespace SKAnimatorTools {
 			IsOK = true;
 		}
 
-		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int upAxisIndex, bool embedTextures, bool verboseLogging, int exportStaticSetMode) {
+		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int upAxisIndex, bool embedTextures, bool verboseLogging, int exportStaticSetMode, bool getAllTextures) {
 			TextBox_DefaultLoadLoc.Text = defaultLoad;
 			TextBox_DefaultSaveLoc.Text = defaultSave;
 			TextBox_RsrcDirectory.Text = defaultRsrc;
@@ -65,6 +80,7 @@ namespace SKAnimatorTools {
 			CheckBox_EmbedTextures.Checked = embedTextures;
 			CheckBox_VerboseLogging.Checked = verboseLogging;
 			Option_StaticSetExportMode.SelectedIndex = exportStaticSetMode;
+			CheckBox_TryGettingAllTextures.Checked = getAllTextures;
 			VerifyAllPathIntegrity();
 		}
 
@@ -82,6 +98,7 @@ namespace SKAnimatorTools {
 			ConfigurationInterface.SetConfigurationValue("EmbedTextures", CheckBox_EmbedTextures.Checked);
 			ConfigurationInterface.SetConfigurationValue("VerboseLogging", CheckBox_VerboseLogging.Checked);
 			ConfigurationInterface.SetConfigurationValue("StaticSetExportMode", Option_StaticSetExportMode.SelectedIndex);
+			ConfigurationInterface.SetConfigurationValue("GetAllTextures", CheckBox_TryGettingAllTextures.Checked);
 			ConfigurationInterface.SetConfigurationValue("IsFirstTimeOpening", false);
 			Close();
 		}
@@ -104,6 +121,31 @@ namespace SKAnimatorTools {
 			bool rsrcOK = IsPathOK(rsrcPath);
 			IsOK = loadOK && saveOK & rsrcOK;
 
+			PicBox_DefLoadLoc.Image = loadOK ? Accepted : Error;
+			MainTooltip.SetToolTip(PicBox_DefLoadLoc,
+				loadOK ? string.Empty : "The given directory is invalid (you didn't input a path) or it doesn't exist!"
+			);
+
+			PicBox_DefSaveLoc.Image = saveOK ? Accepted : Error;
+			MainTooltip.SetToolTip(PicBox_DefSaveLoc,
+				saveOK ? string.Empty : "The given directory is invalid (you didn't input a path) or it doesn't exist!"
+			);
+
+			if (rsrcOK) {
+				bool namedRsrc = new DirectoryInfo(rsrcPath).Name == "rsrc";
+				if (namedRsrc) {
+					PicBox_RsrcDir.Image = Accepted;
+					MainTooltip.SetToolTip(PicBox_RsrcDir, string.Empty);
+				} else {
+					PicBox_RsrcDir.Image = Warning;
+					MainTooltip.SetToolTip(PicBox_RsrcDir, "This path is valid, but the folder is not named rsrc. Only continue if you're sure this is the right folder (e.g. you made it)!");
+				}
+			} else {
+				PicBox_RsrcDir.Image = Error;
+				MainTooltip.SetToolTip(PicBox_RsrcDir, "The given directory is invalid (you didn't input a path) or it doesn't exist!");
+			}
+
+			/*
 			TextBox_DefaultLoadLoc.BackColor = loadOK ? SystemColors.Window : RedColor;
 			TextBox_DefaultSaveLoc.BackColor = saveOK ? SystemColors.Window : RedColor;
 			TextBox_RsrcDirectory.BackColor = rsrcOK ? (new DirectoryInfo(rsrcPath).Name == "rsrc" ? SystemColors.Window : YellowColor) : RedColor;
@@ -113,7 +155,7 @@ namespace SKAnimatorTools {
 			} else {
 				MainTooltip.SetToolTip(TextBox_RsrcDirectory, MainTooltip.GetToolTip(LabelRsrcDir));
 			}
-
+			*/
 			BtnSave.Enabled = IsOK;
 		}
 
@@ -126,7 +168,7 @@ namespace SKAnimatorTools {
 			try {
 				DirectoryInfo dir = new DirectoryInfo(path);
 				if (!dir.Exists) {
-					throw new IOException();
+					return false;
 				}
 				return true;
 			} catch { }
@@ -135,6 +177,16 @@ namespace SKAnimatorTools {
 
 		private void NewUpAxisSelected(object sender, EventArgs e) {
 			Model3D.TargetUpAxis = AxisIntMap[Option_UpAxis.SelectedIndex];
+		}
+
+		private void ProtectAgainstZeroScaleChanged(object sender, EventArgs e) {
+			if (CheckBox_ProtectAgainstZeroScale.Checked == false) {
+				PicBox_ZeroScale.Image = Warning;
+				MainTooltip.SetToolTip(PicBox_ZeroScale, "Some models may be unusable in your editor if they have a zero scale!");
+			} else {
+				PicBox_ZeroScale.Image = Accepted;
+				MainTooltip.SetToolTip(PicBox_ZeroScale, string.Empty);
+			}
 		}
 	}
 }
