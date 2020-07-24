@@ -69,14 +69,14 @@ namespace SKAnimatorTools {
 			IsOK = true;
 		}
 
-		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int upAxisIndex, bool embedTextures, bool verboseLogging, int exportStaticSetMode, bool getAllTextures) {
+		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int cndExportModeIndex, bool embedTextures, bool verboseLogging, int exportStaticSetMode, bool getAllTextures) {
 			TextBox_DefaultLoadLoc.Text = defaultLoad;
 			TextBox_DefaultSaveLoc.Text = defaultSave;
 			TextBox_RsrcDirectory.Text = defaultRsrc;
 			CheckBox_RememberLastLoad.Checked = rememberLoad;
 			CheckBox_MultiplyScaleByHundred.Checked = scale100;
 			CheckBox_ProtectAgainstZeroScale.Checked = protectZeroScale;
-			Option_UpAxis.SelectedIndex = upAxisIndex;
+			Option_ConditionalExportMode.SelectedIndex = cndExportModeIndex;
 			CheckBox_EmbedTextures.Checked = embedTextures;
 			CheckBox_VerboseLogging.Checked = verboseLogging;
 			Option_StaticSetExportMode.SelectedIndex = exportStaticSetMode;
@@ -94,7 +94,7 @@ namespace SKAnimatorTools {
 			ConfigurationInterface.SetConfigurationValue("RememberDirectoryAfterOpen", CheckBox_RememberLastLoad.Checked);
 			ConfigurationInterface.SetConfigurationValue("ScaleBy100", CheckBox_MultiplyScaleByHundred.Checked);
 			ConfigurationInterface.SetConfigurationValue("ProtectAgainstZeroScale", CheckBox_ProtectAgainstZeroScale.Checked);
-			ConfigurationInterface.SetConfigurationValue("ExportUpAxisIndex", Option_UpAxis.SelectedIndex);
+			ConfigurationInterface.SetConfigurationValue("ConditionalConfigExportMode", Option_ConditionalExportMode.SelectedIndex);
 			ConfigurationInterface.SetConfigurationValue("EmbedTextures", CheckBox_EmbedTextures.Checked);
 			ConfigurationInterface.SetConfigurationValue("VerboseLogging", CheckBox_VerboseLogging.Checked);
 			ConfigurationInterface.SetConfigurationValue("StaticSetExportMode", Option_StaticSetExportMode.SelectedIndex);
@@ -173,10 +173,6 @@ namespace SKAnimatorTools {
 				return true;
 			} catch { }
 			return false;
-		}
-
-		private void NewUpAxisSelected(object sender, EventArgs e) {
-			Model3D.TargetUpAxis = AxisIntMap[Option_UpAxis.SelectedIndex];
 		}
 
 		private void ProtectAgainstZeroScaleChanged(object sender, EventArgs e) {

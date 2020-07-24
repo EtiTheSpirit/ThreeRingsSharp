@@ -149,6 +149,7 @@
   <ItemGroup>
     <Compile Include="DataHandlers\AnimationConfigBrancher.cs" />
     <Compile Include="DataHandlers\ClydeFileHandler.cs" />
+    <Compile Include="DataHandlers\Model\ConditionalConfigHandler.cs" />
     <Compile Include="DataHandlers\Properties\ModelPropertyUtility.cs" />
     <Compile Include="DataHandlers\ModelConfigBrancher.cs" />
     <Compile Include="DataHandlers\Model\ArticulatedConfigHandler.cs" />
@@ -179,6 +180,7 @@
     </Compile>
     <Compile Include="Utility\ClassNameStripper.cs" />
     <Compile Include="Utility\ConfigReferenceConstructor.cs" />
+    <Compile Include="Utility\DummyScope.cs" />
     <Compile Include="Utility\Interface\AsyncMessageBox.cs" />
     <Compile Include="Utility\Interface\DataTreeObject.cs" />
     <Compile Include="Utility\Interface\SilkImage.cs" />

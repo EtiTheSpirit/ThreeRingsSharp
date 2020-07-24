@@ -57,6 +57,158 @@
             </summary>
             <param name="clydeFile"></param>
         </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodes(com.threerings.opengl.model.config.ModelConfig,com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,System.String)">
+            <summary>
+            A utility function that iterates through all of the nodes recursively, as some may store mesh data.
+            </summary>
+            <param name="baseModel">The <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> that contained this <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/>.</param>
+            <param name="model">A reference to the <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/> that contains these nodes.</param>
+            <param name="sourceFile">The file where the <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/> is stored.</param>
+            <param name="parent">The parent node to iterate through.</param>
+            <param name="models">The <see cref="T:System.Collections.Generic.List`1"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
+            <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
+            <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil.HandleConfigReference(System.IO.FileInfo,com.threerings.config.ConfigReference,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Takes in a <see cref="T:com.threerings.config.ConfigReference"/> and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances.
+            </summary>
+            <param name="sourceFile">The original base-level file that contains the reference.</param>
+            <param name="reference">The reference itself.</param>
+            <param name="modelCollection">A list of every model that has been loaded recursively.</param>
+            <param name="dataTreeParent">For cases where the GUI is used, this is the data tree representation.</param>
+            <param name="globalTransform">The transformation to apply to all loaded models.</param>
+            <param name="appendModelsToModelCollection">If true, the loaded models will be appended to <paramref name="modelCollection"/>.</param>
+            <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(System.IO.FileInfo,System.String,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Takes in a <see cref="T:System.String"/> filepath and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances.
+            </summary>
+            <param name="sourceFile">The original base-level file that contains the reference.</param>
+            <param name="filePathRelativeToRsrc">The path of the referenced file, relative to the rsrc directory.</param>
+            <param name="modelCollection">A list of every model that has been loaded recursively.</param>
+            <param name="dataTreeParent">For cases where the GUI is used, this is the data tree representation.</param>
+            <param name="globalTransform">The transformation to apply to all loaded models.</param>
+            <param name="appendModelsToModelCollection">If true, the loaded models will be appended to <paramref name="modelCollection"/>.</param>
+            <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil.HandleComponentModel(System.IO.FileInfo,com.threerings.opengl.model.config.CompoundConfig.ComponentModel,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Takes in a <see cref="T:com.threerings.opengl.model.config.CompoundConfig.ComponentModel"/> and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances.<para/>
+            WARNING: This will return <see langword="null"/> if the configreference does not reference anything!
+            </summary>
+            <param name="sourceFile">The original base-level file that contains the reference.</param>
+            <param name="model">The reference itself, stored within a <see cref="T:com.threerings.opengl.model.config.CompoundConfig.ComponentModel"/>.</param>
+            <param name="modelCollection">A list of every model that has been loaded recursively.</param>
+            <param name="dataTreeParent">For cases where the GUI is used, this is the data tree representation.</param>
+            <param name="globalTransform">The transformation to apply to all loaded models.</param>
+            <param name="appendModelsToModelCollection">If true, the loaded models will be appended to <paramref name="modelCollection"/>.</param>
+            <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator">
+            <summary>
+            A specialized class designed to handle <see cref="T:com.threerings.opengl.geometry.config.GeometryConfig"/> types and pull the necessary information out, placing it into a <see cref="T:ThreeRingsSharp.XansData.Model3D"/>
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.GetGeometryInformation(com.threerings.opengl.geometry.config.GeometryConfig,System.String)">
+            <summary>
+            Translates the given <see cref="T:com.threerings.opengl.geometry.config.GeometryConfig"/> into a <see cref="T:ThreeRingsSharp.XansData.Model3D"/>.
+            </summary>
+            <param name="geometry">The <see cref="T:com.threerings.opengl.geometry.config.GeometryConfig"/> storing the applicable data.</param>
+            <param name="geometryIndex">A unique identifier generated by the caller of this method used to identify this geometry. If this ID is seen multiple times, the geometry won't be processed and instead the returned model will reference the existing data.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.GetFromShortBuffer(java.nio.ShortBuffer)">
+            <summary>
+            Since the given buffer may not have an array, this will automatically perform necessary edits to get a <see cref="T:System.UInt16"/> array (this uses ushort because of how java handles datatypes)
+            </summary>
+            <param name="buffer"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.GetArrayByName(com.threerings.opengl.geometry.config.GeometryConfig.AttributeArrayConfig[],System.String)">
+            <summary>
+            Attempts to locate a <see cref="T:com.threerings.opengl.geometry.config.GeometryConfig.AttributeArrayConfig"/> that has the given name from <paramref name="vertexAttributeArrays"/>.
+            </summary>
+            <param name="vertexAttributeArrays">The list of arrays to search.</param>
+            <param name="name">The name to locate.</param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.BoneDataContainer">
+            <summary>
+            A container class for bone indices and weights.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.BoneDataContainer.BoneIndices">
+            <summary>
+            Bone indices are an array of four <see cref="T:System.Single"/> values. It traverses the chain of bones. An index of 0 means stop traversing (this is because bone 0 is always %ROOT%).
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.BoneDataContainer.BoneWeights">
+            <summary>
+            Bone weights are an array of four <see cref="T:System.Single"/> values. These values correspond to a bone index.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.SetupCosmeticInformation(com.threerings.opengl.model.config.ModelConfig,ThreeRingsSharp.Utility.Interface.DataTreeObject,System.Boolean)">
+            <summary>
+            Sets up the cosmetic data for this model, or, what's displayed in the GUI for the program.<para/>
+            This specific method populates data that is common across all imported models.
+            </summary>
+            <param name="model">The model containing other data, such as the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/>.</param>
+            <param name="dataTreeParent">This is the instance in the data tree that represents this object in the hierarchy. If null, this method call is skipped.</param>
+            <param name="dataTreeNameIsImplementation">If <see langword="true"/>, the name of <paramref name="dataTreeParent"/> is the implementation of the model, so the implementation property will not be added.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.GetTexturesFromModel(System.IO.FileInfo,com.threerings.opengl.model.config.ModelConfig.Implementation)">
+            <summary>
+            Given an <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/>, this will extract all textures referenced by it. This will return <see langword="null"/> if the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/> is not <see cref="T:com.threerings.opengl.model.config.ModelConfig.Imported"/>.
+            </summary>
+            <param name="sourceFile">The file containing the <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> that has defined <paramref name="implementation"/>.</param>
+            <param name="implementation">The specific type of model that this is.</param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.DerivedHandler">
+            <summary>
+            A class that handles the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Derived"/> subclass of <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.SchemedHandler">
+            <summary>
+            A class that handles the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Schemed"/> subclass of <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Model.IModelDataHandler">
+            <summary>
+            Represents a class designed to handle the data within a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.IModelDataHandler.HandleModelConfig(System.IO.FileInfo,com.threerings.opengl.model.config.ModelConfig,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Handles the data from the given <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
+            </summary>
+            <param name="sourceFile">The file that contains this data.</param>
+            <param name="baseModel">The <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> storing the data.</param>
+            <param name="modelCollection">A reference to a list of models that will be written to.</param>
+            <param name="dataTreeParent">An optional parameter for use in GUI Data Trees that will be populated with information about this model. This node will be one in the object hierarchy. Add properties to this to display these properties when it is selected, or add direct children to this.</param>
+            <param name="globalTransform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy should have this transform applied to them.</param>
+            <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.StaticConfigHandler.SetupCosmeticInformation(com.threerings.opengl.model.config.StaticConfig,ThreeRingsSharp.Utility.Interface.DataTreeObject)">
+            <summary>
+            Sets up the cosmetic data for this model, or, what's displayed in the GUI for the program.
+            </summary>
+            <param name="model">The <see cref="T:com.threerings.opengl.model.config.StaticConfig"/> to pull data from.</param>
+            <param name="dataTreeParent">This is the instance in the data tree that represents this object in the hierarchy.</param>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Model.StaticSetConfigHandler.Instance">
+            <summary>
+            A reference to the singleton instance of this handler.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Model.ViewerAffecterConfigHandler">
+            <summary>
+            Handles instance of <see cref="T:com.threerings.opengl.scene.config.ViewerAffecterConfig"/> and their associated <see cref="T:com.threerings.opengl.scene.config.ViewerEffectConfig"/>s.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility">
             <summary>
             Specialized methods to pull specific data out of models via their directs.
@@ -339,158 +491,6 @@
             <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="T:com.threerings.math.Transform3D"/>.</param>
             <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodes(com.threerings.opengl.model.config.ModelConfig,com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,System.String)">
-            <summary>
-            A utility function that iterates through all of the nodes recursively, as some may store mesh data.
-            </summary>
-            <param name="baseModel">The <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> that contained this <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/>.</param>
-            <param name="model">A reference to the <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/> that contains these nodes.</param>
-            <param name="sourceFile">The file where the <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/> is stored.</param>
-            <param name="parent">The parent node to iterate through.</param>
-            <param name="models">The <see cref="T:System.Collections.Generic.List`1"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
-            <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
-            <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil.HandleConfigReference(System.IO.FileInfo,com.threerings.config.ConfigReference,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.Object})">
-            <summary>
-            Takes in a <see cref="T:com.threerings.config.ConfigReference"/> and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances.
-            </summary>
-            <param name="sourceFile">The original base-level file that contains the reference.</param>
-            <param name="reference">The reference itself.</param>
-            <param name="modelCollection">A list of every model that has been loaded recursively.</param>
-            <param name="dataTreeParent">For cases where the GUI is used, this is the data tree representation.</param>
-            <param name="globalTransform">The transformation to apply to all loaded models.</param>
-            <param name="appendModelsToModelCollection">If true, the loaded models will be appended to <paramref name="modelCollection"/>.</param>
-            <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(System.IO.FileInfo,System.String,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.Object})">
-            <summary>
-            Takes in a <see cref="T:System.String"/> filepath and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances.
-            </summary>
-            <param name="sourceFile">The original base-level file that contains the reference.</param>
-            <param name="filePathRelativeToRsrc">The path of the referenced file, relative to the rsrc directory.</param>
-            <param name="modelCollection">A list of every model that has been loaded recursively.</param>
-            <param name="dataTreeParent">For cases where the GUI is used, this is the data tree representation.</param>
-            <param name="globalTransform">The transformation to apply to all loaded models.</param>
-            <param name="appendModelsToModelCollection">If true, the loaded models will be appended to <paramref name="modelCollection"/>.</param>
-            <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil.HandleComponentModel(System.IO.FileInfo,com.threerings.opengl.model.config.CompoundConfig.ComponentModel,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.Object})">
-            <summary>
-            Takes in a <see cref="T:com.threerings.opengl.model.config.CompoundConfig.ComponentModel"/> and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances.<para/>
-            WARNING: This will return <see langword="null"/> if the configreference does not reference anything!
-            </summary>
-            <param name="sourceFile">The original base-level file that contains the reference.</param>
-            <param name="model">The reference itself, stored within a <see cref="T:com.threerings.opengl.model.config.CompoundConfig.ComponentModel"/>.</param>
-            <param name="modelCollection">A list of every model that has been loaded recursively.</param>
-            <param name="dataTreeParent">For cases where the GUI is used, this is the data tree representation.</param>
-            <param name="globalTransform">The transformation to apply to all loaded models.</param>
-            <param name="appendModelsToModelCollection">If true, the loaded models will be appended to <paramref name="modelCollection"/>.</param>
-            <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator">
-            <summary>
-            A specialized class designed to handle <see cref="T:com.threerings.opengl.geometry.config.GeometryConfig"/> types and pull the necessary information out, placing it into a <see cref="T:ThreeRingsSharp.XansData.Model3D"/>
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.GetGeometryInformation(com.threerings.opengl.geometry.config.GeometryConfig,System.String)">
-            <summary>
-            Translates the given <see cref="T:com.threerings.opengl.geometry.config.GeometryConfig"/> into a <see cref="T:ThreeRingsSharp.XansData.Model3D"/>.
-            </summary>
-            <param name="geometry">The <see cref="T:com.threerings.opengl.geometry.config.GeometryConfig"/> storing the applicable data.</param>
-            <param name="geometryIndex">A unique identifier generated by the caller of this method used to identify this geometry. If this ID is seen multiple times, the geometry won't be processed and instead the returned model will reference the existing data.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.GetFromShortBuffer(java.nio.ShortBuffer)">
-            <summary>
-            Since the given buffer may not have an array, this will automatically perform necessary edits to get a <see cref="T:System.UInt16"/> array (this uses ushort because of how java handles datatypes)
-            </summary>
-            <param name="buffer"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.GetArrayByName(com.threerings.opengl.geometry.config.GeometryConfig.AttributeArrayConfig[],System.String)">
-            <summary>
-            Attempts to locate a <see cref="T:com.threerings.opengl.geometry.config.GeometryConfig.AttributeArrayConfig"/> that has the given name from <paramref name="vertexAttributeArrays"/>.
-            </summary>
-            <param name="vertexAttributeArrays">The list of arrays to search.</param>
-            <param name="name">The name to locate.</param>
-            <returns></returns>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.BoneDataContainer">
-            <summary>
-            A container class for bone indices and weights.
-            </summary>
-        </member>
-        <member name="F:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.BoneDataContainer.BoneIndices">
-            <summary>
-            Bone indices are an array of four <see cref="T:System.Single"/> values. It traverses the chain of bones. An index of 0 means stop traversing (this is because bone 0 is always %ROOT%).
-            </summary>
-        </member>
-        <member name="F:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator.BoneDataContainer.BoneWeights">
-            <summary>
-            Bone weights are an array of four <see cref="T:System.Single"/> values. These values correspond to a bone index.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.SetupCosmeticInformation(com.threerings.opengl.model.config.ModelConfig,ThreeRingsSharp.Utility.Interface.DataTreeObject,System.Boolean)">
-            <summary>
-            Sets up the cosmetic data for this model, or, what's displayed in the GUI for the program.<para/>
-            This specific method populates data that is common across all imported models.
-            </summary>
-            <param name="model">The model containing other data, such as the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/>.</param>
-            <param name="dataTreeParent">This is the instance in the data tree that represents this object in the hierarchy. If null, this method call is skipped.</param>
-            <param name="dataTreeNameIsImplementation">If <see langword="true"/>, the name of <paramref name="dataTreeParent"/> is the implementation of the model, so the implementation property will not be added.</param>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.GetTexturesFromModel(System.IO.FileInfo,com.threerings.opengl.model.config.ModelConfig.Implementation)">
-            <summary>
-            Given an <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/>, this will extract all textures referenced by it. This will return <see langword="null"/> if the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/> is not <see cref="T:com.threerings.opengl.model.config.ModelConfig.Imported"/>.
-            </summary>
-            <param name="sourceFile">The file containing the <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> that has defined <paramref name="implementation"/>.</param>
-            <param name="implementation">The specific type of model that this is.</param>
-            <returns></returns>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.DerivedHandler">
-            <summary>
-            A class that handles the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Derived"/> subclass of <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
-            </summary>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.SchemedHandler">
-            <summary>
-            A class that handles the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Schemed"/> subclass of <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
-            </summary>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Model.IModelDataHandler">
-            <summary>
-            Represents a class designed to handle the data within a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.IModelDataHandler.HandleModelConfig(System.IO.FileInfo,com.threerings.opengl.model.config.ModelConfig,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,System.Object})">
-            <summary>
-            Handles the data from the given <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
-            </summary>
-            <param name="sourceFile">The file that contains this data.</param>
-            <param name="baseModel">The <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> storing the data.</param>
-            <param name="modelCollection">A reference to a list of models that will be written to.</param>
-            <param name="dataTreeParent">An optional parameter for use in GUI Data Trees that will be populated with information about this model. This node will be one in the object hierarchy. Add properties to this to display these properties when it is selected, or add direct children to this.</param>
-            <param name="globalTransform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy should have this transform applied to them.</param>
-            <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.StaticConfigHandler.SetupCosmeticInformation(com.threerings.opengl.model.config.StaticConfig,ThreeRingsSharp.Utility.Interface.DataTreeObject)">
-            <summary>
-            Sets up the cosmetic data for this model, or, what's displayed in the GUI for the program.
-            </summary>
-            <param name="model">The <see cref="T:com.threerings.opengl.model.config.StaticConfig"/> to pull data from.</param>
-            <param name="dataTreeParent">This is the instance in the data tree that represents this object in the hierarchy.</param>
-        </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Model.StaticSetConfigHandler.Instance">
-            <summary>
-            A reference to the singleton instance of this handler.
-            </summary>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Model.ViewerAffecterConfigHandler">
-            <summary>
-            Handles instance of <see cref="T:com.threerings.opengl.scene.config.ViewerAffecterConfig"/> and their associated <see cref="T:com.threerings.opengl.scene.config.ViewerEffectConfig"/>s.
-            </summary>
-        </member>
         <member name="T:ThreeRingsSharp.DataHandlers.IDataTreeInterface`1">
             <summary>
             Represents a class that can interface with a data tree GUI element to display information about a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.
@@ -698,6 +698,11 @@
             <param name="name"></param>
             <param name="args"></param>
             <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.Utility.DummyScope">
+            <summary>
+            Used for the parsing of <see cref="T:com.threerings.opengl.model.config.ConditionalConfig"/>s, this provides an object implementing <see cref="T:com.threerings.expr.Scope"/> which returns null data.
+            </summary>
         </member>
         <member name="T:ThreeRingsSharp.Utility.Interface.AsyncMessageBox">
             <summary>

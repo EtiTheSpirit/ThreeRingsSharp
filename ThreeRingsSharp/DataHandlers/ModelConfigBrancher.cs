@@ -96,6 +96,11 @@ namespace ThreeRingsSharp.DataHandlers {
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Schemed;
 				ModelConfigHandler.SchemedHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
 
+			} else if (implementation is ConditionalConfig) {
+				XanLogger.WriteLine("Model is of the type 'ConditionalConfig'. Accessing handlers...", true);
+				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Conditional;
+				ConditionalConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
+
 			} else {
 				XanLogger.WriteLine($"\nERROR: A ModelConfig had an unknown implementation!\n=> Implementation: {implName}\n=> Referenced In: {sourceFile}\n", true);
 				// AsyncMessageBox.ShowAsync("This specific implementation is valid, but it has no handler! (There's no code that can translate this data for you :c).\nImplementation: " + implementation.getClass().getTypeName(), "Can't Handle Model", MessageBoxButtons.OK, MessageBoxIcon.Warning);

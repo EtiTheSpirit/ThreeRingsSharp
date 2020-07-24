@@ -25,6 +25,7 @@ using ThreeRingsSharp.XansData.Extensions;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 using System.Threading;
 using ThreeRingsSharp.DataHandlers.Properties;
+using ThreeRingsSharp.DataHandlers.Model;
 
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {
@@ -99,6 +100,16 @@ namespace SKAnimatorTools {
 		public int StaticSetExportMode { get; set; } = 0;
 
 		/// <summary>
+		/// The mode to use when dealing with <see cref="ConditionalConfig"/> instances in the export.<para/>
+		/// <c>0 = Prompt Me</c><para/>
+		/// <c>1 = All models</c><para/>
+		/// <c>2 = Enabled models</c><para/>
+		/// <c>3 = Disabled models</c><para/>
+		/// <c>4 = Default model</c><para/>
+		/// </summary>
+		public int ConditionalExportMode { get; set; } = 0;
+
+		/// <summary>
 		/// The current configuration form, if it exists.
 		/// </summary>
 		private ConfigurationForm ConfigForm { get; set; }
@@ -125,6 +136,8 @@ namespace SKAnimatorTools {
 				StaticSetExportMode = newValue;
 			} else if (configKey == "GetAllTextures") {
 				ModelPropertyUtility.TryGettingAllTextures = newValue;
+			} else if (configKey == "ConditionalConfigExportMode") {
+				ConditionalExportMode = newValue;
 			}
 		}
 
@@ -266,7 +279,12 @@ namespace SKAnimatorTools {
 
 				TreeNode nodeObj = propName.ToTreeNode();
 				if (propName.DisplaySingleChildInline && propValues.Count == 1) {
-					nodeObj.Text += ": " + propValues[0].Text;
+					//nodeObj.Text += ": " + propValues[0].Text;
+					if (!string.IsNullOrEmpty(propValues[0].Text)) {
+						// Add the colon and value only if there's actually a value.
+						// To create nested containers, it's easier to just create another data tree object without text, populate that new object with the sub-properties, and then add the new object as a property to something else.
+						nodeObj.Text += ": " + propValues[0].Text;
+					}
 					if (!propValues[0].CreatedFromProperty) {
 						// TreeNode propZeroNode = propValues[0].ToTreeNode();
 						// nodeObj.Nodes.Add(propZeroNode);
@@ -342,39 +360,72 @@ namespace SKAnimatorTools {
 
 		private void SaveModel_PromptFileExport(object sender, CancelEventArgs e) {
 			bool hasStaticSetConfig = AllModels.Where(model => model.ExtraData.ContainsKey("UnselectedStaticSetModel")).Count() > 0;
-			if (!hasStaticSetConfig) return; // Skip this entire method if there's no staticsets.
-
-			// NEW: If their model includes a StaticSetConfig, we need to give them the choice to export all or one model.
-			DialogResult saveAllStaticSetModels = DialogResult.Cancel;
-			if (StaticSetExportMode == 0) {
-				saveAllStaticSetModels = MessageBox.Show(
-					"The model you're saving contains one or more StaticSetConfigs! " +
-					"This type of model is used like a variant selection (it provides " +
-					"a set of variants, and it's intended that only one of the models " +
-					"is actually used by the system.\n\n" +
-					"In some cases, you might want all variants (for instance, if you " +
-					"want to get a subtype of a gun such as the Antigua, you would export " +
-					"all of the models in the set and then pick the one you want in your " +
-					"3D editor). Likewise, there are cases in which " +
-					"you may want only one variant, for instance, in a CompoundConfig " +
-					"for a scene where it's using the set to select a specific tile or " +
-					"prop.\n\n" +
-					"Would you like to export ALL of the models within the StaticSetConfigs?",
-					"Export All StaticSetConfig components?",
-					MessageBoxButtons.YesNoCancel,
-					MessageBoxIcon.Information
-				);
-				if (saveAllStaticSetModels == DialogResult.Cancel) {
-					e.Cancel = true;
+			bool hasConditionalConfig = AllModels.Where(model => model.ExtraData.ContainsKey("ConditionalConfigFlag")).Count() > 0;
+			if (hasStaticSetConfig) {
+				// NEW: If their model includes a StaticSetConfig, we need to give them the choice to export all or one model.
+				DialogResult saveAllStaticSetModels = DialogResult.Cancel;
+				if (StaticSetExportMode == 0) {
+					saveAllStaticSetModels = MessageBox.Show(
+						"The model you're saving contains one or more StaticSetConfigs! " +
+						"This type of model is used like a variant selection (it provides " +
+						"a set of variants, and it's intended that only one of the models " +
+						"is actually used by the system.\n\n" +
+						"In some cases, you might want all variants (for instance, if you " +
+						"want to get a subtype of a gun such as the Antigua, you would export " +
+						"all of the models in the set and then pick the one you want in your " +
+						"3D editor). Likewise, there are cases in which " +
+						"you may want only one variant, for instance, in a CompoundConfig " +
+						"for a scene where it's using the set to select a specific tile or " +
+						"prop.\n\n" +
+						"Would you like to export ALL of the models within the StaticSetConfigs?",
+						"Export All StaticSetConfig components?",
+						MessageBoxButtons.YesNoCancel,
+						MessageBoxIcon.Information
+					);
+					if (saveAllStaticSetModels == DialogResult.Cancel) {
+						e.Cancel = true;
+						return;
+					}
+				} else {
+					if (StaticSetExportMode == 1) saveAllStaticSetModels = DialogResult.Yes;
+					if (StaticSetExportMode == 2) saveAllStaticSetModels = DialogResult.No;
 				}
-			} else {
-				if (StaticSetExportMode == 1) saveAllStaticSetModels = DialogResult.Yes;
-				if (StaticSetExportMode == 2) saveAllStaticSetModels = DialogResult.No;
+				foreach (Model3D model in AllModels) {
+					if ((bool)model.ExtraData.GetOrDefault("UnselectedStaticSetModel", false) == true) {
+						model.ExtraData["SkipExport"] = saveAllStaticSetModels == DialogResult.No;
+						// If we select no, we want to skip models that aren't the selected ones.
+					}
+				}
 			}
-			foreach (Model3D model in AllModels) {
-				if ((bool)model.ExtraData.GetOrDefault("UnselectedStaticSetModel", false) == true) {
-					model.ExtraData["SkipExport"] = saveAllStaticSetModels == DialogResult.No;
-					// If we select no, we want to skip models that aren't the selected ones.
+			if (hasConditionalConfig) {
+				ConditionalConfigOptions cfgOpts = new ConditionalConfigOptions();
+				int expType = (int)cfgOpts.ShowDialog();
+				cfgOpts = null;
+				if (expType == 5) {
+					// 5 = cancel
+					e.Cancel = true;
+					return;
+				} else {
+					// 1 = all
+					// 2 = default
+					// 3 = enabled
+					// 4 = disabled
+					foreach (Model3D model in AllModels) {
+						if (model.ExtraData.GetOrDefault("ConditionalConfigFlag", null) != null) {
+							if (expType != 1) {
+								bool isDefault = (bool)model.ExtraData.GetOrDefault("ConditionalConfigDefault", false) == true;
+								bool isEnabled = (bool)model.ExtraData.GetOrDefault("ConditionalConfigValue", false) == true;
+								bool skipExport = (expType == 2 && !isDefault) || (expType == 3 && !isEnabled) || (expType == 4 && isEnabled);
+								// Skip conditions:
+								// Export type is default only and it's not default
+								// Export type is enabled and it's not enabled
+								// Export type is disabled and it's enabled
+								model.ExtraData["SkipExport"] = skipExport;
+							} else {
+								model.ExtraData["SkipExport"] = false;
+							}
+						}
+					}
 				}
 			}
 		}

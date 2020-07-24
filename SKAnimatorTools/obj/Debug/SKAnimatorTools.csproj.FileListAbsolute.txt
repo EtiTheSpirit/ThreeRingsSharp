@@ -47,3 +47,4 @@ F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTo
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.MainWindow.resources
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.Bcl.HashCode.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.Bcl.HashCode.xml
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.ConditionalConfigOptions.resources

@@ -136,6 +136,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConditionalConfigOptions.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConditionalConfigOptions.Designer.cs">
+      <DependentUpon>ConditionalConfigOptions.cs</DependentUpon>
+    </Compile>
     <Compile Include="ConfigurationForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -151,6 +157,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ConditionalConfigOptions.resx">
+      <DependentUpon>ConditionalConfigOptions.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ConfigurationForm.resx">
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </EmbeddedResource>
