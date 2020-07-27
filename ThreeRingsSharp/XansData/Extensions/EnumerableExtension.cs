@@ -18,6 +18,36 @@ namespace ThreeRingsSharp.XansData.Extensions {
 
 		#region Dictionary Extensions
 
+		#region Merge Methods
+
+		/// <summary>
+		/// Merges the two dictionaries together. This does not modify the dictionary this method is called on, and instead returns a new instance.
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="dictionary"></param>
+		/// <param name="other"></param>
+		/// <param name="overwrite">If true, entries from <paramref name="other"/> will overwrite entries in <paramref name="dictionary"/>. If false, keys that already exist in <paramref name="dictionary"/> will be preserved.</param>
+		/// <returns></returns>
+		public static Dictionary<TKey, TValue> MergeWith<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, Dictionary<TKey, TValue> other, bool overwrite = false) {
+			Dictionary<TKey, TValue> newDict = new Dictionary<TKey, TValue>();
+			foreach (TKey key in dictionary.Keys) {
+				newDict[key] = dictionary[key];
+			}
+			foreach (TKey key in other.Keys) {
+				if (newDict.ContainsKey(key)) {
+					if (overwrite) {
+						newDict[key] = other[key];
+					}
+				} else {
+					newDict[key] = other[key];
+				}
+			}
+			return newDict;
+		}
+
+		#endregion
+
 		#region KeyOf Methods
 		/// <summary>
 		/// Returns the key of the given value within <paramref name="dictionary"/>.
@@ -269,7 +299,20 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <param name="array"></param>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		public static ManagedConfig GetEntryByName(this ManagedConfig[] array, string name) {
+		[Obsolete("Use GetEntryByName with the typed parameter instead.")] public static ManagedConfig GetEntryByNameMG(this ManagedConfig[] array, string name) {
+			try {
+				return array.Where(obj => obj.getName() == name).FirstOrDefault();
+			} catch { }
+			return null;
+		}
+
+		/// <summary>
+		/// Finds the instance in the array of <see cref="ManagedConfig"/> instances with the given name by calling their <see cref="ManagedConfig.getName()"/> method.
+		/// </summary>
+		/// <param name="array"></param>
+		/// <param name="name"></param>
+		/// <returns></returns>
+		public static T GetEntryByName<T>(this T[] array, string name) where T : ManagedConfig {
 			try {
 				return array.Where(obj => obj.getName() == name).FirstOrDefault();
 			} catch { }

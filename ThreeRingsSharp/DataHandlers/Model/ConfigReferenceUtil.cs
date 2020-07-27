@@ -11,6 +11,7 @@ using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Exceptions;
+using ThreeRingsSharp.XansData.Extensions;
 using static com.threerings.opengl.model.config.CompoundConfig;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
@@ -29,7 +30,12 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		public static List<Model3D> HandleConfigReference(FileInfo sourceFile, ConfigReference reference, List<Model3D> modelCollection, DataTreeObject dataTreeParent, Transform3D globalTransform, bool appendModelsToModelCollection = true, Dictionary<string, dynamic> extraData = null) {
 			if (reference == null) return null;
 			string filePathRelativeToRsrc = reference.getName();
-			return HandleConfigReferenceFromDirectPath(sourceFile, filePathRelativeToRsrc, modelCollection, dataTreeParent, globalTransform, appendModelsToModelCollection, extraData);
+			if (extraData == null) {
+				extraData = reference.ArgumentsToExtraData();
+			} else {
+				extraData = extraData.MergeWith(reference.ArgumentsToExtraData());
+			}
+			return HandleConfigReferenceFromLiteralPath(sourceFile, filePathRelativeToRsrc, modelCollection, dataTreeParent, globalTransform, appendModelsToModelCollection, extraData);
 		}
 
 
@@ -43,7 +49,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// <param name="globalTransform">The transformation to apply to all loaded models.</param>
 		/// <param name="appendModelsToModelCollection">If true, the loaded models will be appended to <paramref name="modelCollection"/>.</param>
 		/// <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
-		public static List<Model3D> HandleConfigReferenceFromDirectPath(FileInfo sourceFile, string filePathRelativeToRsrc, List<Model3D> modelCollection, DataTreeObject dataTreeParent, Transform3D globalTransform, bool appendModelsToModelCollection = true, Dictionary<string, dynamic> extraData = null) {
+		private static List<Model3D> HandleConfigReferenceFromLiteralPath(FileInfo sourceFile, string filePathRelativeToRsrc, List<Model3D> modelCollection, DataTreeObject dataTreeParent, Transform3D globalTransform, bool appendModelsToModelCollection = true, Dictionary<string, dynamic> extraData = null) {
 			if (filePathRelativeToRsrc == null) return null;
 			if (filePathRelativeToRsrc.StartsWith("/")) filePathRelativeToRsrc = filePathRelativeToRsrc.Substring(1);
 			FileInfo referencedModel = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + filePathRelativeToRsrc);

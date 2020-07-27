@@ -182,8 +182,10 @@
     <Compile Include="Utility\ConfigReferenceConstructor.cs" />
     <Compile Include="Utility\DummyScope.cs" />
     <Compile Include="Utility\Interface\AsyncMessageBox.cs" />
+    <Compile Include="Utility\Interface\ConsoleColorVT.cs" />
     <Compile Include="Utility\Interface\DataTreeObject.cs" />
     <Compile Include="Utility\Interface\SilkImage.cs" />
+    <Compile Include="Utility\Interface\VTConsole.cs" />
     <Compile Include="Utility\ReferenceRoot.cs" />
     <Compile Include="Utility\ReflectionHelper.cs" />
     <Compile Include="Utility\ResourceDirectoryGrabber.cs" />
@@ -195,6 +197,7 @@
     <Compile Include="XansData\Exceptions\InvalidTypeException.cs" />
     <Compile Include="XansData\Extensions\ChoiceExtensions.cs" />
     <Compile Include="XansData\Extensions\ConfigReferenceExtension.cs" />
+    <Compile Include="XansData\Extensions\DeepObjectExtensions.cs" />
     <Compile Include="XansData\Extensions\ParameterizedConfigExtension.cs" />
     <Compile Include="XansData\Extensions\TileEntryExtensions.cs" />
     <Compile Include="XansData\FileUtils.cs" />

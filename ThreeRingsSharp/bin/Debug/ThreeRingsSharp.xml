@@ -44,10 +44,10 @@
             </summary>
             <param name="clydeFile">The file to load and decode.</param>
             <param name="allGrabbedModels">A list containing every processed model from the entire hierarchy. This list should be defined by you and then passed in.</param>
-            <param name="isBaseFile">If <see langword="true"/>, this will update the main GUI display data for the base loaded model. If the GUI is not defined (e.g. this is being used in a library) this will do nothing.</param>
-            <param name="lastNodeParent">Intended for use if <paramref name="isBaseFile"/> is <see langword="false"/>, this is the parent Data Tree element to add this model into (so that the hierarchy can be constructed). This should be a <see cref="T:System.Windows.Forms.TreeNode"/>, a <see cref="T:System.Windows.Forms.TreeView"/>, or a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>.</param>
-            <param name="useFileName">If <see langword="true"/>, the name of the loaded file will be displayed in the tree hierarchy's root node, e.g. model.dat</param>
-            <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If it doesn't exist, it will be created.</param>
+            <param name="isBaseFile">If <see langword="true"/>, then it means that <paramref name="clydeFile"/> is the literal file the user opened. Otherwise, if it is <see langword="false"/>, it was loaded by a different model (e.g. a CompoundConfig)</param>
+            <param name="lastNodeParent">Intended for use if <paramref name="isBaseFile"/> is <see langword="false"/>, this is the parent Data Tree element to add this model into (so that the hierarchy can be constructed). This should be a <see cref="T:System.Windows.Forms.TreeNode"/>, a <see cref="T:System.Windows.Forms.TreeView"/>, or a <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>. This is intended for use in a GUI context, and if TRS is not being used with a GUI, this should be null.</param>
+            <param name="useFileName">If <see langword="true"/>, the name of the loaded file will be displayed in the tree hierarchy's root node, e.g. model.dat. This is intended for use in a GUI context, and if TRS is not being used with a GUI, this should be null.</param>
+            <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If null, it will be created as an identity transform.</param>
             <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.HandleConfigReferenceLookup(System.IO.FileInfo)">
@@ -81,7 +81,7 @@
             <param name="appendModelsToModelCollection">If true, the loaded models will be appended to <paramref name="modelCollection"/>.</param>
             <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(System.IO.FileInfo,System.String,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.Object})">
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil.HandleConfigReferenceFromLiteralPath(System.IO.FileInfo,System.String,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>
             Takes in a <see cref="T:System.String"/> filepath and loads its data. It then returns the loaded model and all of its descendants as a list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances.
             </summary>
@@ -590,7 +590,7 @@
             Handles instances of <see cref="T:com.threerings.tudey.data.TudeySceneModel.PlaceableEntry"/>.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Scene.PlaceableHandler.GetTransform(com.threerings.tudey.data.TudeySceneModel.PlaceableEntry)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Scene.PlaceableHandler.GetTransformField(com.threerings.tudey.data.TudeySceneModel.PlaceableEntry)">
             <summary>
             Since Java allows for something that C# doesn't (a subclass having a field with the same name as a method in the parent class), this uses reflection to get the <c>transform</c> *field* of a <see cref="T:com.threerings.tudey.data.TudeySceneModel.PlaceableEntry"/>.<para/>
             Thanks, Java.
@@ -736,6 +736,141 @@
             <param name="title">The title displayed at the top of the message box.</param>
             <param name="buttons">The buttons used in the message box (e.g. OK)</param>
             <param name="icon">The icon to display on the left side of the message box.</param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT">
+            <summary>
+            A console color that uses VT sequences to employ custom RGB colors.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.R">
+            <summary>
+            The R component of this console color.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.G">
+            <summary>
+            The G component of this console color.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.B">
+            <summary>
+            The B component of this console color.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.NearestConsoleColor">
+            <summary>
+            The <see cref="T:System.ConsoleColor"/> that is most similar to this <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> via treating the colors like coordinates in 3D space then testing distance.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.#ctor(System.Byte,System.Byte,System.Byte)">
+            <summary>
+            Construct a new <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> from the specified color value.
+            </summary>
+            <param name="r">The R component (0 - 255)</param>
+            <param name="g">The G component (0 - 255)</param>
+            <param name="b">The B component (0 - 255)</param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.FromConsoleColor(System.ConsoleColor)">
+            <summary>
+            Returns a <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> created by the default color for the input <see cref="T:System.ConsoleColor"/>. This does NOT reflect changes made to the console's palette, and instead returns the MS-DOS default for the specific color.
+            </summary>
+            <param name="stockColor"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.FromColor(System.Drawing.Color)">
+            <summary>
+            Given a <see cref="T:System.Drawing.Color"/>, it will be converted into an instance of <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/>.
+            </summary>
+            <param name="color"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.FromFormattedString(System.String)">
+            <summary>
+            Translates a formatted piece of text into a <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/>. The text should be formatted like: ^#FFFFFF; (where FFFFFF is a hex color code.)
+            </summary>
+            <param name="formatted">The formatted text.</param>
+            <returns>A <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> using the specified hex code.</returns>
+            <exception cref="T:System.ArgumentException"/>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.ApplyToForeground">
+            <summary>
+            Applies this <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> to the foreground.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.ApplyToBackground">
+            <summary>
+            Applies this <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> to the background;
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.AsConsoleColor">
+            <summary>
+            Attempts to return this <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> as a <see cref="T:System.ConsoleColor"/> based on its color.<para/>
+            If this <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> does not match up with a <see cref="T:System.ConsoleColor"/>, this will return null.<para/>
+            Consider referencing <see cref="F:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.NearestConsoleColor"/> if a non-null <see cref="T:System.ConsoleColor"/> is desired.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.GetNearestConsoleColor_Ctor(System.Byte,System.Byte,System.Byte)">
+            <summary>
+            Returns the <see cref="T:System.ConsoleColor"/> whose color is most similar to this <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/>. Similarity is tested via distance in 3D space, where RGB is mapped to XYZ.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.ToString">
+            <summary>
+            Returns the formatted code so that it can be applied to the foreground by writing the result of this function to the console.<para/>
+            This observes <see cref="P:ThreeRingsSharp.Utility.Interface.VTConsole.IsVTEnabled"/> to determine whether to return this as a full RGB VT Sequence, or as the nearest <see cref="T:System.ConsoleColor"/> that is most similar to this <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/>'s color.<para/>
+            Call <see cref="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.ToStringBG"/> to get the background format.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.ToStringBG">
+            <summary>
+            Returns the formatted code so that it can be applied to the background by writing the result of this function to the console.<para/>
+            This observes <see cref="P:ThreeRingsSharp.Utility.Interface.VTConsole.IsVTEnabled"/> to determine whether to return this as a full RGB VT Sequence, or as the nearest <see cref="T:System.ConsoleColor"/> that is most similar to this <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/>'s color.<para/>
+            Call <see cref="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.ToString"/> to get the foreground format.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.ToString(System.Boolean,System.Boolean)">
+            <summary>
+            Returns the formatted code so that it can be applied to the foreground or background. The format is determined by <paramref name="asVT"/>
+            </summary>
+            <param name="asVT">If false, this will return the result of <see cref="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.ToStringNonVT(System.Boolean)"/> with its requireExactConsoleColor parameter set to false. Otherwise, this will return the result of <see cref="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.ToString"/></param>
+            <param name="background">If true, this string will use a VT sequence (if applicable) that applies to the background instead of the foreground.</param>
+            <exception cref="T:System.NotSupportedException"/>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.ToStringNonVT(System.Boolean)">
+            <summary>
+            A tostring method that uses legacy coloring when translating this ConsoleColorVT to a string.<para/>
+            If <paramref name="requireExactConsoleColor"/> is <see langword="true"/>, this will throw a <see cref="T:System.NotSupportedException"/> if this <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> is not using a color equal to one of the default <see cref="T:System.ConsoleColor"/>s<para/>
+            If <paramref name="requireExactConsoleColor"/> is <see langword="false"/>, this will use <see cref="F:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.NearestConsoleColor"/> to apply.
+            </summary>
+            <returns></returns>
+            <exception cref="T:System.NotSupportedException"/>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.ToStringVT(System.Boolean)">
+            <summary>
+            Converts this to a VT string.
+            </summary>
+            <param name="background">If true, the sequence will change the background color. If false, it will change the foreground color.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.GetColorDistance(ThreeRingsSharp.Utility.Interface.ConsoleColorVT,ThreeRingsSharp.Utility.Interface.ConsoleColorVT)">
+            <summary>
+            Returns the distance between the two colors as if they were coordinates in 3D space.
+            </summary>
+            <param name="alpha"></param>
+            <param name="bravo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.ConsoleColorVT.GetColorDistance(System.ValueTuple{System.Byte,System.Byte,System.Byte},System.ValueTuple{System.Byte,System.Byte,System.Byte})">
+            <summary>
+            Returns the distance between the two colors as if they were coordinates in 3D space.<para/>
+            This variant is intended to be used in the constructor.
+            </summary>
+            <param name="alpha"></param>
+            <param name="bravo"></param>
             <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.Utility.Interface.DataTreeObjectEventMarshaller">
@@ -1181,6 +1316,119 @@
             A transparent space.
             </summary>
         </member>
+        <member name="T:ThreeRingsSharp.Utility.Interface.VTConsole">
+            <summary>
+            A console logging utility. Offers the ability to format messages with color codes.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.VTConsole.COLOR_CODE_SYM">
+            <summary>
+            The symbol recognized in messages for color codes. This is identical to Minecraft's color code system.<para/>
+            See <a href="https://minecraft.gamepedia.com/Formatting_codes#Color_codes">https://minecraft.gamepedia.com/Formatting_codes#Color_codes</a> for more information.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.VTConsole.ConsoleColorMap">
+            <summary>
+            A map of byte code values to ConsoleColors
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.VTConsole.DefaultColor">
+            <summary>
+            The default color used by the console for messages printed with no color. Default value is <see cref="F:System.ConsoleColor.White"/><para/>
+            This can be set to a <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> or a <see cref="T:System.ConsoleColor"/>. Attempting to set it to a <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> when <see cref="P:ThreeRingsSharp.Utility.Interface.VTConsole.IsVTEnabled"/> is false will throw a <see cref="T:System.NotSupportedException"/>.
+            </summary>
+            <exception cref="T:System.NotSupportedException"/>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.VTConsole.ForegroundColor">
+            <summary>
+            The foreground color of this console.<para/>
+            Setting this to null if VT is enabled will default to white.<para/>
+            Attempting to set this value to a <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> if <see cref="P:ThreeRingsSharp.Utility.Interface.VTConsole.IsVTEnabled"/> is false will round the color to the nearest <see cref="T:System.ConsoleColor"/>
+            </summary>
+            <exception cref="T:System.NotSupportedException"/>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.VTConsole.BackgroundColor">
+            <summary>
+            The background color of this console.<para/>
+            Setting this to null if VT is enabled will default to black.<para/>
+            Attempting to set this value to a <see cref="T:ThreeRingsSharp.Utility.Interface.ConsoleColorVT"/> if <see cref="P:ThreeRingsSharp.Utility.Interface.VTConsole.IsVTEnabled"/> is false will round the color to the nearest <see cref="T:System.ConsoleColor"/>
+            </summary>
+            <exception cref="T:System.NotSupportedException"/>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.VTConsole.IsVTEnabled">
+            <summary>
+            Whether or not VT Sequences are enabled and should be used.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.VTConsole.EnableVTSupport">
+            <summary>
+            When called, this attempts to enable VT Sequence support for the console. Whether or not this action will be successful depends on the platform this code is running on.<para/>
+            This method will return <see langword="true"/> if VT sequences are supported and were enabled, and <see langword="false"/> if they are not supported on this machine.<para/>
+            VT sequences allow low level control of the console's colors, including the allowance of full 16-million color RGB text and backgrounds, bold/underline formatting, and more.<para/>
+            See <a href="https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences">https://docs.microsoft.com/en-us/windows/console/console-virtual-terminal-sequences</a> for more information.
+            </summary>
+            <returns>True if VT sequences are supported and were successfully enabled, false if they are not.</returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.VTConsole.WriteProxy(System.String)">
+            <summary>
+            A proxy to Write that does some extra sanity checks.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.VTConsole.GetFormattedTimestamp">
+            <summary>
+            Returns a formatted timestamp: "[HH:MM:SS] "
+            </summary>
+            <returns>Returns a formatted timestamp: "[HH:MM:SS] "</returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.VTConsole.MessageHasColors(System.String)">
+            <summary>
+            Returns <see langword="true"/> if the message contains the color code symbol and, by extension, a color code.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.VTConsole.StripColorFormattingCode(System.String)">
+            <summary>
+            Strips away all color formatting stuff from a message so that it's just plain text.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.VTConsole.StripVTColorFormattingCode(System.String)">
+            <summary>
+            Strips away all VT color formatting text.
+            </summary>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.VTConsole.ClearColorFormattingCodeAll(System.String)">
+            <summary>
+            Calls both formatting cleanup methods to strip color codes.
+            </summary>
+            <param name="message"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.VTConsole.WriteMessageFromColors(System.String)">
+            <summary>
+            Writes a color coded console message in a similar manner to text in Minecraft, where colors are selected with § (e.g. §a will make all following text green)
+            </summary>
+            <param name="message">The message to write.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.VTConsole.WriteMessageFromColorsVT(System.String)">
+            <summary>
+            Writes a color coded console message via the custom VT formatting (^#......; where ...... is a hex color code)<para/>
+            Has backwards compatibility for the Minecraft-esque color codes §. where . is a single hex value.
+            </summary>
+            <param name="message"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.VTConsole.Write(System.String)">
+            <summary>
+            Logs information on a single line. This automatically decides whether to call <see cref="M:ThreeRingsSharp.Utility.Interface.VTConsole.WriteMessageFromColors(System.String)"/> or <see cref="M:ThreeRingsSharp.Utility.Interface.VTConsole.WriteMessageFromColorsVT(System.String)"/>.
+            </summary>
+            <param name="message">The text to log.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.Interface.VTConsole.WriteLine(System.String)">
+            <summary>
+            Logs information on a single line. This automatically decides whether to call <see cref="M:ThreeRingsSharp.Utility.Interface.VTConsole.WriteMessageFromColors(System.String)"/> or <see cref="M:ThreeRingsSharp.Utility.Interface.VTConsole.WriteMessageFromColorsVT(System.String)"/>.
+            </summary>
+            <param name="message">The text to log.</param>
+        </member>
         <member name="T:ThreeRingsSharp.Utility.ReflectionHelper">
             <summary>
             Provides aliases to get fields or indices of objects via reflection.
@@ -1401,6 +1649,12 @@
             If true, the box *was* at the bottom before text was appended to it (meaning it should autoscroll)
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.Utility.XanLogger.MainThreadId">
+            <summary>
+            Intended to be set once in the main method of the program, this is the ID of the program's main thread.<para/>
+            This is used to determine if it is safe to write to the GUI console or not.
+            </summary>
+        </member>
         <member name="M:ThreeRingsSharp.Utility.XanLogger.UpdateLog">
             <summary>
             Manually update the contents of <see cref="P:ThreeRingsSharp.Utility.XanLogger.BoxReference"/>. Only works if <see cref="P:ThreeRingsSharp.Utility.XanLogger.UpdateAutomatically"/> is <see langword="false"/>, and of course, if <see cref="P:ThreeRingsSharp.Utility.XanLogger.BoxReference"/> is not <see langword="null"/>.
@@ -1496,8 +1750,7 @@
         </member>
         <member name="T:ThreeRingsSharp.XansData.Extensions.ChoiceExtensions">
             <summary>
-            As mentioned in <see cref="M:com.threerings.config.Parameter.Choice.getChoiceOptions"/>'s customized error, IKVM was unable to correctly convert this method.<para/>
-            This static class houses an extension method that fixes this.
+            Offers methods that make grabbing information from <see cref="T:com.threerings.config.Parameter.Choice"/>s easier.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ChoiceExtensions.GetChoiceOptions(com.threerings.config.Parameter.Choice)">
@@ -1505,29 +1758,94 @@
             A patched variant of <see cref="M:com.threerings.config.Parameter.Choice.getChoiceOptions"/> that doesn't commit <see href="https://www.youtube.com/watch?v=Lebv2-ptzWY"/> when you call it.<para/>
             This returns a string array of every option name that displays in the dropdown menu of the ThreeRings Model Editor, should there be a multi-choice option on a model.
             </summary>
-            <param name="choice"></param>
+            <param name="choice">The choice to get the list of options from.</param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ChoiceExtensions.GetDefaultOption(com.threerings.config.Parameter.Choice)">
             <summary>
             Returns the default option of this choice.
             </summary>
-            <param name="choice"></param>
+            <param name="choice">The choice to get the default option from.</param>
             <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ChoiceExtensions.GetArguments(com.threerings.config.Parameter.Choice.Option)">
+            <summary>
+            Returns the arguments of this <see cref="T:com.threerings.config.Parameter.Choice.Option"/> that are applied to the directs within its parent choice.
+            </summary>
+            <param name="option">The option to get the arguments from.</param>
+            <returns></returns>
+            <exception cref="T:System.ArgumentNullException">If choice is null</exception>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.IsRealReference(com.threerings.config.ConfigReference)">
             <summary>
             Returns <see langword="true"/> if this <see cref="T:com.threerings.config.ConfigReference"/> points to an actual config, and <see langword="false"/> if it does not (for instance, it points to a model file instead).
             </summary>
             <param name="cfgRef"></param>
-            <returns></returns>
+            <returns>False if this ConfigReference points to a literal file (points to a .dat file in the rsrc directory), and true if it points to an actual configuration object (e.g. Texture/2D/Default for textures)</returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.IsFileReference(com.threerings.config.ConfigReference)">
+            <summary>
+            Returns <see langword="true"/> if this <see cref="T:com.threerings.config.ConfigReference"/> points to a .dat file, and <see langword="false"/> if it does not (for instance, it's being used as an actual reference to a config object).
+            </summary>
+            <param name="cfgRef"></param>
+            <returns>True if this ConfigReference points to a literal file (points to a .dat file in the rsrc directory), and false if it points to an actual configuration object (e.g. Texture/2D/Default for textures)</returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.SetArguments(com.threerings.config.ConfigReference,com.threerings.config.ArgumentMap)">
             <summary>
             Sets the arguments of the given <see cref="T:com.threerings.config.ConfigReference"/>.
             </summary>
-            <param name="cfgRef"></param>
-            <param name="args"></param>
+            <param name="cfgRef">The ConfigReference to alter.</param>
+            <param name="newArgMap">The new ArgumentMap that this ConfigReference will use.</param>
+            <exception cref="T:System.ArgumentNullException">If args is null</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ArgumentsToExtraData(com.threerings.config.ConfigReference,System.Boolean)">
+            <summary>
+            Takes the <see cref="T:com.threerings.config.ArgumentMap"/> within this <see cref="T:com.threerings.config.ConfigReference"/> and translates it into the dictionary format used by TRS's extra data containers.
+            </summary>
+            <param name="cfgRef">The ConfigReference to get the data from.</param>
+            <param name="createSubDict">If true, the returned dictionary has a single key called "DirectArgs" which contains the arguments. If false, the arguments are returned as the dictionary itself.</param>
+            <returns>A dictionary containing the arguments for the directs on the given destination object.</returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve(com.threerings.config.ConfigReference)">
+            <summary>
+            Using the information in this <see cref="T:com.threerings.config.ConfigReference"/>, the object this reference points to will be resolved and returned. This <see cref="T:com.threerings.config.ConfigReference"/> must point to an actual configuration. If it points to a file, an <see cref="T:System.InvalidOperationException"/> will be thrown.<para/>
+            Consider using <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveAs``1(com.threerings.config.ConfigReference)"/> if the type of the result is known.<para/>
+            This will automatically populate the arguments in the referenced config if applicable, making usage of the returned object relatively straightforward.
+            </summary>
+            <param name="cfgRef">The ConfigReference to resolve the reference to.</param>
+            <returns>The ManagedConfig the given ConfigReference is pointing to.</returns>
+            <exception cref="T:System.InvalidOperationException">If IsFileReference() returns true on this ConfigReference.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveAs``1(com.threerings.config.ConfigReference)">
+            <summary>
+            Using the information in this <see cref="T:com.threerings.config.ConfigReference"/>, the object this reference points to will be resolved and returned. This <see cref="T:com.threerings.config.ConfigReference"/> must point to an actual configuration. If it points to a file, an <see cref="T:System.InvalidOperationException"/> will be thrown.<para/>
+            This will automatically populate the arguments in the referenced config if applicable, making usage of the returned object relatively straightforward.
+            </summary>
+            <param name="cfgRef">The ConfigReference to resolve the reference to.</param>
+            <typeparam name="T">The destination type for the new ManagedConfig</typeparam>
+            <returns>The ManagedConfig the given ConfigReference is pointing to.</returns>
+            <exception cref="T:System.InvalidOperationException">If IsFileReference() returns true on this ConfigReference.</exception>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Extensions.DeepObjectExtensions">
+            <summary>
+            Extends <see cref="T:com.threerings.util.DeepObject"/> to add a typed Clone method.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.DeepObjectExtensions.Clone``1(``0)">
+            <summary>
+            Clones this <see cref="T:com.threerings.util.DeepObject"/> into a new instance of the given type.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="original"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.DeepObjectExtensions.CloneAs``1(com.threerings.util.DeepObject)">
+            <summary>
+            Clones this <see cref="T:com.threerings.util.DeepObject"/> into a new instance of the given type.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="original"></param>
+            <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ParameterizedConfigExtension.ApplyArguments(com.threerings.config.ParameterizedConfig,com.threerings.config.ArgumentMap,System.String)">
             <summary>
@@ -1537,12 +1855,28 @@
             <param name="args"></param>
             <param name="parentChoiceName">If non-null, this will traverse into a parameter with this name (which is presumably a Choice) and access the choice's directs to apply the args.</param>
         </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.PlaceableEntryExtensions.GetExportTransform(com.threerings.tudey.data.TudeySceneModel.PlaceableEntry,com.threerings.tudey.config.PlaceableConfig.Original,com.threerings.math.Transform3D@)">
+            <summary>
+            Returns a <see cref="T:com.threerings.math.Transform3D"/> designed for export from TR#.
+            </summary>
+            <param name="entry"></param>
+            <param name="originalImpl"></param>
+            <param name="result"></param>
+        </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetTransformFromShallow(com.threerings.tudey.data.TudeySceneModel.TileEntry,ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig,com.threerings.math.Transform3D@)">
             <summary>
             Populates <paramref name="result"/> with the location data from the given <see cref="T:com.threerings.tudey.data.TudeySceneModel.TileEntry"/> and <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> (instead of by trying to reference the original implementation)
             </summary>
             <param name="entry"></param>
             <param name="shallowTile"></param>
+            <param name="result"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetExportTransform(com.threerings.tudey.data.TudeySceneModel.TileEntry,com.threerings.tudey.config.TileConfig.Original,com.threerings.math.Transform3D@)">
+            <summary>
+            Returns a <see cref="T:com.threerings.math.Transform3D"/> designed for export from TR#.
+            </summary>
+            <param name="entry"></param>
+            <param name="originalImpl">The original implementation of this tile. This can be null, but if it is, the width and height will be 1.</param>
             <param name="result"></param>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetWidth(com.threerings.tudey.data.TudeySceneModel.TileEntry,ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig)">
@@ -1561,6 +1895,17 @@
             <summary>
             Provides methods that are nice for <see cref="T:System.Collections.Generic.List`1"/>
             </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.MergeWith``2(System.Collections.Generic.Dictionary{``0,``1},System.Collections.Generic.Dictionary{``0,``1},System.Boolean)">
+            <summary>
+            Merges the two dictionaries together. This does not modify the dictionary this method is called on, and instead returns a new instance.
+            </summary>
+            <typeparam name="TKey"></typeparam>
+            <typeparam name="TValue"></typeparam>
+            <param name="dictionary"></param>
+            <param name="other"></param>
+            <param name="overwrite">If true, entries from <paramref name="other"/> will overwrite entries in <paramref name="dictionary"/>. If false, keys that already exist in <paramref name="dictionary"/> will be preserved.</param>
+            <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.KeyOf``2(System.Collections.Generic.Dictionary{``0,``1},``1)">
             <summary>
@@ -1702,7 +2047,15 @@
             <param name="floatArray"></param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.GetEntryByName(com.threerings.config.ManagedConfig[],System.String)">
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.GetEntryByNameMG(com.threerings.config.ManagedConfig[],System.String)">
+            <summary>
+            Finds the instance in the array of <see cref="T:com.threerings.config.ManagedConfig"/> instances with the given name by calling their <see cref="M:com.threerings.config.ManagedConfig.getName"/> method.
+            </summary>
+            <param name="array"></param>
+            <param name="name"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.GetEntryByName``1(``0[],System.String)">
             <summary>
             Finds the instance in the array of <see cref="T:com.threerings.config.ManagedConfig"/> instances with the given name by calling their <see cref="M:com.threerings.config.ManagedConfig.getName"/> method.
             </summary>
@@ -2548,6 +2901,11 @@
             If <see langword="true"/>, <see cref="M:ThreeRingsSharp.XansData.MeshData.ApplyAxialTransformationMod"/> has already been called. Axial transformations change the up axis based on <see cref="P:ThreeRingsSharp.XansData.Model3D.TargetUpAxis"/>.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.XansData.MeshData.VertexOffset">
+            <summary>
+            All vertices will be moved by this value when exporting.
+            </summary>
+        </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.#ctor">
             <summary>
             Creates a new <see cref="T:ThreeRingsSharp.XansData.MeshData"/>.<para/>
@@ -2560,6 +2918,11 @@
             </summary>
             <param name="name">The name to assign.</param>
             <exception cref="T:System.ArgumentNullException">If <paramref name="name"/> is null.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.MeshData.SetOffsetToAABBCenter">
+            <summary>
+            Since this is used by every tile when exporting scenes, it has its own method. This iterates through <see cref="P:ThreeRingsSharp.XansData.MeshData.Vertices"/> and then sets <see cref="P:ThreeRingsSharp.XansData.MeshData.VertexOffset"/> to the center of their axis-aligned bounding box.
+            </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.GetVertexGroupByName(System.String)">
             <summary>
@@ -2973,11 +3336,11 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PopulateConfigRefsAsync">
             <summary>
-            An asynchronous variant of <see cref="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PopulateConfigRefs(System.Boolean)"/>. This should be called when the program starts so that it can load data in the background.
+            An asynchronous variant of <see cref="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PopulateConfigRefs"/>. This should be called when the program starts so that it can load data in the background.
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PopulateConfigRefs(System.Boolean)">
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PopulateConfigRefs">
             <summary>
             Initializes all config references together.
             </summary>
@@ -3002,7 +3365,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.ReadFromRawConfigRefs(System.Boolean)">
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.ReadFromRawConfigRefs">
             <summary>
             If the merged binary stuff doesn't exist, then this will try to find a ConfigRefs folder.
             </summary>
@@ -3018,6 +3381,13 @@
             <summary>
             Returns <see langword="true"/> if this <see cref="T:System.Xml.Linq.XElement"/> only has class references that can be resolved.<para/>
             Returns <see langword="false"/> if this <see cref="T:System.Xml.Linq.XElement"/> contains class references that cannot be resolved.
+            </summary>
+            <param name="rootEntry"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PruneIllegalClasses(System.Xml.Linq.XElement)">
+            <summary>
+            Filters through a given element in a config XML and removes elements that reference Spiral Knights stuff.
             </summary>
             <param name="rootEntry"></param>
             <returns></returns>
@@ -3085,9 +3455,9 @@
         <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceContainer.TryGetReferenceFromName(System.String)">
             <summary>
             When given the name of a specific entry (acquired via <see cref="M:com.threerings.config.ConfigReference.getName"/>), this will iterate through ALL configs and try to find it.<para/>
-            Warning: This will be slow in general. It will cache what results it gets however.<para/>
+            Warning: This will be slow if references were not prepopulated. It will cache what results it gets, however, so that should assist for repeated calls.<para/>
             Returns <see langword="null"/> if the reference could not be found.<para/>
-            Note: This will not have any arguments applied and will be populated with default data! You need to make sure you apply the arguments to this.
+            Note: This will not have any arguments applied and will be populated with default data! You need to make sure you apply the arguments to this, and most importantly, MAKE SURE YOU CLONE THE RESULT OF THIS. Editing the template object may have unwanted side effects!
             </summary>
             <param name="targetName"></param>
             <returns></returns>

@@ -55,8 +55,8 @@ namespace ThreeRingsSharp.DataHandlers {
 				}
 			}
 
-			Collection entries = scene.getEntries();
-			foreach (object entryObj in entries.toArray()) {
+			object[] entries = scene.getEntries().toArray();
+			foreach (object entryObj in entries) {
 				// Now each entry will be one of three types (at least, in the context that we care about)
 				Entry entry = (Entry)entryObj;
 				if (entry is TileEntry) {
@@ -64,9 +64,8 @@ namespace ThreeRingsSharp.DataHandlers {
 				} else if (entry is PlaceableEntry) {
 					PlaceableHandler.Instance.HandleEntry(sourceFile, entry, models, currentDataTreeObject, transform);
 				}
+				// Other entry types are more for game data and less for the visual scene (e.g. pathfinding nodes, area markers, etc.)
 			}
-
 		}
-
 	}
 }

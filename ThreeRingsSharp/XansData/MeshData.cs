@@ -110,6 +110,11 @@ namespace ThreeRingsSharp.XansData {
 		public bool HasAxialTransformed { get; private set; } = false;
 
 		/// <summary>
+		/// All vertices will be moved by this value when exporting.
+		/// </summary>
+		public Vector3 VertexOffset { get; set; } = new Vector3();
+
+		/// <summary>
 		/// Creates a new <see cref="MeshData"/>.<para/>
 		/// WARNING: This <see cref="MeshData"/> will NOT be added to <see cref="MeshDataBindings"/>!
 		/// </summary>
@@ -124,6 +129,31 @@ namespace ThreeRingsSharp.XansData {
 			Name = name ?? throw new ArgumentNullException("name");
 			_MeshDataBindings[name] = this;
 			_NonUniqueMeshDataInstances.Add(this);
+		}
+
+		/// <summary>
+		/// Since this is used by every tile when exporting scenes, it has its own method. This iterates through <see cref="Vertices"/> and then sets <see cref="VertexOffset"/> to the center of their axis-aligned bounding box.
+		/// </summary>
+		public void SetOffsetToAABBCenter() {
+			float maxX = 0;
+			float maxY = 0;
+			float maxZ = 0;
+			float minX = 0;
+			float minY = 0;
+			float minZ = 0;
+			foreach (Vector3 vertex in Vertices) {
+				float x = vertex.X;
+				float y = vertex.Y;
+				float z = vertex.Z;
+				if (x > maxX) maxX = x;
+				if (y > maxY) maxY = y;
+				if (z > maxZ) maxZ = z;
+				if (x < minX) minX = x;
+				if (y < minY) minY = y;
+				if (z < minZ) minZ = z;
+			}
+
+			VertexOffset = new Vector3((maxX - minX) / 2f, (maxY - minY) / 2f, (maxZ - minZ) / 2f);
 		}
 
 		/// <summary>

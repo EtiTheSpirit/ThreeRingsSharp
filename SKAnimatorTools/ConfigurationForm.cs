@@ -184,5 +184,15 @@ namespace SKAnimatorTools {
 				MainTooltip.SetToolTip(PicBox_ZeroScale, string.Empty);
 			}
 		}
+
+		private void VerboseLoggingChanged(object sender, EventArgs e) {
+			if (CheckBox_VerboseLogging.Checked) {
+				PicBox_VerboseLogging.Image = Warning;
+				MainTooltip.SetToolTip(PicBox_VerboseLogging, "Enabling verbose logging can slow down the program (it has to wait while the text is written to the console).");
+			} else {
+				PicBox_VerboseLogging.Image = Accepted;
+				MainTooltip.SetToolTip(PicBox_VerboseLogging, string.Empty);
+			}
+		}
 	}
 }

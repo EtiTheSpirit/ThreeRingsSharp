@@ -26,11 +26,23 @@ using ThreeRingsSharp.XansData.XML.ConfigReferences;
 using System.Threading;
 using ThreeRingsSharp.DataHandlers.Properties;
 using ThreeRingsSharp.DataHandlers.Model;
+using System.Runtime.InteropServices;
 
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {
 
+		[DllImport("user32.dll")]
+		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+		[DllImport("kernel32.dll")]
+		static extern IntPtr GetConsoleWindow();
+
+		public readonly IntPtr ConsolePtr;
+
 		public MainWindow() {
+			VTConsole.EnableVTSupport();
+			System.Console.Title = "Spiral Knights Animator Tools";
+			ConsolePtr = GetConsoleWindow();
 			InitializeComponent();
 			ConfigReferenceBootstrapper.UISyncContext = SynchronizationContext.Current;
 
@@ -55,7 +67,7 @@ namespace SKAnimatorTools {
 			Model3D.TargetUpAxis = ConfigurationForm.AxisIntMap[(int)ConfigurationInterface.GetConfigurationValue("UpAxisIndex", 1, true)];
 			GLTFExporter.EmbedTextures = ConfigurationInterface.GetConfigurationValue("EmbedTextures", false, true);
 			XanLogger.VerboseLogging = ConfigurationInterface.GetConfigurationValue("VerboseLogging", false, true);
-			StaticSetExportMode = (int)ConfigurationInterface.GetConfigurationValue("StaticSetModeIndex", 0L, true);
+			StaticSetExportMode = (int)ConfigurationInterface.GetConfigurationValue("StaticSetExportMode", 0L, true);
 			ModelPropertyUtility.TryGettingAllTextures = ConfigurationInterface.GetConfigurationValue("GetAllTextures", true, true);
 			if (Directory.Exists(loadDir)) {
 				OpenModel.InitialDirectory = loadDir;
@@ -83,6 +95,11 @@ namespace SKAnimatorTools {
 			}
 
 			XanLogger.UpdateAutomatically = false;
+			if (XanLogger.VerboseLogging) {
+				ShowWindow(ConsolePtr, 5);
+			} else {
+				ShowWindow(ConsolePtr, 0);
+			}
 		}
 
 		/*
@@ -130,9 +147,14 @@ namespace SKAnimatorTools {
 				Model3D.MultiplyScaleByHundred = newValue;
 			} else if (configKey == "VerboseLogging") {
 				XanLogger.VerboseLogging = newValue;
+				if (newValue == true) {
+					ShowWindow(ConsolePtr, 5);
+				} else {
+					ShowWindow(ConsolePtr, 0);
+				}
 			} else if (configKey == "EmbedTextures") {
 				GLTFExporter.EmbedTextures = newValue;
-			} else if (configKey == "StaticSetModeIndex") {
+			} else if (configKey == "StaticSetExportMode") {
 				StaticSetExportMode = newValue;
 			} else if (configKey == "GetAllTextures") {
 				ModelPropertyUtility.TryGettingAllTextures = newValue;
@@ -343,7 +365,19 @@ namespace SKAnimatorTools {
 		private void OnConfigClicked(object sender, EventArgs e) {
 			ConfigForm = new ConfigurationForm();
 			// todo: better method of doing this
-			ConfigForm.SetDataFromConfig(OpenModel.InitialDirectory, SaveModel.InitialDirectory, ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", OpenModel.RestoreDirectory, Model3D.MultiplyScaleByHundred, Model3D.ProtectAgainstZeroScale, ConfigurationForm.AxisIntMap.KeyOf(Model3D.TargetUpAxis), GLTFExporter.EmbedTextures, XanLogger.VerboseLogging, StaticSetExportMode, ModelPropertyUtility.TryGettingAllTextures);
+			ConfigForm.SetDataFromConfig(
+				OpenModel.InitialDirectory, 
+				SaveModel.InitialDirectory, 
+				ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", 
+				OpenModel.RestoreDirectory, 
+				Model3D.MultiplyScaleByHundred, 
+				Model3D.ProtectAgainstZeroScale, 
+				ConditionalExportMode, 
+				GLTFExporter.EmbedTextures, 
+				XanLogger.VerboseLogging, 
+				StaticSetExportMode,
+				ModelPropertyUtility.TryGettingAllTextures
+			);
 			ConfigForm.Show();
 			ConfigForm.Activate();
 			ConfigForm.FormClosed += OnConfigFormClosed;

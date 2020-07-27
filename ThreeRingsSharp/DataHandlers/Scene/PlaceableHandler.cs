@@ -25,7 +25,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 
 		public void SetupCosmeticInformation(PlaceableEntry data, DataTreeObject dataTreeParent) {
 			if (dataTreeParent == null) return;
-			Transform3D transform = GetTransform(data);
+			Transform3D transform = GetTransformField(data);
 
 			// This method returns a property, but this is just a stock object (it was created this way in TudeySceneConfigBrancher)
 			List<DataTreeObject> values = dataTreeParent.Properties[dataTreeParent.FindSimpleProperty("Entries")];
@@ -37,7 +37,6 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 				existingPlaceableCtr = prop.Properties[prop.FindSimpleProperty("Placeable Objects")].FirstOrDefault();
 			}
 			DataTreeObject placeableContainer = existingPlaceableCtr ?? new DataTreeObject() {
-				Text = "Placeable Objects",
 				ImageKey = SilkImage.Variant
 			};
 
@@ -54,7 +53,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			individualPlacementCtr.AddSimpleProperty("Reference", data.getReference()?.getName() ?? "null", SilkImage.Reference);
 			placeableContainer.AddSimpleProperty("Entry", individualPlacementCtr);
 		}
-
+		
 		public void HandleEntry(FileInfo sourceFile, Entry entry, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null) {
 			PlaceableEntry placeable = (PlaceableEntry)entry;
 			SetupCosmeticInformation(placeable, dataTreeParent);
@@ -65,41 +64,48 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			// This may have been caused by the transpiler, which is to be expected. I'm actually quite suprised that I've not run into any errors until now.
 
 			// TEST: Is this, by some slim chance, a file ref? (This can happen!)
-			FileInfo refFile = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + placeable.getReference().getName());
-			if (!refFile.Exists) {
-				PlaceableConfig[] placeableCfgs = (PlaceableConfig[])ConfigReferenceBootstrapper.ConfigReferences["placeable"];
-				PlaceableConfig placeableCfg = (PlaceableConfig)placeableCfgs.GetEntryByName(placeable.getReference().getName());
+			if (placeable.placeable.IsRealReference()) {
+				PlaceableConfig[] placeableCfgs = ConfigReferenceBootstrapper.ConfigReferences["placeable"].OfType<PlaceableConfig>().ToArray();
+				PlaceableConfig placeableCfg = placeableCfgs.GetEntryByName(placeable.placeable.getName());
 				if (placeableCfg == null) {
-					XanLogger.WriteLine($"Unable to find data for placeable [{placeable.getReference().getName()}]!");
+					XanLogger.WriteLine($"Unable to find data for placeable [{placeable.placeable.getName()}]!");
 					return;
 				}
 
-			GETIMPL:
 				PlaceableConfig.Original originalImpl;
-				if (placeableCfg.getConfigManager() != null) {
-					originalImpl = placeableCfg.getOriginal(placeableCfg.getConfigManager());
-				} else {
-					if (placeableCfg.implementation is PlaceableConfig.Original org) {
-						originalImpl = org;
-					} else if (placeableCfg.implementation is PlaceableConfig.Derived der) {
-						placeableCfg = (PlaceableConfig)placeableCfgs.GetEntryByName(der.placeable.getName());
-						goto GETIMPL;
-					} else {
-						originalImpl = null;
+				do {
+					if (placeableCfg == null) {
+						XanLogger.WriteLine("ALERT: A placeable was null!", false, System.Drawing.Color.Red);
+						return;
 					}
-				}
+					if (placeableCfg.getConfigManager() != null) {
+						originalImpl = placeableCfg.getOriginal(placeableCfg.getConfigManager());
+						break;
+					} else {
+						if (placeableCfg.implementation is PlaceableConfig.Original org) {
+							originalImpl = org;
+							break;
+						} else if (placeableCfg.implementation is PlaceableConfig.Derived der) {
+							placeableCfg = placeableCfgs.GetEntryByName(der.placeable.getName());
+						} else {
+							originalImpl = null;
+							break;
+						}
+					}
+				} while (true);
 				if (originalImpl != null) {
-					Transform3D transform = GetTransform(placeable);
+					Transform3D transform = GetTransformField(placeable);
 					string relativeModelPath = originalImpl.model.getName();
-					ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, relativeModelPath, modelCollection, dataTreeParent, globalTransform.compose(transform));
+					XanLogger.WriteLine("Grabbing placeable [" + placeable.placeable.getName() + "] at " + relativeModelPath, true);
+					ConfigReferenceUtil.HandleConfigReference(sourceFile, originalImpl.model, modelCollection, dataTreeParent, globalTransform.compose(transform));
 				} else {
-					XanLogger.WriteLine($"Implementation for placeable [{placeable.getReference().getName()}] does not exist!");
+					XanLogger.WriteLine($"Implementation for placeable [{placeable.placeable.getName()}] does not exist!");
 				}
-				return;
+			} else {
+				Transform3D trs = GetTransformField(placeable);
+				XanLogger.WriteLine("Grabbing placeable at " + placeable.placeable.getName(), true);
+				ConfigReferenceUtil.HandleConfigReference(sourceFile, placeable.placeable, modelCollection, dataTreeParent, globalTransform.compose(trs));
 			}
-
-			Transform3D trs = GetTransform(placeable);
-			ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, placeable.getReference().getName(), modelCollection, dataTreeParent, globalTransform.compose(trs));
 		}
 
 		/// <summary>
@@ -109,7 +115,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 		/// <param name="entry">The <see cref="PlaceableEntry"/> to get the transform of.</param>
 		/// <returns></returns>
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		private Transform3D GetTransform(PlaceableEntry entry) {
+		private Transform3D GetTransformField(PlaceableEntry entry) {
 			return typeof(PlaceableEntry).GetField("transform").GetValue(entry) as Transform3D;
 		}
 

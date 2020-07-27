@@ -1,4 +1,5 @@
 ﻿using com.threerings.math;
+using com.threerings.tudey.config;
 using com.threerings.tudey.util;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,6 @@ using static com.threerings.tudey.data.TudeySceneModel;
 
 namespace ThreeRingsSharp.XansData.Extensions {
 	public static class TileEntryExtensions {
-
 		/// <summary>
 		/// Populates <paramref name="result"/> with the location data from the given <see cref="TileEntry"/> and <see cref="ShallowTileConfig"/> (instead of by trying to reference the original implementation)
 		/// </summary>

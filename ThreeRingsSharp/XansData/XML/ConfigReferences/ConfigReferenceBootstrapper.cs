@@ -87,23 +87,21 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		/// <returns></returns>
 		public static async Task PopulateConfigRefsAsync() {
 			if (HasPopulatedConfigs) return;
-			await Task.Run(() => PopulateConfigRefs(true));
+			await Task.Run(() => PopulateConfigRefs());
 		}
 
 		/// <summary>
 		/// Initializes all config references together.
 		/// </summary>
-		private static void PopulateConfigRefs(bool runningInSeparateTask = false) {
+		private static void PopulateConfigRefs() {
 			if (HasPopulatedConfigs) return;
-			if (!runningInSeparateTask) XanLogger.WriteLine("Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!", true);
+			XanLogger.WriteLine("Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!", true);
 			FileInfo mergedBinFile = new FileInfo(CurrentExeDir + "MergedConfigReferences.bin");
 
 			if (!mergedBinFile.Exists) {
-				if (!runningInSeparateTask) {
-					XanLogger.WriteLine("Special merged binary file doesn't exist! Manually iterating through ConfigRefs...", true);
-					XanLogger.UpdateLog();
-				}
-				ReadFromRawConfigRefs(runningInSeparateTask);
+				XanLogger.WriteLine("Special merged binary file doesn't exist! Manually iterating through ConfigRefs...", true);
+				XanLogger.UpdateLog();
+				ReadFromRawConfigRefs();
 				return;
 			}
 
@@ -122,7 +120,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 						BinaryImporter importer = new BinaryImporter(ByteSource.wrap(dat).openStream());
 						object obj = importer.readObject();
-						if (obj == null && !runningInSeparateTask) {
+						if (obj == null) {
 							XanLogger.WriteLine("WARNING: Reference for [" + name + "] returned null!");
 							XanLogger.UpdateLog();
 							continue;
@@ -138,24 +136,21 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 						}
 
 						importer.close();
-						if (!runningInSeparateTask) {
-							XanLogger.WriteLine("Populated [" + name + "].", true);
-							XanLogger.UpdateLog();
-						}
+						XanLogger.WriteLine("Populated [" + name + "].", true);
+						XanLogger.UpdateLog();
+
 					}
 				} else {
-					if (!runningInSeparateTask) {
-						XanLogger.WriteLine("Special merged binary file is out of date! Manually iterating through ConfigRefs...", true);
-						XanLogger.UpdateLog();
-					}
-					ReadFromRawConfigRefs(runningInSeparateTask);
+					XanLogger.WriteLine("Special merged binary file is out of date! Manually iterating through ConfigRefs...", true);
+					XanLogger.UpdateLog();
+
+					ReadFromRawConfigRefs();
 				}
 			}
 
-			if (!runningInSeparateTask) {
-				XanLogger.WriteLine("Config data has been populated.");
-				XanLogger.UpdateLog();
-			}
+			XanLogger.WriteLine("Config data has been populated.");
+			XanLogger.UpdateLog();
+
 			HasPopulatedConfigs = true;
 		}
 
@@ -266,7 +261,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		/// <summary>
 		/// If the merged binary stuff doesn't exist, then this will try to find a ConfigRefs folder.
 		/// </summary>
-		private static void ReadFromRawConfigRefs(bool runningInSeparateTask = false) {
+		private static void ReadFromRawConfigRefs() {
 			// Get a reference to the current EXE directory.
 			DirectoryInfo configRefsDir = new DirectoryInfo(CurrentExeDir + "ConfigRefs/");
 			if (!configRefsDir.Exists) {
@@ -284,7 +279,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				//XMLImporter importer = new XMLImporter(cfgStream);
 				BinaryImporter importer = new BinaryImporter(cfgStream);
 				object obj = importer.readObject();
-				if (obj == null && !runningInSeparateTask) {
+				if (obj == null) {
 					XanLogger.WriteLine("WARNING: Reference for [" + fName + "] returned null!");
 					XanLogger.UpdateLog();
 					continue;
@@ -294,16 +289,15 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 				Type type = obj.GetType().GetElementType(); // Always an array
 				_ConfigReferences.Put(fName, (cfgs, type));
-				
+
 				foreach (ManagedConfig cfgObj in cfgs) {
 					_ConfigReferences.ConfigEntryToContainerName[cfgObj.getName()] = fName;
 				}
-				
+
 				importer.close();
-				if (!runningInSeparateTask) {
-					XanLogger.WriteLine("Populated [" + fName + "].", true);
-					XanLogger.UpdateLog();
-				}
+				XanLogger.WriteLine("Populated [" + fName + "].", true);
+				XanLogger.UpdateLog();
+
 			}
 		}
 
@@ -349,7 +343,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				// (primarly, these "illegal classes" will be references to things in SK itself)
 				// So let's do that.
 
-				var newXML = new System.Text.StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<java class=\"com.threerings.export.XMLImporter\" version=\"1.0\">\n");
+				System.Text.StringBuilder newXML = new System.Text.StringBuilder("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<java class=\"com.threerings.export.XMLImporter\" version=\"1.0\">\n");
 
 				using (XmlReader reader = XmlReader.Create(configRef.FullName)) {
 					XElement element = reader.ElementsNamed("object").First();
@@ -364,18 +358,20 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 						} catch (ClassNotFoundException) {
 							XanLogger.WriteLine("Can't use [" + fName + "] (it exists solely for SK).");
 							XanLogger.UpdateLog();
+
 							continue;
 						}
 						// So here, there's the object element.
 						List<XElement> newElements = element.Elements().ToList();
 						foreach (XElement entryElement in newElements) {
 							if (!HasLegalClasses(entryElement)) entryElement.Remove(); //element.Add(entryElement);
+							//PruneIllegalClasses(entryElement);
 						}
 
 						newXML.AppendLine(element.ToString());
 						newXML.Append("</java>");
 					}
-					FileInfo newXMLFile = new FileInfo(prunedRefsDir.FullName + "/" + configRef.Name);
+					FileInfo newXMLFile = new FileInfo(prunedRefsDir.FullName + "\\" + configRef.Name);
 					System.IO.File.WriteAllText(newXMLFile.FullName, newXML.ToString());
 
 					string datFile = newXMLFile.FullName.Substring(0, newXMLFile.FullName.Length - newXMLFile.Extension.Length) + ".dat";
@@ -396,6 +392,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				}
 				XanLogger.WriteLine("Pruned [" + fName + "] and converted it to binary.");
 				XanLogger.UpdateLog();
+
 			}
 			str.Flush();
 			str.Close();
@@ -407,12 +404,14 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			}
 			XanLogger.WriteLine("Pruning complete! The merged binary file is done too.");
 			XanLogger.UpdateLog();
+
 			return false;
 		}
 
 		private static void JustMakeBinaries(DirectoryInfo prunedRefsDir) {
 			XanLogger.WriteLine("Existing .DAT files found! Only creating merged binaries...");
 			XanLogger.UpdateLog();
+
 
 			FileInfo mergedBinFile = new FileInfo(CurrentExeDir + "MergedConfigReferences.bin");
 			FileStream str = mergedBinFile.OpenWriteNew();
@@ -433,6 +432,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				if (obj == null) {
 					XanLogger.WriteLine("WARNING: Reference for [" + fName + "] returned null!");
 					XanLogger.UpdateLog();
+
 					continue;
 				}
 				Type type = obj.GetType().GetElementType(); // Always an array
@@ -443,6 +443,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				importer.close();
 				XanLogger.WriteLine("Populated [" + fName + "].", true);
 				XanLogger.UpdateLog();
+
 
 				int size = (int)configRef.Length;
 				using (BinaryReader binReader = new BinaryReader(configRef.OpenRead())) {
@@ -466,6 +467,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			}
 			XanLogger.WriteLine("The merged binary file has been created.");
 			XanLogger.UpdateLog();
+
 		}
 
 		/// <summary>
@@ -505,6 +507,41 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				}
 			}
 			return true;
+		}
+
+		/// <summary>
+		/// Filters through a given element in a config XML and removes elements that reference Spiral Knights stuff.
+		/// </summary>
+		/// <param name="rootEntry"></param>
+		/// <returns></returns>
+		private static void PruneIllegalClasses(XElement rootEntry) {
+			XElement[] descendants = rootEntry.Descendants().ToArray();
+			foreach (XElement element in descendants) {
+				if (element.Parent != null) {
+					XAttribute classAttr = element.Attribute("class");
+					if (classAttr != null) {
+						string csClass = classAttr.Value.Replace('$', '+');
+
+						// Shortcut. I want to skip out on searching if at all possible.
+						if (csClass.StartsWith("com.threerings.projectx")) {
+							DoesClassExistCache[csClass] = false;
+							element.Remove();
+						}
+
+						// Another shortcut. If it's a stock java class then just don't check.
+						if (!csClass.StartsWith("java")) {
+							if (!DoesClassExistCache.ContainsKey(csClass)) {
+								// Y U K K I
+								bool exists = OOOLib.GetTypes().Where(type => type.FullName == csClass).Count() > 0;
+								DoesClassExistCache[csClass] = exists;
+								if (!exists) {
+									element.Remove();
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 
 		/// <summary>

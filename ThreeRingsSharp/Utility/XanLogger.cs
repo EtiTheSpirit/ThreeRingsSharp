@@ -4,9 +4,10 @@ using System.Drawing;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using ThreeRingsSharp.Utility.Interface;
 
 namespace ThreeRingsSharp.Utility {
 	public static class XanLogger {
@@ -64,11 +65,26 @@ namespace ThreeRingsSharp.Utility {
 		private static bool WasAtBottom { get; set; }
 
 		/// <summary>
+		/// Intended to be set once in the main method of the program, this is the ID of the program's main thread.<para/>
+		/// This is used to determine if it is safe to write to the GUI console or not.
+		/// </summary>
+		public static int MainThreadId { get; set; } = 0;
+
+		public static bool IsMainThread => Thread.CurrentThread.ManagedThreadId == MainThreadId;
+
+		private static bool IsUpdatingGUI = false;
+		private static ManualResetEventSlim UpdateComplete = new ManualResetEventSlim();
+		
+		/// <summary>
 		/// Manually update the contents of <see cref="BoxReference"/>. Only works if <see cref="UpdateAutomatically"/> is <see langword="false"/>, and of course, if <see cref="BoxReference"/> is not <see langword="null"/>.
 		/// </summary>
 		public static void UpdateLog() {
+			if (IsUpdatingGUI) return;
+			if (!IsMainThread) return;
 			if (BoxReference == null) return;
 			if (!UpdateAutomatically) {
+				IsUpdatingGUI = true;
+				UpdateComplete.Reset();
 				WasAtBottom = BoxReference.IsScrolledToBottom();
 				foreach ((string, bool) logEntry in LogWhileNotUpdating) {
 					BoxReference.AppendText(logEntry.Item1, logEntry.Item2 ? Color.Gray : BoxReference.ForeColor);
@@ -82,6 +98,8 @@ namespace ThreeRingsSharp.Utility {
 
 				LogWhileNotUpdating.Clear();
 				BoxReference.Update();
+				IsUpdatingGUI = false;
+				UpdateComplete.Set();
 			}
 		}
 
@@ -116,10 +134,18 @@ namespace ThreeRingsSharp.Utility {
 
 			string text = obj?.ToString() ?? "null";
 			Log.Append(text);
+			VTConsole.ForegroundColor = color.HasValue ? ConsoleColorVT.FromColor(color.Value) : ConsoleColor.White;
+			VTConsole.Write(text);
+
 			if (BoxReference == null) return;
 
 			Color defColor = isVerbose ? Color.Gray : BoxReference.ForeColor;
 			Color writeColor = color.GetValueOrDefault(defColor);
+
+			bool oldUpdateAutoValue = UpdateAutomatically;
+			if (!IsMainThread) {
+				_UpdateAutomatically = false;
+			}
 
 			if (UpdateAutomatically) {
 				WasAtBottom = BoxReference.IsScrolledToBottom();
@@ -132,7 +158,17 @@ namespace ThreeRingsSharp.Utility {
 
 				BoxReference.Update();
 			} else {
-				LogWhileNotUpdating.Add((text, isVerbose));
+				if (!UpdateComplete.IsSet) {
+					//UpdateComplete.Wait(); // Wait until the latest update is done.
+				} else {
+					LogWhileNotUpdating.Add((text, isVerbose));
+				}
+			}
+
+			if (!IsMainThread) {
+				// Yes, set the private member here.
+				// I don't want it calling UpdateLog if it sets this to true
+				_UpdateAutomatically = oldUpdateAutoValue;
 			}
 		}
 

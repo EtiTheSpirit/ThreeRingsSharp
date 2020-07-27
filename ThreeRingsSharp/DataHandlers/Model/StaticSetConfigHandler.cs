@@ -12,6 +12,7 @@ using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Extensions;
+using com.threerings.config;
 using static com.threerings.opengl.model.config.ModelConfig;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
@@ -50,6 +51,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						subModels.Add(new DataTreeObjectProperty("Mesh " + idx, SilkImage.Triangle));
 						idx++;
 					}
+					
 					subModelRef.AddSimpleProperty("Geometry", subModels.ToArray(), SilkImage.Variant, SilkImage.Value, false);
 					objects.Add(subModelRef);
 					msIdx++;
@@ -82,32 +84,29 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 			if (staticSet.meshes != null) {
 
-				// TODO: Clean this garbage up.
-				
-
-				/*
-				if (useOnlyTargetModel) {
-					// Only one model of the entire set should be used.
-					MeshSet subModel = (MeshSet)staticSet.meshes.get(staticSet.model);
-					VisibleMesh[] meshes = subModel.visible;
-					int idx = 0;
-					foreach (VisibleMesh mesh in meshes) {
-						string meshTitle = "-MeshSets[" + staticSet.model + "].Mesh[" + idx + "]";
-
-						Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
-						meshToModel.Name = depth1Name + meshTitle;
-						if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
-						// meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
-						meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, staticSet));
-						//meshToModel.Textures.SetFrom(new List<string>() { mesh.texture });
-						meshToModel.ActiveTexture = mesh.texture;
-
-						modelCollection.Add(meshToModel);
-						idx++;
+				if (extraData.ContainsKey("DirectArgs")) {
+					Dictionary<string, dynamic> directs = extraData["DirectArgs"];
+					foreach (string key in directs.Keys) {
+						Parameter param = baseModel.getParameter(key);
+						if (param is Parameter.Direct direct) {
+							if (direct.paths.Contains("implementation.model")) {
+								staticSet.model = directs[key];
+								XanLogger.WriteLine("Set model to " + staticSet.model, true);
+								break;
+							}
+						} else if (param is Parameter.Choice choice) {
+							foreach (Parameter.Direct dir in choice.directs) {
+								if (dir.paths.Contains("implementation.model")) {
+									staticSet.model = directs[key];
+									XanLogger.WriteLine("Set model to " + staticSet.model, true);
+									break;
+								}
+							}
+						}
 					}
+				}
 
-				} else {*/
-					// Export them all!
+				// Export them all!
 				object[] keys = staticSet.meshes.keySet().toArray();
 				foreach (object key in keys) {
 					bool isSelectedModel = (string)key == staticSet.model; // Whether or not this specific mesh is the one selected by the set.

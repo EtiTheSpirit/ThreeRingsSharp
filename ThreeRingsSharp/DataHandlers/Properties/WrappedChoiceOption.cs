@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.DataHandlers.Properties {
 
@@ -50,7 +51,9 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 			Name = option.name;
 			ParentChoice = choice;
 			BaseOption = option;
-			Arguments = args ?? option._arguments; // _arguments was exposed via an IL edit that I did. This is not possible under normal OOO behavior.
+			Arguments = args ?? option.GetArguments();
+			// _arguments was exposed via an IL edit that I did. This is not possible under normal OOO behavior.
+			// I aim to undo this soon as a method is better for the sake of uniformity.
 
 			List<WrappedDirect> newDirects = new List<WrappedDirect>();
 			foreach (Parameter.Direct direct in choice.BaseChoice.directs) {

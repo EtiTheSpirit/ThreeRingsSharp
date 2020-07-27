@@ -2,6 +2,7 @@
 using com.threerings.math;
 using com.threerings.opengl.model.config;
 using com.threerings.tudey.data;
+using com.threerings.util;
 using java.io;
 using System;
 using System.Collections.Generic;
@@ -50,7 +51,8 @@ namespace ThreeRingsSharp.DataHandlers {
 			DataInputStream dataInput = new DataInputStream(new FileInputStream(clydeFile.FullName));
 			return clydeFile.Extension.ToLower() == ".dat" ? (Importer)new BinaryImporter(dataInput) : (Importer)new XMLImporter(dataInput);
 			// Cast ^ says it's redundant, but this isn't C# 9.0 so it goes apeshit because it can't cast between BinaryImporter and XMLImporter.
-			// (C# 9.0 added the capibility for ternary operators to have different return types should they share the same base class or use a keyword that allows for it)
+			// (C# 9.0 added the capibility for ternary operators to have different return types should they
+			// share the same base class or use a keyword that allows for it, but I'm not using this.)
 		}
 
 		/// <summary>
@@ -59,14 +61,12 @@ namespace ThreeRingsSharp.DataHandlers {
 		/// </summary>
 		/// <param name="clydeFile">The file to load and decode.</param>
 		/// <param name="allGrabbedModels">A list containing every processed model from the entire hierarchy. This list should be defined by you and then passed in.</param>
-		/// <param name="isBaseFile">If <see langword="true"/>, this will update the main GUI display data for the base loaded model. If the GUI is not defined (e.g. this is being used in a library) this will do nothing.</param>
-		/// <param name="lastNodeParent">Intended for use if <paramref name="isBaseFile"/> is <see langword="false"/>, this is the parent Data Tree element to add this model into (so that the hierarchy can be constructed). This should be a <see cref="TreeNode"/>, a <see cref="TreeView"/>, or a <see cref="DataTreeObject"/>.</param>
-		/// <param name="useFileName">If <see langword="true"/>, the name of the loaded file will be displayed in the tree hierarchy's root node, e.g. model.dat</param>
-		/// <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If it doesn't exist, it will be created.</param>
+		/// <param name="isBaseFile">If <see langword="true"/>, then it means that <paramref name="clydeFile"/> is the literal file the user opened. Otherwise, if it is <see langword="false"/>, it was loaded by a different model (e.g. a CompoundConfig)</param>
+		/// <param name="lastNodeParent">Intended for use if <paramref name="isBaseFile"/> is <see langword="false"/>, this is the parent Data Tree element to add this model into (so that the hierarchy can be constructed). This should be a <see cref="TreeNode"/>, a <see cref="TreeView"/>, or a <see cref="DataTreeObject"/>. This is intended for use in a GUI context, and if TRS is not being used with a GUI, this should be null.</param>
+		/// <param name="useFileName">If <see langword="true"/>, the name of the loaded file will be displayed in the tree hierarchy's root node, e.g. model.dat. This is intended for use in a GUI context, and if TRS is not being used with a GUI, this should be null.</param>
+		/// <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If null, it will be created as an identity transform.</param>
 		/// <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
 		public static void HandleClydeFile(FileInfo clydeFile, List<Model3D> allGrabbedModels, bool isBaseFile = false, dynamic lastNodeParent = null, bool useFileName = false, Transform3D transform = null, Dictionary<string, dynamic> extraData = null) {
-			// TODO: Do NOT update the main GUI if this is a referenced file (e.g. a CompoundConfig wants to load other data, don't change the table view in the top right)
-
 			object obj = null;
 			string modelClass = null;
 			string modelSubclass = null;
@@ -78,13 +78,12 @@ namespace ThreeRingsSharp.DataHandlers {
 			// Since I want to tie up some UI stuff before throwing the error, I'll store it for later.
 			ClydeDataReadException errToThrow = null;
 
-			// Cache models we've already read. This isn't really important for single models, but for loading stuff like scenes, this speeds up load speed incredibly.
+			// Cache models we've already read. 
+			// This isn't really important for single models, but for loading stuff like scenes, this speeds up load speed incredibly.
 			if (!ClydeObjectCache.ContainsKey(clydeFile.FullName)) {
 				XanLogger.WriteLine($"Loading [{clydeFile.FullName}]...", true);
-				// ProgramLog.Update();
 				if (!VersionInfoScraper.IsValidClydeFile(clydeFile)) {
 					XanLogger.WriteLine("Invalid file. Sending error.", true);
-					// if (isBaseFile) AsyncMessageBox.ShowAsync("This file isn't a valid Clyde file! (Reason: Incorrect header)", "Invalid File", MessageBoxButtons.OK, MessageBoxIcon.Error);
 					throw new ClydeDataReadException("This file isn't a valid Clyde file! (Reason: Incorrect header)");
 				}
 				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(clydeFile);
@@ -97,7 +96,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					if (modelClassInfo.Length == 2) modelSubclass = modelClassInfo[1];
 				}
 
-				// Just abort early here.
+				// Just abort early here. We can't laod these.
 				if (modelClass == "ProjectXModelConfig") {
 					XanLogger.WriteLine("User imported a Player Knight model. These are unsupported. Sending warning.", true);
 					if (isBaseFile && UpdateGUIAction != null) {
@@ -107,7 +106,7 @@ namespace ThreeRingsSharp.DataHandlers {
 						rootDataTreeObject.Text = "ProjectXModelConfig";
 						rootDataTreeObject.ImageKey = SilkImage.Articulated;
 					}
-					errToThrow = new ClydeDataReadException("Player Knights do not use the standard ArticulatedConfig type (used for all animated character models) and instead use a unique type called ProjectXModelConfig. Unfortunately, this type cannot be read by the program (I had to use some hacky data skimming to even get this error message to work)!", "Knights are not supported!", MessageBoxIcon.Error);
+					errToThrow = new ClydeDataReadException("Player Knights do not use the standard ArticulatedConfig type (used for all animated character models) and instead use a unique type called ProjectXModelConfig. Unfortunately, this type cannot be read by the program (I had to use some hacky data skimming to even get this error message to work)!\n\nConsider using /character/npc/crew/model.dat instead.", "Knights are not supported!", MessageBoxIcon.Error);
 					goto FINALIZE_NODES;
 				}
 
@@ -127,7 +126,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					throw;
 				}
 			} else {
-				obj = ClydeObjectCache[clydeFile.FullName];
+				obj = ((DeepObject)ClydeObjectCache[clydeFile.FullName]).clone();
 				(string, string, string) cosmeticInfo = ModelInfoCache[clydeFile.FullName];
 				string modelFullClass = cosmeticInfo.Item3;
 				string[] modelClassInfo = JavaClassNameStripper.GetSplitClassName(modelFullClass);
@@ -155,7 +154,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					rootDataTreeObject.Text = "Unknown Base";
 					rootDataTreeObject.ImageKey = SilkImage.Generic;
 				}
-				errToThrow = new ClydeDataReadException("The root type of this data is null!\nThis usually happens if the implementation is from an outside source that uses Clyde (e.g. Spiral Knights itself) has its own custom classes that are not part of Clyde.\n\nAs a result of this issue, the program is unfortunately unable to extract any meaningful information from this file.", "Unsupported Implementation");
+				errToThrow = new ClydeDataReadException("The root type of this data is null!\nThis usually happens if the implementation is from an outside source that uses Clyde (e.g. Spiral Knights itself) which has its own custom classes that are not part of Clyde.\n\nAs a result of this issue, the program is unfortunately unable to extract any meaningful information from this file.", "Unsupported Implementation");
 			}
 
 			if (obj is ModelConfig model) {

@@ -38,7 +38,6 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 				existingTileCtr = prop.Properties[prop.FindSimpleProperty("Tiles")].FirstOrDefault();
 			}
 			DataTreeObject tilesContainer = existingTileCtr ?? new DataTreeObject() {
-				Text = "Tiles",
 				ImageKey = SilkImage.Tile
 			};
 
@@ -68,22 +67,52 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			//tile.getTransform(tile.getConfig(scene.getConfigManager()), trs);
 
 			SetupCosmeticInformation(tile, dataTreeParent);
-			TileConfig[] tileCfgs = (TileConfig[])ConfigReferenceBootstrapper.ConfigReferences["tile"];
-			TileConfig tileCfg = (TileConfig)tileCfgs.GetEntryByName(tile.tile.getName());
+			// TODO: Some config references have SK data that I need. I need to do a hybrid of my shallow implementation on
+			// top of the bootstrapper that loads the actual filtered game data so that I can grab everything.
+			TileConfig[] tileCfgs = ConfigReferenceBootstrapper.ConfigReferences["tile"].OfType<TileConfig>().ToArray();
+			TileConfig tileCfg = tileCfgs.GetEntryByName(tile.tile.getName());
 			if (tileCfg == null) {
 				XanLogger.WriteLine($"Unable to find data for tile [{tile.tile.getName()}]!");
 				return;
 			}
 
-			//tile.GetTransformFromShallow(tileCfg, out Transform3D transform);
-			//FileInfo modelRef = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + tileCfg.ModelPath);
-			//ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, tileCfg.ModelPath, modelCollection, dataTreeParent, globalTransform.compose(transform), extraData: new Dictionary<string, dynamic> { ["TargetModel"] = tileCfg.TargetModel });
+			
+			// First things first: Tiles are offset and in the wrong position. Fix it.
 
-			TileConfig.Original originalImpl = tileCfg.getOriginal(tileCfg.getConfigManager());
+			TileConfig.Original originalImpl;
+			do {
+				if (tileCfg == null) {
+					XanLogger.WriteLine("ALERT: A tile was null!", false, System.Drawing.Color.Red);
+					return;
+				}
+				if (tileCfg.getConfigManager() != null) {
+					originalImpl = tileCfg.getOriginal(tileCfg.getConfigManager());
+					break;
+				} else {
+					if (tileCfg.implementation is TileConfig.Original original) {
+						originalImpl = original;
+						break;
+					} else if (tileCfg.implementation is TileConfig.Derived derived) {
+						tileCfg = tileCfgs.GetEntryByName(derived.tile.getName());
+					} else {
+						originalImpl = null;
+						break;
+					}
+				}
+			} while (true);
+
+			//tile.GetExportTransform(originalImpl, out Transform3D transform);
+			// All transforms are relative to the center of the object. the origin of the actual models is in their lower-back-left bounds.
+			// I need to add a flag to tell the exporter to move the geometry based on bounds center.
 			Transform3D transform = new Transform3D();
 			tile.getTransform(originalImpl, transform);
 			string relativeModelPath = originalImpl.model.getName();
-			ConfigReferenceUtil.HandleConfigReferenceFromDirectPath(sourceFile, relativeModelPath, modelCollection, dataTreeParent, globalTransform.compose(transform));
+			XanLogger.WriteLine("Grabbing tile [" + tile.tile.getName() + "] at " + relativeModelPath, true);
+			// , true, new Dictionary<string, dynamic>() { ["SceneObjectFlag"] = true, ["SceneObjectTransform"] = transform }
+			List<Model3D> acquiredModels = ConfigReferenceUtil.HandleConfigReference(sourceFile, originalImpl.model, modelCollection, dataTreeParent, globalTransform.compose(transform));
+			foreach (Model3D model in acquiredModels) {
+				model.Mesh.SetOffsetToAABBCenter();
+			}
 		}
 		
 	}

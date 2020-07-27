@@ -146,7 +146,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 							return;
 						}
 
-						ParameterizedConfig referencedConfig = (ParameterizedConfig)ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(configRefPath).clone();
+						ParameterizedConfig referencedConfig = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(configRefPath).CloneAs<ParameterizedConfig>();
 
 						ArgumentMap args = latestAsCfg.getArguments();
 
@@ -252,7 +252,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 							latestAsCfg.getArguments().put(parameterName, argValue);
 							return null;
 						}
-						ParameterizedConfig referencedConfig = (ParameterizedConfig)ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(configRefPath).clone();
+						ParameterizedConfig referencedConfig = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(configRefPath).CloneAs<ParameterizedConfig>();
 
 						// So there's our reference. Now we need to get a parameter from it.
 						Parameter referencedParam = referencedConfig.getParameter(parameterName);
@@ -266,7 +266,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 											// Catch case: This isn't actually pointing to a *configuration*, rather a direct object reference.
 											latestAsCfg.getArguments().put(parameterName, argValue);
 										} else {
-											ParameterizedConfig forwardRefConfig = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(reference.getName()) as ParameterizedConfig;
+											ParameterizedConfig forwardRefConfig = reference.ResolveAs<ParameterizedConfig>();
 											// Using as because it might be null.
 											if (forwardRefConfig != null) {
 												foreach (Parameter subRefParam in forwardRefConfig.parameters) {

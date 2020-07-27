@@ -111,9 +111,9 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 		/// <summary>
 		/// When given the name of a specific entry (acquired via <see cref="ConfigReference.getName"/>), this will iterate through ALL configs and try to find it.<para/>
-		/// Warning: This will be slow in general. It will cache what results it gets however.<para/>
+		/// Warning: This will be slow if references were not prepopulated. It will cache what results it gets, however, so that should assist for repeated calls.<para/>
 		/// Returns <see langword="null"/> if the reference could not be found.<para/>
-		/// Note: This will not have any arguments applied and will be populated with default data! You need to make sure you apply the arguments to this.
+		/// Note: This will not have any arguments applied and will be populated with default data! You need to make sure you apply the arguments to this, and most importantly, MAKE SURE YOU CLONE THE RESULT OF THIS. Editing the template object may have unwanted side effects!
 		/// </summary>
 		/// <param name="targetName"></param>
 		/// <returns></returns>
