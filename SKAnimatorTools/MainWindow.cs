@@ -143,6 +143,10 @@ namespace SKAnimatorTools {
 				if (Directory.Exists(newValue)) {
 					ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(newValue);
 				}
+			} else if (configKey == "DefaultLoadDirectory") {
+				OpenModel.InitialDirectory = newValue;
+			} else if (configKey == "LastSaveDirectory") {
+				SaveModel.InitialDirectory = newValue;
 			} else if (configKey == "ScaleBy100") {
 				Model3D.MultiplyScaleByHundred = newValue;
 			} else if (configKey == "VerboseLogging") {
