@@ -48,6 +48,7 @@
 			this.GroupBoxProgramInfo = new System.Windows.Forms.GroupBox();
 			this.ProgramLog = new System.Windows.Forms.RichTextBox();
 			this.BtnConfig = new System.Windows.Forms.Button();
+			this.ProgramTooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.GroupBoxModelInfo.SuspendLayout();
 			this.GroupBoxProperties.SuspendLayout();
 			this.GroupBoxModelTree.SuspendLayout();
@@ -141,7 +142,7 @@
 			this.GroupBoxProperties.Size = new System.Drawing.Size(401, 198);
 			this.GroupBoxProperties.TabIndex = 7;
 			this.GroupBoxProperties.TabStop = false;
-			this.GroupBoxProperties.Text = "Selected Object\'s Properties";
+			this.GroupBoxProperties.Text = "Selected Object\'s Properties [Click Blue Entries To Edit]";
 			// 
 			// SelectedObjectProperties
 			// 
@@ -153,7 +154,7 @@
 			this.SelectedObjectProperties.SelectedImageIndex = 0;
 			this.SelectedObjectProperties.Size = new System.Drawing.Size(395, 179);
 			this.SelectedObjectProperties.TabIndex = 4;
-			this.SelectedObjectProperties.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.SelectedObjectProperties_AfterSelect);
+			this.SelectedObjectProperties.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.SelectedObjectProperties_NodeMouseClick);
 			// 
 			// GroupBoxModelTree
 			// 
@@ -391,6 +392,7 @@
 		//private System.Windows.Forms.RichTextBox ProgramLog;
 		private System.Windows.Forms.Button BtnConfig;
 		private System.Windows.Forms.RichTextBox ProgramLog;
+		private System.Windows.Forms.ToolTip ProgramTooltip;
 	}
 }
 

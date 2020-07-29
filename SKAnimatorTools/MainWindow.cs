@@ -308,6 +308,7 @@ namespace SKAnimatorTools {
 						if (propName.ExtraData.ContainsKey("StaticSetConfig")) {
 							nodeObj.Tag = propName.ExtraData["StaticSetConfig"];
 							nodeObj.ForeColor = Color.Blue;
+							nodeObj.ToolTipText = "Click on this to change the target model.";
 						}
 						nodeObj.Text += ": " + propValues[0].Text;
 						
@@ -469,16 +470,6 @@ namespace SKAnimatorTools {
 			}
 		}
 
-		private void SelectedObjectProperties_AfterSelect(object sender, TreeViewEventArgs e) {
-			if (e.Node.Tag is StaticSetConfig staticSetConfig) {
-				ChangeTargetPrompt prompt = new ChangeTargetPrompt();
-				prompt.SetPossibleOptionsFrom(staticSetConfig);
-				prompt.Node = e.Node;
-				prompt.FormClosed += OnStaticSetSelectionClosed;
-				prompt.Show();
-			}
-		}
-
 		private void OnStaticSetSelectionClosed(object sender, FormClosedEventArgs e) {
 			if (sender is ChangeTargetPrompt prompt) {
 				string start = prompt.Node.Text;
@@ -487,6 +478,16 @@ namespace SKAnimatorTools {
 				}
 				prompt.Node.Text = start + ": " + prompt.Model.model;
 				prompt.FormClosed -= OnStaticSetSelectionClosed;
+			}
+		}
+
+		private void SelectedObjectProperties_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e) {
+			if (e.Node.Tag is StaticSetConfig staticSetConfig) {
+				ChangeTargetPrompt prompt = new ChangeTargetPrompt();
+				prompt.SetPossibleOptionsFrom(staticSetConfig);
+				prompt.Node = e.Node;
+				prompt.FormClosed += OnStaticSetSelectionClosed;
+				prompt.Show();
 			}
 		}
 	}
