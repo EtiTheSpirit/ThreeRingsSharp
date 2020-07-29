@@ -36,7 +36,12 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <exception cref="ArgumentNullException">If args is null</exception>
 		public static void SetArguments(this ConfigReference cfgRef, ArgumentMap newArgMap) {
 			if (newArgMap == null) throw new ArgumentNullException("newArgMap");
-			cfgRef.GetType().GetField("_arguments").SetValue(cfgRef, newArgMap);
+			ArgumentMap currentArgs = cfgRef.getArguments();
+			currentArgs.clear();
+			object[] keys = newArgMap.keySet().toArray();
+			foreach (object key in keys) {
+				currentArgs.put(key, newArgMap.get(key));
+			}
 		}
 
 		/// <summary>

@@ -954,6 +954,11 @@
             The method in which this is displayed is via creating the given <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/>s in the Properties menu hierarchy, and then adding a child with no icon containing the associated <see langword="string"/>.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.ExtraData">
+            <summary>
+            Additional data that might be stored in this property.
+            </summary>
+        </member>
         <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObject.ClearAllChildren">
             <summary>
             Iterates through all children of this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> and sets their <see cref="P:ThreeRingsSharp.Utility.Interface.DataTreeObject.Parent"/> property to <see langword="null"/>.<para/>
@@ -1120,6 +1125,11 @@
             Converts this <see cref="T:ThreeRingsSharp.Utility.Interface.DataTreeObject"/> into a <see cref="T:System.Windows.Forms.TreeNode"/>.
             </summary>
             <returns></returns>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty.ExtraData">
+            <summary>
+            Additional data that might be stored in this property.
+            </summary>
         </member>
         <member name="M:ThreeRingsSharp.Utility.Interface.DataTreeObjectProperty.#ctor(System.String,ThreeRingsSharp.Utility.Interface.SilkImage,System.Boolean)">
             <summary>
@@ -1855,28 +1865,12 @@
             <param name="args"></param>
             <param name="parentChoiceName">If non-null, this will traverse into a parameter with this name (which is presumably a Choice) and access the choice's directs to apply the args.</param>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.PlaceableEntryExtensions.GetExportTransform(com.threerings.tudey.data.TudeySceneModel.PlaceableEntry,com.threerings.tudey.config.PlaceableConfig.Original,com.threerings.math.Transform3D@)">
-            <summary>
-            Returns a <see cref="T:com.threerings.math.Transform3D"/> designed for export from TR#.
-            </summary>
-            <param name="entry"></param>
-            <param name="originalImpl"></param>
-            <param name="result"></param>
-        </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetTransformFromShallow(com.threerings.tudey.data.TudeySceneModel.TileEntry,ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig,com.threerings.math.Transform3D@)">
             <summary>
             Populates <paramref name="result"/> with the location data from the given <see cref="T:com.threerings.tudey.data.TudeySceneModel.TileEntry"/> and <see cref="T:ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig"/> (instead of by trying to reference the original implementation)
             </summary>
             <param name="entry"></param>
             <param name="shallowTile"></param>
-            <param name="result"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetExportTransform(com.threerings.tudey.data.TudeySceneModel.TileEntry,com.threerings.tudey.config.TileConfig.Original,com.threerings.math.Transform3D@)">
-            <summary>
-            Returns a <see cref="T:com.threerings.math.Transform3D"/> designed for export from TR#.
-            </summary>
-            <param name="entry"></param>
-            <param name="originalImpl">The original implementation of this tile. This can be null, but if it is, the width and height will be 1.</param>
             <param name="result"></param>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.TileEntryExtensions.GetWidth(com.threerings.tudey.data.TudeySceneModel.TileEntry,ThreeRingsSharp.DataHandlers.Scene.Data.ShallowTileConfig)">

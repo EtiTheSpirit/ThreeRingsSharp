@@ -305,7 +305,12 @@ namespace SKAnimatorTools {
 					if (!string.IsNullOrEmpty(propValues[0].Text)) {
 						// Add the colon and value only if there's actually a value.
 						// To create nested containers, it's easier to just create another data tree object without text, populate that new object with the sub-properties, and then add the new object as a property to something else.
+						if (propName.ExtraData.ContainsKey("StaticSetConfig")) {
+							nodeObj.Tag = propName.ExtraData["StaticSetConfig"];
+							nodeObj.ForeColor = Color.Blue;
+						}
 						nodeObj.Text += ": " + propValues[0].Text;
+						
 					}
 					if (!propValues[0].CreatedFromProperty) {
 						// TreeNode propZeroNode = propValues[0].ToTreeNode();
@@ -461,6 +466,27 @@ namespace SKAnimatorTools {
 						}
 					}
 				}
+			}
+		}
+
+		private void SelectedObjectProperties_AfterSelect(object sender, TreeViewEventArgs e) {
+			if (e.Node.Tag is StaticSetConfig staticSetConfig) {
+				ChangeTargetPrompt prompt = new ChangeTargetPrompt();
+				prompt.SetPossibleOptionsFrom(staticSetConfig);
+				prompt.Node = e.Node;
+				prompt.FormClosed += OnStaticSetSelectionClosed;
+				prompt.Show();
+			}
+		}
+
+		private void OnStaticSetSelectionClosed(object sender, FormClosedEventArgs e) {
+			if (sender is ChangeTargetPrompt prompt) {
+				string start = prompt.Node.Text;
+				if (start.Contains(":")) {
+					start = start.Substring(0, start.IndexOf(":"));
+				}
+				prompt.Node.Text = start + ": " + prompt.Model.model;
+				prompt.FormClosed -= OnStaticSetSelectionClosed;
 			}
 		}
 	}

@@ -44,30 +44,7 @@ namespace ThreeRingsSharp.Utility.Interface {
 			return NodeBindings[node];
 		}
 
-		/*
-		public class DataTreeObjectSelectionChanged {
-			/// <summary>
-			/// A reference to the equivalent <see cref="DataTreeObject"/> that was clicked.
-			/// </summary>
-			public DataTreeObject Data { get; }
 
-			/// <summary>
-			/// A reference to the <see cref="TreeNode"/> that was clicked.
-			/// </summary>
-			public TreeNode Node { get; }
-
-			/// <summary>
-			/// <see langword="true"/> if the object was selected, <see langword="false"/> if it was deselected.
-			/// </summary>
-			public bool WasSelected { get; }
-
-			internal DataTreeObjectSelectionChanged(DataTreeObject data, TreeNode node, bool wasSelected) {
-				Data = data;
-				Node = node;
-				WasSelected = wasSelected;
-			}
-		}
-		*/
 	}
 
 
@@ -146,6 +123,11 @@ namespace ThreeRingsSharp.Utility.Interface {
 		/// The method in which this is displayed is via creating the given <see cref="DataTreeObject"/>s in the Properties menu hierarchy, and then adding a child with no icon containing the associated <see langword="string"/>.
 		/// </summary>
 		public Dictionary<DataTreeObjectProperty, List<DataTreeObject>> Properties { get; } = new Dictionary<DataTreeObjectProperty, List<DataTreeObject>>();
+
+		/// <summary>
+		/// Additional data that might be stored in this property.
+		/// </summary>
+		public Dictionary<string, object> ExtraData { get; internal set; } = new Dictionary<string, object>();
 
 		/// <summary>
 		/// Iterates through all children of this <see cref="DataTreeObject"/> and sets their <see cref="Parent"/> property to <see langword="null"/>.<para/>
@@ -380,7 +362,8 @@ namespace ThreeRingsSharp.Utility.Interface {
 		public static explicit operator DataTreeObjectProperty(DataTreeObject obj) {
 			if (obj is null) return null;
 			return new DataTreeObjectProperty(obj.Text, obj.ImageKey, obj.DisplaySingleChildInline) {
-				CreatedFromFullObject = !obj.CreatedFromProperty
+				CreatedFromFullObject = !obj.CreatedFromProperty,
+				ExtraData = obj.ExtraData
 			};
 		}
 	}
@@ -422,6 +405,11 @@ namespace ThreeRingsSharp.Utility.Interface {
 		}
 
 		/// <summary>
+		/// Additional data that might be stored in this property.
+		/// </summary>
+		public Dictionary<string, object> ExtraData { get; internal set; } = new Dictionary<string, object>();
+
+		/// <summary>
 		/// Construct a new property with empty string and the <see cref="SilkImage.Value"/> image.
 		/// </summary>
 		/// <param name="text">The text to display in this property.</param>
@@ -439,7 +427,8 @@ namespace ThreeRingsSharp.Utility.Interface {
 				Text = prop.Text,
 				ImageKey = prop.ImageKey,
 				DisplaySingleChildInline = prop.DisplaySingleChildInline,
-				CreatedFromProperty = !prop.CreatedFromFullObject
+				CreatedFromProperty = !prop.CreatedFromFullObject,
+				ExtraData = prop.ExtraData
 			};
 		}
 	}

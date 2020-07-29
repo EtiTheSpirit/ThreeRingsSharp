@@ -30,7 +30,9 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			// In SK Animator Tools V1 I was an idiot and thought the "model" property was the only key. This is false.
 			// Instead, model represents the *default selection*. There may be more models. Iterate through the keys like damn lol.
 
-			dataTreeParent.AddSimpleProperty("Target Model", model.model);
+			
+			DataTreeObjectProperty targetProp = dataTreeParent.AddSimpleProperty("Target Set Model", model.model);
+			targetProp.ExtraData["StaticSetConfig"] = model;
 			// if (useOnlyTargetModel) dataTreeParent.AddSimpleProperty("Special Directive", "Only export target model", SilkImage.Scripted);
 
 			List<object> objects = new List<object>();
@@ -84,7 +86,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 			if (staticSet.meshes != null) {
 
-				if (extraData.ContainsKey("DirectArgs")) {
+				if (extraData != null && extraData.ContainsKey("DirectArgs")) {
 					Dictionary<string, dynamic> directs = extraData["DirectArgs"];
 					foreach (string key in directs.Keys) {
 						Parameter param = baseModel.getParameter(key);
@@ -116,11 +118,14 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					foreach (VisibleMesh mesh in meshes) {
 						string meshTitle = "-MeshSets[" + key.ToString() + "].Mesh[" + idx + "]";
 
+						
+
 						Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
 						meshToModel.Name = depth1Name + meshTitle;
-						if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
-						meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
-						//meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, staticSet));
+						if (globalTransform != null) meshToModel.Transform = globalTransform.compose(meshToModel.Transform);
+						//meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
+						
+						
 						meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
 						meshToModel.ActiveTexture = mesh.texture;
 						if (!isSelectedModel) {

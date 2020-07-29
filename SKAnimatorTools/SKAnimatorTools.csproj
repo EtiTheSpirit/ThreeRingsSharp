@@ -152,6 +152,12 @@
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration\ConfigurationInterface.cs" />
+    <Compile Include="ChangeTargetPrompt.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ChangeTargetPrompt.Designer.cs">
+      <DependentUpon>ChangeTargetPrompt.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -160,6 +166,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ChangeTargetPrompt.resx">
+      <DependentUpon>ChangeTargetPrompt.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ConditionalConfigOptions.resx">
       <DependentUpon>ConditionalConfigOptions.cs</DependentUpon>
     </EmbeddedResource>

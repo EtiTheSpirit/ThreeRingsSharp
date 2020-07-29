@@ -153,6 +153,7 @@
 			this.SelectedObjectProperties.SelectedImageIndex = 0;
 			this.SelectedObjectProperties.Size = new System.Drawing.Size(395, 179);
 			this.SelectedObjectProperties.TabIndex = 4;
+			this.SelectedObjectProperties.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.SelectedObjectProperties_AfterSelect);
 			// 
 			// GroupBoxModelTree
 			// 
