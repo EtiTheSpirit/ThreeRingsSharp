@@ -8,7 +8,11 @@ assignees: XanTheDragon
 ---
 
 ### Requirement: Is it already planned? (Erase after you read this)
-Check out Initial Program Design at https://github.com/XanTheDragon/ThreeRingsSharp/projects/1?fullscreen=true -- Is your feature listed here? If it is, please do not submit this feature request.
+Check ...
+ - Initial Program Design at https://github.com/XanTheDragon/ThreeRingsSharp/projects/1?fullscreen=true
+- Next Update Plans at https://github.com/XanTheDragon/ThreeRingsSharp/projects/3?fullscreen=true
+
+Is your feature listed here? If it is, please do not submit this feature request.
 
 
 ### What is the feature?
