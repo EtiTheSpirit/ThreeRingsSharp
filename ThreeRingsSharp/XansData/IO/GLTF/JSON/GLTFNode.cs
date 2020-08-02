@@ -62,7 +62,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// <summary>
 		/// The child nodes of this node.
 		/// </summary>
-		[JsonProperty("children")] public int[] Children = new int[0];
+		[JsonProperty("children")] public List<int> Children = new List<int>();
 
 		/// <summary>
 		/// Set this to true to export <see cref="Matrix"/>, and false to export <see cref="Translation"/>, <see cref="Rotation"/>, and <see cref="Scale"/>.
@@ -131,7 +131,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		// Format: ShouldSerialize...
 		// Replace ... with the name of the field.
 
-		public bool ShouldSerializeChildren() => Children.Length > 0;
+		public bool ShouldSerializeChildren() => Children.Count > 0;
 		public bool ShouldSerializeName() => Name != null;
 		public bool ShouldSerializeMesh() => Mesh >= 0;
 		public bool ShouldSerializeSkin() => Skin >= 0;

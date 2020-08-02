@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java class="com.threerings.export.XMLImporter" version="1.0">
+<object class="[Lcom.threerings.opengl.compositor.config.RenderQueueConfig;">
+  <entry>
+    <name>Blurred</name>
+    <priority>-75</priority>
+  </entry>
+  <entry>
+    <name>Opaque</name>
+    <sortMode>BY_STATE</sortMode>
+  </entry>
+  <entry>
+    <name>Overlay</name>
+    <priority>200</priority>
+    <sortMode>NONE</sortMode>
+    <renderMode class="com.threerings.opengl.compositor.config.RenderQueueConfig$Ortho">
+      <onormal>0.0, 0.0, 1.0</onormal>
+    </renderMode>
+  </entry>
+  <entry>
+    <name>Skybox</name>
+    <priority>-100</priority>
+    <sortMode>NONE</sortMode>
+    <renderMode class="com.threerings.opengl.compositor.config.RenderQueueConfig$Skybox">
+      <fovScale>1.25</fovScale>
+      <onormal>0.0, 0.0, 1.0</onormal>
+    </renderMode>
+  </entry>
+  <entry>
+    <name>Skybox (Fov Standard)</name>
+    <priority>-90</priority>
+    <sortMode>NONE</sortMode>
+    <renderMode class="com.threerings.opengl.compositor.config.RenderQueueConfig$Skybox">
+      <onormal>0.0, 0.0, 1.0</onormal>
+    </renderMode>
+  </entry>
+  <entry>
+    <name>Transparent</name>
+    <priority>100</priority>
+  </entry>
+</object>
+</java>

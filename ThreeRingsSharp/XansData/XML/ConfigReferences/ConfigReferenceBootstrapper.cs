@@ -73,6 +73,11 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		public static Action OnConfigsPopulatedAction { get; set; } = null;
 
 		/// <summary>
+		/// An <see cref="Action"/> to run when something goes wrong while configs are loading.
+		/// </summary>
+		public static Action<System.Exception> ConfigsErroredAction { get; set; } = null;
+
+		/// <summary>
 		/// A reference to the GUI thread's <see cref="SynchronizationContext"/>.
 		/// </summary>
 		public static SynchronizationContext UISyncContext { get; set; } = null;
@@ -94,64 +99,70 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		/// Initializes all config references together.
 		/// </summary>
 		private static void PopulateConfigRefs() {
-			if (HasPopulatedConfigs) return;
-			XanLogger.WriteLine("Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!", XanLogger.DEBUG);
-			FileInfo mergedBinFile = new FileInfo(CurrentExeDir + "MergedConfigReferences.bin");
+			try {
+				if (HasPopulatedConfigs) return;
+				XanLogger.WriteLine("Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!", XanLogger.DEBUG);
+				FileInfo mergedBinFile = new FileInfo(CurrentExeDir + "MergedConfigReferences.bin");
 
-			if (!mergedBinFile.Exists) {
-				XanLogger.WriteLine("Special merged binary file doesn't exist! Manually iterating through ConfigRefs...", XanLogger.DEBUG);
-				XanLogger.UpdateLog();
-				ReadFromRawConfigRefs();
-				return;
-			}
+				if (!mergedBinFile.Exists) {
+					XanLogger.WriteLine("Special merged binary file doesn't exist! Manually iterating through ConfigRefs...", XanLogger.DEBUG);
+					XanLogger.UpdateLog();
+					ReadFromRawConfigRefs();
+					return;
+				}
 
-			// I need to split these merged binary files into their individual dat components.
-			// Thankfully, OOO uses Guava which comes boxed with a way of doing this, AND it's already in the Java stream format. Woohoo!
-			using (BinaryReader reader = new BinaryReader(mergedBinFile.OpenRead())) {
-				if (reader.ReadInt32() == MERGED_FILE_VERSION) {
-					int numFiles = reader.ReadInt32();
-					for (int index = 0; index < numFiles; index++) {
-						int size = reader.ReadInt32();
-						int nameLength = reader.ReadByte();
-						string name = Encoding.ASCII.GetString(reader.ReadBytes(nameLength));
-						int typeLength = reader.ReadByte();
-						reader.ReadBytes(typeLength); // typeName
-						byte[] dat = reader.ReadBytes(size);
+				// I need to split these merged binary files into their individual dat components.
+				// Thankfully, OOO uses Guava which comes boxed with a way of doing this, AND it's already in the Java stream format. Woohoo!
+				using (BinaryReader reader = new BinaryReader(mergedBinFile.OpenRead())) {
+					if (reader.ReadInt32() == MERGED_FILE_VERSION) {
+						int numFiles = reader.ReadInt32();
+						for (int index = 0; index < numFiles; index++) {
+							int size = reader.ReadInt32();
+							int nameLength = reader.ReadByte();
+							string name = Encoding.ASCII.GetString(reader.ReadBytes(nameLength));
+							int typeLength = reader.ReadByte();
+							reader.ReadBytes(typeLength); // typeName
+							byte[] dat = reader.ReadBytes(size);
 
-						BinaryImporter importer = new BinaryImporter(ByteSource.wrap(dat).openStream());
-						object obj = importer.readObject();
-						if (obj == null) {
-							XanLogger.WriteLine("WARNING: Reference for [" + name + "] returned null!");
+							BinaryImporter importer = new BinaryImporter(ByteSource.wrap(dat).openStream());
+							object obj = importer.readObject();
+							if (obj == null) {
+								XanLogger.WriteLine("WARNING: Reference for [" + name + "] returned null!");
+								XanLogger.UpdateLog();
+								continue;
+							}
+							Type type = obj.GetType().GetElementType(); // Always an array
+
+							Array objArr = obj as Array;
+							ManagedConfig[] cfgs = objArr.OfType<ManagedConfig>().ToArray();
+							_ConfigReferences.Put(name, (cfgs, type));
+
+							foreach (ManagedConfig cfgObj in cfgs) {
+								_ConfigReferences.ConfigEntryToContainerName[cfgObj.getName()] = name;
+							}
+
+							importer.close();
+							XanLogger.WriteLine("Populated [" + name + "].", XanLogger.DEBUG);
 							XanLogger.UpdateLog();
-							continue;
+
 						}
-						Type type = obj.GetType().GetElementType(); // Always an array
-
-						Array objArr = obj as Array;
-						ManagedConfig[] cfgs = objArr.OfType<ManagedConfig>().ToArray();
-						_ConfigReferences.Put(name, (cfgs, type));
-
-						foreach (ManagedConfig cfgObj in cfgs) {
-							_ConfigReferences.ConfigEntryToContainerName[cfgObj.getName()] = name;
-						}
-
-						importer.close();
-						XanLogger.WriteLine("Populated [" + name + "].", XanLogger.DEBUG);
+					} else {
+						XanLogger.WriteLine("Special merged binary file is out of date! Manually iterating through ConfigRefs...", XanLogger.DEBUG);
 						XanLogger.UpdateLog();
 
+						ReadFromRawConfigRefs();
 					}
-				} else {
-					XanLogger.WriteLine("Special merged binary file is out of date! Manually iterating through ConfigRefs...", XanLogger.DEBUG);
-					XanLogger.UpdateLog();
-
-					ReadFromRawConfigRefs();
 				}
+
+				XanLogger.WriteLine("Config data has been populated.");
+				XanLogger.UpdateLog();
+
+				HasPopulatedConfigs = true;
+			} catch (System.Exception error) {
+				UISyncContext.Send(callback => {
+					ConfigsErroredAction?.Invoke(error);
+				}, null);
 			}
-
-			XanLogger.WriteLine("Config data has been populated.");
-			XanLogger.UpdateLog();
-
-			HasPopulatedConfigs = true;
 		}
 
 		/// <summary>
@@ -266,7 +277,9 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			DirectoryInfo configRefsDir = new DirectoryInfo(CurrentExeDir + "ConfigRefs/");
 			if (!configRefsDir.Exists) {
 				XanLogger.UpdateAutomatically = false; // Since this throw will prevent it from finishing.
-				throw new DirectoryNotFoundException("The ConfigRefs folder is missing! This is a relatively complex issue. You need to install DatDec (go to https://github.com/lucas-allegri/datdec/releases), decompile ALL of the files in the Spiral Knights configs directory, and then copy only the XML files from that directory (DatDec will create the XML files) into a new folder here with the EXE. Create a new folder in the same one as this EXE file named \"ConfigRefs\", and put all of the XML files inside. After you do that, relaunch the program and try again.");
+				throw new DirectoryNotFoundException("The Merged Config References data container *and* ConfigRefs folder are missing! Unfortunately, this is a relatively complex issue. You have two methods to resolve this issue:\n" +
+					"#1: Go to the program's repository and download MergedConfigReferences.bin\n\n" +
+					"#2: Install DatDec (go to https://github.com/lucas-allegri/datdec/releases), decompile ALL of the files in the Spiral Knights configs directory, and then copy only the XML files from that directory (DatDec will create the XML files) into a new folder here with the EXE. Create a new folder in the same one as this EXE file named \"ConfigRefs\", and put all of the XML files inside. After you do that, relaunch the program and try again.");
 			}
 			DirectoryInfo prunedRefsDir = new DirectoryInfo(configRefsDir.FullName + "/BinaryConfigs");
 

@@ -27,7 +27,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
-		/// Returns the default option of this choice.
+		/// Returns the default option of this choice. Will return null if it couldn't be found for whatever reason.
 		/// </summary>
 		/// <param name="choice">The choice to get the default option from.</param>
 		/// <returns></returns>

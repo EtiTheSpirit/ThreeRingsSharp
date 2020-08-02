@@ -1634,7 +1634,7 @@
         </member>
         <member name="F:ThreeRingsSharp.Utility.XanLogger.TRACE">
             <summary>
-            Indicates a trace log message, which is vastly more frequent and used to relay even minuscule details.
+            Indicates a trace log message, which is vastly more frequent and used to relay very minuscule details.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.Utility.XanLogger.LogFileStream">
@@ -1756,11 +1756,6 @@
             A reference to <see cref="P:ThreeRingsSharp.XansData.Armature.BaseNode"/>.transform, which is the main transformation of this <see cref="T:ThreeRingsSharp.XansData.Armature"/>.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.XansData.Armature.MultipliedTransform">
-            <summary>
-            The transformation of this <see cref="T:ThreeRingsSharp.XansData.Armature"/> calculated via <c>Transform.compose(InverseReferenceTransform);</c>
-            </summary>
-        </member>
         <member name="P:ThreeRingsSharp.XansData.Armature.Index">
             <summary>
             The index of this bone in the parent model's bone name list.
@@ -1877,7 +1872,7 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ChoiceExtensions.GetDefaultOption(com.threerings.config.Parameter.Choice)">
             <summary>
-            Returns the default option of this choice.
+            Returns the default option of this choice. Will return null if it couldn't be found for whatever reason.
             </summary>
             <param name="choice">The choice to get the default option from.</param>
             <returns></returns>
@@ -3444,9 +3439,9 @@
             The texture that this model uses. This is by filename, not full path.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.XansData.Model3D.Attachments">
+        <member name="P:ThreeRingsSharp.XansData.Model3D.AttachmentNode">
             <summary>
-            The attached models on this <see cref="T:ThreeRingsSharp.XansData.Model3D"/>.
+            The <see cref="T:ThreeRingsSharp.XansData.Armature"/> that this <see cref="T:ThreeRingsSharp.XansData.Model3D"/> is attached to.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.ExtraData">

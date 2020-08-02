@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java class="com.threerings.export.XMLImporter" version="1.0">
+<object class="[Lcom.threerings.opengl.gui.config.CursorConfig;">
+  <entry>
+    <name>Default</name>
+    <image>ui/cursor/default.png</image>
+  </entry>
+  <entry>
+    <name>Hand</name>
+    <image>ui/cursor/hand.png</image>
+    <hotSpotX>5</hotSpotX>
+  </entry>
+  <entry>
+    <name>Text</name>
+    <image>ui/cursor/text.png</image>
+    <hotSpotX>4</hotSpotX>
+    <hotSpotY>11</hotSpotY>
+  </entry>
+</object>
+</java>

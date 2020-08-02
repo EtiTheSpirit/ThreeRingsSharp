@@ -37,6 +37,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 			MeshSet meshes = model.skin;
 			VisibleMesh[] renderedMeshes = meshes.visible;
+			Dictionary<string, Armature> allInstantiatedArmatures = new Dictionary<string, Armature>();
 
 			int idx = 0;
 			string depth1Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile);
@@ -53,6 +54,9 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				if (meshToModel.Mesh.HasBoneData) {
 					XanLogger.WriteLine("Model has bone data, setting that up.", XanLogger.TRACE);
 					meshToModel.Mesh.SetBones(model.root);
+					foreach (KeyValuePair<string, Armature> boneNamesToBones in meshToModel.Mesh.AllBones) {
+						allInstantiatedArmatures[boneNamesToBones.Key] = boneNamesToBones.Value;
+					}
 				}
 
 				/*
@@ -65,10 +69,17 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				idx++;
 			}
 
-			//foreach (Attachment attachment in model.attachments) {
-				// TODO: Make attachments move to where they're supposed to.
-				// ConfigReferenceUtil.HandleConfigReference(sourceFile, attachment.model, modelCollection, dataTreeParent, globalTransform);
-			//}
+			foreach (Attachment attachment in model.attachments) {
+				List<Model3D> attachmentModels = ConfigReferenceUtil.HandleConfigReference(sourceFile, attachment.model, modelCollection, dataTreeParent, globalTransform);
+				if (attachmentModels == null) continue; // A lot of attachments have null models and I'm not sure why.
+				foreach (Model3D referencedModel in attachmentModels) {
+					if (allInstantiatedArmatures.ContainsKey(attachment.node ?? string.Empty)) {
+						referencedModel.AttachmentNode = allInstantiatedArmatures[attachment.node];
+					} else {
+						XanLogger.WriteLine("Attachment wanted to attach to node [" + attachment.node + "] but this node does not exist!");
+					}
+				}
+			}
 
 			// RecursivelyIterateNodesForMeshes(baseModel, model, sourceFile, model.root, modelCollection, globalTransform, fullDepthName);
 		}

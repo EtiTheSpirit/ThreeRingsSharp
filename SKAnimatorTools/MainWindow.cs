@@ -55,6 +55,10 @@ namespace SKAnimatorTools {
 				LabelType.Text = type ?? LabelType.Text;
 				Update(); // Update all of the display data.
 			};
+			ConfigReferenceBootstrapper.ConfigsErroredAction = error => {
+				MessageBox.Show(error.Message + "\n\nThe program cannot continue when this error occurs and must exit, as this data is 100% required for it to function properly.", "Configuration Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				Environment.Exit(1);
+			};
 			AsyncMessageBox.IsInGUIContext = true;
 
 			bool isFreshLoad = ConfigurationInterface.GetConfigurationValue("IsFirstTimeOpening", true, true);
@@ -230,12 +234,14 @@ namespace SKAnimatorTools {
 					isOK = false;
 				} else {
 					XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", color: Color.IndianRed);
+					XanLogger.LogException(err);
 					AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
 					isOK = false;
 				}
 				throw;
 			} catch (System.Exception err) {
 				XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", color: Color.IndianRed);
+				XanLogger.LogException(err);
 				AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
 				isOK = false;
 				throw;

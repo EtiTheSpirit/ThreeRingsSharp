@@ -1,0 +1,673 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java class="com.threerings.export.XMLImporter" version="1.0">
+<object class="[Lcom.threerings.opengl.renderer.config.TextureConfig;">
+  <entry>
+    <name>2D (Target)/RGBA</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Identity</name>
+        <paths>implementation.identity</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2DTarget">
+      <format>RGBA</format>
+      <minFilter>LINEAR</minFilter>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/Blank/Depth</name>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <format>DEPTH_COMPONENT</format>
+      <minFilter>LINEAR</minFilter>
+      <wrapS>CLAMP_TO_BORDER</wrapS>
+      <wrapT>CLAMP_TO_BORDER</wrapT>
+      <borderColor>1.0, 1.0, 1.0, 0.0</borderColor>
+      <compareMode>COMPARE_R_TO_TEXTURE</compareMode>
+      <compareFunc>GEQUAL</compareFunc>
+      <depthMode>INTENSITY</depthMode>
+      <contents class="com.threerings.opengl.renderer.config.TextureConfig$Original2D$Blank">
+        <width>512</width>
+        <height>512</height>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/Blank/RGBA</name>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <format>RGBA</format>
+      <minFilter>LINEAR</minFilter>
+      <wrapS>CLAMP_TO_BORDER</wrapS>
+      <wrapT>CLAMP_TO_BORDER</wrapT>
+      <contents class="com.threerings.opengl.renderer.config.TextureConfig$Original2D$Blank">
+        <width>512</width>
+        <height>512</height>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Alpha/Default</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Mode</name>
+        <paths>implementation.depth_mode</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <format>ALPHA</format>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Alpha/Default (Filtering, Wrapping)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap S</name>
+        <paths>implementation.wrap_s</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap T</name>
+        <paths>implementation.wrap_t</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Minify</name>
+        <paths>implementation.min_filter</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Magnify</name>
+        <paths>implementation.mag_filter</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Depth Mode</name>
+        <paths>implementation.depth_mode</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <format>ALPHA</format>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Blend</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Blend Color</name>
+        <paths>implementation.border_color</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <border>true</border>
+      <borderColor>0.0, 0.0, 0.0, 0.5</borderColor>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Colorized (Multiple)/Default</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorizations</name>
+        <paths>implementation.contents.colorizations</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <contents class="com.threerings.opengl.renderer.config.TextureConfig$Original2D$ImageFile">
+        <colorizations>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>513</colorization>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>769</colorization>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>1025</colorization>
+          </entry>
+        </colorizations>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Colorized (Multiple)/Default (Filtering, Wrapping)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap S</name>
+        <paths>implementation.wrap_s</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap T</name>
+        <paths>implementation.wrap_t</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Minify</name>
+        <paths>implementation.min_filter</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Magnify</name>
+        <paths>implementation.mag_filter</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorizations</name>
+        <paths>implementation.contents.colorizations</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <contents class="com.threerings.opengl.renderer.config.TextureConfig$Original2D$ImageFile">
+        <colorizations>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>513</colorization>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>769</colorization>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>1025</colorization>
+          </entry>
+        </colorizations>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Colorized (Multiple)/Default (NoMipmap)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorizations</name>
+        <paths>implementation.contents.colorizations</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <minFilter>LINEAR</minFilter>
+      <contents class="com.threerings.opengl.renderer.config.TextureConfig$Original2D$ImageFile">
+        <colorizations>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>513</colorization>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>769</colorization>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>1025</colorization>
+          </entry>
+        </colorizations>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Colorized (Multiple)/Default (Wrapping)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap S</name>
+        <paths>implementation.wrap_s</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap T</name>
+        <paths>implementation.wrap_t</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorizations</name>
+        <paths>implementation.contents.colorizations</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <contents class="com.threerings.opengl.renderer.config.TextureConfig$Original2D$ImageFile">
+        <colorizations>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>513</colorization>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>769</colorization>
+          </entry>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>1025</colorization>
+          </entry>
+        </colorizations>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Colorized (Single)/Default</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorization</name>
+        <paths>implementation.contents.colorizations[0].colorization</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <contents class="com.threerings.opengl.renderer.config.TextureConfig$Original2D$ImageFile">
+        <colorizations>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>257</colorization>
+          </entry>
+        </colorizations>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Colorized (Single)/Default (Filtering, Wrapping)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap S</name>
+        <paths>implementation.wrap_s</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap T</name>
+        <paths>implementation.wrap_t</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Minify</name>
+        <paths>implementation.min_filter</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Magnify</name>
+        <paths>implementation.mag_filter</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorization</name>
+        <paths>implementation.contents.colorizations[0].colorization</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <minFilter>NEAREST</minFilter>
+      <contents class="com.threerings.opengl.renderer.config.TextureConfig$Original2D$ImageFile">
+        <colorizations>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>257</colorization>
+          </entry>
+        </colorizations>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Colorized (Single)/Default (Wrapping)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorization</name>
+        <paths>implementation.contents.colorizations[0].colorization</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap S</name>
+        <paths>implementation.wrap_s</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap T</name>
+        <paths>implementation.wrap_t</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <minFilter>NEAREST</minFilter>
+      <contents class="com.threerings.opengl.renderer.config.TextureConfig$Original2D$ImageFile">
+        <colorizations>
+          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+            <colorization>257</colorization>
+          </entry>
+        </colorizations>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Default</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+    </parameters>
+  </entry>
+  <entry>
+    <name>2D/File/Default (Filtering)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Minify</name>
+        <paths>implementation.min_filter</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Magnify</name>
+        <paths>implementation.mag_filter</paths>
+      </entry>
+    </parameters>
+  </entry>
+  <entry>
+    <name>2D/File/Default (Filtering, Wrapping)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap S</name>
+        <paths>implementation.wrap_s</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap T</name>
+        <paths>implementation.wrap_t</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Minify</name>
+        <paths>implementation.min_filter</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Magnify</name>
+        <paths>implementation.mag_filter</paths>
+      </entry>
+    </parameters>
+  </entry>
+  <entry>
+    <name>2D/File/Default (Wrapping)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap S</name>
+        <paths>implementation.wrap_s</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap T</name>
+        <paths>implementation.wrap_t</paths>
+      </entry>
+    </parameters>
+  </entry>
+  <entry>
+    <name>2D/File/Intensity/Colorized</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorization</name>
+        <paths>implementation.contents.colorizations</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <format>INTENSITY</format>
+      <depthMode>INTENSITY</depthMode>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Intensity/Default</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <format>INTENSITY</format>
+      <depthMode>INTENSITY</depthMode>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Intensity/Default (Filtering, Wrapping)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap S</name>
+        <paths>implementation.wrap_s</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap T</name>
+        <paths>implementation.wrap_t</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Minify</name>
+        <paths>implementation.min_filter</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Magnify</name>
+        <paths>implementation.mag_filter</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <format>INTENSITY</format>
+      <depthMode>INTENSITY</depthMode>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Luminance/Colorized</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorization</name>
+        <paths>implementation.contents.colorizations</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <format>INTENSITY</format>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Luminance/Default</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <format>INTENSITY</format>
+    </implementation>
+  </entry>
+  <entry>
+    <name>2D/File/Luminance/Default (Filtering, Wrapping)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.contents.file</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap S</name>
+        <paths>implementation.wrap_s</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Wrap T</name>
+        <paths>implementation.wrap_t</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Minify</name>
+        <paths>implementation.min_filter</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Magnify</name>
+        <paths>implementation.mag_filter</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Original2D">
+      <format>INTENSITY</format>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Animated/Default</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Speed</name>
+        <paths>implementation.frame.second_operand.value</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Frames</name>
+        <paths>implementation.frames</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Animated">
+      <frame class="com.threerings.expr.FloatExpression$Multiply">
+        <firstOperand class="com.threerings.expr.FloatExpression$Clock">
+        </firstOperand>
+      </frame>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Cube Map/Depth</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Size</name>
+        <paths>implementation.contents.size</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$OriginalCubeMap">
+      <format>DEPTH_COMPONENT</format>
+      <minFilter>LINEAR</minFilter>
+      <contents class="com.threerings.opengl.renderer.config.TextureConfig$OriginalCubeMap$Blank">
+        <size>256</size>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Cube Map/Files</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Files - Positive Axes</name>
+        <paths>implementation.contents.positive</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Files - Negative Axes</name>
+        <paths>implementation.contents.negative</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$OriginalCubeMap">
+      <format>RGB</format>
+      <minFilter>LINEAR</minFilter>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Cube Map/RGBA</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Size</name>
+        <paths>implementation.contents.size</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$OriginalCubeMap">
+      <format>RGBA</format>
+      <minFilter>LINEAR</minFilter>
+      <contents class="com.threerings.opengl.renderer.config.TextureConfig$OriginalCubeMap$Blank">
+        <size>256</size>
+      </contents>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Cube Render/Default</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Size</name>
+        <paths>implementation.texture["Size"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$CubeRender">
+      <texture>
+        <name>Cube Map/RGBA</name>
+        <arguments>
+          <key class="java.lang.String">Size</key>
+          <value class="java.lang.Integer">256</value>
+        </arguments>
+      </texture>
+      <far>20.0</far>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Reflection/Files</name>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Reflection">
+      <texture>
+        <name>Cube Map/Files</name>
+        <arguments>
+          <key class="java.lang.String">Files - Negative Axes</key>
+          <value class="com.threerings.opengl.renderer.config.TextureConfig$OriginalCubeMap$FileTrio">
+          </value>
+          <key class="java.lang.String">Files - Positive Axes</key>
+          <value class="com.threerings.opengl.renderer.config.TextureConfig$OriginalCubeMap$FileTrio">
+          </value>
+        </arguments>
+      </texture>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Refraction/Files</name>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Refraction">
+      <texture>
+        <name>Cube Map/Files</name>
+        <arguments>
+          <key class="java.lang.String">Files - Negative Axes</key>
+          <value class="com.threerings.opengl.renderer.config.TextureConfig$OriginalCubeMap$FileTrio">
+          </value>
+          <key class="java.lang.String">Files - Positive Axes</key>
+          <value class="com.threerings.opengl.renderer.config.TextureConfig$OriginalCubeMap$FileTrio">
+          </value>
+        </arguments>
+      </texture>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Shadow/Color</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Texture</name>
+        <paths>implementation.texture</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Shadow">
+      <texture>
+        <name>2D/Blank/RGBA</name>
+      </texture>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Shadow/Depth</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Texture</name>
+        <paths>implementation.texture</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.opengl.renderer.config.TextureConfig$Shadow">
+      <texture>
+        <name>2D/Blank/Depth</name>
+      </texture>
+      <depth>true</depth>
+    </implementation>
+  </entry>
+</object>
+</java>

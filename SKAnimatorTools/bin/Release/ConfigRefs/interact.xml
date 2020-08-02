@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java class="com.threerings.export.XMLImporter" version="1.0">
+<object class="[Lcom.threerings.projectx.config.InteractConfig;">
+  <entry>
+    <name>Laying</name>
+    <animation>
+      <name>animation/sequential/simple.dat</name>
+      <arguments>
+        <key class="java.lang.String">Animations</key>
+        <value class="[Lcom.threerings.opengl.model.config.AnimationConfig$ComponentAnimation;">
+          <entry>
+            <animation>
+              <name>character/pc/laying/animation_laying_bed_start.dat</name>
+            </animation>
+          </entry>
+          <entry>
+            <animation>
+              <name>character/pc/laying/animation_laying_bed_loop.dat</name>
+            </animation>
+          </entry>
+        </value>
+        <key class="java.lang.String">Loop</key>
+        <value class="java.lang.Boolean">false</value>
+        <key class="java.lang.String">Priority</key>
+        <value class="java.lang.Integer">0</value>
+      </arguments>
+    </animation>
+  </entry>
+  <entry>
+    <name>Sittting</name>
+    <animation>
+      <name>animation/sequential/simple.dat</name>
+      <arguments>
+        <key class="java.lang.String">Animations</key>
+        <value class="[Lcom.threerings.opengl.model.config.AnimationConfig$ComponentAnimation;">
+          <entry>
+            <animation>
+              <name>character/pc/sitting/animation_sit_chair_start.dat</name>
+            </animation>
+          </entry>
+          <entry>
+            <animation>
+              <name>character/pc/sitting/animation_sit_chair_loop.dat</name>
+            </animation>
+          </entry>
+        </value>
+        <key class="java.lang.String">Loop</key>
+        <value class="java.lang.Boolean">false</value>
+        <key class="java.lang.String">Priority</key>
+        <value class="java.lang.Integer">0</value>
+      </arguments>
+    </animation>
+  </entry>
+</object>
+</java>

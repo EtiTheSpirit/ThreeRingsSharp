@@ -26,7 +26,7 @@ namespace ThreeRingsSharp.Utility {
 		public const int DEBUG = 1;
 
 		/// <summary>
-		/// Indicates a trace log message, which is vastly more frequent and used to relay even minuscule details.
+		/// Indicates a trace log message, which is vastly more frequent and used to relay very minuscule details.
 		/// </summary>
 		public const int TRACE = 2;
 
@@ -201,6 +201,16 @@ namespace ThreeRingsSharp.Utility {
 				// I don't want it calling UpdateLog if it sets this to true
 				_UpdateAutomatically = oldUpdateAutoValue;
 			}
+		}
+
+		/// <summary>
+		/// Writes an exception to the log file for review in bug reports.
+		/// </summary>
+		/// <param name="error"></param>
+		public static void LogException(Exception error) {
+			string errMsg = "[ERROR -- " + error.GetType().Name + "] " + error.Message ?? " NO MESSAGE" + "\n\n" + error.StackTrace.Replace("\r", "").Replace("\n", "\n\t");
+			byte[] fileWrite = Encoding.ASCII.GetBytes(errMsg);
+			LogFileStream.Write(fileWrite, 0, fileWrite.Length);
 		}
 
 		/// <summary>

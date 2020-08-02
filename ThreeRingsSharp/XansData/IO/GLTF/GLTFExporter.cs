@@ -117,6 +117,12 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 			// A mapping from MeshData to its associated GLTFMesh
 			Dictionary<MeshData, GLTFMesh> meshesToGLTF = new Dictionary<MeshData, GLTFMesh>();
 
+			// A mapping from an Armature to its associated GLTFNode
+			Dictionary<Armature, GLTFNode> armatureToNodeMap = new Dictionary<Armature, GLTFNode>();
+
+			// A mapping from a GLTFNode to the Model3D it was created from.
+			Dictionary<Model3D, GLTFNode> modelToNodeMap = new Dictionary<Model3D, GLTFNode>();
+
 			// A list of node IDs that the scene SHOULD include.
 			List<int> sceneNodes = new List<int>();
 
@@ -786,13 +792,14 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 
 					#endregion
 
-					#region Create Mesh
+					#region Create Model
 					GLTFNode node = new GLTFNode {
 						ThisIndex = currentNodeIndex,
 						Name = model.Name,
 						Mesh = glMesh.ThisIndex,
 						Skin = modelSkin.ThisIndex
 					};
+					modelToNodeMap[model] = node;
 
 					if (JSONData.Materials.Count > 0) {
 						string fullName = model.Textures.Where(texturePath => {
@@ -818,18 +825,19 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						GLTFNode nodeForThisBone = new GLTFNode {
 							ThisIndex = currentNodeIndex,
 							Name = boneName,
-							Children = armature.GetChildIndices(nodeIndexAtInstantiation)
+							Children = armature.GetChildIndices(nodeIndexAtInstantiation).ToList()
 						};
 						nodeForThisBone.SetTransform(armature.Transform);
 
 						if (boneName == "%ROOT%") {
 							// This is the root bone.
 							// Add the mesh reference.
-							node.Children = new int[] { nodeForThisBone.ThisIndex };
+							node.Children = new List<int> { nodeForThisBone.ThisIndex };
 							modelSkin.Skeleton = nodeForThisBone.ThisIndex;
 						}
 						modelSkin.Joints.Add(nodeForThisBone.ThisIndex);
 						JSONData.Nodes.Add(nodeForThisBone);
+						armatureToNodeMap[armature] = nodeForThisBone;
 						currentNodeIndex++;
 					}
 
@@ -838,21 +846,23 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						GLTFNode nodeForThisBone = new GLTFNode {
 							ThisIndex = currentNodeIndex,
 							Name = boneName,
-							Children = armature.GetChildIndices(nodeIndexAtInstantiation)
+							Children = armature.GetChildIndices(nodeIndexAtInstantiation).ToList()
 						};
 						nodeForThisBone.SetTransform(armature.Transform);
 
 						if (boneName == "%ROOT%") {
 							// This is the root bone.
 							// Add the mesh reference.
-							node.Children = new int[] { nodeForThisBone.ThisIndex };
+							node.Children = new List<int> { nodeForThisBone.ThisIndex };
 							modelSkin.Skeleton = nodeForThisBone.ThisIndex;
 						}
 						modelSkin.Joints.Add(nodeForThisBone.ThisIndex);
 						JSONData.Nodes.Add(nodeForThisBone);
+						armatureToNodeMap[armature] = nodeForThisBone;
 						currentNodeIndex++;
 					}
 					#endregion
+
 				}
 				#endregion
 
@@ -882,12 +892,28 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					model.ApplyScaling();
 					node.SetTransform(model.Transform);
 					JSONData.Nodes.Add(node);
+					modelToNodeMap[model] = node;
 					currentNodeIndex++;
 				}
 				#endregion
 
 				currentModelIndex++;
 			}
+
+			#region Attach Models To Nodes
+			foreach (Model3D model in models) {
+				if (model.AttachmentNode != null) {
+					if (!armatureToNodeMap.ContainsKey(model.AttachmentNode)) {
+						XanLogger.WriteLine("WARNING: Model wants to attach to armature [" + model.AttachmentNode.Name + "], but this armature has not been created in the mesh data!");
+						continue;
+					}
+					GLTFNode associatedNode = modelToNodeMap[model];
+					GLTFNode attachmentBoneNode = armatureToNodeMap[model.AttachmentNode];
+					attachmentBoneNode.Children.Add(associatedNode.ThisIndex);
+					XanLogger.WriteLine("Parented model [" + model.Name + "] to node [" + model.AttachmentNode.Name + "]", XanLogger.TRACE);
+				}
+			}
+			#endregion
 
 			#endregion
 

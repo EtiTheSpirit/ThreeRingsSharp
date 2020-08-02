@@ -1,0 +1,2572 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<java class="com.threerings.export.XMLImporter" version="1.0">
+<object class="[Lcom.threerings.tudey.config.EffectConfig;">
+  <entry>
+    <name>Action</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Action</name>
+        <paths>implementation.action.fire_action</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <action class="com.threerings.projectx.dungeon.config.DungeonActionConfig$FireAction">
+      </action>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Admin/Accessorizer</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <rotateWithTarget>false</rotateWithTarget>
+      </sprite>
+      <action class="com.threerings.projectx.craft.config.CraftActionConfig$OpenAccessorizer">
+      </action>
+      <targetOnly>true</targetOnly>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Basic</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Model</name>
+        <paths>implementation.sprite.model</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Lifespan</name>
+        <paths>implementation.lifespan</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Attach to Target</name>
+        <paths>implementation.sprite.attach_to_target</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <model>
+          <name>particle/fx_gethit_monster.dat</name>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Debug/Flash Shape</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Shape</name>
+        <paths>implementation.sprite.model["Shape"], implementation.shape</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <model>
+          <name>model/debug/flash_shape.dat</name>
+          <arguments>
+            <key class="java.lang.String">Shape</key>
+            <value class="com.threerings.tudey.shape.config.ShapeConfig$Point">
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <lifespan>750</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Energy Spent</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>model/scripted/transient_sound.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Sounder</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Clip/Default (Gain)</name>
+              <arguments>
+                <key class="java.lang.String">File</key>
+                <value class="java.lang.String">sound/effect/world/energy/energy_use_02_mono.ogg</value>
+                <key class="java.lang.String">Gain</key>
+                <value class="java.lang.Float">1.0</value>
+                <key class="java.lang.String">Range</key>
+                <value class="java.lang.String">Medium</value>
+              </arguments>
+            </value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>particle/fx_energy_spend.dat</name>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Heal/Heal by Tag</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Target Tag</name>
+        <paths>implementation.action.actions[0].condition.second.location.tag, implementation.action.actions[0].action.actions[0].target.tag</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Area Shape</name>
+        <paths>implementation.shape</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+      </shape>
+      <action class="com.threerings.tudey.config.ActionConfig$Compound">
+        <actions>
+          <entry class="com.threerings.tudey.config.ActionConfig$Conditional">
+            <action class="com.threerings.tudey.config.ActionConfig$Compound">
+              <actions>
+                <entry class="com.threerings.projectx.dungeon.config.DungeonActionConfig$DepthScaleHeal">
+                  <depthScale>
+                    <name>Monster/Heal/Heal Base</name>
+                  </depthScale>
+                </entry>
+                <entry class="com.threerings.tudey.config.ActionConfig$FireEffect">
+                  <effect>
+                    <name>Basic</name>
+                    <arguments>
+                      <key class="java.lang.String">Attach to Target</key>
+                      <value class="java.lang.Boolean">false</value>
+                      <key class="java.lang.String">Lifespan</key>
+                      <value class="java.lang.Integer">1000</value>
+                      <key class="java.lang.String">Model</key>
+                      <value class="com.threerings.config.ConfigReference">
+                        <name>particle/fx_heal.dat</name>
+                      </value>
+                    </arguments>
+                  </effect>
+                </entry>
+                <entry class="com.threerings.tudey.config.ActionConfig$FireEffect">
+                  <effect>
+                    <name>Sound Effect</name>
+                    <arguments>
+                      <key class="java.lang.String">Shape</key>
+                      <value class="java.lang.String">Point</value>
+                      <key class="java.lang.String">Sound</key>
+                      <value class="com.threerings.config.ConfigReference">
+                        <name>Variable Clip/Default</name>
+                        <arguments>
+                          <key class="java.lang.String">File</key>
+                          <value class="java.lang.String">sound/effect/world/enemy_heal_cast_01.ogg</value>
+                          <key class="java.lang.String">Gain</key>
+                          <value class="com.threerings.probs.FloatVariable$Constant">
+                            <value>1.0</value>
+                          </value>
+                          <key class="java.lang.String">Pitch</key>
+                          <value class="com.threerings.probs.FloatVariable$Uniform">
+                            <minimum>0.85</minimum>
+                            <maximum>1.15</maximum>
+                          </value>
+                          <key class="java.lang.String">Range</key>
+                          <value class="java.lang.String">Long</value>
+                        </arguments>
+                      </value>
+                    </arguments>
+                  </effect>
+                </entry>
+              </actions>
+            </action>
+          </entry>
+        </actions>
+      </action>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Hit Flash/Monster Hit</name>
+  </entry>
+  <entry>
+    <name>Hit Flash/Object Hit</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Hit Sounder</name>
+        <paths>implementation.sprite.model["Sounder"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>0</floorMask>
+        <model>
+          <name>model/scripted/transient_sound.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Sounder</key>
+            <value/>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>particle/fx_gethit_block.dat</name>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Boss/Harvester Warning</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>character/npc/monster/harvester/parts/scripted_face.dat</name>
+        </model>
+      </sprite>
+      <targetOnly>true</targetOnly>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Boss/Swarm Consume</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>world/environment/global_particles.dat</name>
+          <arguments>
+            <key class="java.lang.String">Model</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>particle/fx_fade_out_in.dat</name>
+              <arguments>
+                <key class="java.lang.String">Fade Percent</key>
+                <value class="java.lang.Float">0.375</value>
+                <key class="java.lang.String">Total Duration</key>
+                <value class="java.lang.Float">2.5</value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <action class="com.threerings.projectx.dungeon.config.DungeonActionConfig$ApplyStatus">
+        <condition>
+          <name>Monster Attacks/Boss/Swarm/Consume</name>
+        </condition>
+      </action>
+      <targetOnly>true</targetOnly>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Boss/Swarm Corruption</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Density</name>
+        <paths>implementation.sprite.model["Model"]["Density"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>world/environment/global_particles.dat</name>
+          <arguments>
+            <key class="java.lang.String">Model</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>character/npc/monster/swarm/parts/frustrum_fx_pixelclouds.dat</name>
+              <arguments>
+                <key class="java.lang.String">Density</key>
+                <value class="java.lang.String">Sparse</value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <lifespan>5000</lifespan>
+      <targetOnly>true</targetOnly>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Boss/Swarm Eject</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>world/environment/global_particles.dat</name>
+          <arguments>
+            <key class="java.lang.String">Model</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>particle/fx_fade_out_in.dat</name>
+              <arguments>
+                <key class="java.lang.String">Fade Percent</key>
+                <value class="java.lang.Float">0.375</value>
+                <key class="java.lang.String">Total Duration</key>
+                <value class="java.lang.Float">2.5</value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <action class="com.threerings.projectx.dungeon.config.DungeonActionConfig$ApplyStatus">
+        <condition>
+          <name>Monster Attacks/Boss/Swarm/Eject</name>
+        </condition>
+      </action>
+      <targetOnly>true</targetOnly>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Chromalisk/Knockdown</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Animator">
+        <attachToTarget>true</attachToTarget>
+        <animation>
+          <name>character/npc/monster/chromalisk/animation/knockdown.dat</name>
+        </animation>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Construct/Retrode/Emerge from Ground</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Spawn Table</name>
+        <paths>implementation.action.actions[0].action.actions[1].spawn_table</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <model>
+          <name>model/compound/model.dat</name>
+          <arguments>
+            <key class="java.lang.String">Influences</key>
+            <value class="com.threerings.opengl.model.config.InfluenceFlagConfig">
+              <fog>false</fog>
+              <lights>false</lights>
+              <projections>false</projections>
+              <definitions>false</definitions>
+            </value>
+            <key class="java.lang.String">Models</key>
+            <value class="[Lcom.threerings.opengl.model.config.CompoundConfig$ComponentModel;">
+              <entry>
+                <node>%ROOT%</node>
+                <model>
+                  <name>particle/model_metaparticle.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Alpha Mode</key>
+                    <value class="com.threerings.opengl.effect.AlphaMode">OPAQUE</value>
+                    <key class="java.lang.String">Influences</key>
+                    <value class="com.threerings.opengl.model.config.InfluenceFlagConfig">
+                      <fog>false</fog>
+                      <lights>false</lights>
+                      <projections>false</projections>
+                      <definitions>false</definitions>
+                    </value>
+                    <key class="java.lang.String">Lifespan</key>
+                    <value class="java.lang.Float">2.333</value>
+                    <key class="java.lang.String">Model</key>
+                    <value class="com.threerings.config.ConfigReference">
+                      <name>character/npc/monster/mechazombie/model_nrm.dat</name>
+                      <arguments>
+                        <key class="java.lang.String">Animation - Starting Default</key>
+                        <value class="com.threerings.config.ConfigReference">
+                          <name>character/npc/monster/mechazombie/animations/animation_spawn_crawl.dat</name>
+                        </value>
+                        <key class="java.lang.String">Reaction</key>
+                        <value class="java.lang.String">Flinch</value>
+                        <key class="java.lang.String">Variant</key>
+                        <value class="java.lang.String">Tier 1</value>
+                      </arguments>
+                    </value>
+                    <key class="java.lang.String">Scale</key>
+                    <value class="java.lang.Float">1.0</value>
+                    <key class="java.lang.String">Transform</key>
+                    <value class="com.threerings.math.Transform3D">
+                    </value>
+                  </arguments>
+                </model>
+              </entry>
+              <entry>
+                <node>%ROOT%</node>
+                <model>
+                  <name>particle/characters/mechazombie/fx_burrow_emerge.dat</name>
+                </model>
+                <transform>
+                  <translation>0.0, -0.5, 0.0</translation>
+                </transform>
+              </entry>
+              <entry>
+                <model>
+                  <name>model/scripted/transient_sound_only.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Loop Duration</key>
+                    <value class="java.lang.Float">0.0</value>
+                    <key class="java.lang.String">Sounder</key>
+                    <value class="com.threerings.config.ConfigReference">
+                      <name>Clip/Default (Gain) (Pitch)</name>
+                      <arguments>
+                        <key class="java.lang.String">File</key>
+                        <value class="java.lang.String">sound/effect/monster/zombie/zombie_spawn_03.ogg</value>
+                        <key class="java.lang.String">Gain</key>
+                        <value class="java.lang.Float">0.6</value>
+                        <key class="java.lang.String">Pitch</key>
+                        <value class="java.lang.Float">1.1</value>
+                        <key class="java.lang.String">Range</key>
+                        <value class="java.lang.String">Medium</value>
+                      </arguments>
+                    </value>
+                  </arguments>
+                </model>
+              </entry>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <action class="com.threerings.tudey.config.ActionConfig$Compound">
+        <actions>
+          <entry class="com.threerings.tudey.config.ActionConfig$Delayed">
+            <action class="com.threerings.tudey.config.ActionConfig$Compound">
+              <actions>
+                <entry class="com.threerings.projectx.dungeon.config.DungeonActionConfig$ImpartImpulse">
+                  <impulseDealt>
+                    <translation>2.0, 0.0</translation>
+                    <duration>200</duration>
+                    <level>10</level>
+                  </impulseDealt>
+                </entry>
+                <entry class="com.threerings.projectx.dungeon.config.DungeonActionConfig$TableSpawn">
+                  <spawnTable>
+                    <name>Monster/Tutorial/Training Grounds/Retrode</name>
+                    <arguments>
+                      <key class="java.lang.String">Loot</key>
+                      <value class="java.lang.String">Primary</value>
+                      <key class="java.lang.String">Tag</key>
+                      <value class="java.lang.String">(Wave Tag)</value>
+                    </arguments>
+                  </spawnTable>
+                </entry>
+              </actions>
+            </action>
+          </entry>
+        </actions>
+      </action>
+      <lifespan>2333</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Drone/Lost Soul/Lost Soul Fizzle</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Variant</name>
+        <paths>implementation.sprite.model["Transient"]["Color"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>model/scripted/transient_sound.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Sounder</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Meta Clip/Single Clip, pitch variation</name>
+              <arguments>
+                <key class="java.lang.String">File</key>
+                <value class="java.lang.String">sound/effect/world/block_ghost.ogg</value>
+                <key class="java.lang.String">Gain</key>
+                <value class="java.lang.Float">0.2</value>
+                <key class="java.lang.String">Pitch adjust</key>
+                <value class="java.lang.String">Higher 4</value>
+                <key class="java.lang.String">Range</key>
+                <value class="java.lang.String">Medium</value>
+              </arguments>
+            </value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+              <translation>0.0, 0.0, 0.75</translation>
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>particle/characters/drone/lostsoul/fx_destruction.dat</name>
+              <arguments>
+                <key class="java.lang.String">Color</key>
+                <value class="java.lang.String">Lost Soul</value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>1.5</radius>
+      </shape>
+    </implementation>
+  </entry>
+  <entry depth="1">
+    <name>Monster/Drone/Lost Soul/Self-Destruct Explosion</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Choice" depth="3">
+        <outer rdepth="1"/>
+        <name>Variant</name>
+        <directs>
+          <entry>
+            <name>Effects Variant</name>
+            <paths>implementation.sprite.model["Transient"]["Models"][1].model["Variant"]</paths>
+          </entry>
+          <entry>
+            <name>Status Condition</name>
+            <paths>implementation.action.actions[0].damage.damages[1].status_condition</paths>
+          </entry>
+        </directs>
+        <options>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Lost Soul</name>
+            <arguments>
+              <key class="java.lang.String">Effects Variant</key>
+              <value class="java.lang.String">Lost Soul</value>
+              <key class="java.lang.String">Status Condition</key>
+              <value/>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Fire</name>
+            <arguments>
+              <key class="java.lang.String">Effects Variant</key>
+              <value class="java.lang.String">Fire</value>
+              <key class="java.lang.String">Status Condition</key>
+              <value class="com.threerings.config.ConfigReference">
+                <name>Fire (Scaled)</name>
+                <arguments>
+                  <key class="java.lang.String">Chance</key>
+                  <value class="java.lang.Float">0.0</value>
+                  <key class="java.lang.String">Power</key>
+                  <value class="java.lang.Integer">0</value>
+                  <key class="java.lang.String">Status Chance</key>
+                  <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusChance">MAXIMUM</value>
+                  <key class="java.lang.String">Status Power</key>
+                  <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusPower">MODERATE</value>
+                </arguments>
+              </value>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Freeze</name>
+            <arguments>
+              <key class="java.lang.String">Effects Variant</key>
+              <value class="java.lang.String">Freeze</value>
+              <key class="java.lang.String">Status Condition</key>
+              <value class="com.threerings.config.ConfigReference">
+                <name>Freeze (Scaled)</name>
+                <arguments>
+                  <key class="java.lang.String">Chance</key>
+                  <value class="java.lang.Float">0.0</value>
+                  <key class="java.lang.String">Power</key>
+                  <value class="java.lang.Integer">0</value>
+                  <key class="java.lang.String">Status Chance</key>
+                  <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusChance">MAXIMUM</value>
+                  <key class="java.lang.String">Status Power</key>
+                  <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusPower">MODERATE</value>
+                </arguments>
+              </value>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Poison</name>
+            <arguments>
+              <key class="java.lang.String">Effects Variant</key>
+              <value class="java.lang.String">Poison</value>
+              <key class="java.lang.String">Status Condition</key>
+              <value class="com.threerings.config.ConfigReference">
+                <name>Poison (Scaled)</name>
+                <arguments>
+                  <key class="java.lang.String">Chance</key>
+                  <value class="java.lang.Float">0.0</value>
+                  <key class="java.lang.String">Power</key>
+                  <value class="java.lang.Integer">0</value>
+                  <key class="java.lang.String">Status Chance</key>
+                  <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusChance">MAXIMUM</value>
+                  <key class="java.lang.String">Status Power</key>
+                  <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusPower">MODERATE</value>
+                </arguments>
+              </value>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Shock</name>
+            <arguments>
+              <key class="java.lang.String">Effects Variant</key>
+              <value class="java.lang.String">Shock</value>
+              <key class="java.lang.String">Status Condition</key>
+              <value class="com.threerings.config.ConfigReference">
+                <name>Shock (Scaled)</name>
+                <arguments>
+                  <key class="java.lang.String">Chance</key>
+                  <value class="java.lang.Float">0.0</value>
+                  <key class="java.lang.String">Power</key>
+                  <value class="java.lang.Integer">0</value>
+                  <key class="java.lang.String">Status Chance</key>
+                  <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusChance">MAXIMUM</value>
+                  <key class="java.lang.String">Status Power</key>
+                  <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusPower">MODERATE</value>
+                </arguments>
+              </value>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Harvested</name>
+            <arguments>
+              <key class="java.lang.String">Effects Variant</key>
+              <value class="java.lang.String">Lost Soul</value>
+              <key class="java.lang.String">Status Condition</key>
+              <value/>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Void</name>
+            <arguments>
+              <key class="java.lang.String">Effects Variant</key>
+              <value class="java.lang.String">Void</value>
+              <key class="java.lang.String">Status Condition</key>
+              <value/>
+            </arguments>
+          </entry>
+        </options>
+        <choice>Lost Soul</choice>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>model/scripted/transient_sound.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Sounder</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Clip/Default (Gain)</name>
+              <arguments>
+                <key class="java.lang.String">File</key>
+                <value class="java.lang.String">sound/effect/monster/drone/lostsoul_explode.ogg</value>
+                <key class="java.lang.String">Gain</key>
+                <value class="java.lang.Float">1.0</value>
+                <key class="java.lang.String">Range</key>
+                <value class="java.lang.String">Short</value>
+              </arguments>
+            </value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+              <translation>0.0, 0.0, 0.5</translation>
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>model/compound/model.dat</name>
+              <arguments>
+                <key class="java.lang.String">Influences</key>
+                <value class="com.threerings.opengl.model.config.InfluenceFlagConfig">
+                  <fog>false</fog>
+                  <lights>false</lights>
+                  <projections>false</projections>
+                  <definitions>false</definitions>
+                </value>
+                <key class="java.lang.String">Models</key>
+                <value class="[Lcom.threerings.opengl.model.config.CompoundConfig$ComponentModel;">
+                  <entry>
+                    <model>
+                      <name>model/scripted/shake_camera.dat</name>
+                      <arguments>
+                        <key class="java.lang.String">Amplitude</key>
+                        <value class="com.threerings.math.Vector3f">0.0, -0.6, 0.6</value>
+                        <key class="java.lang.String">Duration</key>
+                        <value class="java.lang.Float">1.4</value>
+                        <key class="java.lang.String">Falloff</key>
+                        <value class="java.lang.Float">10.0</value>
+                        <key class="java.lang.String">Frequency</key>
+                        <value class="java.lang.Float">25.0</value>
+                        <key class="java.lang.String">Inner Radius</key>
+                        <value class="java.lang.Float">10.0</value>
+                        <key class="java.lang.String">Outer Radius</key>
+                        <value class="java.lang.Float">30.0</value>
+                      </arguments>
+                    </model>
+                  </entry>
+                  <entry>
+                    <model>
+                      <name>particle/characters/drone/lostsoul/fx_explosion.dat</name>
+                      <arguments>
+                        <key class="java.lang.String">Variant</key>
+                        <value class="java.lang.String">Lost Soul</value>
+                      </arguments>
+                    </model>
+                  </entry>
+                </value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>1.5</radius>
+      </shape>
+      <action class="com.threerings.tudey.config.ActionConfig$Compound">
+        <actions>
+          <entry class="com.threerings.projectx.dungeon.config.DungeonActionConfig$DamageRegionFromPoint">
+            <damage class="com.threerings.projectx.dungeon.config.DamageConfig$Compound">
+              <damages>
+                <entry class="com.threerings.projectx.dungeon.config.DamageConfig$DepthScale">
+                  <depthScale>
+                    <name>Monster/Damage/Attack Base</name>
+                  </depthScale>
+                  <flags>4</flags>
+                </entry>
+                <entry class="com.threerings.projectx.dungeon.config.DamageConfig$Status">
+                  <flags>4</flags>
+                </entry>
+              </damages>
+            </damage>
+            <impulseDealt>
+              <translation>3.0, 0.0</translation>
+              <duration>250</duration>
+              <level>5</level>
+            </impulseDealt>
+          </entry>
+        </actions>
+      </action>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Fiend/Gorgo/Butt Stomp</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>model/scripted/transient.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>model/schemed/high_medium_low.dat</name>
+              <arguments>
+                <key class="java.lang.String">High</key>
+                <value class="com.threerings.config.ConfigReference">
+                  <name>particle/characters/gorgo/fx_buttstomp_shockwave.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Level of Detail</key>
+                    <value class="java.lang.String">High</value>
+                  </arguments>
+                </value>
+                <key class="java.lang.String">Low</key>
+                <value class="com.threerings.config.ConfigReference">
+                  <name>particle/characters/gorgo/fx_buttstomp_shockwave.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Level of Detail</key>
+                    <value class="java.lang.String">Low</value>
+                  </arguments>
+                </value>
+                <key class="java.lang.String">Medium</key>
+                <value class="com.threerings.config.ConfigReference">
+                  <name>particle/characters/gorgo/fx_buttstomp_shockwave.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Level of Detail</key>
+                    <value class="java.lang.String">Medium</value>
+                  </arguments>
+                </value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <action class="com.threerings.projectx.dungeon.config.DungeonActionConfig$DamageRegionFromPoint">
+        <damage class="com.threerings.projectx.dungeon.config.DamageConfig$DepthScaleMulti">
+          <depthScale>
+            <name>Monster/Damage/Attack Base +05</name>
+          </depthScale>
+          <flags>4</flags>
+          <majorReact>true</majorReact>
+          <type2>SHADOW</type2>
+          <splitDepth>
+            <name>Monster/Split/Split - Full</name>
+          </splitDepth>
+        </damage>
+        <impulseDealt>
+          <translation>-1.0, 0.0</translation>
+          <duration>250</duration>
+          <level>3</level>
+        </impulseDealt>
+      </action>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Fiend/Trojan/Awaken Aura</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>0</floorMask>
+        <attachToTarget>true</attachToTarget>
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/model_fadein.dat</name>
+          <arguments>
+            <key class="java.lang.String">Alpha Mode</key>
+            <value class="com.threerings.opengl.effect.AlphaMode">TRANSLUCENT</value>
+            <key class="java.lang.String">Influences</key>
+            <value class="com.threerings.opengl.model.config.InfluenceFlagConfig">
+              <fog>false</fog>
+              <projections>false</projections>
+              <definitions>false</definitions>
+            </value>
+            <key class="java.lang.String">Lifespan</key>
+            <value class="java.lang.Float">3.2</value>
+            <key class="java.lang.String">Model</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>item/gear/accessory/armor/aura/shadow/model_shadow.dat</name>
+            </value>
+            <key class="java.lang.String">Scale</key>
+            <value class="java.lang.Float">4.0</value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+              <translation>0.0, 0.0, 0.75</translation>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <lifespan>3200</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Mimic/Damage React</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Animator">
+        <animation>
+          <name>character/npc/monster/mimic/anim/anim_reacting.dat</name>
+          <arguments>
+            <key class="java.lang.String">Color Variant</key>
+            <value class="java.lang.String">Normal</value>
+          </arguments>
+        </animation>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Mimic/Tentacle Retract</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Animator">
+        <attachToTarget>true</attachToTarget>
+        <animation>
+          <name>character/npc/monster/mimic/tentacle/animation/animation_despawn.dat</name>
+        </animation>
+      </sprite>
+      <action class="com.threerings.tudey.config.ActionConfig$Delayed">
+      </action>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Monster/Undead/Parts/Zombie Breath (damage)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Status</name>
+        <paths>implementation.action.damage.status_condition</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>0</floorMask>
+        <attachToTarget>true</attachToTarget>
+      </sprite>
+      <action class="com.threerings.projectx.dungeon.config.DungeonActionConfig$DamageRegionFromPoint">
+        <damage class="com.threerings.projectx.dungeon.config.DamageConfig$Status">
+          <flags>4</flags>
+          <statusCondition>
+            <name>Stun</name>
+            <arguments>
+              <key class="java.lang.String">Chance</key>
+              <value class="java.lang.Float">0.0</value>
+              <key class="java.lang.String">Power</key>
+              <value class="java.lang.Integer">0</value>
+            </arguments>
+          </statusCondition>
+        </damage>
+      </action>
+      <lifespan>100</lifespan>
+    </implementation>
+  </entry>
+  <entry depth="1">
+    <name>Monster/Undead/Zombie Breath</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Choice" depth="3">
+        <outer rdepth="1"/>
+        <name>Variant</name>
+        <directs>
+          <entry>
+            <name>Visual Variant</name>
+            <paths>implementation.sprite.model["Models"][0].model["Transient"]["Variant"]</paths>
+          </entry>
+        </directs>
+        <options>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Dust Zombie</name>
+            <arguments>
+              <key class="java.lang.String">Visual Variant</key>
+              <value class="java.lang.String">Dust</value>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Slag Walker</name>
+            <arguments>
+              <key class="java.lang.String">Visual Variant</key>
+              <value class="java.lang.String">Fire - Slag Walker</value>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Frozen Shambler</name>
+            <arguments>
+              <key class="java.lang.String">Visual Variant</key>
+              <value class="java.lang.String">Ice - Frozen Shambler</value>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Droul</name>
+            <arguments>
+              <key class="java.lang.String">Visual Variant</key>
+              <value class="java.lang.String">Poison - Droul</value>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Frank</name>
+            <arguments>
+              <key class="java.lang.String">Visual Variant</key>
+              <value class="java.lang.String">Shock - Frank</value>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Curse</name>
+            <arguments>
+              <key class="java.lang.String">Visual Variant</key>
+              <value class="java.lang.String">Curse - Curse</value>
+            </arguments>
+          </entry>
+        </options>
+        <choice>Dust</choice>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Delay</name>
+        <paths>implementation.action.delay</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Status</name>
+        <paths>implementation.action.action.effect["Status"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Sounder</name>
+        <paths>implementation.sprite.model["Models"][0].model["Sounder"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>0</floorMask>
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>model/compound/model.dat</name>
+          <arguments>
+            <key class="java.lang.String">Influences</key>
+            <value class="com.threerings.opengl.model.config.InfluenceFlagConfig">
+              <fog>false</fog>
+              <lights>false</lights>
+              <projections>false</projections>
+              <definitions>false</definitions>
+            </value>
+            <key class="java.lang.String">Models</key>
+            <value class="[Lcom.threerings.opengl.model.config.CompoundConfig$ComponentModel;">
+              <entry>
+                <model>
+                  <name>model/scripted/transient_sound.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Loop Duration</key>
+                    <value class="java.lang.Float">0.0</value>
+                    <key class="java.lang.String">Move with Origin</key>
+                    <value class="java.lang.Boolean">false</value>
+                    <key class="java.lang.String">Sounder</key>
+                    <value/>
+                    <key class="java.lang.String">Transform</key>
+                    <value class="com.threerings.math.Transform3D">
+                    </value>
+                    <key class="java.lang.String">Transient</key>
+                    <value class="com.threerings.config.ConfigReference">
+                      <name>particle/fx_zombie_breath.dat</name>
+                      <arguments>
+                        <key class="java.lang.String">Variant</key>
+                        <value class="java.lang.String">Dust</value>
+                      </arguments>
+                    </value>
+                  </arguments>
+                </model>
+                <transform>
+                  <scale>1.2</scale>
+                  <translation>0.0, -1.34, 0.0</translation>
+                  <rotation>0.0, 0.0, -1.0, 9.099629E-7</rotation>
+                </transform>
+              </entry>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <action class="com.threerings.tudey.config.ActionConfig$Delayed">
+        <action class="com.threerings.tudey.config.ActionConfig$FireEffect">
+          <effect>
+            <name>Monster/Undead/Parts/Zombie Breath (damage)</name>
+            <arguments>
+              <key class="java.lang.String">Status</key>
+              <value class="com.threerings.config.ConfigReference">
+                <name>Stun</name>
+                <arguments>
+                  <key class="java.lang.String">Chance</key>
+                  <value class="java.lang.Float">0.0</value>
+                  <key class="java.lang.String">Power</key>
+                  <value class="java.lang.Integer">0</value>
+                  <key class="java.lang.String">Status Chance</key>
+                  <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusChance">CUSTOM</value>
+                  <key class="java.lang.String">Status Power</key>
+                  <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusPower">CUSTOM</value>
+                </arguments>
+              </value>
+            </arguments>
+          </effect>
+        </action>
+      </action>
+      <lifespan>100</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Furni/Tome Lecterns/Cursed Tome</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <model>
+          <name>particle/furni/tome_lecterns/scripted_tome_curse.dat</name>
+        </model>
+      </sprite>
+      <lifespan>7000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Furni/Tome Lecterns/Cursed Tome (with Pet)</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>particle/furni/tome_lecterns/scripted_tome_curse.dat</name>
+        </model>
+      </sprite>
+      <action class="com.threerings.tudey.config.ActionConfig$Delayed">
+        <action class="com.threerings.tudey.config.ActionConfig$FireEffect">
+          <effect>
+            <name>Objects/Furni/Tome Lecterns/Parts/Cursed Tome (Spookat Materialize)</name>
+          </effect>
+        </action>
+      </action>
+      <lifespan>7000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Furni/Tome Lecterns/Mystical Tome</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>0</floorMask>
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/furni/tome_lecterns/scripted_tome_mystic.dat</name>
+        </model>
+      </sprite>
+      <lifespan>7000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Furni/Tome Lecterns/Parts/Cursed Tome (Spookat Materialize)</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <rotateWithTarget>false</rotateWithTarget>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>0.2</radius>
+      </shape>
+      <action class="com.threerings.tudey.config.ActionConfig$Delayed">
+        <action class="com.threerings.projectx.dungeon.config.DungeonActionConfig$ActivateMonster">
+          <spawnTable>
+            <name>default (Actor)</name>
+            <arguments>
+              <key class="java.lang.String">Actor</key>
+              <value class="com.threerings.config.ConfigReference">
+                <name>Character/NPC/Monster/Undead/NPC/Spookat (Summoned Pet)</name>
+              </value>
+            </arguments>
+          </spawnTable>
+        </action>
+      </action>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Lift/Feathered</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>world/dynamic/pillowpile/parts/ambient_feathersaura.dat</name>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Lift/Milk n Cookies - Impact</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>model/scripted/transient_sound.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Sounder</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Clip/Default (Gain)</name>
+              <arguments>
+                <key class="java.lang.String">File</key>
+                <value class="java.lang.String">sound/effect/world/props/hydrant_break.ogg</value>
+                <key class="java.lang.String">Gain</key>
+                <value class="java.lang.Float">1.0</value>
+                <key class="java.lang.String">Range</key>
+                <value class="java.lang.String">Medium</value>
+              </arguments>
+            </value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+              <translation>0.0, 0.0, 1.4</translation>
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>model/articulated/transient_billboard_align.dat</name>
+              <arguments>
+                <key class="java.lang.String">Model</key>
+                <value class="com.threerings.config.ConfigReference">
+                  <name>particle/event/fx_milk-cookie_impact.dat</name>
+                </value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>0.75</radius>
+      </shape>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Lift/Punkin Pied</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>world/dynamic/punkin_pie/parts/ambient_pied.dat</name>
+          <arguments>
+            <key class="java.lang.String">Lifespan</key>
+            <value class="java.lang.String">+2.5</value>
+          </arguments>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Lift/Snowman</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>particle/debuff_snowman.dat</name>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Lift/Snowman, Yellow</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>particle/debuff_snowman_yellow.dat</name>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Lift/Soaking Wet</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>world/dynamic/waterbucket/parts/ambient_wet.dat</name>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Monster Objects/Beast Bell/Ring bell, beast stun</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>model/scripted/transient_sound.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Sounder</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Clip/Default (Gain)</name>
+              <arguments>
+                <key class="java.lang.String">File</key>
+                <value class="java.lang.String">sound/effect/world/dynamic/snarby_bell_strike.ogg</value>
+                <key class="java.lang.String">Gain</key>
+                <value class="java.lang.Float">1.0</value>
+                <key class="java.lang.String">Range</key>
+                <value class="java.lang.String">Long</value>
+              </arguments>
+            </value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>model/compound/model.dat</name>
+              <arguments>
+                <key class="java.lang.String">Influences</key>
+                <value class="com.threerings.opengl.model.config.InfluenceFlagConfig">
+                  <fog>false</fog>
+                  <lights>false</lights>
+                  <projections>false</projections>
+                  <definitions>false</definitions>
+                </value>
+                <key class="java.lang.String">Models</key>
+                <value class="[Lcom.threerings.opengl.model.config.CompoundConfig$ComponentModel;">
+                  <entry>
+                    <node>%ROOT%</node>
+                    <model>
+                      <name>particle/props/fx_beastbell_ring.dat</name>
+                    </model>
+                    <transform>
+                      <translation>0.0, 0.0, 1.0</translation>
+                    </transform>
+                  </entry>
+                  <entry>
+                    <node>%ROOT%</node>
+                    <model>
+                      <name>model/scripted/shake_camera.dat</name>
+                      <arguments>
+                        <key class="java.lang.String">Amplitude</key>
+                        <value class="com.threerings.math.Vector3f">-0.4, 0.0, 0.0</value>
+                        <key class="java.lang.String">Duration</key>
+                        <value class="java.lang.Float">3.0</value>
+                        <key class="java.lang.String">Falloff</key>
+                        <value class="java.lang.Float">10.0</value>
+                        <key class="java.lang.String">Frequency</key>
+                        <value class="java.lang.Float">30.0</value>
+                        <key class="java.lang.String">Inner Radius</key>
+                        <value class="java.lang.Float">10.0</value>
+                        <key class="java.lang.String">Outer Radius</key>
+                        <value class="java.lang.Float">100.0</value>
+                      </arguments>
+                    </model>
+                  </entry>
+                </value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>4.5</radius>
+      </shape>
+      <action class="com.threerings.tudey.config.ActionConfig$Compound">
+        <actions>
+          <entry class="com.threerings.tudey.config.ActionConfig$TargetedAction">
+            <action class="com.threerings.tudey.config.ActionConfig$Compound">
+              <actions>
+                <entry class="com.threerings.projectx.dungeon.config.DungeonActionConfig$DamageTarget">
+                  <damage class="com.threerings.projectx.dungeon.config.DamageConfig$Status">
+                    <statusCondition>
+                      <name>Stun 2</name>
+                      <arguments>
+                        <key class="java.lang.String">Chance</key>
+                        <value class="java.lang.Float">1.0</value>
+                        <key class="java.lang.String">Power</key>
+                        <value class="java.lang.Integer">50</value>
+                        <key class="java.lang.String">Status Chance</key>
+                        <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusChance">CUSTOM</value>
+                        <key class="java.lang.String">Status Power</key>
+                        <value class="com.threerings.projectx.dungeon.data.StatusCodes$StatusPower">DEADLY</value>
+                      </arguments>
+                    </statusCondition>
+                  </damage>
+                </entry>
+              </actions>
+            </action>
+          </entry>
+        </actions>
+      </action>
+      <lifespan>1500</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Monster Objects/Grim Totem/Zombie resurrection, pulse</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>0</floorMask>
+        <attachToTarget>true</attachToTarget>
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/fx_grimtotem_shockwave.dat</name>
+          <arguments>
+            <key class="java.lang.String">Variant</key>
+            <value class="java.lang.String">Totem</value>
+          </arguments>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>6.0</radius>
+      </shape>
+      <action class="com.threerings.tudey.config.ActionConfig$Compound">
+        <actions>
+          <entry class="com.threerings.tudey.config.ActionConfig$Conditional">
+            <action class="com.threerings.tudey.config.ActionConfig$Compound">
+            </action>
+          </entry>
+        </actions>
+      </action>
+      <lifespan>1500</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Monster Objects/Grim Totem/Zombie resurrection, warning</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>0</floorMask>
+        <attachToTarget>true</attachToTarget>
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/fx_grimtotem_warning.dat</name>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>6.0</radius>
+      </shape>
+      <action class="com.threerings.tudey.config.ActionConfig$None">
+      </action>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Monster Objects/Healing Totem/Healing, pulse</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>0</floorMask>
+        <attachToTarget>true</attachToTarget>
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/fx_healing_totem_shockwave.dat</name>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>6.0</radius>
+      </shape>
+      <action class="com.threerings.tudey.config.ActionConfig$Compound">
+        <actions>
+          <entry class="com.threerings.projectx.dungeon.config.DungeonActionConfig$DepthScaleHeal">
+            <depthScale>
+              <name>Monster/Heal/Heal Base -05</name>
+            </depthScale>
+          </entry>
+        </actions>
+      </action>
+      <lifespan>1500</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Monster Objects/Healing Totem/Healing, warning</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>0</floorMask>
+        <attachToTarget>true</attachToTarget>
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/fx_heal.dat</name>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>6.0</radius>
+      </shape>
+      <action class="com.threerings.tudey.config.ActionConfig$None">
+      </action>
+      <lifespan>500</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Props/Custom/Dust Pile/Kick Up Dust</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>0</floorMask>
+        <model>
+          <name>model/schemed/medium_low.dat</name>
+          <arguments>
+            <key class="java.lang.String">Low</key>
+            <value/>
+            <key class="java.lang.String">Medium</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>particle/props/undead/fx_kick-up-dust.dat</name>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Props/Custom/Soldiers Graveyard/Sword Fade-In</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>255</floorMask>
+        <model>
+          <name>particle/model_fadein.dat</name>
+          <arguments>
+            <key class="java.lang.String">Alpha Mode</key>
+            <value class="com.threerings.opengl.effect.AlphaMode">TRANSLUCENT</value>
+            <key class="java.lang.String">Influences</key>
+            <value class="com.threerings.opengl.model.config.InfluenceFlagConfig">
+              <fog>false</fog>
+              <projections>false</projections>
+              <definitions>false</definitions>
+            </value>
+            <key class="java.lang.String">Lifespan</key>
+            <value class="java.lang.Float">2.0</value>
+            <key class="java.lang.String">Model</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>item/weapon/sword/calibur/model.dat</name>
+              <arguments>
+                <key class="java.lang.String">variant</key>
+                <value class="java.lang.String">calibur</value>
+              </arguments>
+            </value>
+            <key class="java.lang.String">Scale</key>
+            <value class="java.lang.Float">1.2</value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+              <translation>-0.3, 0.0, 1.3</translation>
+              <rotation>0.06162843, 0.70441604, 0.06162843, 0.70441604</rotation>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <action class="com.threerings.tudey.config.ActionConfig$Delayed">
+        <action class="com.threerings.tudey.config.ActionConfig$SpawnActor">
+          <actor>
+            <name>Static/Mission/Soldiers Graveyard/Unknown Knight's Sword</name>
+          </actor>
+        </action>
+      </action>
+      <lifespan>2000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Props/Custom/Sundry Fade-In</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>255</floorMask>
+        <model>
+          <name>particle/model_fadein.dat</name>
+          <arguments>
+            <key class="java.lang.String">Alpha Mode</key>
+            <value class="com.threerings.opengl.effect.AlphaMode">TRANSLUCENT</value>
+            <key class="java.lang.String">Influences</key>
+            <value class="com.threerings.opengl.model.config.InfluenceFlagConfig">
+              <fog>false</fog>
+              <projections>false</projections>
+              <definitions>false</definitions>
+            </value>
+            <key class="java.lang.String">Lifespan</key>
+            <value class="java.lang.Float">2.0</value>
+            <key class="java.lang.String">Model</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>world/prop/generic/interior/furniture/clutter/knights/sundries.dat</name>
+            </value>
+            <key class="java.lang.String">Scale</key>
+            <value class="java.lang.Float">1.0</value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+              <translation>0.0, 0.0, 0.5</translation>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <action class="com.threerings.tudey.config.ActionConfig$Delayed">
+        <action class="com.threerings.tudey.config.ActionConfig$SpawnActor">
+          <actor>
+            <name>Static/Mission/Knight Camp/Sundries</name>
+          </actor>
+        </action>
+      </action>
+      <lifespan>2000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Objects/Props/Mortar shell explosion</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>model/compound/model.dat</name>
+          <arguments>
+            <key class="java.lang.String">Influences</key>
+            <value class="com.threerings.opengl.model.config.InfluenceFlagConfig">
+              <projections>false</projections>
+              <definitions>false</definitions>
+            </value>
+            <key class="java.lang.String">Models</key>
+            <value class="[Lcom.threerings.opengl.model.config.CompoundConfig$ComponentModel;">
+              <entry>
+                <node>%ROOT%</node>
+                <model>
+                  <name>model/scripted/shake_camera.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Amplitude</key>
+                    <value class="com.threerings.math.Vector3f">0.0, 0.0, 0.4</value>
+                    <key class="java.lang.String">Duration</key>
+                    <value class="java.lang.Float">3.0</value>
+                    <key class="java.lang.String">Falloff</key>
+                    <value class="java.lang.Float">10.0</value>
+                    <key class="java.lang.String">Frequency</key>
+                    <value class="java.lang.Float">30.0</value>
+                    <key class="java.lang.String">Inner Radius</key>
+                    <value class="java.lang.Float">10.0</value>
+                    <key class="java.lang.String">Outer Radius</key>
+                    <value class="java.lang.Float">100.0</value>
+                  </arguments>
+                </model>
+              </entry>
+              <entry>
+                <node>%ROOT%</node>
+                <model>
+                  <name>model/scripted/transient_sound.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Loop Duration</key>
+                    <value class="java.lang.Float">0.0</value>
+                    <key class="java.lang.String">Move with Origin</key>
+                    <value class="java.lang.Boolean">false</value>
+                    <key class="java.lang.String">Sounder</key>
+                    <value class="com.threerings.config.ConfigReference">
+                      <name>Clip/Default (Gain)</name>
+                      <arguments>
+                        <key class="java.lang.String">File</key>
+                        <value class="java.lang.String">sound/effect/world/block_explosive.ogg</value>
+                        <key class="java.lang.String">Gain</key>
+                        <value class="java.lang.Float">1.0</value>
+                        <key class="java.lang.String">Range</key>
+                        <value class="java.lang.String">Medium</value>
+                      </arguments>
+                    </value>
+                    <key class="java.lang.String">Transform</key>
+                    <value class="com.threerings.math.Transform3D">
+                      <scale>2.0</scale>
+                    </value>
+                    <key class="java.lang.String">Transient</key>
+                    <value class="com.threerings.config.ConfigReference">
+                      <name>particle/explosive_block.dat</name>
+                      <arguments>
+                        <key class="java.lang.String">Block</key>
+                        <value class="java.lang.Boolean">false</value>
+                      </arguments>
+                    </value>
+                  </arguments>
+                </model>
+              </entry>
+              <entry>
+                <node>%ROOT%</node>
+                <model>
+                  <name>particle/props/factory/fx_mortarshell_destruct.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Texture</key>
+                    <value class="java.lang.String">world/prop/clockworks/factory/mortarshell_active.png</value>
+                  </arguments>
+                </model>
+              </entry>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>2.0</radius>
+      </shape>
+      <action class="com.threerings.projectx.dungeon.config.DungeonActionConfig$DamageRegion">
+        <damage class="com.threerings.projectx.dungeon.config.DamageConfig$Compound">
+          <damages>
+            <entry class="com.threerings.projectx.dungeon.config.DamageConfig$DepthScale">
+              <depthScale>
+                <name>Hazard/Hazard Base</name>
+              </depthScale>
+              <flags>4</flags>
+            </entry>
+            <entry class="com.threerings.projectx.dungeon.config.DamageConfig$DepthScale">
+              <depthScale>
+                <name>Hazard/Hazard Base -10</name>
+              </depthScale>
+              <flags>2</flags>
+            </entry>
+          </damages>
+        </damage>
+      </action>
+      <lifespan>1500</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player Faction/Turret, Auto/Parts/Railgun beam (damage)</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <model>
+          <name>model/debug/flash_shape.dat</name>
+          <arguments>
+            <key class="java.lang.String">Shape</key>
+            <value class="com.threerings.tudey.shape.config.ShapeConfig$Transformed">
+              <shape class="com.threerings.tudey.shape.config.ShapeConfig$Rectangle">
+                <width>0.6</width>
+                <height>12.0</height>
+              </shape>
+              <transform>
+                <translation>0.0, -6.0</translation>
+              </transform>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <action class="com.threerings.projectx.dungeon.config.DungeonActionConfig$DamageRegionFromPoint">
+        <damage class="com.threerings.projectx.dungeon.config.DamageConfig$Normal">
+          <amount>10.0</amount>
+          <flags>2</flags>
+        </damage>
+        <impulseDealt>
+          <translation>2.0, 0.0</translation>
+          <duration>200</duration>
+          <level>5</level>
+        </impulseDealt>
+      </action>
+      <lifespan>2000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player Faction/Turret, Auto/Railgun beam</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <action class="com.threerings.tudey.config.ActionConfig$Conditional">
+        <action class="com.threerings.tudey.config.ActionConfig$FireEffect">
+          <effect>
+            <name>Player Faction/Turret, Auto/Parts/Railgun beam (damage)</name>
+          </effect>
+        </action>
+      </action>
+      <lifespan>2000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Better Vitapod</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>model/scripted/transient.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+              <translation>0.0, 0.0, 0.5</translation>
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>particle/fx_item_fail.dat</name>
+              <arguments>
+                <key class="java.lang.String">Variant</key>
+                <value class="java.lang.String">Better Vitapod</value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <targetOnly>true</targetOnly>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Change Color</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorization</name>
+        <paths>implementation.sprite.model["Colorization"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/fx_recolor.dat</name>
+          <arguments>
+            <key class="java.lang.String">Colorization</key>
+            <value class="java.lang.Integer">257</value>
+          </arguments>
+        </model>
+      </sprite>
+      <lifespan>3000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Emergency Rez</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/fx_shareheart.dat</name>
+        </model>
+      </sprite>
+      <lifespan>2000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Full Inventory</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>model/scripted/transient.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+              <translation>0.0, 0.0, 0.5</translation>
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>particle/fx_item_fail.dat</name>
+              <arguments>
+                <key class="java.lang.String">Variant</key>
+                <value class="java.lang.String">Inventory Full</value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <targetOnly>true</targetOnly>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Learn Recipe</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/fx_learnrecipe.dat</name>
+        </model>
+      </sprite>
+      <lifespan>3000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Max Health</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>model/scripted/transient.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+              <translation>0.0, 0.0, 0.5</translation>
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>particle/fx_item_fail.dat</name>
+              <arguments>
+                <key class="java.lang.String">Variant</key>
+                <value class="java.lang.String">Max Health</value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <targetOnly>true</targetOnly>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Pickup Item</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Texture</name>
+        <paths>implementation.sprite.model["Texture"]["Texture"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Item Count</name>
+        <paths>implementation.sprite.model["Item Count"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>particle/fx_getitem.dat</name>
+          <arguments>
+            <key class="java.lang.String">Item Count</key>
+            <value class="java.lang.String"><!--empty--></value>
+            <key class="java.lang.String">Item Name</key>
+            <value class="java.lang.String"><!--empty--></value>
+            <key class="java.lang.String">Texture</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>item/drop/icon.dat</name>
+              <arguments>
+                <key class="java.lang.String">Halo</key>
+                <value/>
+                <key class="java.lang.String">Texture</key>
+                <value class="com.threerings.config.ConfigReference">
+                  <name>2D/File/Colorized (Multiple)/Default</name>
+                  <arguments>
+                    <key class="java.lang.String">Colorizations</key>
+                    <value class="[Lcom.threerings.opengl.renderer.config.ColorizationConfig;">
+                      <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+                        <colorization>516</colorization>
+                      </entry>
+                      <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+                        <colorization>771</colorization>
+                      </entry>
+                      <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+                        <colorization>1026</colorization>
+                      </entry>
+                    </value>
+                    <key class="java.lang.String">File</key>
+                    <value class="java.lang.String">ui/icon/inventory/icon_armor.png</value>
+                  </arguments>
+                </value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Pickup Item (Split)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Item Count</name>
+        <paths>implementation.effect["Item Count"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>File</name>
+        <paths>implementation.effect["Texture"]["File"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorizations</name>
+        <paths>implementation.effect["Texture"]["Colorizations"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Derived">
+      <effect>
+        <name>Player/Pickup Item</name>
+        <arguments>
+          <key class="java.lang.String">Item Count</key>
+          <value class="java.lang.String"><!--empty--></value>
+          <key class="java.lang.String">Texture</key>
+          <value class="com.threerings.config.ConfigReference">
+            <name>2D/File/Colorized (Multiple)/Default</name>
+            <arguments>
+              <key class="java.lang.String">Colorizations</key>
+              <value class="[Lcom.threerings.opengl.renderer.config.ColorizationConfig;">
+                <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+                  <colorization>516</colorization>
+                </entry>
+                <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+                  <colorization>771</colorization>
+                </entry>
+                <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+                  <colorization>1026</colorization>
+                </entry>
+              </value>
+              <key class="java.lang.String">File</key>
+              <value class="java.lang.String">ui/icon/inventory/icon_armor.png</value>
+            </arguments>
+          </value>
+        </arguments>
+      </effect>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Pickup Item Sound</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <model>
+          <name>model/scripted/play_sounder.dat</name>
+          <arguments>
+            <key class="java.lang.String">Sounder</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Clip/Default (Gain)</name>
+              <arguments>
+                <key class="java.lang.String">File</key>
+                <value class="java.lang.String">sound/effect/player/player_pickup.ogg</value>
+                <key class="java.lang.String">Gain</key>
+                <value class="java.lang.Float">2.5</value>
+                <key class="java.lang.String">Range</key>
+                <value class="java.lang.String">Medium</value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Pre Emergency Rez</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/fx_rezwarmup.dat</name>
+        </model>
+      </sprite>
+      <lifespan>2000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Rank Up</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/fx_rankup.dat</name>
+        </model>
+      </sprite>
+      <lifespan>4000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Release Fireflies</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorization</name>
+        <paths>implementation.sprite.model["Transient"]["Colorization"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>model/scripted/transient.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>item/gear/accessory/armor/aura/stinkyknight/fx_bugs-recolor.dat</name>
+              <arguments>
+                <key class="java.lang.String">Colorization</key>
+                <value class="java.lang.Integer">257</value>
+                <key class="java.lang.String">Lifespan</key>
+                <value class="java.lang.Float">12.0</value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <lifespan>3000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Spark Rez</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <rotateWithTarget>false</rotateWithTarget>
+        <model>
+          <name>particle/fx_shareheart-energy.dat</name>
+        </model>
+      </sprite>
+      <lifespan>2000</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>Player/Use Item</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Texture</name>
+        <paths>implementation.sprite.model["Transient"]["Texture"]["Texture"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>model/scripted/transient_sound.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Sounder</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>Compound</name>
+              <arguments>
+                <key class="java.lang.String">Sounders</key>
+                <value class="[Lcom.threerings.openal.config.SounderConfig$ComponentSounder;">
+                  <entry>
+                    <sounder>
+                      <name>Clip/Default (Gain) (Pitch)</name>
+                      <arguments>
+                        <key class="java.lang.String">File</key>
+                        <value class="java.lang.String">sound/effect/player/player_pickup.ogg</value>
+                        <key class="java.lang.String">Gain</key>
+                        <value class="java.lang.Float">1.0</value>
+                        <key class="java.lang.String">Pitch</key>
+                        <value class="java.lang.Float">1.1</value>
+                        <key class="java.lang.String">Range</key>
+                        <value class="java.lang.String">Medium</value>
+                      </arguments>
+                    </sounder>
+                  </entry>
+                  <entry>
+                    <sounder>
+                      <name>Clip/Default (Gain) (Pitch)</name>
+                      <arguments>
+                        <key class="java.lang.String">File</key>
+                        <value class="java.lang.String">sound/effect/item/heart_acquire_01.ogg</value>
+                        <key class="java.lang.String">Gain</key>
+                        <value class="java.lang.Float">0.4</value>
+                        <key class="java.lang.String">Pitch</key>
+                        <value class="java.lang.Float">0.8</value>
+                        <key class="java.lang.String">Range</key>
+                        <value class="java.lang.String">Medium</value>
+                      </arguments>
+                    </sounder>
+                  </entry>
+                </value>
+              </arguments>
+            </value>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>particle/fx_useitem.dat</name>
+              <arguments>
+                <key class="java.lang.String">Texture</key>
+                <value class="com.threerings.config.ConfigReference">
+                  <name>item/drop/icon.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Halo</key>
+                    <value class="com.threerings.config.ConfigReference">
+                      <name>item/drop/ambient_rim.dat</name>
+                      <arguments>
+                        <key class="java.lang.String">Fixed</key>
+                        <value/>
+                      </arguments>
+                    </value>
+                    <key class="java.lang.String">Texture</key>
+                    <value class="com.threerings.config.ConfigReference">
+                      <name>2D/File/Colorized (Multiple)/Default</name>
+                      <arguments>
+                        <key class="java.lang.String">Colorizations</key>
+                        <value class="[Lcom.threerings.opengl.renderer.config.ColorizationConfig;">
+                          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+                            <colorization>516</colorization>
+                          </entry>
+                          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+                            <colorization>771</colorization>
+                          </entry>
+                          <entry class="com.threerings.opengl.renderer.config.ColorizationConfig$Normal">
+                            <colorization>1026</colorization>
+                          </entry>
+                        </value>
+                        <key class="java.lang.String">File</key>
+                        <value class="java.lang.String">ui/icon/inventory/icon_armor.png</value>
+                      </arguments>
+                    </value>
+                  </arguments>
+                </value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <lifespan>433</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PvP/Control Point/Capture Flash</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Colorization Aux</name>
+        <paths>implementation.sprite.model["Colorization Aux"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>2</floorMask>
+        <model>
+          <name>particle/props/pvp_lockdown/cp_shockwave.dat</name>
+          <arguments>
+            <key class="java.lang.String">Colorization Aux</key>
+            <value class="java.lang.Integer">2561</value>
+          </arguments>
+        </model>
+      </sprite>
+      <lifespan>1400</lifespan>
+    </implementation>
+  </entry>
+  <entry depth="1">
+    <name>PvP/Team Sound Effect</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Sound</name>
+        <paths>implementation.sprite.model["Sounder"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Choice" depth="3">
+        <outer rdepth="1"/>
+        <name>Shape</name>
+        <directs>
+          <entry>
+            <name>Shape</name>
+            <paths>implementation.shape</paths>
+          </entry>
+        </directs>
+        <options>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Point</name>
+            <arguments>
+              <key class="java.lang.String">Shape</key>
+              <value class="com.threerings.tudey.shape.config.ShapeConfig$Point">
+              </value>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Global</name>
+            <arguments>
+              <key class="java.lang.String">Shape</key>
+              <value class="com.threerings.tudey.shape.config.ShapeConfig$Global">
+              </value>
+            </arguments>
+          </entry>
+        </options>
+        <choice>Point</choice>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Team Id</name>
+        <paths>implementation.team_id</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.projectx.dungeon.arena.config.ArenaEffectConfig$Team">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <model>
+          <name>model/scripted/transient_sound.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Sounder</key>
+            <value/>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value/>
+          </arguments>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>PvP/Warp Flash</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <model>
+          <name>world/environment/global_particles.dat</name>
+          <arguments>
+            <key class="java.lang.String">Model</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>particle/fx_blow_out_in.dat</name>
+              <arguments>
+                <key class="java.lang.String">Fade Percent</key>
+                <value class="java.lang.Float">0.1</value>
+                <key class="java.lang.String">Total Duration</key>
+                <value class="java.lang.Float">2.5</value>
+              </arguments>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Global">
+      </shape>
+      <lifespan>3000</lifespan>
+    </implementation>
+  </entry>
+  <entry depth="1">
+    <name>Sound Effect</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Sound</name>
+        <paths>implementation.sprite.model["Sounder"]</paths>
+      </entry>
+      <entry class="com.threerings.config.Parameter$Choice" depth="3">
+        <outer rdepth="1"/>
+        <name>Shape</name>
+        <directs>
+          <entry>
+            <name>Shape</name>
+            <paths>implementation.shape</paths>
+          </entry>
+        </directs>
+        <options>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Point</name>
+            <arguments>
+              <key class="java.lang.String">Shape</key>
+              <value class="com.threerings.tudey.shape.config.ShapeConfig$Point">
+              </value>
+            </arguments>
+          </entry>
+          <entry>
+            <outer rdepth="3"/>
+            <name>Global</name>
+            <arguments>
+              <key class="java.lang.String">Shape</key>
+              <value class="com.threerings.tudey.shape.config.ShapeConfig$Global">
+              </value>
+            </arguments>
+          </entry>
+        </options>
+        <choice>Point</choice>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <model>
+          <name>model/scripted/transient_sound.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">false</value>
+            <key class="java.lang.String">Sounder</key>
+            <value/>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value/>
+          </arguments>
+        </model>
+      </sprite>
+    </implementation>
+  </entry>
+  <entry>
+    <name>World/Explosions/No-Damage/Custom/Cogmaster's Castle</name>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>255</floorMask>
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>model/compound/model.dat</name>
+          <arguments>
+            <key class="java.lang.String">Influences</key>
+            <value class="com.threerings.opengl.model.config.InfluenceFlagConfig">
+              <fog>false</fog>
+              <projections>false</projections>
+              <definitions>false</definitions>
+            </value>
+            <key class="java.lang.String">Models</key>
+            <value class="[Lcom.threerings.opengl.model.config.CompoundConfig$ComponentModel;">
+              <entry>
+                <node>%ROOT%</node>
+                <model>
+                  <name>model/scripted/custom/shake_camera_simple_explosion.dat</name>
+                </model>
+              </entry>
+              <entry>
+                <node>%ROOT%</node>
+                <model>
+                  <name>model/scripted/transient_sound.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Loop Duration</key>
+                    <value class="java.lang.Float">0.0</value>
+                    <key class="java.lang.String">Move with Origin</key>
+                    <value class="java.lang.Boolean">false</value>
+                    <key class="java.lang.String">Sounder</key>
+                    <value class="com.threerings.config.ConfigReference">
+                      <name>Variable Clip/Default</name>
+                      <arguments>
+                        <key class="java.lang.String">File</key>
+                        <value class="java.lang.String">sound/effect/world/block_explosive.ogg</value>
+                        <key class="java.lang.String">Gain</key>
+                        <value class="com.threerings.probs.FloatVariable$Uniform">
+                          <minimum>0.4</minimum>
+                          <maximum>0.8</maximum>
+                        </value>
+                        <key class="java.lang.String">Pitch</key>
+                        <value class="com.threerings.probs.FloatVariable$Uniform">
+                          <minimum>0.8</minimum>
+                          <maximum>1.2</maximum>
+                        </value>
+                        <key class="java.lang.String">Range</key>
+                        <value class="java.lang.String">Medium</value>
+                      </arguments>
+                    </value>
+                    <key class="java.lang.String">Transform</key>
+                    <value class="com.threerings.math.Transform3D">
+                    </value>
+                    <key class="java.lang.String">Transient</key>
+                    <value class="com.threerings.config.ConfigReference">
+                      <name>model/scripted/random.dat</name>
+                      <arguments>
+                        <key class="java.lang.String">Actions</key>
+                        <value class="[Lcom.threerings.opengl.model.config.ActionConfig$WeightedAction;">
+                          <entry>
+                            <action class="com.threerings.opengl.model.config.ActionConfig$SpawnTransient">
+                              <model>
+                                <name>particle/explosion/simple.dat</name>
+                                <arguments>
+                                  <key class="java.lang.String">Color</key>
+                                  <value class="com.threerings.opengl.renderer.Color4f">1.0, 0.36862746, 0.0, 1.0</value>
+                                  <key class="java.lang.String">Extra FX</key>
+                                  <value class="java.lang.Boolean">false</value>
+                                  <key class="java.lang.String">Ground Scar</key>
+                                  <value class="java.lang.Boolean">false</value>
+                                </arguments>
+                              </model>
+                              <transform>
+                                <scale>2.0</scale>
+                              </transform>
+                            </action>
+                          </entry>
+                          <entry>
+                            <action class="com.threerings.opengl.model.config.ActionConfig$SpawnTransient">
+                              <model>
+                                <name>particle/explosion/simple.dat</name>
+                                <arguments>
+                                  <key class="java.lang.String">Color</key>
+                                  <value class="com.threerings.opengl.renderer.Color4f">1.0, 0.36862746, 0.0, 1.0</value>
+                                  <key class="java.lang.String">Extra FX</key>
+                                  <value class="java.lang.Boolean">false</value>
+                                  <key class="java.lang.String">Ground Scar</key>
+                                  <value class="java.lang.Boolean">false</value>
+                                </arguments>
+                              </model>
+                              <transform>
+                                <scale>2.6</scale>
+                              </transform>
+                            </action>
+                          </entry>
+                          <entry>
+                            <action class="com.threerings.opengl.model.config.ActionConfig$SpawnTransient">
+                              <model>
+                                <name>particle/explosion/simple.dat</name>
+                                <arguments>
+                                  <key class="java.lang.String">Color</key>
+                                  <value class="com.threerings.opengl.renderer.Color4f">1.0, 0.36862746, 0.0, 1.0</value>
+                                  <key class="java.lang.String">Extra FX</key>
+                                  <value class="java.lang.Boolean">false</value>
+                                  <key class="java.lang.String">Ground Scar</key>
+                                  <value class="java.lang.Boolean">false</value>
+                                </arguments>
+                              </model>
+                              <transform>
+                                <scale>3.2</scale>
+                              </transform>
+                            </action>
+                          </entry>
+                        </value>
+                      </arguments>
+                    </value>
+                  </arguments>
+                </model>
+              </entry>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>2.0</radius>
+      </shape>
+      <lifespan>1500</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>World/Explosions/No-Damage/Simple (camera shake)</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Transform - Explosion</name>
+        <paths>implementation.sprite.model["Models"][1].model["Transform"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <floorMask>255</floorMask>
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>model/compound/model.dat</name>
+          <arguments>
+            <key class="java.lang.String">Influences</key>
+            <value class="com.threerings.opengl.model.config.InfluenceFlagConfig">
+              <fog>false</fog>
+              <projections>false</projections>
+              <definitions>false</definitions>
+            </value>
+            <key class="java.lang.String">Models</key>
+            <value class="[Lcom.threerings.opengl.model.config.CompoundConfig$ComponentModel;">
+              <entry>
+                <node>%ROOT%</node>
+                <model>
+                  <name>model/scripted/custom/shake_camera_simple_explosion.dat</name>
+                </model>
+              </entry>
+              <entry>
+                <node>%ROOT%</node>
+                <model>
+                  <name>model/scripted/transient_sound.dat</name>
+                  <arguments>
+                    <key class="java.lang.String">Loop Duration</key>
+                    <value class="java.lang.Float">0.0</value>
+                    <key class="java.lang.String">Move with Origin</key>
+                    <value class="java.lang.Boolean">false</value>
+                    <key class="java.lang.String">Sounder</key>
+                    <value class="com.threerings.config.ConfigReference">
+                      <name>Clip/Default (Gain)</name>
+                      <arguments>
+                        <key class="java.lang.String">File</key>
+                        <value class="java.lang.String">sound/effect/world/block_explosive.ogg</value>
+                        <key class="java.lang.String">Gain</key>
+                        <value class="java.lang.Float">1.0</value>
+                        <key class="java.lang.String">Range</key>
+                        <value class="java.lang.String">Medium</value>
+                      </arguments>
+                    </value>
+                    <key class="java.lang.String">Transform</key>
+                    <value class="com.threerings.math.Transform3D">
+                      <scale>2.0</scale>
+                    </value>
+                    <key class="java.lang.String">Transient</key>
+                    <value class="com.threerings.config.ConfigReference">
+                      <name>particle/explosion/simple.dat</name>
+                      <arguments>
+                        <key class="java.lang.String">Color</key>
+                        <value class="com.threerings.opengl.renderer.Color4f">1.0, 0.36862746, 0.0, 1.0</value>
+                        <key class="java.lang.String">Extra FX</key>
+                        <value class="java.lang.Boolean">false</value>
+                        <key class="java.lang.String">Ground Scar</key>
+                        <value class="java.lang.Boolean">false</value>
+                      </arguments>
+                    </value>
+                  </arguments>
+                </model>
+              </entry>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Circle">
+        <radius>2.0</radius>
+      </shape>
+      <lifespan>1500</lifespan>
+    </implementation>
+  </entry>
+  <entry>
+    <name>World/Traps and Hazards/Whitespace/Floor Spikes, triggered</name>
+    <parameters>
+      <entry class="com.threerings.config.Parameter$Direct">
+        <name>Transform</name>
+        <paths>implementation.sprite.model["Transform"]</paths>
+      </entry>
+    </parameters>
+    <implementation class="com.threerings.tudey.config.EffectConfig$Original">
+      <sprite class="com.threerings.tudey.config.EffectSpriteConfig$Default">
+        <attachToTarget>true</attachToTarget>
+        <model>
+          <name>model/scripted/transient_sound.dat</name>
+          <arguments>
+            <key class="java.lang.String">Loop Duration</key>
+            <value class="java.lang.Float">0.0</value>
+            <key class="java.lang.String">Move with Origin</key>
+            <value class="java.lang.Boolean">true</value>
+            <key class="java.lang.String">Sounder</key>
+            <value/>
+            <key class="java.lang.String">Transform</key>
+            <value class="com.threerings.math.Transform3D">
+            </value>
+            <key class="java.lang.String">Transient</key>
+            <value class="com.threerings.config.ConfigReference">
+              <name>world/dynamic/traps_n_hazards/floor/whitespace/hidden_triggered/fx_spikes_01.dat</name>
+            </value>
+          </arguments>
+        </model>
+      </sprite>
+      <shape class="com.threerings.tudey.shape.config.ShapeConfig$Rectangle">
+        <width>0.65</width>
+        <height>0.65</height>
+      </shape>
+      <action class="com.threerings.tudey.config.ActionConfig$Compound">
+        <actions>
+          <entry class="com.threerings.tudey.config.ActionConfig$Delayed">
+            <action class="com.threerings.projectx.dungeon.config.DungeonActionConfig$FireAction">
+              <fireAction>
+                <name>Traps and Hazards/Whitespace Spikes, floor</name>
+              </fireAction>
+            </action>
+          </entry>
+        </actions>
+      </action>
+      <lifespan>3000</lifespan>
+    </implementation>
+  </entry>
+</object>
+</java>

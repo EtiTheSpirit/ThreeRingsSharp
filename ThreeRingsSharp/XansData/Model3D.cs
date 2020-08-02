@@ -110,9 +110,9 @@ namespace ThreeRingsSharp.XansData {
 		public string ActiveTexture { get; set; } = null;
 
 		/// <summary>
-		/// The attached models on this <see cref="Model3D"/>.
+		/// The <see cref="Armature"/> that this <see cref="Model3D"/> is attached to.
 		/// </summary>
-		[Obsolete("Feature isn't ready, does nothing.")] public List<Model3D> Attachments { get; set; } = new List<Model3D>();
+		public Armature AttachmentNode { get; set; } = null;
 
 		/// <summary>
 		/// Any extra information attached to this <see cref="Model3D"/> that serves as arbitrary data.

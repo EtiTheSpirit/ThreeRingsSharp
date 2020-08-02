@@ -59,25 +59,29 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 			if (model.defaultModel != null) {
 				List<Model3D> mdls = ConfigReferenceUtil.HandleConfigReference(sourceFile, model.defaultModel, modelCollection, dataTreeParent, globalTransform, false, extraData);
-				foreach (Model3D mdl in mdls) {
-					mdl.ExtraData["ConditionalConfigFlag"] = true;
-					mdl.ExtraData["ConditionalConfigDefault"] = true;
-					if (model.defaultTransform != null) mdl.Transform = model.defaultTransform;
-					modelCollection.Add(mdl);
+				if (mdls != null) {
+					foreach (Model3D mdl in mdls) {
+						mdl.ExtraData["ConditionalConfigFlag"] = true;
+						mdl.ExtraData["ConditionalConfigDefault"] = true;
+						if (model.defaultTransform != null) mdl.Transform = model.defaultTransform;
+						modelCollection.Add(mdl);
+					}
 				}
 			}
 
 			foreach (ConditionalConfig.Case condition in model.cases) {
 				List<Model3D> mdls = ConfigReferenceUtil.HandleConfigReference(sourceFile, condition.model, modelCollection, dataTreeParent, globalTransform, false, extraData);
-				foreach (Model3D mdl in mdls) {
-					mdl.ExtraData["ConditionalConfigFlag"] = true;
-					mdl.ExtraData["ConditionalConfigValue"] = true;
-					try {
-						bool state = condition.condition.createEvaluator(DummyScope.Instance).evaluate();
-						mdl.ExtraData["ConditionalConfigValue"] = state;
-					} catch { }
-					if (condition.transform != null) mdl.Transform = condition.transform;
-					modelCollection.Add(mdl);
+				if (mdls != null) {
+					foreach (Model3D mdl in mdls) {
+						mdl.ExtraData["ConditionalConfigFlag"] = true;
+						mdl.ExtraData["ConditionalConfigValue"] = true;
+						try {
+							bool state = condition.condition.createEvaluator(DummyScope.Instance).evaluate();
+							mdl.ExtraData["ConditionalConfigValue"] = state;
+						} catch { }
+						if (condition.transform != null) mdl.Transform = condition.transform;
+						modelCollection.Add(mdl);
+					}
 				}
 			}
 		}

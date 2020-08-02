@@ -1,0 +1,105 @@
+[DEBUG] Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!
+[DEBUG] Populated [actor].
+[DEBUG] Populated [area].
+[DEBUG] Populated [behavior].
+[DEBUG] Populated [cursor].
+[DEBUG] Populated [effect].
+[DEBUG] Populated [font].
+[DEBUG] Populated [ground].
+[DEBUG] Populated [interface_script].
+[DEBUG] Populated [material].
+[DEBUG] Populated [parameterized_handler].
+[DEBUG] Populated [path].
+Just a second! I'm still loading up the config references. The model will load once that's done.
+[DEBUG] Populated [placeable].
+[DEBUG] Populated [render_effect].
+[DEBUG] Populated [render_queue].
+[DEBUG] Populated [render_scheme].
+[DEBUG] Populated [scene_global].
+[DEBUG] Populated [shader].
+[DEBUG] Populated [sounder].
+[DEBUG] Populated [style].
+[DEBUG] Populated [texture].
+[DEBUG] Populated [tile].
+[DEBUG] Populated [wall].
+Config data has been populated.
+Working. This might take a bit...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\crew\model.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform as identity transform with scale=1
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\model.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
+Resolved Model/Two-Sided/Masked (Soft) as com.threerings.opengl.material.config.MaterialConfig
+Resolved 2D/File/Default as com.threerings.opengl.renderer.config.TextureConfig
+Attachment wanted to attach to node [bone_helmet] but this node does not exist!
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\doublebelt\model_cobalt-distance.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ModelConfig::Derived'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\model\conditional\distance.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ConditionalConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\circle.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\part_circle.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: SceneInfluencerConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
+
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: SceneInfluencerConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
+
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\face\model_face.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\face\part_model_face.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\face\part_ambient_faceblink.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: MetaParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/character/pc/face/part_ambient_faceblink.dat
+
+Attachment wanted to attach to node [bone_helmet] but this node does not exist!
+Attachment wanted to attach to node [bone_helmet] but this node does not exist!
+Number of models loaded: 3 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
+Number of unique meshes instantiated: 2
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\helm_dark-powder.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\helm_green-tan.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\helm_silver-blue.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\crew_navy.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\crew_prp.png].
+glTF Exporter instantiated 3 models (skipped 0 models).
+Done! Exported to [F:\Users\Xan\Desktop\3D\__SK_TEST\knight.glb]

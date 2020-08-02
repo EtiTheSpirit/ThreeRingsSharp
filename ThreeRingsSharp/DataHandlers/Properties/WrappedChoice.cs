@@ -61,7 +61,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 		/// <param name="args"></param>
 		public WrappedChoice(ParameterizedConfig cfg, Parameter.Choice choice, ArgumentMap args = null) {
 			_Choice = choice.choice;
-			DefaultChoice = choice.GetDefaultOption().name;
+			DefaultChoice = choice.GetDefaultOption()?.name ?? choice.options.First()?.name;
 			Config = cfg;
 			BaseChoice = choice;
 			
