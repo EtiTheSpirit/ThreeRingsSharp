@@ -57,9 +57,10 @@
             </summary>
             <param name="clydeFile"></param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodes(com.threerings.opengl.model.config.ModelConfig,com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,System.String)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodesForMeshes(com.threerings.opengl.model.config.ModelConfig,com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,System.String)">
             <summary>
-            A utility function that iterates through all of the nodes recursively, as some may store mesh data.
+            A utility function that iterates through all of the nodes recursively, as some may store mesh data.<para/>
+            This does not decode the rig. It strictly grabs meshes out of the rig.
             </summary>
             <param name="baseModel">The <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> that contained this <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/>.</param>
             <param name="model">A reference to the <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/> that contains these nodes.</param>
@@ -1715,12 +1716,100 @@
             <param name="text"></param>
             <param name="color"></param>
         </member>
+        <member name="T:ThreeRingsSharp.XansData.Armature">
+            <summary>
+            Intended to represent a bone in a mesh. It is incredibly similar to <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig.Node"/>, with the exception that its matrix is premultiplied for exporting.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Armature.Name">
+            <summary>
+            The name of this <see cref="T:ThreeRingsSharp.XansData.Armature"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Armature.BaseNode">
+            <summary>
+            The <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig.Node"/> that this <see cref="T:ThreeRingsSharp.XansData.Armature"/> was created from.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Armature.InverseReferenceTransform">
+            <summary>
+            A reference to <see cref="P:ThreeRingsSharp.XansData.Armature.BaseNode"/>.invRefTransform, which is the inverse reference transformation of this <see cref="T:ThreeRingsSharp.XansData.Armature"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Armature.Transform">
+            <summary>
+            A reference to <see cref="P:ThreeRingsSharp.XansData.Armature.BaseNode"/>.transform, which is the main transformation of this <see cref="T:ThreeRingsSharp.XansData.Armature"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Armature.BindShapeMatrix">
+            <summary>
+            The transformation of this <see cref="T:ThreeRingsSharp.XansData.Armature"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Armature.Index">
+            <summary>
+            The index of this bone in the parent model's bone name list.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Armature.Parent">
+            <summary>
+            The <see cref="T:ThreeRingsSharp.XansData.Armature"/> that contains this instance, or <see langword="null"/> if this is a root instance.<para/>
+            Setting this will update the children of the applicable objects (remove this from the children of the old parent (if applicable), add this to the children of the new parent (if applicable)) automatically.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.Armature._Parent">
+            <summary>
+            The internal reference of the parent. Do not change this internally, and instead change <see cref="P:ThreeRingsSharp.XansData.Armature.Parent"/>, as it properly updates the object hierarchy.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Armature.Children">
+            <summary>
+            All <see cref="T:ThreeRingsSharp.XansData.Armature"/>s that are first-level descendants of this object (this does NOT include nested objects).
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.Armature._Children">
+            <summary>
+            An internal reference to the children of this <see cref="T:ThreeRingsSharp.XansData.Armature"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Armature.AddChild(ThreeRingsSharp.XansData.Armature)">
+            <summary>
+            Adds the given child to this <see cref="T:ThreeRingsSharp.XansData.Armature"/>'s children.
+            </summary>
+            <param name="child"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Armature.RemoveChild(ThreeRingsSharp.XansData.Armature)">
+            <summary>
+            Removes the given child from this <see cref="T:ThreeRingsSharp.XansData.Armature"/>'s children.
+            </summary>
+            <param name="child"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Armature.ConstructHierarchyFromNode(com.threerings.opengl.model.config.ArticulatedConfig.Node)">
+            <summary>
+            Given a <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig.Node"/> from an <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/>, this will translates the <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig.Node"/> and all its <see cref="F:com.threerings.opengl.model.config.ArticulatedConfig.Node.children"/> into <see cref="T:ThreeRingsSharp.XansData.Armature"/>s.
+            </summary>
+            <param name="rootNode"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Armature.GetChildIndices(System.Int32)">
+            <summary>
+            Gets the <see cref="P:ThreeRingsSharp.XansData.Armature.Index"/> property of the children of this armature, adding <paramref name="offset"/> to their value.
+            </summary>
+            <param name="offset"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Armature.GetDescendants">
+            <summary>
+            Recursively get the children of this node.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.DevelopmentFlags">
             <summary>
             A class containing values to toggle various features. Generally speaking, if a feature is disabled, it is broken.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.DevelopmentFlags.FLAG_DO_BONE_EXPORTS">
+        <member name="F:ThreeRingsSharp.XansData.DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS">
             <summary>
             If <see langword="true"/>, glTF will export bones. If <see langword="false"/>, glTF will export solid meshes only.
             </summary>
@@ -2024,6 +2113,14 @@
             <returns></returns>
             <exception cref="T:System.DataMisalignedException">Thrown if the length of the given <paramref name="enumerable"/> is not divisible by <paramref name="groupSize"/>.</exception>
         </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.As1D``1(``0[0:,0:])">
+            <summary>
+            Converts this 2D array to a 1D array by butt-joining the objects in the second dimension. This reverses <see cref="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.As2D``1(System.Collections.Generic.IEnumerable{``0},System.Int32)"/>.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="array2d"></param>
+            <returns></returns>
+        </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.GetSecondDimensionAt``1(``0[0:,0:],System.Int32)">
             <summary>
             Given an <paramref name="index"/>, this will return the second dimension of the 2D array. If the 2D array were constructed as an array of arrays, this would be the equivalent to getting array[x] in array[x][y].
@@ -2034,7 +2131,7 @@
             <returns></returns>
             <exception cref="T:System.IndexOutOfRangeException">Thrown if the given index is out of the range fo the array.</exception>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.ToIntArray(System.Single[])">
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.ToUshortArray(System.Single[])">
             <summary>
             A very specialized method designed specifically for <see cref="T:ThreeRingsSharp.DataHandlers.Model.GeometryConfigTranslator"/> which converts a float array to an int array.
             </summary>
@@ -2115,6 +2212,12 @@
             Returns all components of this transform in the order of <c>translation, rotation, scale (as Vector3f), scale (as float)</c>.
             </summary>
             <param name="trs"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.GetMatrixComponents(com.threerings.math.Transform3D)">
+            <summary>
+            Returns the components of this <see cref="T:com.threerings.math.Transform3D"/>'s matrix in column-major order. If it does not have a matrix, one will be created via the promotion of a duplicate <see cref="T:com.threerings.math.Transform3D"/>.
+            </summary>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.RotateOnAxis(com.threerings.math.Transform3D,ThreeRingsSharp.XansData.Structs.Axis,System.Single)">
@@ -2365,6 +2468,11 @@
             The type of model data this accessor represents, which determines is size.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.ByteOffset">
+            <summary>
+            The offset in the referenced buffer that this accessor should start at.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAsset">
             <summary>
             Represents raw asset data for this glTF file, such as the version it's using and the tool that created the file.
@@ -2535,6 +2643,11 @@
             The index of this mesh in glTF data.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.ThisIndex">
+            <summary>
+            Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
+            </summary>
+        </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Name">
             <summary>
             The name of this object as it appears in the 3D editor.
@@ -2568,6 +2681,16 @@
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Matrix">
             <summary>
             A transformation matrix representing the position, size, and scale of this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode"/>.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Children">
+            <summary>
+            The child nodes of this node.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.ExportMatrix">
+            <summary>
+            Set this to true to export <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Matrix"/>, and false to export <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Translation"/>, <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Rotation"/>, and <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Scale"/>.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.SetPosition(ThreeRingsSharp.XansData.Structs.Vector3)">
@@ -2726,6 +2849,11 @@
             The IDs of the nodes included in this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFScene"/>.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFSkin.ThisIndex">
+            <summary>
+            Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
+            </summary>
+        </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFSkin.InverseBindMatrices">
             <summary>
             The index of the accessor containing the floating-point 4x4 inverse-bind matrices. The default is that each matrix is a 4x4 identity matrix, which implies that inverse-bind matrices were pre-applied.
@@ -2825,7 +2953,12 @@
             A list of every <see cref="T:ThreeRingsSharp.XansData.MeshData"/> that has been instantiated. Unlike <see cref="P:ThreeRingsSharp.XansData.MeshData.MeshDataBindings"/>, should any meshes have the same name (which will not happen under normal circumstances), this will store all instances.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.MeshData.Users">
+        <member name="F:ThreeRingsSharp.XansData.MeshData._Users">
+            <summary>
+            A list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances that reference this mesh.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.MeshData.Users">
             <summary>
             A list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances that reference this mesh.
             </summary>
@@ -2863,8 +2996,13 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.BoneNames">
             <summary>
-            A list of every bone name in this model. Unlike the list provided in Clyde geometry, the first element (index 0) of this list is null.<para/>
+            A list of every bone name in this model that deforms the model (so NOT all of the bones)! Unlike the list provided in Clyde geometry, the first element (index 0) of this list is null.<para/>
             This allows easier bone indexing when observing vertex groups since all that needs to be done is testing if the name is null (0 denotes "not in a bone group")
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.MeshData.ExtraBoneNames">
+            <summary>
+            A list of the bones within <see cref="P:ThreeRingsSharp.XansData.MeshData.AllBones"/> that are not listed in <see cref="P:ThreeRingsSharp.XansData.MeshData.BoneNames"/>
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.BoneIndices">
@@ -2877,6 +3015,16 @@
             <summary>
             The weights for bones.<para/>
             If you need to find the weight of a vertex for a given bone, search <see cref="P:ThreeRingsSharp.XansData.MeshData.VertexGroups"/> instead.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.MeshData.BoneIndicesNative">
+            <summary>
+            The native ushort index array from the model that instantiated this mesh without any processing.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.MeshData.BoneWeightsNative">
+            <summary>
+            The native float weight array from the model that instantiated this mesh without any processing.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.HasBoneData">
@@ -2900,9 +3048,19 @@
             All vertices will be moved by this value when exporting.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.XansData.MeshData.Skeleton">
+            <summary>
+            The rig associated with this <see cref="T:ThreeRingsSharp.XansData.MeshData"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.MeshData.AllBones">
+            <summary>
+            A list of every bone in <see cref="P:ThreeRingsSharp.XansData.MeshData.Skeleton"/> indexable by the names in <see cref="P:ThreeRingsSharp.XansData.MeshData.BoneNames"/>
+            </summary>
+        </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.#ctor">
             <summary>
-            Creates a new <see cref="T:ThreeRingsSharp.XansData.MeshData"/>.<para/>
+            Creates a new blank <see cref="T:ThreeRingsSharp.XansData.MeshData"/>.<para/>
             WARNING: This <see cref="T:ThreeRingsSharp.XansData.MeshData"/> will NOT be added to <see cref="P:ThreeRingsSharp.XansData.MeshData.MeshDataBindings"/>!
             </summary>
         </member>
@@ -2917,6 +3075,12 @@
             <summary>
             Since this is used by every tile when exporting scenes, it has its own method. This iterates through <see cref="P:ThreeRingsSharp.XansData.MeshData.Vertices"/> and then sets <see cref="P:ThreeRingsSharp.XansData.MeshData.VertexOffset"/> to the center of their axis-aligned bounding box.
             </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.MeshData.SetBones(com.threerings.opengl.model.config.ArticulatedConfig.Node)">
+            <summary>
+            Sets <see cref="P:ThreeRingsSharp.XansData.MeshData.Skeleton"/> and populates <see cref="P:ThreeRingsSharp.XansData.MeshData.AllBones"/>.
+            </summary>
+            <param name="root"></param>
         </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.GetVertexGroupByName(System.String)">
             <summary>
@@ -2954,7 +3118,7 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.DisposeIfNoUsersExist">
             <summary>
-            Calls <see cref="M:ThreeRingsSharp.XansData.MeshData.Dispose"/> if <see cref="F:ThreeRingsSharp.XansData.MeshData.Users"/> is empty.
+            Calls <see cref="M:ThreeRingsSharp.XansData.MeshData.Dispose"/> if <see cref="F:ThreeRingsSharp.XansData.MeshData._Users"/> is empty.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.ModelFormat">
@@ -3162,6 +3326,17 @@
             The indices in this vertex group. These form triangles in this <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/>.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.IndexIndices">
+            <summary>
+            The indices of elements in the parent <see cref="T:ThreeRingsSharp.XansData.MeshData"/>. This is probably confusing to read, so think of it this way:<para/>
+            I access a value out of this list. The returned value <c>int returnedValue = IndexIndices[x]</c> is used to index the parent's data arrays (Indices, Vertices, Bone stuff): <c>Parent.Indices[returnedValue]</c>. Make more sense?
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Parent">
+            <summary>
+            The MeshData that contains this <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/>.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.XansData.Structs.VertexGroup.Name">
             <summary>
             The name of this vertex group, which should be identical to the node it corresponds to.
@@ -3260,7 +3435,7 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.ExtraData">
             <summary>
-            Any extra information attached to this <see cref="T:ThreeRingsSharp.XansData.Model3D"/> that should be attached as arbitrary data.
+            Any extra information attached to this <see cref="T:ThreeRingsSharp.XansData.Model3D"/> that serves as arbitrary data.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Model3D.Export(System.IO.FileInfo,ThreeRingsSharp.XansData.ModelFormat)">

@@ -192,6 +192,7 @@
     <Compile Include="Utility\TextureGrabber.cs" />
     <Compile Include="Utility\VersionInfoScraper.cs" />
     <Compile Include="Utility\XanLogger.cs" />
+    <Compile Include="XansData\Armature.cs" />
     <Compile Include="XansData\DevelopmentFlags.cs" />
     <Compile Include="XansData\Exceptions\ClydeDataReadException.cs" />
     <Compile Include="XansData\Exceptions\InvalidTypeException.cs" />
