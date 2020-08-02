@@ -81,13 +81,13 @@ namespace ThreeRingsSharp.DataHandlers {
 			// Cache models we've already read. 
 			// This isn't really important for single models, but for loading stuff like scenes, this speeds up load speed incredibly.
 			if (!ClydeObjectCache.ContainsKey(clydeFile.FullName)) {
-				XanLogger.WriteLine($"Loading [{clydeFile.FullName}]...", true);
+				XanLogger.WriteLine($"Loading [{clydeFile.FullName}] because it hasn't been initialized before...", XanLogger.DEBUG);
 				if (!VersionInfoScraper.IsValidClydeFile(clydeFile)) {
-					XanLogger.WriteLine("Invalid file. Sending error.", true);
+					XanLogger.WriteLine("Invalid file. Sending error.", XanLogger.DEBUG);
 					throw new ClydeDataReadException("This file isn't a valid Clyde file! (Reason: Incorrect header)");
 				}
 				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(clydeFile);
-				XanLogger.WriteLine($"Read file to grab the raw info.", true);
+				XanLogger.WriteLine($"Read file to grab the raw info.", XanLogger.TRACE);
 				string modelFullClass = cosmeticInfo.Item3;
 				string[] modelClassInfo = JavaClassNameStripper.GetSplitClassName(modelFullClass);
 
@@ -98,7 +98,7 @@ namespace ThreeRingsSharp.DataHandlers {
 
 				// Just abort early here. We can't laod these.
 				if (modelClass == "ProjectXModelConfig") {
-					XanLogger.WriteLine("User imported a Player Knight model. These are unsupported. Sending warning.", true);
+					XanLogger.WriteLine("User imported a Player Knight model. These are unsupported. Sending warning.", XanLogger.DEBUG);
 					if (isBaseFile && UpdateGUIAction != null) {
 						UpdateGUIAction(null, null, null, "ModelConfig");
 					}
@@ -126,6 +126,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					throw;
 				}
 			} else {
+				XanLogger.WriteLine("Loading Clyde object from cache because this .dat file has already been loaded.", XanLogger.TRACE);
 				obj = ((DeepObject)ClydeObjectCache[clydeFile.FullName]).clone();
 				(string, string, string) cosmeticInfo = ModelInfoCache[clydeFile.FullName];
 				string modelFullClass = cosmeticInfo.Item3;
@@ -141,12 +142,15 @@ namespace ThreeRingsSharp.DataHandlers {
 			// That is, all external referenced files by this .dat have this value passed into the method we're in right now instead of it being null.
 			if (transform == null) {
 				transform = new Transform3D(Vector3f.ZERO, Quaternion.IDENTITY, Model3D.MultiplyScaleByHundred ? 100f : 1f);
+				XanLogger.WriteLine("Instantiated global transform as identity transform with scale=" + transform.getScale(), XanLogger.TRACE);
 			} else {
 				// If we ever load a new file, give it a fresh transform based on whatever was passed in so that it can be manipulated by this model.
 				transform = transform.Clone();
+				XanLogger.WriteLine("Instantiated global transform by cloning the existing passed in transform of " + transform.toString());
 			}
 
 			if (obj is null) {
+				XanLogger.WriteLine("Clyde object is null. Unknown object type.", XanLogger.TRACE);
 				if (isBaseFile && UpdateGUIAction != null) {
 					UpdateGUIAction(null, null, null, "Unknown");
 				}
@@ -158,6 +162,7 @@ namespace ThreeRingsSharp.DataHandlers {
 			}
 
 			if (obj is ModelConfig model) {
+				XanLogger.WriteLine("Clyde object is ModelConfig.", XanLogger.TRACE);
 				if (isBaseFile && UpdateGUIAction != null) {
 					UpdateGUIAction(null, null, null, "ModelConfig");
 				}
@@ -169,6 +174,7 @@ namespace ThreeRingsSharp.DataHandlers {
 				}
 
 			} else if (obj is AnimationConfig animation) {
+				XanLogger.WriteLine("Clyde object is AnimationConfig.", XanLogger.TRACE);
 				if (isBaseFile && UpdateGUIAction != null) {
 					UpdateGUIAction(null, null, null, "AnimationConfig");
 				}
@@ -180,6 +186,7 @@ namespace ThreeRingsSharp.DataHandlers {
 				errToThrow = new ClydeDataReadException("Animations are unsupported! Come back later c:", "Unsupported Implementation", MessageBoxIcon.Warning);
 
 			} else if (obj is TudeySceneModel scene) {
+				XanLogger.WriteLine("Clyde object is TudeySceneModel.", XanLogger.TRACE);
 				if (isBaseFile && UpdateGUIAction != null) {
 					UpdateGUIAction(null, null, null, "TudeySceneModel");
 				}
@@ -193,6 +200,7 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			} else {
 				string mdlClass = modelClass ?? obj.GetType().Name;
+				XanLogger.WriteLine("Clyde object is an unknown class [" + mdlClass + "]", XanLogger.TRACE);
 				if (isBaseFile && UpdateGUIAction != null) {
 					UpdateGUIAction(null, null, null, mdlClass);
 				}

@@ -82,7 +82,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			TileConfig.Original originalImpl;
 			do {
 				if (tileCfg == null) {
-					XanLogger.WriteLine("ALERT: A tile was null!", false, System.Drawing.Color.Red);
+					XanLogger.WriteLine("ALERT: A tile was null!", color: System.Drawing.Color.Red);
 					return;
 				}
 				if (tileCfg.getConfigManager() != null) {
@@ -107,7 +107,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			Transform3D transform = new Transform3D();
 			tile.getTransform(originalImpl, transform);
 			string relativeModelPath = originalImpl.model.getName();
-			XanLogger.WriteLine("Grabbing tile [" + tile.tile.getName() + "] at " + relativeModelPath, true);
+			XanLogger.WriteLine("Grabbing tile [" + tile.tile.getName() + "] at " + relativeModelPath, XanLogger.DEBUG);
 			// , true, new Dictionary<string, dynamic>() { ["SceneObjectFlag"] = true, ["SceneObjectTransform"] = transform }
 			List<Model3D> acquiredModels = ConfigReferenceUtil.HandleConfigReference(sourceFile, originalImpl.model, modelCollection, dataTreeParent, globalTransform.compose(transform));
 			foreach (Model3D model in acquiredModels) {

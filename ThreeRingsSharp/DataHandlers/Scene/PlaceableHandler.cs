@@ -75,7 +75,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 				PlaceableConfig.Original originalImpl;
 				do {
 					if (placeableCfg == null) {
-						XanLogger.WriteLine("ALERT: A placeable was null!", false, System.Drawing.Color.Red);
+						XanLogger.WriteLine("ALERT: A placeable was null!", color: System.Drawing.Color.Red);
 						return;
 					}
 					if (placeableCfg.getConfigManager() != null) {
@@ -96,14 +96,14 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 				if (originalImpl != null) {
 					Transform3D transform = GetTransformField(placeable);
 					string relativeModelPath = originalImpl.model.getName();
-					XanLogger.WriteLine("Grabbing placeable [" + placeable.placeable.getName() + "] at " + relativeModelPath, true);
+					XanLogger.WriteLine("Grabbing placeable [" + placeable.placeable.getName() + "] at " + relativeModelPath, XanLogger.DEBUG);
 					ConfigReferenceUtil.HandleConfigReference(sourceFile, originalImpl.model, modelCollection, dataTreeParent, globalTransform.compose(transform));
 				} else {
 					XanLogger.WriteLine($"Implementation for placeable [{placeable.placeable.getName()}] does not exist!");
 				}
 			} else {
 				Transform3D trs = GetTransformField(placeable);
-				XanLogger.WriteLine("Grabbing placeable at " + placeable.placeable.getName(), true);
+				XanLogger.WriteLine("Grabbing placeable at " + placeable.placeable.getName(), XanLogger.DEBUG);
 				ConfigReferenceUtil.HandleConfigReference(sourceFile, placeable.placeable, modelCollection, dataTreeParent, globalTransform.compose(trs));
 			}
 		}

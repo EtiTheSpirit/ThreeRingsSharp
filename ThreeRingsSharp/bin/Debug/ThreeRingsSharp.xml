@@ -246,7 +246,7 @@
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Choice">
             <summary>
-            The string choice that is currently selected. To get the <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/> that is associated with this choice, consider calling <see cref="!:CurrentSelectedChoiceDirect"/>.<para/>
+            The string choice that is currently selected. To get the <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/> that is associated with this choice, consider calling <see cref="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.CurrentSelectedChoice"/>.<para/>
             This property's <see langword="setter"/> will throw an <see cref="T:System.ArgumentException"/> if the given <see cref="T:System.String"/> is not included in <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.PossibleChoices"/>. If the given <see cref="T:System.String"/> is <see langword="null"/>, it will be replaced with <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.DefaultChoice"/>.<para/>
             <para/>
             WARNING: Object not functional entirely.
@@ -1506,7 +1506,7 @@
             This method will attempt to resolve that path when given a <see cref="T:com.threerings.config.ConfigReference"/> and a configuration index (which is the name of one of the xml files in the spiral knights/config directory, e.g. "material" or "tile")<para/>
             Assuming <paramref name="fromObj"/> is a <see cref="T:com.threerings.config.ConfigReference"/>, this will call its <c>getName()</c> method (which returns its path), resolve the config data via <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>, and return the object with the given name.<para/>
             Given <paramref name="directName"/>, it will attempt to call the <c>getParameter()</c> method on the returned config with an argument of this name, which should return the <see cref="T:com.threerings.config.Parameter"/> it's pointing to.<para/>
-            The first return value is the <see cref="T:com.threerings.config.ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="!:MaterialConfig"/>), and the second value is the <see cref="T:com.threerings.config.Parameter"/> returned by ^.
+            The first return value is the <see cref="T:com.threerings.config.ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="T:com.threerings.opengl.material.config.MaterialConfig"/>), and the second value is the <see cref="T:com.threerings.config.Parameter"/> returned by ^.
             </summary>
             <param name="fromObj"></param>
             <param name="directName"></param>
@@ -1519,7 +1519,7 @@
             This method will attempt to resolve that path when given a <see cref="T:com.threerings.config.ConfigReference"/> and a configuration index (which is the name of one of the xml files in the spiral knights/config directory, e.g. "material" or "tile")<para/>
             Assuming <paramref name="fromObj"/> is a <see cref="T:com.threerings.config.ConfigReference"/>, this will call its <c>getName()</c> method (which returns its path), resolve the config data via <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>, and return the object with the given name.<para/>
             Given <paramref name="directName"/>, it will attempt to call the <c>getParameter()</c> method on the returned config with an argument of this name, which should return the <see cref="T:com.threerings.config.Parameter"/> it's pointing to.<para/>
-            The first return value is the <see cref="T:com.threerings.config.ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="!:MaterialConfig"/>), and the second value is the <see cref="T:com.threerings.config.Parameter"/> returned by ^.
+            The first return value is the <see cref="T:com.threerings.config.ConfigReference"/> after resolution (which will be a specific reference type, like <see cref="T:com.threerings.opengl.material.config.MaterialConfig"/>), and the second value is the <see cref="T:com.threerings.config.Parameter"/> returned by ^.
             </summary>
             <param name="fromObj"></param>
             <param name="directName"></param>
@@ -1622,9 +1622,19 @@
             <param name="clydeFile"></param>
             <returns></returns>
         </member>
-        <member name="P:ThreeRingsSharp.Utility.XanLogger.Log">
+        <member name="F:ThreeRingsSharp.Utility.XanLogger.STANDARD">
             <summary>
-            Intended for exporting the log to a text file. This <see cref="T:System.Text.StringBuilder"/> will contain the entire log.
+            Indicates a standard log message that is shown no matter what.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.XanLogger.DEBUG">
+            <summary>
+            Indicates a debug log message, which is generally more frequent and used to acutely guide the developer through code.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.XanLogger.TRACE">
+            <summary>
+            Indicates a trace log message, which is vastly more frequent and used to relay even minuscule details.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.Utility.XanLogger.LogFileStream">
@@ -1637,9 +1647,9 @@
             The log while <see cref="P:ThreeRingsSharp.Utility.XanLogger.UpdateAutomatically"/> is false and it's written to (this is used to append all of the data when <see cref="M:ThreeRingsSharp.Utility.XanLogger.UpdateLog"/> is called)
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.Utility.XanLogger.VerboseLogging">
+        <member name="P:ThreeRingsSharp.Utility.XanLogger.LoggingLevel">
             <summary>
-            If <see langword="true"/>, verbose log entries will be posted in the log. Its default value is equal to <see cref="F:ThreeRingsSharp.Utility.XanLogger.IsDebugMode"/>, but can be set at any time.
+            The level of messages to display.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.Utility.XanLogger.IsDebugMode">
@@ -1650,7 +1660,7 @@
         </member>
         <member name="P:ThreeRingsSharp.Utility.XanLogger.UpdateAutomatically">
             <summary>
-            If <see langword="true"/>, the textbox will be updated to display new text the moment it is written. If <see langword="false"/>, <see cref="M:ThreeRingsSharp.Utility.XanLogger.UpdateLog"/> can be called, which will copy the contents of <see cref="P:ThreeRingsSharp.Utility.XanLogger.Log"/> and append it to the textbox.<para/>
+            If <see langword="true"/>, the textbox will be updated to display new text the moment it is written. If <see langword="false"/>, <see cref="M:ThreeRingsSharp.Utility.XanLogger.UpdateLog"/> can be called, which will copy the contents of <see cref="P:ThreeRingsSharp.Utility.XanLogger.LogWhileNotUpdating"/> and append it to the textbox.<para/>
             Setting this to true will cause <see cref="M:ThreeRingsSharp.Utility.XanLogger.UpdateLog"/> to run.
             </summary>
         </member>
@@ -1676,34 +1686,34 @@
             Manually update the contents of <see cref="P:ThreeRingsSharp.Utility.XanLogger.BoxReference"/>. Only works if <see cref="P:ThreeRingsSharp.Utility.XanLogger.UpdateAutomatically"/> is <see langword="false"/>, and of course, if <see cref="P:ThreeRingsSharp.Utility.XanLogger.BoxReference"/> is not <see langword="null"/>.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.XanLogger.WriteLine(System.Boolean,System.Nullable{System.Drawing.Color})">
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.WriteLine(System.Int32,System.Nullable{System.Drawing.Color})">
             <summary>
             Append a new line to the log.
             </summary>
-            <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="P:ThreeRingsSharp.Utility.XanLogger.VerboseLogging"/> is false.</param>
+            <param name="logLevel">The level to log. If this is greater than <see cref="P:ThreeRingsSharp.Utility.XanLogger.LoggingLevel"/>, it will not be appended to the log.</param>
             <param name="color">The color of the text in the log.</param>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.XanLogger.WriteLine(System.Object,System.Boolean,System.Nullable{System.Drawing.Color})">
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.WriteLine(System.Object,System.Int32,System.Nullable{System.Drawing.Color})">
             <summary>
             Append the given text to the log and advance by one line.
             </summary>
             <param name="obj"></param>
-            <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="P:ThreeRingsSharp.Utility.XanLogger.VerboseLogging"/> is false.</param>
+            <param name="logLevel">The level to log. If this is greater than <see cref="P:ThreeRingsSharp.Utility.XanLogger.LoggingLevel"/>, it will not be appended to the log.</param>
             <param name="color">The color of the text in the log.</param>
             <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.XanLogger.Write(System.Object,System.Boolean,System.Nullable{System.Drawing.Color})">
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.Write(System.Object,System.Int32,System.Nullable{System.Drawing.Color})">
             <summary>
             Append the given text to the log.
             </summary>
             <param name="obj">The text to write to the log.</param>
-            <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="P:ThreeRingsSharp.Utility.XanLogger.VerboseLogging"/> is false.</param>
+            <param name="logLevel">The level to log. If this is greater than <see cref="P:ThreeRingsSharp.Utility.XanLogger.LoggingLevel"/>, it will not be appended to the log.</param>
             <param name="color">The color of the text in the log.</param>
             <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
         </member>
         <member name="M:ThreeRingsSharp.Utility.XanLogger.Clear">
             <summary>
-            Clears all text from the log. This also wipes <see cref="P:ThreeRingsSharp.Utility.XanLogger.Log"/>.
+            Clears all text from the log. This does not clear the VT console.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.Utility.RichTextBoxUtil.IsScrolledToBottom(System.Windows.Forms.RichTextBox)">
@@ -1746,9 +1756,9 @@
             A reference to <see cref="P:ThreeRingsSharp.XansData.Armature.BaseNode"/>.transform, which is the main transformation of this <see cref="T:ThreeRingsSharp.XansData.Armature"/>.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.XansData.Armature.BindShapeMatrix">
+        <member name="P:ThreeRingsSharp.XansData.Armature.MultipliedTransform">
             <summary>
-            The transformation of this <see cref="T:ThreeRingsSharp.XansData.Armature"/>.
+            The transformation of this <see cref="T:ThreeRingsSharp.XansData.Armature"/> calculated via <c>Transform.compose(InverseReferenceTransform);</c>
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Armature.Index">
@@ -2222,6 +2232,12 @@
         <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.GetMatrixComponents(com.threerings.math.Transform3D)">
             <summary>
             Returns the components of this <see cref="T:com.threerings.math.Transform3D"/>'s matrix in column-major order. If it does not have a matrix, one will be created via the promotion of a duplicate <see cref="T:com.threerings.math.Transform3D"/>.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.GetMatrixComponents(com.threerings.math.Matrix4f)">
+            <summary>
+            Returns the components of this <see cref="T:com.threerings.math.Matrix4f"/> in column-major order.
             </summary>
             <returns></returns>
         </member>
@@ -3131,11 +3147,6 @@
             Represents a format type for 3D models.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.ModelFormat.OBJ">
-            <summary>
-            Format: WaveFront OBJ Format
-            </summary>
-        </member>
         <member name="F:ThreeRingsSharp.XansData.ModelFormat.GLTF">
             <summary>
             Format: Graphics Library Transmission Format
@@ -3555,13 +3566,6 @@
             <summary>
             Returns <see langword="true"/> if this <see cref="T:System.Xml.Linq.XElement"/> only has class references that can be resolved.<para/>
             Returns <see langword="false"/> if this <see cref="T:System.Xml.Linq.XElement"/> contains class references that cannot be resolved.
-            </summary>
-            <param name="rootEntry"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PruneIllegalClasses(System.Xml.Linq.XElement)">
-            <summary>
-            Filters through a given element in a config XML and removes elements that reference Spiral Knights stuff.
             </summary>
             <param name="rootEntry"></param>
             <returns></returns>

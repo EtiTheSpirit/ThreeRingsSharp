@@ -198,7 +198,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 							// - of the object and grab the config reference by type.
 
 							if (last == null) {
-								XanLogger.WriteLine("Alert: Unable to locate the data for " + path, false, System.Drawing.Color.DarkGoldenrod);
+								XanLogger.WriteLine("Alert: Unable to locate the data for " + path, color: System.Drawing.Color.DarkGoldenrod);
 								return (null, null);
 							}
 
@@ -228,7 +228,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 							object endOfNextPath = nextPathData.Item1;
 							if (endOfNextPath == null) {
 								// Something wasn't able to be located.
-								XanLogger.WriteLine("Alert: Unable to locate the data for " + path, false, System.Drawing.Color.DarkGoldenrod);
+								XanLogger.WriteLine("Alert: Unable to locate the data for " + path, color: System.Drawing.Color.DarkGoldenrod);
 								return (null, null);
 							}
 							// Now in this context, we've just traversed a path in a chain of references.

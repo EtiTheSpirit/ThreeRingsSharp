@@ -62,7 +62,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 					// Also need to handle skinning.
 					if (skinnedIndexedStored.mode != Mode.TRIANGLES) {
-						XanLogger.WriteLine("WARNING: This Articulated model may not export properly! Its mode isn't TRIANGLES, and other behaviors (e.g. TRIANGLESTRIP) haven't been coded in yet! The method used for TRIANGLES will be applied anyway just to try something.", false, Color.DarkGoldenrod);
+						XanLogger.WriteLine("WARNING: This Articulated model may not export properly! Its mode isn't TRIANGLES, and other behaviors (e.g. TRIANGLESTRIP) haven't been coded in yet! The method used for TRIANGLES will be applied anyway just to try something.", color: Color.DarkGoldenrod);
 					}
 					AttributeArrayConfig[] allArrays = skinnedIndexedStored.vertexAttribArrays;
 					AttributeArrayConfig boneIndicesAttr = GetArrayByName(allArrays, "boneIndices");

@@ -38,12 +38,29 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// </summary>
 		/// <returns></returns>
 		public static float[] GetMatrixComponents(this Transform3D trs) {
-			Matrix4f mtx = trs.Clone().promote(Transform3D.GENERAL).getMatrix();
+			return trs.Clone().promote(Transform3D.GENERAL).getMatrix().GetMatrixComponents();
+		}
+
+
+		/// <summary>
+		/// Returns the components of this <see cref="Matrix4f"/> in column-major order.
+		/// </summary>
+		/// <returns></returns>
+		public static float[] GetMatrixComponents(this Matrix4f mtx) {
+			/*
+			// Row Major
 			return new float[] {
 				mtx.m00, mtx.m10, mtx.m20, mtx.m30,
 				mtx.m01, mtx.m11, mtx.m21, mtx.m31,
 				mtx.m02, mtx.m12, mtx.m22, mtx.m32,
 				mtx.m03, mtx.m13, mtx.m23, mtx.m33
+			};
+			*/
+			return new float[] {
+				mtx.m00, mtx.m01, mtx.m02, mtx.m03,
+				mtx.m10, mtx.m11, mtx.m12, mtx.m13,
+				mtx.m20, mtx.m21, mtx.m22, mtx.m23,
+				mtx.m30, mtx.m31, mtx.m32, mtx.m33
 			};
 		}
 

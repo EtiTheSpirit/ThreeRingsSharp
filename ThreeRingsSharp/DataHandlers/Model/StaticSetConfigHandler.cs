@@ -93,14 +93,14 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						if (param is Parameter.Direct direct) {
 							if (direct.paths.Contains("implementation.model")) {
 								staticSet.model = directs[key];
-								XanLogger.WriteLine("Set model to " + staticSet.model, true);
+								XanLogger.WriteLine("Set model to " + staticSet.model, XanLogger.DEBUG);
 								break;
 							}
 						} else if (param is Parameter.Choice choice) {
 							foreach (Parameter.Direct dir in choice.directs) {
 								if (dir.paths.Contains("implementation.model")) {
 									staticSet.model = directs[key];
-									XanLogger.WriteLine("Set model to " + staticSet.model, true);
+									XanLogger.WriteLine("Set model to " + staticSet.model, XanLogger.DEBUG);
 									break;
 								}
 							}

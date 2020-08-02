@@ -13,10 +13,24 @@ using ThreeRingsSharp.Utility.Interface;
 namespace ThreeRingsSharp.Utility {
 	public static class XanLogger {
 
+		#region Log Levels
+
 		/// <summary>
-		/// Intended for exporting the log to a text file. This <see cref="StringBuilder"/> will contain the entire log.
+		/// Indicates a standard log message that is shown no matter what.
 		/// </summary>
-		public static StringBuilder Log { get; } = new StringBuilder();
+		public const int STANDARD = 0;
+
+		/// <summary>
+		/// Indicates a debug log message, which is generally more frequent and used to acutely guide the developer through code.
+		/// </summary>
+		public const int DEBUG = 1;
+
+		/// <summary>
+		/// Indicates a trace log message, which is vastly more frequent and used to relay even minuscule details.
+		/// </summary>
+		public const int TRACE = 2;
+
+		#endregion
 
 		/// <summary>
 		/// The active log file.
@@ -26,12 +40,12 @@ namespace ThreeRingsSharp.Utility {
 		/// <summary>
 		/// The log while <see cref="UpdateAutomatically"/> is false and it's written to (this is used to append all of the data when <see cref="UpdateLog"/> is called)
 		/// </summary>
-		private static List<(string, bool)> LogWhileNotUpdating { get; } = new List<(string, bool)>();
+		private static List<(string, int)> LogWhileNotUpdating { get; } = new List<(string, int)>();
 
 		/// <summary>
-		/// If <see langword="true"/>, verbose log entries will be posted in the log. Its default value is equal to <see cref="IsDebugMode"/>, but can be set at any time.
+		/// The level of messages to display.
 		/// </summary>
-		public static bool VerboseLogging { get; set; } = IsDebugMode;
+		public static int LoggingLevel { get; set; } = IsDebugMode ? DEBUG : STANDARD;
 
 #if DEBUG
 		/// <summary>
@@ -47,7 +61,7 @@ namespace ThreeRingsSharp.Utility {
 		public static readonly bool IsDebugMode = false;
 #endif
 		/// <summary>
-		/// If <see langword="true"/>, the textbox will be updated to display new text the moment it is written. If <see langword="false"/>, <see cref="UpdateLog"/> can be called, which will copy the contents of <see cref="Log"/> and append it to the textbox.<para/>
+		/// If <see langword="true"/>, the textbox will be updated to display new text the moment it is written. If <see langword="false"/>, <see cref="UpdateLog"/> can be called, which will copy the contents of <see cref="LogWhileNotUpdating"/> and append it to the textbox.<para/>
 		/// Setting this to true will cause <see cref="UpdateLog"/> to run.
 		/// </summary>
 		public static bool UpdateAutomatically {
@@ -79,7 +93,7 @@ namespace ThreeRingsSharp.Utility {
 		public static bool IsMainThread => Thread.CurrentThread.ManagedThreadId == MainThreadId;
 
 		private static bool IsUpdatingGUI = false;
-		private static ManualResetEventSlim UpdateComplete = new ManualResetEventSlim();
+		private static readonly ManualResetEventSlim UpdateComplete = new ManualResetEventSlim();
 		
 		/// <summary>
 		/// Manually update the contents of <see cref="BoxReference"/>. Only works if <see cref="UpdateAutomatically"/> is <see langword="false"/>, and of course, if <see cref="BoxReference"/> is not <see langword="null"/>.
@@ -92,8 +106,11 @@ namespace ThreeRingsSharp.Utility {
 				IsUpdatingGUI = true;
 				UpdateComplete.Reset();
 				WasAtBottom = BoxReference.IsScrolledToBottom();
-				foreach ((string, bool) logEntry in LogWhileNotUpdating) {
-					BoxReference.AppendText(logEntry.Item1, logEntry.Item2 ? Color.Gray : BoxReference.ForeColor);
+				foreach ((string, int) logEntry in LogWhileNotUpdating) {
+					Color defColor = BoxReference.ForeColor;
+					if (logEntry.Item2 == DEBUG) defColor = Color.Gray;
+					if (logEntry.Item2 == TRACE) defColor = Color.LightGray;
+					BoxReference.AppendText(logEntry.Item1, defColor);
 				}
 
 				if (WasAtBottom && !BoxReference.IsScrolledToBottom()) {
@@ -111,43 +128,49 @@ namespace ThreeRingsSharp.Utility {
 		/// <summary>
 		/// Append a new line to the log.
 		/// </summary>
-		/// <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="VerboseLogging"/> is false.</param>
+		/// <param name="logLevel">The level to log. If this is greater than <see cref="LoggingLevel"/>, it will not be appended to the log.</param>
 		/// <param name="color">The color of the text in the log.</param>
-		public static void WriteLine(bool isVerbose = false, Color? color = null) => Write("\n", isVerbose, color);
+		public static void WriteLine(int logLevel = STANDARD, Color? color = null) => Write("\n", logLevel, color);
 
 		/// <summary>
 		/// Append the given text to the log and advance by one line.
 		/// </summary>
 		/// <param name="obj"></param>
-		/// <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="VerboseLogging"/> is false.</param>
+		/// <param name="logLevel">The level to log. If this is greater than <see cref="LoggingLevel"/>, it will not be appended to the log.</param>
 		/// <param name="color">The color of the text in the log.</param>
 		/// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
-		public static void WriteLine(object obj, bool isVerbose = false, Color? color = null) {
-			Write((obj?.ToString() ?? "null") + "\n", isVerbose, color);
+		public static void WriteLine(object obj, int logLevel = STANDARD, Color? color = null) {
+			Write((obj?.ToString() ?? "null") + "\n", logLevel, color);
 		}
 
 		/// <summary>
 		/// Append the given text to the log.
 		/// </summary>
 		/// <param name="obj">The text to write to the log.</param>
-		/// <param name="isVerbose">If true, this is treated as a verbose log entry, which will not be appended to the log if <see cref="VerboseLogging"/> is false.</param>
+		/// <param name="logLevel">The level to log. If this is greater than <see cref="LoggingLevel"/>, it will not be appended to the log.</param>
 		/// <param name="color">The color of the text in the log.</param>
 		/// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
-		public static void Write(object obj, bool isVerbose = false, Color? color = null) {
+		public static void Write(object obj, int logLevel = STANDARD, Color? color = null) {
 			if (obj == null) throw new ArgumentNullException("obj");
 			string text = obj?.ToString() ?? "null";
-			byte[] fileWrite = Encoding.ASCII.GetBytes((isVerbose ? "[VERBOSE] " : "") + VTConsole.StripColorFormattingCode(text));
+			string strippedText = VTConsole.StripColorFormattingCode(text);
+			bool canLog = logLevel <= LoggingLevel;
+
+			string prefix = "";
+			if (logLevel == DEBUG) prefix = "[DEBUG] ";
+			if (logLevel == TRACE) prefix = "[TRACE] ";
+			byte[] fileWrite = Encoding.ASCII.GetBytes(prefix + strippedText);
 			LogFileStream.Write(fileWrite, 0, fileWrite.Length);
 
-
-			if (!VerboseLogging && isVerbose) return;
-			Log.Append(text);
+			if (!canLog) return;
 			VTConsole.ForegroundColor = color.HasValue ? ConsoleColorVT.FromColor(color.Value) : ConsoleColor.White;
 			VTConsole.Write(text);
 
 			if (BoxReference == null) return;
 
-			Color defColor = isVerbose ? Color.Gray : BoxReference.ForeColor;
+			Color defColor = BoxReference.ForeColor;
+			if (logLevel == DEBUG) defColor = Color.Gray;
+			if (logLevel == TRACE) defColor = Color.LightGray;
 			Color writeColor = color.GetValueOrDefault(defColor);
 
 			bool oldUpdateAutoValue = UpdateAutomatically;
@@ -157,7 +180,7 @@ namespace ThreeRingsSharp.Utility {
 
 			if (UpdateAutomatically) {
 				WasAtBottom = BoxReference.IsScrolledToBottom();
-				BoxReference.AppendText(text, writeColor);
+				BoxReference.AppendText(strippedText, writeColor);
 
 				if (WasAtBottom && !BoxReference.IsScrolledToBottom()) {
 					BoxReference.SelectionStart = BoxReference.TextLength;
@@ -169,7 +192,7 @@ namespace ThreeRingsSharp.Utility {
 				if (!UpdateComplete.IsSet) {
 					//UpdateComplete.Wait(); // Wait until the latest update is done.
 				} else {
-					LogWhileNotUpdating.Add((text, isVerbose));
+					LogWhileNotUpdating.Add((strippedText, logLevel));
 				}
 			}
 
@@ -181,10 +204,9 @@ namespace ThreeRingsSharp.Utility {
 		}
 
 		/// <summary>
-		/// Clears all text from the log. This also wipes <see cref="Log"/>.
+		/// Clears all text from the log. This does not clear the VT console.
 		/// </summary>
 		public static void Clear() {
-			Log.Clear();
 			BoxReference.Text = "";
 		}
 
@@ -231,7 +253,7 @@ namespace ThreeRingsSharp.Utility {
 		/// <param name="color"></param>
 		public static void AppendText(this RichTextBox box, string text, Color color) {
 			if (color == box.ForeColor) {
-				// Skip if it has no actual coor change.
+				// Skip if it has no actual color change.
 				box.AppendText(text);
 				return;
 			}

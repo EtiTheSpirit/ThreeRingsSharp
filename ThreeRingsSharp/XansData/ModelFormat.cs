@@ -12,11 +12,6 @@ namespace ThreeRingsSharp.XansData {
 	public enum ModelFormat {
 
 		/// <summary>
-		/// Format: WaveFront OBJ Format
-		/// </summary>
-		[Obsolete] OBJ,
-
-		/// <summary>
 		/// Format: Graphics Library Transmission Format
 		/// </summary>
 		GLTF,
@@ -27,7 +22,6 @@ namespace ThreeRingsSharp.XansData {
 		/// A binding from <see cref="string"/> file extensions to <see cref="ModelFormat"/>s, e.g. the string <c>".glb"</c> corresponds to <see cref="ModelFormat.GLTF"/>.
 		/// </summary>
 		public static readonly IReadOnlyDictionary<string, ModelFormat> ExtensionToFormatBindings = new Dictionary<string, ModelFormat>() {
-			[".obj"] = ModelFormat.OBJ,
 			[".glb"] = ModelFormat.GLTF,
 		};
 

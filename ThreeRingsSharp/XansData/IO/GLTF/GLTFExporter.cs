@@ -603,7 +603,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 								texFileToIndexMap[texPath] = totalImageCount;
 
 								if (EmbedTextures) {
-									XanLogger.WriteLine($"Embedding [{texFile.FullName}].", true);
+									XanLogger.WriteLine($"Embedding [{texFile.FullName}].", XanLogger.DEBUG);
 
 									#region Assign Core Data
 									(byte[], string) iData = GetImageData(texFile);
@@ -648,7 +648,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 									#endregion
 
 								} else {
-									XanLogger.WriteLine($"Adding reference to [{texFile.FullName}].", true);
+									XanLogger.WriteLine($"Adding reference to [{texFile.FullName}].", XanLogger.DEBUG);
 
 									#region Assign Core Data
 									#region Create Image & Texture
@@ -679,10 +679,10 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 								totalImageCount++;
 							}
 						} else {
-							XanLogger.WriteLine($"Attempt to create image [{texFile.FullName}] failed -- File does not exist.", true);
+							XanLogger.WriteLine($"Attempt to create image [{texFile.FullName}] failed -- File does not exist.", XanLogger.STANDARD);
 						}
 					} else {
-						XanLogger.WriteLine($"Attempt to create image failed -- Image is null!", true);
+						XanLogger.WriteLine($"Attempt to create image failed -- Image is null!", XanLogger.STANDARD);
 					}
 				}
 			}
@@ -717,16 +717,74 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				GLTFAccessor weightAccessor = accessors.Item6;
 
 				MeshData modelMesh = model.Mesh;
+				int inverseBindMatrixIndex = -1;
 
-				#region Append Bind Matrices & Nodes (WIP)
+				#region Write Inverse Bind Matrices
 				if (modelMesh.HasBoneData && DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS) {
+					List<byte> bindMtxBuffer = new List<byte>();
+
+					#region Create & Append Accessor
+					GLTFAccessor bindMatrixAccessor = new GLTFAccessor {
+						BufferView = currentBufferViewIndex,
+						ThisIndex = currentAccessorIndex,
+						ComponentType = GLTFComponentType.FLOAT,
+						Type = GLTFType.MAT4,
+						Count = modelMesh.BoneNames.Length + modelMesh.ExtraBoneNames.Length
+					};
+					bindMatrixAccessor.Min.SetListCap(0f, 16);
+					bindMatrixAccessor.Max.SetListCap(0f, 16);
+					foreach (string riggedBoneName in modelMesh.BoneNames) {
+						if (riggedBoneName == null) {
+							bindMatrixAccessor.Count--;
+							continue;
+						}
+						Armature bone = modelMesh.AllBones[riggedBoneName];
+						foreach (float component in bone.InverseReferenceTransform.GetMatrixComponents()) {
+							bindMtxBuffer.AddRange(BitConverter.GetBytes(component));
+						}
+					}
+
+					// Add identity matrix.
+					foreach (string extraBoneName in modelMesh.ExtraBoneNames) {
+						Armature bone = modelMesh.AllBones[extraBoneName];
+						foreach (float component in bone.InverseReferenceTransform.GetMatrixComponents()) {
+							bindMtxBuffer.AddRange(BitConverter.GetBytes(component));
+						}
+					}
+
+					int matrixAccessorSize = bindMatrixAccessor.Count * 16 * 4; // 16 floats per matrix4f * 4 bytes per float
+					GLTFBufferView bindMatrixView = new GLTFBufferView {
+						ThisIndex = currentBufferViewIndex,
+						ByteLength = matrixAccessorSize,
+						ByteOffset = currentOffset
+					};
+					currentOffset += matrixAccessorSize;
+					currentBufferViewIndex++;
+					currentAccessorIndex++;
+					JSONData.Accessors.Add(bindMatrixAccessor);
+					JSONData.BufferViews.Add(bindMatrixView);
+					binBuffer.AddRange(bindMtxBuffer);
+					inverseBindMatrixIndex = bindMatrixAccessor.ThisIndex;
+					#endregion
+				}
+				#endregion
+
+				#region Append Nodes
+				if (modelMesh.HasBoneData && DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS) {
+
+					#region Create Skin
 
 					GLTFSkin modelSkin = new GLTFSkin {
 						ThisIndex = currentSkinIndex,
-						Name = model.Name + "-Skin"
+						Name = model.Name + "-Skin",
 					};
+					if (inverseBindMatrixIndex != -1) {
+						modelSkin.InverseBindMatrices = inverseBindMatrixIndex;
+					}
 					currentSkinIndex++;
 					JSONData.Skins.Add(modelSkin);
+
+					#endregion
 
 					#region Create Mesh
 					GLTFNode node = new GLTFNode {

@@ -104,5 +104,21 @@ namespace SKAnimatorTools.Configuration {
 			OnConfigurationChanged(key, oldValue, value);
 			SaveConfigs();
 		}
+
+		/// <summary>
+		/// Removes the given key from the config data. Does not fire any config changed events, as this is intended for removing legacy values.<para/>
+		/// If the key doesn't exist, this does nothing.
+		/// </summary>
+		/// <param name="key"></param>
+		public static void RemoveConfigurationValue(string key) {
+			if (string.IsNullOrEmpty(key)) throw new ArgumentNullException("key");
+			if (key.Length > 32) throw new ArgumentException("The key is too long! Please make sure the key is <= 32 characters long.", "key");
+			if (!key.IsAlphanumeric()) throw new ArgumentException("The key contains illegal characters! Please only use alphanumeric characters.", "key");
+			if (Configuration == null) LoadConfigs();
+			if (Configuration.ContainsKey(key)) {
+				Configuration.Remove(key);
+			}
+			SaveConfigs();
+		}
 	}
 }

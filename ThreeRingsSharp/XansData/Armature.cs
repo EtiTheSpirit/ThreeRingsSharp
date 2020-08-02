@@ -35,9 +35,9 @@ namespace ThreeRingsSharp.XansData {
 		public Transform3D Transform => BaseNode.transform;
 
 		/// <summary>
-		/// The transformation of this <see cref="Armature"/>.
+		/// The transformation of this <see cref="Armature"/> calculated via <c>Transform.compose(InverseReferenceTransform);</c>
 		/// </summary>
-		public Transform3D BindShapeMatrix => Transform.compose(InverseReferenceTransform.invertLocal());
+		[Obsolete] public Transform3D MultipliedTransform => Transform.compose(InverseReferenceTransform);
 
 		/// <summary>
 		/// The index of this bone in the parent model's bone name list.

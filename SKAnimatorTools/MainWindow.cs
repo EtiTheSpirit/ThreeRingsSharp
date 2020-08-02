@@ -66,7 +66,14 @@ namespace SKAnimatorTools {
 			Model3D.ProtectAgainstZeroScale = ConfigurationInterface.GetConfigurationValue("ProtectAgainstZeroScale", true, true);
 			Model3D.TargetUpAxis = ConfigurationForm.AxisIntMap[(int)ConfigurationInterface.GetConfigurationValue("UpAxisIndex", 1, true)];
 			GLTFExporter.EmbedTextures = ConfigurationInterface.GetConfigurationValue("EmbedTextures", false, true);
-			XanLogger.VerboseLogging = ConfigurationInterface.GetConfigurationValue("VerboseLogging", false, true);
+			bool? verboseLogging = (bool?)ConfigurationInterface.GetConfigurationValue("VerboseLogging", null, true);
+			if (verboseLogging != null) {
+				bool verbose = verboseLogging.Value;
+				ConfigurationInterface.RemoveConfigurationValue("VerboseLogging");
+				XanLogger.LoggingLevel = ConfigurationInterface.GetConfigurationValue("LoggingLevel", XanLogger.DEBUG, true);
+			} else {
+				XanLogger.LoggingLevel = (int)ConfigurationInterface.GetConfigurationValue("LoggingLevel", XanLogger.STANDARD, true);
+			}
 			StaticSetExportMode = (int)ConfigurationInterface.GetConfigurationValue("StaticSetExportMode", 0L, true);
 			ModelPropertyUtility.TryGettingAllTextures = ConfigurationInterface.GetConfigurationValue("GetAllTextures", true, true);
 			if (Directory.Exists(loadDir)) {
@@ -95,7 +102,7 @@ namespace SKAnimatorTools {
 			}
 
 			XanLogger.UpdateAutomatically = false;
-			if (XanLogger.VerboseLogging) {
+			if (XanLogger.LoggingLevel > XanLogger.STANDARD) {
 				ShowWindow(ConsolePtr, 5);
 			} else {
 				ShowWindow(ConsolePtr, 0);
@@ -144,9 +151,9 @@ namespace SKAnimatorTools {
 				SaveModel.InitialDirectory = newValue;
 			} else if (configKey == "ScaleBy100") {
 				Model3D.MultiplyScaleByHundred = newValue;
-			} else if (configKey == "VerboseLogging") {
-				XanLogger.VerboseLogging = newValue;
-				if (newValue == true) {
+			} else if (configKey == "LoggingLevel") {
+				XanLogger.LoggingLevel = newValue;
+				if (newValue > XanLogger.STANDARD) {
 					ShowWindow(ConsolePtr, 5);
 				} else {
 					ShowWindow(ConsolePtr, 0);
@@ -211,24 +218,24 @@ namespace SKAnimatorTools {
 				XanLogger.UpdateLog();
 				ClydeFileHandler.HandleClydeFile(clydeFile, AllModels, true, ModelStructureTree);
 			} catch (ClydeDataReadException exc) {
-				XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, false, Color.IndianRed);
+				XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, color: Color.IndianRed);
 				AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
 				isOK = false;
 				throw;
 			} catch (TypeInitializationException tExc) {
 				System.Exception err = tExc.InnerException;
 				if (err is ClydeDataReadException exc) {
-					XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, false, Color.IndianRed);
+					XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, color: Color.IndianRed);
 					AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
 					isOK = false;
 				} else {
-					XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", false, Color.IndianRed);
+					XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", color: Color.IndianRed);
 					AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
 					isOK = false;
 				}
 				throw;
 			} catch (System.Exception err) {
-				XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", false, Color.IndianRed);
+				XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", color: Color.IndianRed);
 				AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
 				isOK = false;
 				throw;
@@ -379,7 +386,7 @@ namespace SKAnimatorTools {
 				Model3D.ProtectAgainstZeroScale, 
 				ConditionalExportMode, 
 				GLTFExporter.EmbedTextures, 
-				XanLogger.VerboseLogging, 
+				XanLogger.LoggingLevel, 
 				StaticSetExportMode,
 				ModelPropertyUtility.TryGettingAllTextures
 			);

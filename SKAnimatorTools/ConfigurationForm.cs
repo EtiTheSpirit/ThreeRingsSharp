@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Structs;
 
@@ -38,16 +39,6 @@ namespace SKAnimatorTools {
 		private bool IsOK { get; set; } = true;
 
 		/// <summary>
-		/// A reference to a red color that represents an invalid control.
-		/// </summary>
-		private static readonly Color RedColor = Color.FromArgb(255, 127, 127);
-
-		/// <summary>
-		/// A reference to a yellow color that represents a control *could* be invalid (e.g. rsrc directory isn't named rsrc).
-		/// </summary>
-		private static readonly Color YellowColor = Color.FromArgb(255, 255, 127);
-
-		/// <summary>
 		/// An image of a green circle with a white checkmark.
 		/// </summary>
 		private static readonly Bitmap Accepted = Properties.Resources.accept;
@@ -72,7 +63,7 @@ namespace SKAnimatorTools {
 			IsOK = true;
 		}
 
-		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int cndExportModeIndex, bool embedTextures, bool verboseLogging, int exportStaticSetMode, bool getAllTextures) {
+		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int cndExportModeIndex, bool embedTextures, int logLevel, int exportStaticSetMode, bool getAllTextures) {
 			TextBox_DefaultLoadLoc.Text = defaultLoad;
 			TextBox_DefaultSaveLoc.Text = defaultSave;
 			TextBox_RsrcDirectory.Text = defaultRsrc;
@@ -81,7 +72,7 @@ namespace SKAnimatorTools {
 			CheckBox_ProtectAgainstZeroScale.Checked = protectZeroScale;
 			Option_ConditionalExportMode.SelectedIndex = cndExportModeIndex;
 			CheckBox_EmbedTextures.Checked = embedTextures;
-			CheckBox_VerboseLogging.Checked = verboseLogging;
+			Option_LogLevel.SelectedIndex = logLevel;
 			Option_StaticSetExportMode.SelectedIndex = exportStaticSetMode;
 			CheckBox_TryGettingAllTextures.Checked = getAllTextures;
 			VerifyAllPathIntegrity();
@@ -100,7 +91,7 @@ namespace SKAnimatorTools {
 			ConfigurationInterface.SetConfigurationValue("ProtectAgainstZeroScale", CheckBox_ProtectAgainstZeroScale.Checked);
 			ConfigurationInterface.SetConfigurationValue("ConditionalConfigExportMode", Option_ConditionalExportMode.SelectedIndex);
 			ConfigurationInterface.SetConfigurationValue("EmbedTextures", CheckBox_EmbedTextures.Checked);
-			ConfigurationInterface.SetConfigurationValue("VerboseLogging", CheckBox_VerboseLogging.Checked);
+			ConfigurationInterface.SetConfigurationValue("LoggingLevel", Option_LogLevel.SelectedIndex);
 			ConfigurationInterface.SetConfigurationValue("StaticSetExportMode", Option_StaticSetExportMode.SelectedIndex);
 			ConfigurationInterface.SetConfigurationValue("GetAllTextures", CheckBox_TryGettingAllTextures.Checked);
 			ConfigurationInterface.SetConfigurationValue("IsFirstTimeOpening", false);
@@ -190,9 +181,10 @@ namespace SKAnimatorTools {
 		}
 
 		private void VerboseLoggingChanged(object sender, EventArgs e) {
-			if (CheckBox_VerboseLogging.Checked) {
+			// SelectedIndex translates to the level nicely.
+			if (Option_LogLevel.SelectedIndex > XanLogger.STANDARD) {
 				PicBox_VerboseLogging.Image = Warning;
-				MainTooltip.SetToolTip(PicBox_VerboseLogging, "Enabling verbose logging can slow down the program (it has to wait while the text is written to the console).");
+				MainTooltip.SetToolTip(PicBox_VerboseLogging, "Enabling debug or trace logging can slow down the program (it has to wait while the text is written to the console). This does not need to be set to change how latest.log is written, and is only useful for debugging during runtime.");
 			} else {
 				PicBox_VerboseLogging.Image = Accepted;
 				MainTooltip.SetToolTip(PicBox_VerboseLogging, string.Empty);
@@ -200,9 +192,10 @@ namespace SKAnimatorTools {
 		}
 
 		private void BtnSelectDefLoadLoc_Click(object sender, EventArgs e) {
-			CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-			dialog.InitialDirectory = Directory.Exists(TextBox_DefaultLoadLoc.Text) ? TextBox_DefaultLoadLoc.Text : DEFAULT_DIRECTORY;
-			dialog.IsFolderPicker = true;
+			CommonOpenFileDialog dialog = new CommonOpenFileDialog {
+				InitialDirectory = Directory.Exists(TextBox_DefaultLoadLoc.Text) ? TextBox_DefaultLoadLoc.Text : DEFAULT_DIRECTORY,
+				IsFolderPicker = true
+			};
 			if (dialog.ShowDialog() == CommonFileDialogResult.Ok) {
 				TextBox_DefaultLoadLoc.Text = dialog.FileName;
 				VerifyAllPathIntegrity();
@@ -210,9 +203,10 @@ namespace SKAnimatorTools {
 		}
 
 		private void BtnSelectDefSaveLoc_Click(object sender, EventArgs e) {
-			CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-			dialog.InitialDirectory = Directory.Exists(TextBox_DefaultSaveLoc.Text) ? TextBox_DefaultSaveLoc.Text : "C:\\";
-			dialog.IsFolderPicker = true;
+			CommonOpenFileDialog dialog = new CommonOpenFileDialog {
+				InitialDirectory = Directory.Exists(TextBox_DefaultSaveLoc.Text) ? TextBox_DefaultSaveLoc.Text : "C:\\",
+				IsFolderPicker = true
+			};
 			if (dialog.ShowDialog() == CommonFileDialogResult.Ok) {
 				TextBox_DefaultSaveLoc.Text = dialog.FileName;
 				VerifyAllPathIntegrity();
@@ -220,9 +214,10 @@ namespace SKAnimatorTools {
 		}
 
 		private void BtnSelectDefRsrcLoc_Click(object sender, EventArgs e) {
-			CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-			dialog.InitialDirectory = Directory.Exists(TextBox_RsrcDirectory.Text) ? TextBox_RsrcDirectory.Text : DEFAULT_DIRECTORY;
-			dialog.IsFolderPicker = true;
+			CommonOpenFileDialog dialog = new CommonOpenFileDialog {
+				InitialDirectory = Directory.Exists(TextBox_RsrcDirectory.Text) ? TextBox_RsrcDirectory.Text : DEFAULT_DIRECTORY,
+				IsFolderPicker = true
+			};
 			if (dialog.ShowDialog() == CommonFileDialogResult.Ok) {
 				TextBox_RsrcDirectory.Text = dialog.FileName;
 				VerifyAllPathIntegrity();

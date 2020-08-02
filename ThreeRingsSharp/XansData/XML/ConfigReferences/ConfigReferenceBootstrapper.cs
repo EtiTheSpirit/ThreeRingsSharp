@@ -95,11 +95,11 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 		/// </summary>
 		private static void PopulateConfigRefs() {
 			if (HasPopulatedConfigs) return;
-			XanLogger.WriteLine("Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!", true);
+			XanLogger.WriteLine("Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!", XanLogger.DEBUG);
 			FileInfo mergedBinFile = new FileInfo(CurrentExeDir + "MergedConfigReferences.bin");
 
 			if (!mergedBinFile.Exists) {
-				XanLogger.WriteLine("Special merged binary file doesn't exist! Manually iterating through ConfigRefs...", true);
+				XanLogger.WriteLine("Special merged binary file doesn't exist! Manually iterating through ConfigRefs...", XanLogger.DEBUG);
 				XanLogger.UpdateLog();
 				ReadFromRawConfigRefs();
 				return;
@@ -136,12 +136,12 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 						}
 
 						importer.close();
-						XanLogger.WriteLine("Populated [" + name + "].", true);
+						XanLogger.WriteLine("Populated [" + name + "].", XanLogger.DEBUG);
 						XanLogger.UpdateLog();
 
 					}
 				} else {
-					XanLogger.WriteLine("Special merged binary file is out of date! Manually iterating through ConfigRefs...", true);
+					XanLogger.WriteLine("Special merged binary file is out of date! Manually iterating through ConfigRefs...", XanLogger.DEBUG);
 					XanLogger.UpdateLog();
 
 					ReadFromRawConfigRefs();
@@ -295,7 +295,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				}
 
 				importer.close();
-				XanLogger.WriteLine("Populated [" + fName + "].", true);
+				XanLogger.WriteLine("Populated [" + fName + "].", XanLogger.DEBUG);
 				XanLogger.UpdateLog();
 
 			}
@@ -441,7 +441,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				_ConfigReferences.Put(fName, (cfgs, type));
 
 				importer.close();
-				XanLogger.WriteLine("Populated [" + fName + "].", true);
+				XanLogger.WriteLine("Populated [" + fName + "].", XanLogger.DEBUG);
 				XanLogger.UpdateLog();
 
 
@@ -507,41 +507,6 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				}
 			}
 			return true;
-		}
-
-		/// <summary>
-		/// Filters through a given element in a config XML and removes elements that reference Spiral Knights stuff.
-		/// </summary>
-		/// <param name="rootEntry"></param>
-		/// <returns></returns>
-		private static void PruneIllegalClasses(XElement rootEntry) {
-			XElement[] descendants = rootEntry.Descendants().ToArray();
-			foreach (XElement element in descendants) {
-				if (element.Parent != null) {
-					XAttribute classAttr = element.Attribute("class");
-					if (classAttr != null) {
-						string csClass = classAttr.Value.Replace('$', '+');
-
-						// Shortcut. I want to skip out on searching if at all possible.
-						if (csClass.StartsWith("com.threerings.projectx")) {
-							DoesClassExistCache[csClass] = false;
-							element.Remove();
-						}
-
-						// Another shortcut. If it's a stock java class then just don't check.
-						if (!csClass.StartsWith("java")) {
-							if (!DoesClassExistCache.ContainsKey(csClass)) {
-								// Y U K K I
-								bool exists = OOOLib.GetTypes().Where(type => type.FullName == csClass).Count() > 0;
-								DoesClassExistCache[csClass] = exists;
-								if (!exists) {
-									element.Remove();
-								}
-							}
-						}
-					}
-				}
-			}
 		}
 
 		/// <summary>

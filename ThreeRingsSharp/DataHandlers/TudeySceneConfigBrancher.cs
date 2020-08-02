@@ -44,7 +44,7 @@ namespace ThreeRingsSharp.DataHandlers {
 		/// <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="Transform3D"/>.</param>
 		public static void HandleDataFrom(FileInfo sourceFile, TudeySceneModel scene, List<Model3D> models, DataTreeObject currentDataTreeObject = null, bool useImplementation = false, Transform3D transform = null) {
 			SetupCosmeticData(scene, currentDataTreeObject);
-			XanLogger.WriteLine("Iterating through scene entries...", true);
+			XanLogger.WriteLine("Iterating through scene entries...", XanLogger.DEBUG);
 
 			string implName = (JavaClassNameStripper.GetWholeClassName(scene.getClass()) ?? scene.getClass().getTypeName()).Replace("$", "::");
 			if (currentDataTreeObject != null) {

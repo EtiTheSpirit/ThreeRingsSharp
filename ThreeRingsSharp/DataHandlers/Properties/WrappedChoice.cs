@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 	public class WrappedChoice {
 
 		/// <summary>
-		/// The string choice that is currently selected. To get the <see cref="WrappedDirect"/> that is associated with this choice, consider calling <see cref="CurrentSelectedChoiceDirect"/>.<para/>
+		/// The string choice that is currently selected. To get the <see cref="WrappedDirect"/> that is associated with this choice, consider calling <see cref="CurrentSelectedChoice"/>.<para/>
 		/// This property's <see langword="setter"/> will throw an <see cref="ArgumentException"/> if the given <see cref="string"/> is not included in <see cref="PossibleChoices"/>. If the given <see cref="string"/> is <see langword="null"/>, it will be replaced with <see cref="DefaultChoice"/>.<para/>
 		/// <para/>
 		/// WARNING: Object not functional entirely.

@@ -168,11 +168,11 @@ namespace ThreeRingsSharp.XansData {
 						vScaleLength = 1;
 						Transform.setScale(1);
 					}
-					XanLogger.WriteLine($"A MeshData had a uniform scale of 0. Protection was enabled, and it has been changed to {vScaleLength}.", true);
+					XanLogger.WriteLine($"A MeshData had a uniform scale of 0. Protection was enabled, and it has been changed to {vScaleLength}.", XanLogger.DEBUG);
 				} else if (vScaleLength == 0) {
 					// fScale won't be 0 here since if it is, it'll go to the condition above instead.
 					Transform.getMatrix().setToScale(fScale);
-					XanLogger.WriteLine($"A MeshData had a matrix scale of 0. Protection was enabled, and it has been changed to {fScale} (on all axes).", true);
+					XanLogger.WriteLine($"A MeshData had a matrix scale of 0. Protection was enabled, and it has been changed to {fScale} (on all axes).", XanLogger.DEBUG);
 				}
 			}
 

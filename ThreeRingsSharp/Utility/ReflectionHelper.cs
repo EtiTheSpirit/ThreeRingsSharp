@@ -1,4 +1,5 @@
 ﻿using com.threerings.config;
+using com.threerings.opengl.material.config;
 using System;
 using System.Collections.Generic;
 using System.Linq;

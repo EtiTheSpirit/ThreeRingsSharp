@@ -51,6 +51,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
 				meshToModel.ActiveTexture = mesh.texture;
 				if (meshToModel.Mesh.HasBoneData) {
+					XanLogger.WriteLine("Model has bone data, setting that up.", XanLogger.TRACE);
 					meshToModel.Mesh.SetBones(model.root);
 				}
 

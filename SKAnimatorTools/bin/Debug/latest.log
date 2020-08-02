@@ -1,24 +1,46 @@
-[VERBOSE] Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!
-[VERBOSE] Populated [actor].
-[VERBOSE] Populated [area].
-[VERBOSE] Populated [behavior].
-[VERBOSE] Populated [cursor].
-[VERBOSE] Populated [effect].
-[VERBOSE] Populated [font].
-[VERBOSE] Populated [ground].
-[VERBOSE] Populated [interface_script].
-[VERBOSE] Populated [material].
-[VERBOSE] Populated [parameterized_handler].
-[VERBOSE] Populated [path].
-[VERBOSE] Populated [placeable].
-[VERBOSE] Populated [render_effect].
-[VERBOSE] Populated [render_queue].
-[VERBOSE] Populated [render_scheme].
-[VERBOSE] Populated [scene_global].
-[VERBOSE] Populated [shader].
-[VERBOSE] Populated [sounder].
-[VERBOSE] Populated [style].
-[VERBOSE] Populated [texture].
-[VERBOSE] Populated [tile].
-[VERBOSE] Populated [wall].
+[DEBUG] Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!
+[DEBUG] Populated [actor].
+[DEBUG] Populated [area].
+[DEBUG] Populated [behavior].
+[DEBUG] Populated [cursor].
+[DEBUG] Populated [effect].
+[DEBUG] Populated [font].
+[DEBUG] Populated [ground].
+Just a second! I'm still loading up the config references. The model will load once that's done.
+[DEBUG] Populated [interface_script].
+[DEBUG] Populated [material].
+[DEBUG] Populated [parameterized_handler].
+[DEBUG] Populated [path].
+[DEBUG] Populated [placeable].
+[DEBUG] Populated [render_effect].
+[DEBUG] Populated [render_queue].
+[DEBUG] Populated [render_scheme].
+[DEBUG] Populated [scene_global].
+[DEBUG] Populated [shader].
+[DEBUG] Populated [sounder].
+[DEBUG] Populated [style].
+[DEBUG] Populated [texture].
+[DEBUG] Populated [tile].
+[DEBUG] Populated [wall].
 Config data has been populated.
+Working. This might take a bit...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\model.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform as identity transform with scale=1
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+Resolved Model/Skinned/Masked (Soft) as com.threerings.opengl.material.config.MaterialConfig
+Resolved 2D/File/Default as com.threerings.opengl.renderer.config.TextureConfig
+[TRACE] Model has bone data, setting that up.
+Number of models loaded: 1 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
+Number of unique meshes instantiated: 1
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_orange.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_thwacker.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_mender.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_scorcher.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_demo.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_dead.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_ember.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_ember_l.png].
+glTF Exporter instantiated 1 models (skipped 0 models).
+Done! Exported to [F:\Users\Xan\Desktop\3D\__SK_TEST\gremlin.glb]
