@@ -10,7 +10,6 @@
 [DEBUG] Populated [material].
 [DEBUG] Populated [parameterized_handler].
 [DEBUG] Populated [path].
-Just a second! I'm still loading up the config references. The model will load once that's done.
 [DEBUG] Populated [placeable].
 [DEBUG] Populated [render_effect].
 [DEBUG] Populated [render_queue].
@@ -24,82 +23,48 @@ Just a second! I'm still loading up the config references. The model will load o
 [DEBUG] Populated [wall].
 Config data has been populated.
 Working. This might take a bit...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\crew\model.dat] because it hasn't been initialized before...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\model.dat] because it hasn't been initialized before...
 [TRACE] Read file to grab the raw info.
 [TRACE] Instantiated global transform as identity transform with scale=1
 [TRACE] Clyde object is ModelConfig.
 [DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\model.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
-Resolved Model/Two-Sided/Masked (Soft) as com.threerings.opengl.material.config.MaterialConfig
+Resolved Model/Skinned/Two-Sided/Masked (Hard) as com.threerings.opengl.material.config.MaterialConfig
 Resolved 2D/File/Default as com.threerings.opengl.renderer.config.TextureConfig
-Attachment wanted to attach to node [bone_helmet] but this node does not exist!
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\doublebelt\model_cobalt-distance.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'ModelConfig::Derived'. Accessing handlers...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\model\conditional\distance.dat] because it hasn't been initialized before...
+[TRACE] Model has bone data, setting that up.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\sleepingcap\model.dat] because it hasn't been initialized before...
 [TRACE] Read file to grab the raw info.
 Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
 [TRACE] Clyde object is ModelConfig.
 [DEBUG] Model is of the type 'ConditionalConfig'. Accessing handlers...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\circle.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\part_circle.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] 
-ERROR: A ModelConfig had an unknown implementation!
-=> Implementation: SceneInfluencerConfig
-=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
-
-[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] 
-ERROR: A ModelConfig had an unknown implementation!
-=> Implementation: SceneInfluencerConfig
-=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
-
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\face\model_face.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\face\part_model_face.dat] because it hasn't been initialized before...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\sleepingcap\model_base.dat] because it hasn't been initialized before...
 [TRACE] Read file to grab the raw info.
 Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
 [TRACE] Clyde object is ModelConfig.
 [DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
-[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\face\part_ambient_faceblink.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] 
-ERROR: A ModelConfig had an unknown implementation!
-=> Implementation: MetaParticleSystemConfig
-=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/character/pc/face/part_ambient_faceblink.dat
-
-Attachment wanted to attach to node [bone_helmet] but this node does not exist!
-Attachment wanted to attach to node [bone_helmet] but this node does not exist!
-Number of models loaded: 3 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
+Resolved Model/Opaque as com.threerings.opengl.material.config.MaterialConfig
+Number of models loaded: 2 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
 Number of unique meshes instantiated: 2
-[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\helm_dark-powder.png].
-[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\helm_green-tan.png].
-[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\helm_silver-blue.png].
-[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\crew_navy.png].
-[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\nose\crew_prp.png].
-glTF Exporter instantiated 3 models (skipped 0 models).
-Done! Exported to [F:\Users\Xan\Desktop\3D\__SK_TEST\knight.glb]
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_default.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_mkii.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_mkiii.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_red.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_redmkii.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_redmkiii.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_poi.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_poimkii.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_poimkiii.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_sho.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_shomkii.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_shomkiii.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_fre.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_fremkii.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\rocketpuppy\skin_fremkiii.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\sleepingcap\skin_wintercap.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\sleepingcap\skin_wintercap-grn.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\sleepingcap\skin_wintercap-wht.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\sleepingcap\skin_wintercap-blu.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\sleepingcap\skin_wintercap-epic.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\sleepingcap\skin_sleep.png].
+[TRACE] Parented model [sleepingcap.model_base-Mesh[0]] to node [bone_gun_butt]
+glTF Exporter instantiated 2 models (skipped 0 models).
+Done! Exported to [F:\Users\Xan\Desktop\3D\__SK_TEST\rocketpuppy.glb]

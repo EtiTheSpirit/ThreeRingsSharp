@@ -73,6 +73,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				List<Model3D> attachmentModels = ConfigReferenceUtil.HandleConfigReference(sourceFile, attachment.model, modelCollection, dataTreeParent, globalTransform);
 				if (attachmentModels == null) continue; // A lot of attachments have null models and I'm not sure why.
 				foreach (Model3D referencedModel in attachmentModels) {
+					referencedModel.Transform.composeLocal(attachment.transform);
 					if (allInstantiatedArmatures.ContainsKey(attachment.node ?? string.Empty)) {
 						referencedModel.AttachmentNode = allInstantiatedArmatures[attachment.node];
 					} else {
