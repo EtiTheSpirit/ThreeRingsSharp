@@ -8,7 +8,7 @@ assignees: XanTheDragon
 ---
 
 ### What's happening?
-Describe what's going on here, and be clear about it!
+Describe what's going on here, and be clear about it! It's helpful if you send the `latest.log` file in the same folder as the exe too (This is created from Beta 0.1.1 onward)
 
 ### What model?
 Arguably the most important piece of information: What model is breaking? Provide the file path to the model relative to the `rsrc` folder, for example: `rsrc/character/npc/monster/gremlin/null/model.dat`
