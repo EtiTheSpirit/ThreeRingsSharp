@@ -265,6 +265,22 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
+		/// Converts this 2D array to a 1D array by butt-joining the objects in the second dimension. This reverses <see cref="As2D{T}(IEnumerable{T}, int)"/>.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="array2d"></param>
+		/// <returns></returns>
+		public static T[] As1D<T>(this T[,] array2d) {
+			int numberOfFirst = array2d.GetLength(0);
+			int numberOfSecond = array2d.GetLength(1);
+			List<T> returnArray = new List<T>(numberOfFirst * numberOfSecond);
+			for (int index = 0; index < numberOfFirst; index++) {
+				returnArray.AddRange(array2d.GetSecondDimensionAt(index));
+			}
+			return returnArray.ToArray();
+		}
+
+		/// <summary>
 		/// Given an <paramref name="index"/>, this will return the second dimension of the 2D array. If the 2D array were constructed as an array of arrays, this would be the equivalent to getting array[x] in array[x][y].
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
@@ -285,10 +301,10 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// </summary>
 		/// <param name="floatArray"></param>
 		/// <returns></returns>
-		public static int[] ToIntArray(this float[] floatArray) {
-			int[] retn = new int[floatArray.Length];
+		public static ushort[] ToUshortArray(this float[] floatArray) {
+			ushort[] retn = new ushort[floatArray.Length];
 			for (int idx = 0; idx < floatArray.Length; idx++) {
-				retn[idx] = (int)floatArray[idx];
+				retn[idx] = (ushort)floatArray[idx];
 			}
 			return retn;
 		}

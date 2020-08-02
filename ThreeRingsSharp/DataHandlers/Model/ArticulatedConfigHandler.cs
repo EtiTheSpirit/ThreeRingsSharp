@@ -49,8 +49,10 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
 				//meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
 				meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
-
 				meshToModel.ActiveTexture = mesh.texture;
+				if (meshToModel.Mesh.HasBoneData) {
+					meshToModel.Mesh.SetBones(model.root);
+				}
 
 				/*
 				string tex = sourceFile.Directory.FullName.Replace("\\", "/") + "/" + mesh.texture;
@@ -67,11 +69,12 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				// ConfigReferenceUtil.HandleConfigReference(sourceFile, attachment.model, modelCollection, dataTreeParent, globalTransform);
 			//}
 
-			RecursivelyIterateNodes(baseModel, model, sourceFile, model.root, modelCollection, globalTransform, fullDepthName);
+			// RecursivelyIterateNodesForMeshes(baseModel, model, sourceFile, model.root, modelCollection, globalTransform, fullDepthName);
 		}
 
 		/// <summary>
-		/// A utility function that iterates through all of the nodes recursively, as some may store mesh data.
+		/// A utility function that iterates through all of the nodes recursively, as some may store mesh data.<para/>
+		/// This does not decode the rig. It strictly grabs meshes out of the rig.
 		/// </summary>
 		/// <param name="baseModel">The <see cref="ModelConfig"/> that contained this <see cref="ArticulatedConfig"/>.</param>
 		/// <param name="model">A reference to the <see cref="ArticulatedConfig"/> that contains these nodes.</param>
@@ -80,7 +83,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// <param name="models">The <see cref="List{T}"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
 		/// <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
 		/// <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
-		private void RecursivelyIterateNodes(ModelConfig baseModel, ArticulatedConfig model, FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform, string fullDepthName) {
+		private void RecursivelyIterateNodesForMeshes(ModelConfig baseModel, ArticulatedConfig model, FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform, string fullDepthName) {
 			foreach (Node node in parent.children) {
 				// Transform3D newTransform = latestTransform;
 
@@ -116,7 +119,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				//group.Name = node.name;
 
 				if (node.children.Length > 0) {
-					RecursivelyIterateNodes(baseModel, model, sourceFile, node, models, latestTransform, fullDepthName);
+					RecursivelyIterateNodesForMeshes(baseModel, model, sourceFile, node, models, latestTransform, fullDepthName);
 				}
 			}
 		}

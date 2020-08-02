@@ -34,6 +34,20 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
+		/// Returns the components of this <see cref="Transform3D"/>'s matrix in column-major order. If it does not have a matrix, one will be created via the promotion of a duplicate <see cref="Transform3D"/>.
+		/// </summary>
+		/// <returns></returns>
+		public static float[] GetMatrixComponents(this Transform3D trs) {
+			Matrix4f mtx = trs.Clone().promote(Transform3D.GENERAL).getMatrix();
+			return new float[] {
+				mtx.m00, mtx.m10, mtx.m20, mtx.m30,
+				mtx.m01, mtx.m11, mtx.m21, mtx.m31,
+				mtx.m02, mtx.m12, mtx.m22, mtx.m32,
+				mtx.m03, mtx.m13, mtx.m23, mtx.m33
+			};
+		}
+
+		/// <summary>
 		/// Rotates the given <see cref="Transform3D"/> on the given <paramref name="axis"/> by the given <paramref name="rotation"/> (which is in radians)<para/>
 		/// Returns the same <see cref="Transform3D"/> that this was called on for ease in chaining.
 		/// </summary>

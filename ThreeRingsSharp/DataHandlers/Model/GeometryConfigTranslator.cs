@@ -50,7 +50,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				float[] uvs;
 				float[] normals;
 				ushort[] indices;
-				int[,] boneIndices = new int[0, 0];
+				ushort[,] boneIndices = new ushort[0, 0];
 				float[,] boneWeights = new float[0, 0];
 				string[] boneNames = new string[0];
 
@@ -68,7 +68,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					AttributeArrayConfig boneIndicesAttr = GetArrayByName(allArrays, "boneIndices");
 					AttributeArrayConfig boneWeightsAttr = GetArrayByName(allArrays, "boneWeights");
 
-					int[] boneIndicesI = skinnedIndexedStored.getFloatArray(false, boneIndicesAttr).ToIntArray();
+					ushort[] boneIndicesS = skinnedIndexedStored.getFloatArray(false, boneIndicesAttr).ToUshortArray();
 					float[] boneWeightsF = skinnedIndexedStored.getFloatArray(false, boneWeightsAttr);
 					// Now let's consider this literally: indices and weights for bones are vertex *attribute* arrays.
 					// So presumably this means that we iterate through the indices.
@@ -85,10 +85,14 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						boneNames[idx + 1] = skinnedIndexedStored.bones[idx];
 					}
 
-					boneIndices = boneIndicesI.As2D(4);
+					boneIndices = boneIndicesS.As2D(4);
 					boneWeights = boneWeightsF.As2D(4);
 
+					meshData.BoneIndicesNative = boneIndicesS;
+					meshData.BoneWeightsNative = boneWeightsF;
+
 					meshData.HasBoneData = true;
+					
 				} else if (geometry is IndexedStored indexedStored) {
 					vertices = indexedStored.getFloatArray(false, indexedStored.vertexArray);
 					uvs = indexedStored.getFloatArray(false, indexedStored.texCoordArrays);

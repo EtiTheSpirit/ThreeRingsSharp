@@ -46,6 +46,11 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// </summary>
 		[JsonProperty("type")] public string Type = GLTFType.SCALAR;
 
+		/// <summary>
+		/// The offset in the referenced buffer that this accessor should start at.
+		/// </summary>
+		[JsonProperty("byteOffset")] public int ByteOffset = 0;
+
 		#region Newtonsoft Field Write Conditions
 		// These are referenced by newtonsoft during runtime.
 		// Format: ShouldSerialize...

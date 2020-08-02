@@ -15,12 +15,23 @@ namespace ThreeRingsSharp.XansData.Structs {
 		/// <summary>
 		/// All of the vertices stored in this VertexGroup, which all correspond to a specific bone. These ARE unique objects (not unique positions in space) since this is a representation of bone data. If you need to access the full geometry (and not every vertex used by a given bone), do it through <see cref="MeshData.Vertices"/>. Do note that Weights are stored within vertices.
 		/// </summary>
-		public List<Vertex> Vertices { get; set; } = new List<Vertex>();
+		[Obsolete("Reference parent MeshData via IndexIndices.")] public List<Vertex> Vertices { get; set; } = new List<Vertex>();
 
 		/// <summary>
 		/// The indices in this vertex group. These form triangles in this <see cref="VertexGroup"/>.
 		/// </summary>
-		public List<ushort> Indices { get; set; } = new List<ushort>();
+		[Obsolete("Reference parent MeshData via IndexIndices.")] public List<ushort> Indices { get; set; } = new List<ushort>();
+
+		/// <summary>
+		/// The indices of elements in the parent <see cref="MeshData"/>. This is probably confusing to read, so think of it this way:<para/>
+		/// I access a value out of this list. The returned value <c>int returnedValue = IndexIndices[x]</c> is used to index the parent's data arrays (Indices, Vertices, Bone stuff): <c>Parent.Indices[returnedValue]</c>. Make more sense?
+		/// </summary>
+		public List<int> IndexIndices { get; set; } = new List<int>();
+
+		/// <summary>
+		/// The MeshData that contains this <see cref="VertexGroup"/>.
+		/// </summary>
+		public MeshData Parent { get; }
 
 		/// <summary>
 		/// The name of this vertex group, which should be identical to the node it corresponds to.
@@ -47,8 +58,9 @@ namespace ThreeRingsSharp.XansData.Structs {
 		public VertexGroup Clone() {
 			return new VertexGroup {
 				Name = Name,
-				Vertices = Vertices.ShallowClone().ToList(),
-				Indices = Indices.ShallowClone().ToList(),
+				IndexIndices = IndexIndices.ShallowClone().ToList(),
+				//Vertices = Vertices.ShallowClone().ToList(),
+				//Indices = Indices.ShallowClone().ToList(),
 			};
 		}
 

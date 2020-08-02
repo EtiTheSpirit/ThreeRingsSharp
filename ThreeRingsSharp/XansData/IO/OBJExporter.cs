@@ -15,7 +15,7 @@ namespace ThreeRingsSharp.XansData.IO {
 	/// <summary>
 	/// Exports model data in the Wavefront OBJ format.
 	/// </summary>
-	public class OBJExporter : AbstractModelExporter {
+	[Obsolete("This is old and yucky. Use glTF")] public class OBJExporter : AbstractModelExporter {
 
 		public override void Export(Model3D[] models, FileInfo toFile) {
 			StringBuilder objBuilder = new StringBuilder("# " + TOOL);

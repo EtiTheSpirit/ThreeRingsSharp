@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.Structs;
 using ThreeRingsSharp.XansData.Extensions;
+using static com.threerings.opengl.model.config.ArticulatedConfig;
 
 namespace ThreeRingsSharp.XansData {
 
@@ -35,7 +36,12 @@ namespace ThreeRingsSharp.XansData {
 		/// <summary>
 		/// A list of <see cref="Model3D"/> instances that reference this mesh.
 		/// </summary>
-		internal readonly List<Model3D> Users = new List<Model3D>();
+		internal readonly List<Model3D> _Users = new List<Model3D>();
+
+		/// <summary>
+		/// A list of <see cref="Model3D"/> instances that reference this mesh.
+		/// </summary>
+		public IReadOnlyList<Model3D> Users => _Users;
 
 		/// <summary>
 		/// They key in <see cref="MeshDataBindings"/> that corresponds to this <see cref="MeshData"/>.
@@ -69,16 +75,21 @@ namespace ThreeRingsSharp.XansData {
 		public List<VertexGroup> VertexGroups { get; set; } = new List<VertexGroup>();
 
 		/// <summary>
-		/// A list of every bone name in this model. Unlike the list provided in Clyde geometry, the first element (index 0) of this list is null.<para/>
+		/// A list of every bone name in this model that deforms the model (so NOT all of the bones)! Unlike the list provided in Clyde geometry, the first element (index 0) of this list is null.<para/>
 		/// This allows easier bone indexing when observing vertex groups since all that needs to be done is testing if the name is null (0 denotes "not in a bone group")
 		/// </summary>
 		public string[] BoneNames { get; set; } = new string[0];
 
 		/// <summary>
+		/// A list of the bones within <see cref="AllBones"/> that are not listed in <see cref="BoneNames"/>
+		/// </summary>
+		public string[] ExtraBoneNames { get; set; }
+
+		/// <summary>
 		/// The indices for bones. These correspond to an entry in the modified <see cref="BoneNames"/> list.<para/>
 		/// If you need to find the bone for a given vertex, search <see cref="VertexGroups"/> instead, as <see cref="VertexGroup"/>s contain bindings to bones.
 		/// </summary>
-		public int[,] BoneIndices { get; set; } = new int[0, 0];
+		public ushort[,] BoneIndices { get; set; } = new ushort[0, 0];
 		// NOTE TO SELF: Yes, these vanilla indices correspond to your modded name list.
 		// You said it everywhere else, you say it here: OOO models dictate that a bone index of 0 = "no bone"
 		// This means that every *other* index is actually subtracted by 1 to get the position in their vanilla bone name list.
@@ -92,6 +103,16 @@ namespace ThreeRingsSharp.XansData {
 		/// If you need to find the weight of a vertex for a given bone, search <see cref="VertexGroups"/> instead.
 		/// </summary>
 		public float[,] BoneWeights { get; set; } = new float[0, 0];
+
+		/// <summary>
+		/// The native ushort index array from the model that instantiated this mesh without any processing.
+		/// </summary>
+		public ushort[] BoneIndicesNative { get; set; } = new ushort[0];
+
+		/// <summary>
+		/// The native float weight array from the model that instantiated this mesh without any processing.
+		/// </summary>
+		public float[] BoneWeightsNative { get; set; } = new float[0];
 
 		/// <summary>
 		/// This should be <see langword="true"/> if this has bone data. If it is false, <see cref="ConstructGroups"/> will not do anything.<para/>
@@ -115,7 +136,17 @@ namespace ThreeRingsSharp.XansData {
 		public Vector3 VertexOffset { get; set; } = new Vector3();
 
 		/// <summary>
-		/// Creates a new <see cref="MeshData"/>.<para/>
+		/// The rig associated with this <see cref="MeshData"/>.
+		/// </summary>
+		public Armature Skeleton { get; private set; } = null;
+
+		/// <summary>
+		/// A list of every bone in <see cref="Skeleton"/> indexable by the names in <see cref="BoneNames"/>
+		/// </summary>
+		public Dictionary<string, Armature> AllBones { get; } = new Dictionary<string, Armature>();
+
+		/// <summary>
+		/// Creates a new blank <see cref="MeshData"/>.<para/>
 		/// WARNING: This <see cref="MeshData"/> will NOT be added to <see cref="MeshDataBindings"/>!
 		/// </summary>
 		public MeshData() { }
@@ -157,6 +188,47 @@ namespace ThreeRingsSharp.XansData {
 		}
 
 		/// <summary>
+		/// Sets <see cref="Skeleton"/> and populates <see cref="AllBones"/>.
+		/// </summary>
+		/// <param name="root"></param>
+		public void SetBones(Node root) => SetBones(Armature.ConstructHierarchyFromNode(root));
+
+		public void SetBones(Armature root) {
+			AllBones.Clear();
+			Skeleton = root;
+			AllBones[root.Name] = root;
+			IterateChildren(root);
+
+			int trueIndex = 0;
+			// Start at 1 because 0 was made always null.
+			for (int index = 1; index < BoneNames.Length; index++) {
+				string boneName = BoneNames[index];
+				AllBones[boneName].Index = trueIndex;
+				trueIndex++;
+			}
+			// Now do note: BoneNames does NOT include all bones! It strictly includes bones that deform the model.
+			// We've assigned the indices there, but we need to add indices to the extra stuff too for proper glTF exports.
+			// Let's do that now:
+			int extraNameIndex = 0;
+			ExtraBoneNames = new string[AllBones.Count - BoneNames.Length + 1];
+			foreach (KeyValuePair<string, Armature> boneInfo in AllBones) {
+				if (!BoneNames.Contains(boneInfo.Key)) {
+					boneInfo.Value.Index = trueIndex;
+					ExtraBoneNames[extraNameIndex] = boneInfo.Value.Name;
+					trueIndex++;
+					extraNameIndex++;
+				}
+			}
+		}
+
+		private void IterateChildren(Armature parent) {
+			foreach (Armature child in parent.Children) {
+				AllBones[child.Name] = child;
+				IterateChildren(child);
+			}
+		}
+
+		/// <summary>
 		/// Iterates through <see cref="VertexGroups"/> and returns the first <see cref="VertexGroup"/> whose <see cref="VertexGroup.Name"/> is equal to <paramref name="name"/>, or <see langword="null"/> if one could not be found.
 		/// </summary>
 		/// <param name="name">The name to search for.</param>
@@ -187,6 +259,9 @@ namespace ThreeRingsSharp.XansData {
 
 			// Apparently, this concept went way over my head in SK Animator Tools and it was a disaster. Part of why the code was so horrifying there.
 
+			// Now as for how this data is organized, you automatically grab this data and split it into vertex groups.
+			// A vertex group contains instances of vertices. 
+
 			foreach (string boneName in BoneNames) {
 				if (boneName != null) {
 					VertexGroups.Add(new VertexGroup(boneName));
@@ -194,23 +269,24 @@ namespace ThreeRingsSharp.XansData {
 			}
 
 			foreach (ushort index in Indices) {
-				int[] boneIndices = BoneIndices.GetSecondDimensionAt(index);
+				ushort[] boneIndices = BoneIndices.GetSecondDimensionAt(index);
 				float[] boneWeights = BoneWeights.GetSecondDimensionAt(index);
-				Vector3 point = Vertices[index];
-				Vector3 normal = Normals[index];
-				Vector2 uv = UVs[index];
+				//Vector3 point = Vertices[index];
+				//Vector3 normal = Normals[index];
+				//Vector2 uv = UVs[index];
 
 				// Iterate 4x because again, quadruplets.
 				for (int idx = 0; idx < 4; idx++) {
-					int boneIndex = boneIndices[idx];
+					ushort boneIndex = boneIndices[idx];
 					float boneWeight = boneWeights[idx];
 					string boneName = BoneNames[boneIndex];
-					if (boneName == null) break;
+					if (boneName == null) return;
 					VertexGroup groupForBone = GetVertexGroupByName(boneName);
+					groupForBone.IndexIndices.Add(index);
 
 					// Populate the group.
-					groupForBone.Vertices.Add(new Vertex(point, boneWeight, normal, uv));
-					groupForBone.Indices.Add(index);
+					//groupForBone.Vertices.Add(new Vertex(point, boneWeight, normal, uv));
+					//groupForBone.Indices.Add(index);
 				}
 			}
 		}
@@ -220,6 +296,7 @@ namespace ThreeRingsSharp.XansData {
 		/// This will do nothing if <see cref="HasTransformed"/> is <see langword="true"/>.
 		/// </summary>
 		/// <param name="transform"></param>
+		[Obsolete]
 		public void ApplyTransform(Transform3D transform) {
 			if (HasTransformed) return;
 
@@ -289,8 +366,10 @@ namespace ThreeRingsSharp.XansData {
 			};
 
 			data.BoneNames = new string[BoneNames.Length];
-			data.BoneIndices = new int[BoneIndices.GetLength(0), BoneIndices.GetLength(1)];
+			data.BoneIndices = new ushort[BoneIndices.GetLength(0), BoneIndices.GetLength(1)];
 			data.BoneWeights = new float[BoneWeights.GetLength(0), BoneWeights.GetLength(1)];
+			data.BoneIndicesNative = BoneIndicesNative.ShallowClone().ToArray();
+			data.BoneWeightsNative = BoneWeightsNative.ShallowClone().ToArray();
 			Array.Copy(BoneNames, data.BoneNames, BoneNames.Length);
 			Array.Copy(BoneIndices, data.BoneIndices, BoneIndices.Length);
 			Array.Copy(BoneWeights, data.BoneWeights, BoneWeights.Length);
@@ -299,10 +378,10 @@ namespace ThreeRingsSharp.XansData {
 		}
 
 		/// <summary>
-		/// Calls <see cref="Dispose"/> if <see cref="Users"/> is empty.
+		/// Calls <see cref="Dispose"/> if <see cref="_Users"/> is empty.
 		/// </summary>
 		internal void DisposeIfNoUsersExist() {
-			if (!Disposed && Users.Count == 0) {
+			if (!Disposed && _Users.Count == 0) {
 				Debug.WriteLine($"MeshData [{Name}] has no users and will be destroyed (It was likely cloned, and this is the original).");
 				Dispose();
 			}

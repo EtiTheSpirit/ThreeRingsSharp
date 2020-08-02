@@ -14,7 +14,7 @@ namespace ThreeRingsSharp.XansData {
 		/// <summary>
 		/// Format: WaveFront OBJ Format
 		/// </summary>
-		OBJ,
+		[Obsolete] OBJ,
 
 		/// <summary>
 		/// Format: Graphics Library Transmission Format

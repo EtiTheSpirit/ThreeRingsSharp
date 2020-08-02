@@ -14,7 +14,7 @@ namespace ThreeRingsSharp.XansData {
 		/// <summary>
 		/// If <see langword="true"/>, glTF will export bones. If <see langword="false"/>, glTF will export solid meshes only.
 		/// </summary>
-		public const bool FLAG_DO_BONE_EXPORTS = false;
+		public const bool FLAG_ALLOW_BONE_EXPORTS = false;
 
 		/// <summary>
 		/// If <see langword="true"/>, texture files will always be imported into glTF even if it's set to reference in the program's configuration.

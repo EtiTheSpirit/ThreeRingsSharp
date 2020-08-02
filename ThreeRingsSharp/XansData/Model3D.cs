@@ -29,7 +29,7 @@ namespace ThreeRingsSharp.XansData {
 		/// A list of bindings from <see cref="ModelFormat"/>s to a singleton of their applicable <see cref="AbstractModelExporter"/>.
 		/// </summary>
 		private static readonly IReadOnlyDictionary<ModelFormat, dynamic> ExporterBindings = new Dictionary<ModelFormat, dynamic>() {
-			[ModelFormat.OBJ] = new ModelExporterFactory<OBJExporter>(),
+			// [ModelFormat.OBJ] = new ModelExporterFactory<OBJExporter>(),
 			[ModelFormat.GLTF] = new ModelExporterFactory<GLTFExporter>()
 		};
 
@@ -78,11 +78,11 @@ namespace ThreeRingsSharp.XansData {
 				if (_Mesh != null) {
 					// Was existing, now it's being set to something else.
 					// This means we were using it, and now we aren't. Unregister.
-					_Mesh.Users.Remove(this);
+					_Mesh._Users.Remove(this);
 					_Mesh.DisposeIfNoUsersExist();
 				}
 				if (value != null) {
-					value.Users.Add(this);
+					value._Users.Add(this);
 				}
 				_Mesh = value;
 			}
@@ -115,7 +115,7 @@ namespace ThreeRingsSharp.XansData {
 		[Obsolete("Feature isn't ready, does nothing.")] public List<Model3D> Attachments { get; set; } = new List<Model3D>();
 
 		/// <summary>
-		/// Any extra information attached to this <see cref="Model3D"/> that should be attached as arbitrary data.
+		/// Any extra information attached to this <see cref="Model3D"/> that serves as arbitrary data.
 		/// </summary>
 		public Dictionary<string, object> ExtraData { get; } = new Dictionary<string, object>();
 
@@ -138,6 +138,7 @@ namespace ThreeRingsSharp.XansData {
 		/// This duplicates <see cref="Mesh"/> into a new instance made just for this <see cref="Model3D"/> and then applies <see cref="Transform"/> to its contents.<para/>
 		/// This can only be called once (subsequent calls will do nothing.)
 		/// </summary>
+		[Obsolete]
 		public void ApplyTransformations() {
 			if (HasDoneTransformation) return;
 
