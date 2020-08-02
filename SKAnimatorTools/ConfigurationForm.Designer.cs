@@ -60,8 +60,6 @@
 			this.BtnSelectDefLoadLoc = new System.Windows.Forms.PictureBox();
 			this.BtnSelectDefSaveLoc = new System.Windows.Forms.PictureBox();
 			this.BtnSelectDefRsrcLoc = new System.Windows.Forms.PictureBox();
-			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
 			this.tableLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.PicBox_StaticSetExpMode)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.PicBox_CndExportMode)).BeginInit();
@@ -610,11 +608,6 @@
 			this.BtnSelectDefRsrcLoc.MouseEnter += new System.EventHandler(this.OnFolderSelMouseEnter);
 			this.BtnSelectDefRsrcLoc.MouseLeave += new System.EventHandler(this.OnFolderSelMouseLeave);
 			// 
-			// openFileDialog1
-			// 
-			this.openFileDialog1.FileName = "PickFolderDialog";
-			this.openFileDialog1.RestoreDirectory = true;
-			// 
 			// ConfigurationForm
 			// 
 			this.AcceptButton = this.BtnSave;
@@ -692,7 +685,5 @@
 		private System.Windows.Forms.PictureBox BtnSelectDefLoadLoc;
 		private System.Windows.Forms.PictureBox BtnSelectDefSaveLoc;
 		private System.Windows.Forms.PictureBox BtnSelectDefRsrcLoc;
-		private System.Windows.Forms.OpenFileDialog openFileDialog1;
-		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
 	}
 }

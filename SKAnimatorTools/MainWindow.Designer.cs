@@ -68,7 +68,6 @@
 			// 
 			this.OpenModel.FileName = "model.dat";
 			this.OpenModel.Filter = "Clyde Binary|*.dat|Clyde XML|*.xml";
-			this.OpenModel.InitialDirectory = "E:\\Steam Games\\steamapps\\common\\Spiral Knights\\rsrc";
 			// 
 			// ModelStructureTree
 			// 
