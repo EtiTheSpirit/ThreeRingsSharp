@@ -62,7 +62,7 @@ namespace SKAnimatorTools {
 			string saveDir = ConfigurationInterface.GetConfigurationValue("LastSaveDirectory", @"C:\", true);
 			string rsrcDir = ConfigurationInterface.GetConfigurationValue("RsrcDirectory", @"C:\", true);
 			bool restoreDirectoryWhenLoading = ConfigurationInterface.GetConfigurationValue("RememberDirectoryAfterOpen", false, true);
-			Model3D.MultiplyScaleByHundred = ConfigurationInterface.GetConfigurationValue("ScaleBy100", true, true);
+			Model3D.MultiplyScaleByHundred = ConfigurationInterface.GetConfigurationValue("ScaleBy100", false, true);
 			Model3D.ProtectAgainstZeroScale = ConfigurationInterface.GetConfigurationValue("ProtectAgainstZeroScale", true, true);
 			Model3D.TargetUpAxis = ConfigurationForm.AxisIntMap[(int)ConfigurationInterface.GetConfigurationValue("UpAxisIndex", 1, true)];
 			GLTFExporter.EmbedTextures = ConfigurationInterface.GetConfigurationValue("EmbedTextures", false, true);
@@ -403,7 +403,7 @@ namespace SKAnimatorTools {
 		}
 
 		private void SaveModel_PromptFileExport(object sender, CancelEventArgs e) {
-			bool hasStaticSetConfig = AllModels.Where(model => model.ExtraData.ContainsKey("UnselectedStaticSetModel")).Count() > 0;
+			bool hasStaticSetConfig = AllModels.Where(model => model.ExtraData.ContainsKey("StaticSetConfig")).Count() > 0;
 			bool hasConditionalConfig = AllModels.Where(model => model.ExtraData.ContainsKey("ConditionalConfigFlag")).Count() > 0;
 			if (hasStaticSetConfig) {
 				// NEW: If their model includes a StaticSetConfig, we need to give them the choice to export all or one model.
@@ -434,10 +434,20 @@ namespace SKAnimatorTools {
 					if (StaticSetExportMode == 1) saveAllStaticSetModels = DialogResult.Yes;
 					if (StaticSetExportMode == 2) saveAllStaticSetModels = DialogResult.No;
 				}
+
+				bool onlyExportActive = saveAllStaticSetModels == DialogResult.No;
 				foreach (Model3D model in AllModels) {
-					if ((bool)model.ExtraData.GetOrDefault("UnselectedStaticSetModel", false) == true) {
-						model.ExtraData["SkipExport"] = saveAllStaticSetModels == DialogResult.No;
-						// If we select no, we want to skip models that aren't the selected ones.
+					model.ExtraData["SkipExport"] = false; // This is important because if we change any data, we want to clear this out and restart from scratch.
+					StaticSetConfig associatedStaticSet = (StaticSetConfig)model.ExtraData.GetOrDefault("StaticSetConfig", null);
+					if (associatedStaticSet != null) {
+						string targetModel = (string)model.ExtraData.GetOrDefault("StaticSetEntryName", null);
+						bool isTargetModel = associatedStaticSet.model == targetModel;
+
+						bool shouldExport = (isTargetModel && onlyExportActive) || !onlyExportActive;
+						// Should export if:
+						// - This is the target model and only export active is true, or
+						// - Only export active is false
+						model.ExtraData["SkipExport"] = !shouldExport;
 					}
 				}
 			}

@@ -59,8 +59,9 @@
 			// 
 			// SaveModel
 			// 
-			this.SaveModel.Filter = "gLTF 2.0 Binary|*.glb|WaveFront OBJ|*.obj";
+			this.SaveModel.Filter = "gLTF 2.0 Binary|*.glb";
 			this.SaveModel.RestoreDirectory = true;
+			this.SaveModel.SupportMultiDottedExtensions = true;
 			this.SaveModel.FileOk += new System.ComponentModel.CancelEventHandler(this.SaveModel_PromptFileExport);
 			// 
 			// OpenModel

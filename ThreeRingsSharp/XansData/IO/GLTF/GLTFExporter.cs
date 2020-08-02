@@ -108,6 +108,9 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 			int numModelsSkipped = 0;
 			int numModelsCreated = 0;
 
+			int currentSkinIndex = 0;
+			int currentNodeIndex = 0;
+
 			// A mapping from texture filepath to integer index for textures in the glTF data.
 			Dictionary<string, int> texFileToIndexMap = new Dictionary<string, int>();
 
@@ -128,217 +131,269 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				List<GLTFAccessor> accessors = new List<GLTFAccessor>();
 				List<byte> buffer = new List<byte>();
 
-				// Quick thing beforehand: Change the up axis!
-				// Edit: This is broken, it causes malformed outputs.
-				// meshData.ApplyAxialTransformationMod();
+				// Go through all model references.
+				// If ALL of them have the SkipExport flag set to true (or, as this condition checks, none of them have it set to false),
+				// this mesh should be skipped as it has no active users.
+				bool skipMesh = meshData.Users.Where(model => (bool)model.ExtraData.GetOrDefault("SkipExport", false) == false).Count() == 0;
+				if (skipMesh) continue;
 
-				if (meshData.HasBoneData && DevelopmentFlags.FLAG_DO_BONE_EXPORTS) {
+				if (meshData.HasBoneData && DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS) {
 
 					// So for bone data, the target is as follows:
 					// Node that the scene references: The main armature object (a node in glTF is an object)
 					// The main armature object references children.
 
 					#region Create Buffer Accessors
-					foreach (VertexGroup grp in meshData.VertexGroups) {
-						#region Accessor No. 1: Vertices
-						GLTFAccessor vertexAccessor = new GLTFAccessor {
-							BufferView = currentBufferViewIndex,
-							ThisIndex = currentAccessorIndex,
-							// byteOffset = currentBufferViewSize,
-							ComponentType = GLTFComponentType.FLOAT,
-							Type = GLTFType.VEC3,
-							Count = grp.Vertices.Count
-						};
-						vertexAccessor.Min.SetListCap(0f, 3);
-						vertexAccessor.Max.SetListCap(0f, 3);
-						foreach (Vertex vertex in grp.Vertices) {
-							Vector3 point = vertex.Point;
-							float x = point.X;
-							float y = point.Y;
-							float z = point.Z;
-							buffer.AddRange(BitConverter.GetBytes(x));
-							buffer.AddRange(BitConverter.GetBytes(y));
-							buffer.AddRange(BitConverter.GetBytes(z));
 
-							// This garbage is weird. But it's required by standards, so..
-							if (x < vertexAccessor.Min[0]) vertexAccessor.Min[0] = x;
-							if (y < vertexAccessor.Min[1]) vertexAccessor.Min[1] = y;
-							if (z < vertexAccessor.Min[2]) vertexAccessor.Min[2] = z;
+					#region Accessor No. 1: Vertices
+					GLTFAccessor vertexAccessor = new GLTFAccessor {
+						BufferView = currentBufferViewIndex,
+						ThisIndex = currentAccessorIndex,
+						// byteOffset = currentBufferViewSize,
+						ComponentType = GLTFComponentType.FLOAT,
+						Type = GLTFType.VEC3,
+						Count = meshData.Vertices.Count
+					};
+					vertexAccessor.Min.SetListCap(0f, 3);
+					vertexAccessor.Max.SetListCap(0f, 3);
+					foreach (Vector3 vertex in meshData.Vertices) {
+						float x = vertex.X - meshData.VertexOffset.X;
+						float y = vertex.Y - meshData.VertexOffset.Y;
+						float z = vertex.Z - meshData.VertexOffset.Z;
+						buffer.AddRange(BitConverter.GetBytes(x));
+						buffer.AddRange(BitConverter.GetBytes(y));
+						buffer.AddRange(BitConverter.GetBytes(z));
 
-							if (x > vertexAccessor.Max[0]) vertexAccessor.Max[0] = x;
-							if (y > vertexAccessor.Max[1]) vertexAccessor.Max[1] = y;
-							if (z > vertexAccessor.Max[2]) vertexAccessor.Max[2] = z;
-						}
-						accessors.Add(vertexAccessor);
-						int vertexSize = vertexAccessor.Count * 12; // 4 bytes per float * 3 floats
-						bufferViews.Add(new GLTFBufferView {
-							ThisIndex = currentBufferViewIndex,
-							ByteLength = vertexSize,
-							ByteOffset = currentOffset
-						});
-						currentOffset += vertexSize;
-						currentBufferViewIndex++;
-						currentAccessorIndex++;
-						#endregion
+						// This garbage is weird. But it's required by standards, so..
+						if (x < vertexAccessor.Min[0]) vertexAccessor.Min[0] = x;
+						if (y < vertexAccessor.Min[1]) vertexAccessor.Min[1] = y;
+						if (z < vertexAccessor.Min[2]) vertexAccessor.Min[2] = z;
 
-						#region Accessor No. 2: Normals
-						GLTFAccessor normalAccessor = new GLTFAccessor {
-							BufferView = currentBufferViewIndex,
-							ThisIndex = currentAccessorIndex,
-							ComponentType = GLTFComponentType.FLOAT,
-							Type = GLTFType.VEC3,
-							Count = grp.Vertices.Count // Get the number of vertices. Yes, vertices. This is using vertex groups which uses the Vertex struct, which contains the data (normals, uvs, weights)
-						};
-
-						normalAccessor.Min.SetListCap(0f, 3);
-						normalAccessor.Max.SetListCap(0f, 3);
-						foreach (Vertex vertex in grp.Vertices) {
-							Vector3 normal = vertex.Normal;
-							float x = normal.X;
-							float y = normal.Y;
-							float z = normal.Z;
-							buffer.AddRange(BitConverter.GetBytes(x));
-							buffer.AddRange(BitConverter.GetBytes(y));
-							buffer.AddRange(BitConverter.GetBytes(z));
-
-							// This garbage is weird. But it's required by standards, so..
-							if (x < normalAccessor.Min[0]) normalAccessor.Min[0] = x;
-							if (y < normalAccessor.Min[1]) normalAccessor.Min[1] = y;
-							if (z < normalAccessor.Min[2]) normalAccessor.Min[2] = z;
-
-							if (x > normalAccessor.Max[0]) normalAccessor.Max[0] = x;
-							if (y > normalAccessor.Max[1]) normalAccessor.Max[1] = y;
-							if (z > normalAccessor.Max[2]) normalAccessor.Max[2] = z;
-						}
-
-						accessors.Add(normalAccessor);
-						int normalSize = normalAccessor.Count * 12;
-						bufferViews.Add(new GLTFBufferView {
-							ThisIndex = currentBufferViewIndex,
-							ByteLength = normalSize,
-							ByteOffset = currentOffset
-						});
-						currentOffset += normalSize; // 4 bytes per float * 3 floats
-						currentBufferViewIndex++;
-						currentAccessorIndex++;
-						#endregion
-
-						#region Accessor No. 3: UVs
-						GLTFAccessor uvAccessor = new GLTFAccessor {
-							BufferView = currentBufferViewIndex,
-							ThisIndex = currentAccessorIndex,
-							// byteOffset = currentBufferViewSize,
-							ComponentType = GLTFComponentType.FLOAT,
-							Type = GLTFType.VEC2,
-							Count = grp.Vertices.Count // Get the number of vertices. Yes, vertices. This is using vertex groups which uses the Vertex struct, which contains the data (normals, uvs, weights)
-						};
-
-						uvAccessor.Min.SetListCap(0f, 2);
-						uvAccessor.Max.SetListCap(0f, 2);
-						foreach (Vertex vertex in grp.Vertices) {
-							Vector2 uv = vertex.UV;
-							float x = uv.X;
-							float y = 1 - uv.Y; // Do 1 - y because glTF coordinates have (0,0) in the top left rather than the bottom left.
-							buffer.AddRange(BitConverter.GetBytes(x));
-							buffer.AddRange(BitConverter.GetBytes(y));
-
-							// This garbage is weird. But it's required by standards, so..
-							if (x < uvAccessor.Min[0]) uvAccessor.Min[0] = x;
-							if (y < uvAccessor.Min[1]) uvAccessor.Min[1] = y;
-
-							if (x > uvAccessor.Max[0]) uvAccessor.Max[0] = x;
-							if (y > uvAccessor.Max[1]) uvAccessor.Max[1] = y;
-						}
-
-						accessors.Add(uvAccessor);
-						int uvSize = uvAccessor.Count * 8;
-						bufferViews.Add(new GLTFBufferView {
-							ThisIndex = currentBufferViewIndex,
-							ByteLength = uvSize,
-							ByteOffset = currentOffset
-						});
-						currentOffset += uvSize; // 4 bytes per float * 2 floats
-						currentBufferViewIndex++;
-						currentAccessorIndex++;
-						#endregion
-
-						#region Accessor No. 4: Indices
-						GLTFAccessor indexAccessor = new GLTFAccessor {
-							BufferView = currentBufferViewIndex,
-							ThisIndex = currentAccessorIndex,
-							// byteOffset = currentBufferViewSize,
-							ComponentType = GLTFComponentType.UNSIGNED_SHORT, // OOO models use shorts for indices.
-							Type = GLTFType.SCALAR,
-							Count = grp.Indices.Count
-						};
-
-						indexAccessor.Min.SetListCap((ushort)0, 1);
-						indexAccessor.Max.SetListCap((ushort)0, 1);
-						foreach (ushort index in grp.Indices) {
-							buffer.AddRange(BitConverter.GetBytes(index));
-							if (index < indexAccessor.Min[0]) indexAccessor.Min[0] = index;
-							if (index > indexAccessor.Max[0]) indexAccessor.Max[0] = index;
-						}
-
-						accessors.Add(indexAccessor);
-						int indexSize = indexAccessor.Count * 2; // 2 bytes per ushort.
-						bufferViews.Add(new GLTFBufferView {
-							ThisIndex = currentBufferViewIndex,
-							ByteLength = indexSize,
-							ByteOffset = currentOffset
-						});
-						currentOffset += indexSize; // 4 bytes per float * 2 floats
-						currentBufferViewIndex++;
-						currentAccessorIndex++;
-						#endregion
-
-						#region Accessor No. 5: Joints
-						GLTFAccessor jointAccessor = null;
-						if (meshData.HasBoneData && DevelopmentFlags.FLAG_DO_BONE_EXPORTS) {
-							jointAccessor = new GLTFAccessor {
-								BufferView = currentBufferViewIndex,
-								ThisIndex = currentAccessorIndex,
-								ComponentType = GLTFComponentType.UNSIGNED_SHORT,
-								Type = GLTFType.VEC4,
-								Count = meshData.BoneIndices.GetLength(0)
-							};
-							// This can't use min/max.
-							accessors.Add(jointAccessor);
-							int jointSize = jointAccessor.Count * 4 * 2; // 4 elements per VEC4, 2 bytes per ushort.
-							bufferViews.Add(new GLTFBufferView {
-								ThisIndex = currentBufferViewIndex,
-								ByteLength = jointSize,
-								ByteOffset = currentOffset
-							});
-							currentOffset += jointSize;
-							currentBufferViewIndex++;
-							currentAccessorIndex++;
-						}
-						#endregion
-
-						#region Accessor No. 6: Weights
-						GLTFAccessor weightAccessor = null;
-						if (meshData.HasBoneData && DevelopmentFlags.FLAG_DO_BONE_EXPORTS) {
-							weightAccessor = new GLTFAccessor {
-								BufferView = currentBufferViewIndex,
-								ThisIndex = currentAccessorIndex,
-								ComponentType = GLTFComponentType.FLOAT,
-								Type = GLTFType.VEC4,
-								Count = meshData.BoneWeights.GetLength(0)
-							};
-							accessors.Add(weightAccessor);
-							int weightSize = weightAccessor.Count * 4 * 4; // 4 elements per VEC4, 4 bytes per float;
-							bufferViews.Add(new GLTFBufferView {
-								ThisIndex = currentBufferViewIndex,
-								ByteLength = weightSize,
-								ByteOffset = currentOffset
-							});
-							currentOffset += weightSize;
-							currentBufferViewIndex++;
-							currentAccessorIndex++;
-						}
-						#endregion
+						if (x > vertexAccessor.Max[0]) vertexAccessor.Max[0] = x;
+						if (y > vertexAccessor.Max[1]) vertexAccessor.Max[1] = y;
+						if (z > vertexAccessor.Max[2]) vertexAccessor.Max[2] = z;
 					}
+					accessors.Add(vertexAccessor);
+					int vertexSize = vertexAccessor.Count * 12;
+					bufferViews.Add(new GLTFBufferView {
+						ThisIndex = currentBufferViewIndex,
+						ByteLength = vertexSize,
+						ByteOffset = currentOffset
+					});
+					currentOffset += vertexSize; // 4 bytes per float * 3 floats
+					currentBufferViewIndex++;
+					currentAccessorIndex++;
+					#endregion
+
+					#region Accessor No. 2: Normals
+					GLTFAccessor normalAccessor = new GLTFAccessor {
+						BufferView = currentBufferViewIndex,
+						ThisIndex = currentAccessorIndex,
+						// byteOffset = currentBufferViewSize,
+						ComponentType = GLTFComponentType.FLOAT,
+						Type = GLTFType.VEC3,
+						Count = meshData.Normals.Count
+					};
+
+					normalAccessor.Min.SetListCap(0f, 3);
+					normalAccessor.Max.SetListCap(0f, 3);
+					foreach (Vector3 normal in meshData.Normals) {
+						float x = normal.X;
+						float y = normal.Y;
+						float z = normal.Z;
+						buffer.AddRange(BitConverter.GetBytes(x));
+						buffer.AddRange(BitConverter.GetBytes(y));
+						buffer.AddRange(BitConverter.GetBytes(z));
+
+						// This garbage is weird. But it's required by standards, so..
+						if (x < normalAccessor.Min[0]) normalAccessor.Min[0] = x;
+						if (y < normalAccessor.Min[1]) normalAccessor.Min[1] = y;
+						if (z < normalAccessor.Min[2]) normalAccessor.Min[2] = z;
+
+						if (x > normalAccessor.Max[0]) normalAccessor.Max[0] = x;
+						if (y > normalAccessor.Max[1]) normalAccessor.Max[1] = y;
+						if (z > normalAccessor.Max[2]) normalAccessor.Max[2] = z;
+					}
+
+					accessors.Add(normalAccessor);
+					int normalSize = normalAccessor.Count * 12;
+					bufferViews.Add(new GLTFBufferView {
+						ThisIndex = currentBufferViewIndex,
+						ByteLength = normalSize,
+						ByteOffset = currentOffset
+					});
+					currentOffset += normalSize; // 4 bytes per float * 3 floats
+					currentBufferViewIndex++;
+					currentAccessorIndex++;
+					#endregion
+
+					#region Accessor No. 3: UVs
+					GLTFAccessor uvAccessor = new GLTFAccessor {
+						BufferView = currentBufferViewIndex,
+						ThisIndex = currentAccessorIndex,
+						// byteOffset = currentBufferViewSize,
+						ComponentType = GLTFComponentType.FLOAT,
+						Type = GLTFType.VEC2,
+						Count = meshData.UVs.Count
+					};
+
+					uvAccessor.Min.SetListCap(0f, 2);
+					uvAccessor.Max.SetListCap(0f, 2);
+					foreach (Vector2 uv in meshData.UVs) {
+						float x = uv.X;
+						float y = 1 - uv.Y; // Do 1 - y because glTF coordinates have (0,0) in the top left rather than the bottom left.
+						buffer.AddRange(BitConverter.GetBytes(x));
+						buffer.AddRange(BitConverter.GetBytes(y));
+
+						// This garbage is weird. But it's required by standards, so..
+						if (x < uvAccessor.Min[0]) uvAccessor.Min[0] = x;
+						if (y < uvAccessor.Min[1]) uvAccessor.Min[1] = y;
+
+						if (x > uvAccessor.Max[0]) uvAccessor.Max[0] = x;
+						if (y > uvAccessor.Max[1]) uvAccessor.Max[1] = y;
+					}
+
+					accessors.Add(uvAccessor);
+					int uvSize = uvAccessor.Count * 8;
+					bufferViews.Add(new GLTFBufferView {
+						ThisIndex = currentBufferViewIndex,
+						ByteLength = uvSize,
+						ByteOffset = currentOffset
+					});
+					currentOffset += uvSize; // 4 bytes per float * 2 floats
+					currentBufferViewIndex++;
+					currentAccessorIndex++;
+					#endregion
+
+					#region Accessor No. 4: Indices
+					GLTFAccessor indexAccessor = new GLTFAccessor {
+						BufferView = currentBufferViewIndex,
+						ThisIndex = currentAccessorIndex,
+						// byteOffset = currentBufferViewSize,
+						ComponentType = GLTFComponentType.UNSIGNED_SHORT, // OOO models use shorts for indices.
+						Type = GLTFType.SCALAR,
+						Count = meshData.Indices.Count
+					};
+
+					indexAccessor.Min.SetListCap((ushort)0, 1);
+					indexAccessor.Max.SetListCap((ushort)0, 1);
+					foreach (ushort index in meshData.Indices) {
+						buffer.AddRange(BitConverter.GetBytes(index));
+						if (index < indexAccessor.Min[0]) indexAccessor.Min[0] = index;
+						if (index > indexAccessor.Max[0]) indexAccessor.Max[0] = index;
+					}
+
+					accessors.Add(indexAccessor);
+					int indexSize = indexAccessor.Count * 2; // 2 bytes per ushort.
+					bufferViews.Add(new GLTFBufferView {
+						ThisIndex = currentBufferViewIndex,
+						ByteLength = indexSize,
+						ByteOffset = currentOffset
+					});
+					currentOffset += indexSize; // 4 bytes per float * 2 floats
+					currentBufferViewIndex++;
+					currentAccessorIndex++;
+					#endregion
+
+					#region Accessor No. 5: Joints
+					GLTFAccessor jointAccessor = null;
+					jointAccessor = new GLTFAccessor {
+						BufferView = currentBufferViewIndex,
+						ThisIndex = currentAccessorIndex,
+						ComponentType = GLTFComponentType.UNSIGNED_SHORT,
+						Type = GLTFType.VEC4,
+						Count = meshData.BoneIndicesNative.Length / 4
+					};
+					jointAccessor.Min.SetListCap(0, 4);
+					jointAccessor.Max.SetListCap(0, 4);
+
+					int boneSubIdx = 0;
+					foreach (ushort boneIndex in meshData.BoneIndicesNative) {
+						buffer.AddRange(BitConverter.GetBytes(boneIndex));
+						if (boneIndex < jointAccessor.Min[boneSubIdx]) jointAccessor.Min[boneSubIdx] = boneIndex;
+						if (boneIndex > jointAccessor.Max[boneSubIdx]) jointAccessor.Max[boneSubIdx] = boneIndex;
+						if (boneSubIdx > 3) boneSubIdx = 0;
+					}
+
+					// This can't use min/max.
+					accessors.Add(jointAccessor);
+					int jointSize = jointAccessor.Count * 4 * 2; // 4 elements per vec4, 2 bytes per ushort.
+					bufferViews.Add(new GLTFBufferView {
+						ThisIndex = currentBufferViewIndex,
+						ByteLength = jointSize,
+						ByteOffset = currentOffset
+					});
+					currentOffset += jointSize;
+					currentBufferViewIndex++;
+					currentAccessorIndex++;
+
+					#endregion
+
+					#region Accessor No. 6: Weights
+					GLTFAccessor weightAccessor = null;
+					weightAccessor = new GLTFAccessor {
+						BufferView = currentBufferViewIndex,
+						ThisIndex = currentAccessorIndex,
+						ComponentType = GLTFComponentType.FLOAT,
+						Type = GLTFType.VEC4,
+						Count = meshData.BoneWeightsNative.Length / 4
+					};
+					weightAccessor.Min.SetListCap(0, 4);
+					weightAccessor.Max.SetListCap(0, 4);
+
+					int weightSubIdx = 0;
+					foreach (float boneWeight in meshData.BoneWeightsNative) {
+						buffer.AddRange(BitConverter.GetBytes(boneWeight));
+						if (boneWeight < weightAccessor.Min[weightSubIdx]) weightAccessor.Min[weightSubIdx] = boneWeight;
+						if (boneWeight > weightAccessor.Max[weightSubIdx]) weightAccessor.Max[weightSubIdx] = boneWeight;
+						weightSubIdx++;
+						if (weightSubIdx > 3) weightSubIdx = 0;
+					}
+
+					accessors.Add(weightAccessor);
+					int weightSize = weightAccessor.Count * 4 * 4; // 4 elements per vec4, 4 bytes per float;
+					bufferViews.Add(new GLTFBufferView {
+						ThisIndex = currentBufferViewIndex,
+						ByteLength = weightSize,
+						ByteOffset = currentOffset
+					});
+					currentOffset += weightSize;
+					currentBufferViewIndex++;
+					currentAccessorIndex++;
+
+					#endregion
+
+					#endregion
+
+					#region Create Mesh
+					GLTFPrimitive primitive = new GLTFPrimitive {
+						Indices = indexAccessor.ThisIndex,
+						Attributes = new GLTFPrimitiveAttribute {
+							Normal = normalAccessor.ThisIndex,
+							Position = vertexAccessor.ThisIndex,
+							TexCoord0 = uvAccessor.ThisIndex,
+							Joints = jointAccessor.ThisIndex,
+							Weights = weightAccessor.ThisIndex,
+						}
+					};
+
+					GLTFMesh mesh = new GLTFMesh {
+						// Primitives has a length of 1 by default so ima use that to my advantage.
+						ThisIndex = currentMeshIndex,
+						Name = meshData.Name,
+						Primitives = new List<GLTFPrimitive>() { primitive }
+					};
+					currentMeshIndex++;
+					#endregion
+
+					#region Register Data
+					// Register all data to the glTF JSON and Binary data.
+					binBuffer.AddRange(buffer);
+					foreach (GLTFBufferView bufferView in bufferViews) JSONData.BufferViews.Add(bufferView);
+					foreach (GLTFAccessor accessor in accessors) JSONData.Accessors.Add(accessor);
+					JSONData.Meshes.Add(mesh);
+					meshesToGLTF[meshData] = mesh;
+					glTFToAccessors[mesh] = (vertexAccessor, normalAccessor, uvAccessor, indexAccessor, jointAccessor, weightAccessor);
 					#endregion
 
 				} else {
@@ -661,44 +716,115 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				GLTFAccessor jointAccessor = accessors.Item5;
 				GLTFAccessor weightAccessor = accessors.Item6;
 
-				#region Append Rigging (WIP)
-				if (model.Mesh.HasBoneData && DevelopmentFlags.FLAG_DO_BONE_EXPORTS) {
+				MeshData modelMesh = model.Mesh;
 
-				}
-				#endregion
+				#region Append Bind Matrices & Nodes (WIP)
+				if (modelMesh.HasBoneData && DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS) {
 
-				#region Append Animations (WIP)
-				if (model.Mesh.HasBoneData && DevelopmentFlags.FLAG_DO_BONE_EXPORTS) {
-
-				}
-				#endregion
-
-				#region Create Object
-				if (model.Mesh.HasBoneData && DevelopmentFlags.FLAG_DO_BONE_EXPORTS) {
-					#region Create Object (Skinned)
-
-					#endregion
-				} else {
-					#region Create Object (Static)
-					GLTFNode node = new GLTFNode {
-						Name = model.Name,
-						Mesh = glMesh.ThisIndex
+					GLTFSkin modelSkin = new GLTFSkin {
+						ThisIndex = currentSkinIndex,
+						Name = model.Name + "-Skin"
 					};
+					currentSkinIndex++;
+					JSONData.Skins.Add(modelSkin);
+
+					#region Create Mesh
+					GLTFNode node = new GLTFNode {
+						ThisIndex = currentNodeIndex,
+						Name = model.Name,
+						Mesh = glMesh.ThisIndex,
+						Skin = modelSkin.ThisIndex
+					};
+
 					if (JSONData.Materials.Count > 0) {
-							string fullName = model.Textures.Where(texturePath => {
-								if (texturePath != null) {
-									return new FileInfo(texturePath).Name == model.ActiveTexture;
-								} else {
-									return false;
-								}
-							}).FirstOrDefault();
-							if (fullName != null) glMesh.Primitives[0].Material = texFileToIndexMap[fullName];
-						
+						string fullName = model.Textures.Where(texturePath => {
+							if (texturePath != null) {
+								return new FileInfo(texturePath).Name == model.ActiveTexture;
+							} else {
+								return false;
+							}
+						}).FirstOrDefault();
+						if (fullName != null) glMesh.Primitives[0].Material = texFileToIndexMap[fullName];
 					}
 					model.ApplyScaling();
 					node.SetTransform(model.Transform);
 					JSONData.Nodes.Add(node);
+					currentNodeIndex++;
 					#endregion
+
+					#region Create Bone Nodes
+					int nodeIndexAtInstantiation = currentNodeIndex;
+					foreach (string boneName in modelMesh.BoneNames) {
+						if (boneName == null) continue;
+						Armature armature = modelMesh.AllBones[boneName];
+						GLTFNode nodeForThisBone = new GLTFNode {
+							ThisIndex = currentNodeIndex,
+							Name = boneName,
+							Children = armature.GetChildIndices(nodeIndexAtInstantiation)
+						};
+						nodeForThisBone.SetTransform(armature.Transform);
+
+						if (boneName == "%ROOT%") {
+							// This is the root bone.
+							// Add the mesh reference.
+							node.Children = new int[] { nodeForThisBone.ThisIndex };
+							modelSkin.Skeleton = nodeForThisBone.ThisIndex;
+						}
+						modelSkin.Joints.Add(nodeForThisBone.ThisIndex);
+						JSONData.Nodes.Add(nodeForThisBone);
+						currentNodeIndex++;
+					}
+
+					foreach (string boneName in modelMesh.ExtraBoneNames) {
+						Armature armature = modelMesh.AllBones[boneName];
+						GLTFNode nodeForThisBone = new GLTFNode {
+							ThisIndex = currentNodeIndex,
+							Name = boneName,
+							Children = armature.GetChildIndices(nodeIndexAtInstantiation)
+						};
+						nodeForThisBone.SetTransform(armature.Transform);
+
+						if (boneName == "%ROOT%") {
+							// This is the root bone.
+							// Add the mesh reference.
+							node.Children = new int[] { nodeForThisBone.ThisIndex };
+							modelSkin.Skeleton = nodeForThisBone.ThisIndex;
+						}
+						modelSkin.Joints.Add(nodeForThisBone.ThisIndex);
+						JSONData.Nodes.Add(nodeForThisBone);
+						currentNodeIndex++;
+					}
+					#endregion
+				}
+				#endregion
+
+				#region Append Animations (WIP)
+				if (modelMesh.HasBoneData && DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS) {
+
+				}
+				#endregion
+
+				#region Create Object (If Static)
+				if (!modelMesh.HasBoneData || !DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS) {
+					GLTFNode node = new GLTFNode {
+						ThisIndex = currentNodeIndex,
+						Name = model.Name,
+						Mesh = glMesh.ThisIndex
+					};
+					if (JSONData.Materials.Count > 0) {
+						string fullName = model.Textures.Where(texturePath => {
+							if (texturePath != null) {
+								return new FileInfo(texturePath).Name == model.ActiveTexture;
+							} else {
+								return false;
+							}
+						}).FirstOrDefault();
+						if (fullName != null) glMesh.Primitives[0].Material = texFileToIndexMap[fullName];
+					}
+					model.ApplyScaling();
+					node.SetTransform(model.Transform);
+					JSONData.Nodes.Add(node);
+					currentNodeIndex++;
 				}
 				#endregion
 

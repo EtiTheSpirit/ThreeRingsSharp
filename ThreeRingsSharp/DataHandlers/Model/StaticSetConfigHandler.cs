@@ -118,21 +118,23 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					foreach (VisibleMesh mesh in meshes) {
 						string meshTitle = "-MeshSets[" + key.ToString() + "].Mesh[" + idx + "]";
 
-						
-
 						Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
 						meshToModel.Name = depth1Name + meshTitle;
+						meshToModel.ExtraData["StaticSetEntryName"] = key.ToString();
+						meshToModel.ExtraData["StaticSetConfig"] = staticSet;
 						if (globalTransform != null) meshToModel.Transform = globalTransform.compose(meshToModel.Transform);
 						//meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
 						
 						
 						meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
 						meshToModel.ActiveTexture = mesh.texture;
+						/*
 						if (!isSelectedModel) {
 							// Tell the model's extradata that this model is part of a StaticSetConfig and it's NOT the selected variant.
 							// This is used by the confirmation dialog on the exporter.
 							meshToModel.ExtraData["UnselectedStaticSetModel"] = true;
 						}
+						*/
 
 						modelCollection.Add(meshToModel);
 						idx++;
