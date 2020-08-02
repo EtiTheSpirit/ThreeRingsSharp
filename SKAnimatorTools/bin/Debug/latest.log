@@ -1,0 +1,24 @@
+[VERBOSE] Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!
+[VERBOSE] Populated [actor].
+[VERBOSE] Populated [area].
+[VERBOSE] Populated [behavior].
+[VERBOSE] Populated [cursor].
+[VERBOSE] Populated [effect].
+[VERBOSE] Populated [font].
+[VERBOSE] Populated [ground].
+[VERBOSE] Populated [interface_script].
+[VERBOSE] Populated [material].
+[VERBOSE] Populated [parameterized_handler].
+[VERBOSE] Populated [path].
+[VERBOSE] Populated [placeable].
+[VERBOSE] Populated [render_effect].
+[VERBOSE] Populated [render_queue].
+[VERBOSE] Populated [render_scheme].
+[VERBOSE] Populated [scene_global].
+[VERBOSE] Populated [shader].
+[VERBOSE] Populated [sounder].
+[VERBOSE] Populated [style].
+[VERBOSE] Populated [texture].
+[VERBOSE] Populated [tile].
+[VERBOSE] Populated [wall].
+Config data has been populated.

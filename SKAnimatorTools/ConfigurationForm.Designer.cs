@@ -280,9 +280,8 @@
 			this.CheckBox_VerboseLogging.Size = new System.Drawing.Size(142, 18);
 			this.CheckBox_VerboseLogging.TabIndex = 11;
 			this.CheckBox_VerboseLogging.Text = "Enable Verbose Logging";
-			this.MainTooltip.SetToolTip(this.CheckBox_VerboseLogging, "If enabled, more detailed log entries will be shown. This may slow down processin" +
-        "g, as the program has to wait until it has written to the textbox before it can " +
-        "continue.");
+			this.MainTooltip.SetToolTip(this.CheckBox_VerboseLogging, "If enabled, more detailed log entries will be shown. This does not affect latest." +
+        "log (it will always be written as if verbose logging is on).");
 			this.CheckBox_VerboseLogging.UseVisualStyleBackColor = true;
 			this.CheckBox_VerboseLogging.CheckedChanged += new System.EventHandler(this.VerboseLoggingChanged);
 			// 

@@ -135,13 +135,13 @@ namespace ThreeRingsSharp.Utility {
 		/// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
 		public static void Write(object obj, bool isVerbose = false, Color? color = null) {
 			if (obj == null) throw new ArgumentNullException("obj");
-			if (!VerboseLogging && isVerbose) return;
-
 			string text = obj?.ToString() ?? "null";
-			Log.Append(text);
-
 			byte[] fileWrite = Encoding.ASCII.GetBytes((isVerbose ? "[VERBOSE] " : "") + VTConsole.StripColorFormattingCode(text));
 			LogFileStream.Write(fileWrite, 0, fileWrite.Length);
+
+
+			if (!VerboseLogging && isVerbose) return;
+			Log.Append(text);
 			VTConsole.ForegroundColor = color.HasValue ? ConsoleColorVT.FromColor(color.Value) : ConsoleColor.White;
 			VTConsole.Write(text);
 
