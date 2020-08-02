@@ -1,4 +1,5 @@
 ﻿using com.sun.tools.javac.main;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using SKAnimatorTools.Configuration;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,8 @@ using ThreeRingsSharp.XansData.Structs;
 
 namespace SKAnimatorTools {
 	public partial class ConfigurationForm : Form {
+
+		public const string DEFAULT_DIRECTORY = @"C:\Program Files (x86)\Steam\steamapps\common\Spiral Knights\rsrc";
 
 
 		/// <summary>
@@ -194,6 +197,44 @@ namespace SKAnimatorTools {
 				PicBox_VerboseLogging.Image = Accepted;
 				MainTooltip.SetToolTip(PicBox_VerboseLogging, string.Empty);
 			}
+		}
+
+		private void BtnSelectDefLoadLoc_Click(object sender, EventArgs e) {
+			CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+			dialog.InitialDirectory = Directory.Exists(TextBox_DefaultLoadLoc.Text) ? TextBox_DefaultLoadLoc.Text : DEFAULT_DIRECTORY;
+			dialog.IsFolderPicker = true;
+			if (dialog.ShowDialog() == CommonFileDialogResult.Ok) {
+				TextBox_DefaultLoadLoc.Text = dialog.FileName;
+				VerifyAllPathIntegrity();
+			}
+		}
+
+		private void BtnSelectDefSaveLoc_Click(object sender, EventArgs e) {
+			CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+			dialog.InitialDirectory = Directory.Exists(TextBox_DefaultSaveLoc.Text) ? TextBox_DefaultSaveLoc.Text : "C:\\";
+			dialog.IsFolderPicker = true;
+			if (dialog.ShowDialog() == CommonFileDialogResult.Ok) {
+				TextBox_DefaultSaveLoc.Text = dialog.FileName;
+				VerifyAllPathIntegrity();
+			}
+		}
+
+		private void BtnSelectDefRsrcLoc_Click(object sender, EventArgs e) {
+			CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+			dialog.InitialDirectory = Directory.Exists(TextBox_RsrcDirectory.Text) ? TextBox_RsrcDirectory.Text : DEFAULT_DIRECTORY;
+			dialog.IsFolderPicker = true;
+			if (dialog.ShowDialog() == CommonFileDialogResult.Ok) {
+				TextBox_RsrcDirectory.Text = dialog.FileName;
+				VerifyAllPathIntegrity();
+			}
+		}
+
+		private void OnFolderSelMouseEnter(object sender, EventArgs e) {
+			((Control)sender).BackColor = ((SolidBrush)SystemBrushes.ControlLight).Color; 
+		}
+
+		private void OnFolderSelMouseLeave(object sender, EventArgs e) {
+			((Control)sender).BackColor = ((SolidBrush)SystemBrushes.Control).Color;
 		}
 	}
 }

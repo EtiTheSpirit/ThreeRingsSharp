@@ -1627,6 +1627,11 @@
             Intended for exporting the log to a text file. This <see cref="T:System.Text.StringBuilder"/> will contain the entire log.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.Utility.XanLogger.LogFileStream">
+            <summary>
+            The active log file.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.Utility.XanLogger.LogWhileNotUpdating">
             <summary>
             The log while <see cref="P:ThreeRingsSharp.Utility.XanLogger.UpdateAutomatically"/> is false and it's written to (this is used to append all of the data when <see cref="M:ThreeRingsSharp.Utility.XanLogger.UpdateLog"/> is called)

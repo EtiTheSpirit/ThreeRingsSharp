@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -16,6 +17,11 @@ namespace ThreeRingsSharp.Utility {
 		/// Intended for exporting the log to a text file. This <see cref="StringBuilder"/> will contain the entire log.
 		/// </summary>
 		public static StringBuilder Log { get; } = new StringBuilder();
+
+		/// <summary>
+		/// The active log file.
+		/// </summary>
+		private static FileStream LogFileStream { get; }
 
 		/// <summary>
 		/// The log while <see cref="UpdateAutomatically"/> is false and it's written to (this is used to append all of the data when <see cref="UpdateLog"/> is called)
@@ -89,7 +95,6 @@ namespace ThreeRingsSharp.Utility {
 				foreach ((string, bool) logEntry in LogWhileNotUpdating) {
 					BoxReference.AppendText(logEntry.Item1, logEntry.Item2 ? Color.Gray : BoxReference.ForeColor);
 				}
-				
 
 				if (WasAtBottom && !BoxReference.IsScrolledToBottom()) {
 					BoxReference.SelectionStart = BoxReference.TextLength;
@@ -134,6 +139,9 @@ namespace ThreeRingsSharp.Utility {
 
 			string text = obj?.ToString() ?? "null";
 			Log.Append(text);
+
+			byte[] fileWrite = Encoding.ASCII.GetBytes((isVerbose ? "[VERBOSE] " : "") + VTConsole.StripColorFormattingCode(text));
+			LogFileStream.Write(fileWrite, 0, fileWrite.Length);
 			VTConsole.ForegroundColor = color.HasValue ? ConsoleColorVT.FromColor(color.Value) : ConsoleColor.White;
 			VTConsole.Write(text);
 
@@ -178,6 +186,13 @@ namespace ThreeRingsSharp.Utility {
 		public static void Clear() {
 			Log.Clear();
 			BoxReference.Text = "";
+		}
+
+		static XanLogger() {
+			if (File.Exists(@".\latest.log")) {
+				File.Delete(@".\latest.log");
+			}
+			LogFileStream = File.OpenWrite(@".\latest.log");
 		}
 	}
 

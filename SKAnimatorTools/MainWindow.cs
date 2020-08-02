@@ -58,9 +58,9 @@ namespace SKAnimatorTools {
 			AsyncMessageBox.IsInGUIContext = true;
 
 			bool isFreshLoad = ConfigurationInterface.GetConfigurationValue("IsFirstTimeOpening", true, true);
-			string loadDir = ConfigurationInterface.GetConfigurationValue("DefaultLoadDirectory", @"C:\", true);
+			string loadDir = ConfigurationInterface.GetConfigurationValue("DefaultLoadDirectory", ConfigurationForm.DEFAULT_DIRECTORY, true);
 			string saveDir = ConfigurationInterface.GetConfigurationValue("LastSaveDirectory", @"C:\", true);
-			string rsrcDir = ConfigurationInterface.GetConfigurationValue("RsrcDirectory", @"C:\", true);
+			string rsrcDir = ConfigurationInterface.GetConfigurationValue("RsrcDirectory", ConfigurationForm.DEFAULT_DIRECTORY, true);
 			bool restoreDirectoryWhenLoading = ConfigurationInterface.GetConfigurationValue("RememberDirectoryAfterOpen", false, true);
 			Model3D.MultiplyScaleByHundred = ConfigurationInterface.GetConfigurationValue("ScaleBy100", false, true);
 			Model3D.ProtectAgainstZeroScale = ConfigurationInterface.GetConfigurationValue("ProtectAgainstZeroScale", true, true);
@@ -134,11 +134,6 @@ namespace SKAnimatorTools {
 		private void OnConfigChanged(string configKey, dynamic oldValue, dynamic newValue) {
 			if (configKey == "RememberDirectoryAfterOpen") {
 				OpenModel.RestoreDirectory = newValue;
-				if (newValue == false) {
-					OpenModel.InitialDirectory = ConfigurationInterface.GetConfigurationValue("DefaultLoadDirectory", @"C:\", true);
-				} else {
-					OpenModel.InitialDirectory = string.Empty;
-				}
 			} else if (configKey == "RsrcDirectory") {
 				if (Directory.Exists(newValue)) {
 					ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(newValue);

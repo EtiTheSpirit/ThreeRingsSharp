@@ -49,3 +49,12 @@ F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.Bc
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.Bcl.HashCode.xml
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.ConditionalConfigOptions.resources
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.ChangeTargetPrompt.resources
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.Shell.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.pdb
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.xml
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.Shell.pdb
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.Shell.xml
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.pdb
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.xml

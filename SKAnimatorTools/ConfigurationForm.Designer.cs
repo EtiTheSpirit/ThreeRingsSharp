@@ -26,9 +26,6 @@
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigurationForm));
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-			this.PicBox_StaticSetExpMode = new System.Windows.Forms.PictureBox();
-			this.PicBox_CndExportMode = new System.Windows.Forms.PictureBox();
-			this.PicBox_RsrcDir = new System.Windows.Forms.PictureBox();
 			this.LabelDefaultPath = new System.Windows.Forms.Label();
 			this.LabelSaveLocation = new System.Windows.Forms.Label();
 			this.TextBox_DefaultLoadLoc = new System.Windows.Forms.TextBox();
@@ -44,6 +41,14 @@
 			this.CheckBox_MultiplyScaleByHundred = new System.Windows.Forms.CheckBox();
 			this.CheckBox_ProtectAgainstZeroScale = new System.Windows.Forms.CheckBox();
 			this.CheckBox_RememberLastLoad = new System.Windows.Forms.CheckBox();
+			this.CheckBox_TryGettingAllTextures = new System.Windows.Forms.CheckBox();
+			this.MainTooltip = new System.Windows.Forms.ToolTip(this.components);
+			this.BtnCancel = new System.Windows.Forms.Button();
+			this.BtnSave = new System.Windows.Forms.Button();
+			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.PicBox_StaticSetExpMode = new System.Windows.Forms.PictureBox();
+			this.PicBox_CndExportMode = new System.Windows.Forms.PictureBox();
+			this.PicBox_RsrcDir = new System.Windows.Forms.PictureBox();
 			this.PicBox_DefSaveLoc = new System.Windows.Forms.PictureBox();
 			this.PicBox_DefLoadLoc = new System.Windows.Forms.PictureBox();
 			this.PicBox_TexExtrMethod = new System.Windows.Forms.PictureBox();
@@ -52,11 +57,11 @@
 			this.PicBox_100Scale = new System.Windows.Forms.PictureBox();
 			this.PicBox_EmbedTextures = new System.Windows.Forms.PictureBox();
 			this.PicBox_VerboseLogging = new System.Windows.Forms.PictureBox();
-			this.CheckBox_TryGettingAllTextures = new System.Windows.Forms.CheckBox();
-			this.MainTooltip = new System.Windows.Forms.ToolTip(this.components);
-			this.BtnCancel = new System.Windows.Forms.Button();
-			this.BtnSave = new System.Windows.Forms.Button();
-			this.textBox1 = new System.Windows.Forms.TextBox();
+			this.BtnSelectDefLoadLoc = new System.Windows.Forms.PictureBox();
+			this.BtnSelectDefSaveLoc = new System.Windows.Forms.PictureBox();
+			this.BtnSelectDefRsrcLoc = new System.Windows.Forms.PictureBox();
+			this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+			this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
 			this.tableLayoutPanel1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.PicBox_StaticSetExpMode)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.PicBox_CndExportMode)).BeginInit();
@@ -69,42 +74,49 @@
 			((System.ComponentModel.ISupportInitialize)(this.PicBox_100Scale)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.PicBox_EmbedTextures)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.PicBox_VerboseLogging)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.BtnSelectDefLoadLoc)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.BtnSelectDefSaveLoc)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.BtnSelectDefRsrcLoc)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// tableLayoutPanel1
 			// 
-			this.tableLayoutPanel1.ColumnCount = 3;
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 30.44444F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 69.55556F));
-			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 40F));
-			this.tableLayoutPanel1.Controls.Add(this.PicBox_StaticSetExpMode, 2, 4);
-			this.tableLayoutPanel1.Controls.Add(this.PicBox_CndExportMode, 2, 3);
-			this.tableLayoutPanel1.Controls.Add(this.PicBox_RsrcDir, 2, 2);
-			this.tableLayoutPanel1.Controls.Add(this.LabelDefaultPath, 0, 0);
-			this.tableLayoutPanel1.Controls.Add(this.LabelSaveLocation, 0, 1);
-			this.tableLayoutPanel1.Controls.Add(this.TextBox_DefaultLoadLoc, 1, 0);
-			this.tableLayoutPanel1.Controls.Add(this.TextBox_DefaultSaveLoc, 1, 1);
-			this.tableLayoutPanel1.Controls.Add(this.LabelRsrcDir, 0, 2);
-			this.tableLayoutPanel1.Controls.Add(this.TextBox_RsrcDirectory, 1, 2);
-			this.tableLayoutPanel1.Controls.Add(this.Option_ConditionalExportMode, 1, 3);
-			this.tableLayoutPanel1.Controls.Add(this.LabelUpAxis, 0, 3);
-			this.tableLayoutPanel1.Controls.Add(this.Option_StaticSetExportMode, 1, 4);
-			this.tableLayoutPanel1.Controls.Add(this.LabelStaticSetExportMode, 0, 4);
-			this.tableLayoutPanel1.Controls.Add(this.CheckBox_VerboseLogging, 1, 10);
-			this.tableLayoutPanel1.Controls.Add(this.CheckBox_EmbedTextures, 1, 9);
-			this.tableLayoutPanel1.Controls.Add(this.CheckBox_MultiplyScaleByHundred, 1, 8);
-			this.tableLayoutPanel1.Controls.Add(this.CheckBox_ProtectAgainstZeroScale, 1, 7);
-			this.tableLayoutPanel1.Controls.Add(this.CheckBox_RememberLastLoad, 1, 6);
-			this.tableLayoutPanel1.Controls.Add(this.PicBox_DefSaveLoc, 2, 1);
-			this.tableLayoutPanel1.Controls.Add(this.PicBox_DefLoadLoc, 2, 0);
-			this.tableLayoutPanel1.Controls.Add(this.PicBox_TexExtrMethod, 2, 5);
-			this.tableLayoutPanel1.Controls.Add(this.PicBox_RememberLastLoad, 2, 6);
-			this.tableLayoutPanel1.Controls.Add(this.PicBox_ZeroScale, 2, 7);
-			this.tableLayoutPanel1.Controls.Add(this.PicBox_100Scale, 2, 8);
-			this.tableLayoutPanel1.Controls.Add(this.PicBox_EmbedTextures, 2, 9);
-			this.tableLayoutPanel1.Controls.Add(this.PicBox_VerboseLogging, 2, 10);
-			this.tableLayoutPanel1.Controls.Add(this.CheckBox_TryGettingAllTextures, 1, 5);
-			this.tableLayoutPanel1.Location = new System.Drawing.Point(13, 13);
+			this.tableLayoutPanel1.ColumnCount = 4;
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 35.37415F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 64.62585F));
+			this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 43F));
+			this.tableLayoutPanel1.Controls.Add(this.PicBox_StaticSetExpMode, 3, 4);
+			this.tableLayoutPanel1.Controls.Add(this.PicBox_CndExportMode, 3, 3);
+			this.tableLayoutPanel1.Controls.Add(this.PicBox_RsrcDir, 3, 2);
+			this.tableLayoutPanel1.Controls.Add(this.LabelDefaultPath, 1, 0);
+			this.tableLayoutPanel1.Controls.Add(this.LabelSaveLocation, 1, 1);
+			this.tableLayoutPanel1.Controls.Add(this.TextBox_DefaultLoadLoc, 2, 0);
+			this.tableLayoutPanel1.Controls.Add(this.TextBox_DefaultSaveLoc, 2, 1);
+			this.tableLayoutPanel1.Controls.Add(this.LabelRsrcDir, 1, 2);
+			this.tableLayoutPanel1.Controls.Add(this.TextBox_RsrcDirectory, 2, 2);
+			this.tableLayoutPanel1.Controls.Add(this.Option_ConditionalExportMode, 2, 3);
+			this.tableLayoutPanel1.Controls.Add(this.LabelUpAxis, 1, 3);
+			this.tableLayoutPanel1.Controls.Add(this.Option_StaticSetExportMode, 2, 4);
+			this.tableLayoutPanel1.Controls.Add(this.LabelStaticSetExportMode, 1, 4);
+			this.tableLayoutPanel1.Controls.Add(this.CheckBox_VerboseLogging, 2, 10);
+			this.tableLayoutPanel1.Controls.Add(this.CheckBox_EmbedTextures, 2, 9);
+			this.tableLayoutPanel1.Controls.Add(this.CheckBox_MultiplyScaleByHundred, 2, 8);
+			this.tableLayoutPanel1.Controls.Add(this.CheckBox_ProtectAgainstZeroScale, 2, 7);
+			this.tableLayoutPanel1.Controls.Add(this.CheckBox_RememberLastLoad, 2, 6);
+			this.tableLayoutPanel1.Controls.Add(this.PicBox_DefSaveLoc, 3, 1);
+			this.tableLayoutPanel1.Controls.Add(this.PicBox_DefLoadLoc, 3, 0);
+			this.tableLayoutPanel1.Controls.Add(this.PicBox_TexExtrMethod, 3, 5);
+			this.tableLayoutPanel1.Controls.Add(this.PicBox_RememberLastLoad, 3, 6);
+			this.tableLayoutPanel1.Controls.Add(this.PicBox_ZeroScale, 3, 7);
+			this.tableLayoutPanel1.Controls.Add(this.PicBox_100Scale, 3, 8);
+			this.tableLayoutPanel1.Controls.Add(this.PicBox_EmbedTextures, 3, 9);
+			this.tableLayoutPanel1.Controls.Add(this.PicBox_VerboseLogging, 3, 10);
+			this.tableLayoutPanel1.Controls.Add(this.CheckBox_TryGettingAllTextures, 2, 5);
+			this.tableLayoutPanel1.Controls.Add(this.BtnSelectDefLoadLoc, 0, 0);
+			this.tableLayoutPanel1.Controls.Add(this.BtnSelectDefSaveLoc, 0, 1);
+			this.tableLayoutPanel1.Controls.Add(this.BtnSelectDefRsrcLoc, 0, 2);
+			this.tableLayoutPanel1.Location = new System.Drawing.Point(10, 12);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
 			this.tableLayoutPanel1.RowCount = 11;
 			this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 10F));
@@ -121,54 +133,12 @@
 			this.tableLayoutPanel1.Size = new System.Drawing.Size(484, 284);
 			this.tableLayoutPanel1.TabIndex = 0;
 			// 
-			// PicBox_StaticSetExpMode
-			// 
-			this.PicBox_StaticSetExpMode.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PicBox_StaticSetExpMode.Image = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_StaticSetExpMode.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_StaticSetExpMode.Location = new System.Drawing.Point(446, 107);
-			this.PicBox_StaticSetExpMode.Name = "PicBox_StaticSetExpMode";
-			this.PicBox_StaticSetExpMode.Size = new System.Drawing.Size(35, 20);
-			this.PicBox_StaticSetExpMode.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.PicBox_StaticSetExpMode.TabIndex = 18;
-			this.PicBox_StaticSetExpMode.TabStop = false;
-			// 
-			// PicBox_CndExportMode
-			// 
-			this.PicBox_CndExportMode.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PicBox_CndExportMode.Image = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_CndExportMode.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_CndExportMode.Location = new System.Drawing.Point(446, 81);
-			this.PicBox_CndExportMode.Name = "PicBox_CndExportMode";
-			this.PicBox_CndExportMode.Size = new System.Drawing.Size(35, 20);
-			this.PicBox_CndExportMode.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.PicBox_CndExportMode.TabIndex = 17;
-			this.PicBox_CndExportMode.TabStop = false;
-			// 
-			// PicBox_RsrcDir
-			// 
-			this.PicBox_RsrcDir.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PicBox_RsrcDir.Image = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_RsrcDir.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_RsrcDir.Location = new System.Drawing.Point(446, 55);
-			this.PicBox_RsrcDir.Name = "PicBox_RsrcDir";
-			this.PicBox_RsrcDir.Size = new System.Drawing.Size(35, 20);
-			this.PicBox_RsrcDir.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.PicBox_RsrcDir.TabIndex = 16;
-			this.PicBox_RsrcDir.TabStop = false;
-			// 
 			// LabelDefaultPath
 			// 
 			this.LabelDefaultPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.LabelDefaultPath.AutoSize = true;
-			this.LabelDefaultPath.Location = new System.Drawing.Point(3, 0);
+			this.LabelDefaultPath.Location = new System.Drawing.Point(29, 0);
 			this.LabelDefaultPath.Name = "LabelDefaultPath";
 			this.LabelDefaultPath.Size = new System.Drawing.Size(112, 26);
 			this.LabelDefaultPath.TabIndex = 0;
@@ -181,7 +151,7 @@
 			this.LabelSaveLocation.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.LabelSaveLocation.AutoSize = true;
-			this.LabelSaveLocation.Location = new System.Drawing.Point(3, 26);
+			this.LabelSaveLocation.Location = new System.Drawing.Point(29, 26);
 			this.LabelSaveLocation.Name = "LabelSaveLocation";
 			this.LabelSaveLocation.Size = new System.Drawing.Size(113, 26);
 			this.LabelSaveLocation.TabIndex = 1;
@@ -193,9 +163,9 @@
 			// 
 			this.TextBox_DefaultLoadLoc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-			this.TextBox_DefaultLoadLoc.Location = new System.Drawing.Point(138, 3);
+			this.TextBox_DefaultLoadLoc.Location = new System.Drawing.Point(175, 3);
 			this.TextBox_DefaultLoadLoc.Name = "TextBox_DefaultLoadLoc";
-			this.TextBox_DefaultLoadLoc.Size = new System.Drawing.Size(302, 20);
+			this.TextBox_DefaultLoadLoc.Size = new System.Drawing.Size(262, 20);
 			this.TextBox_DefaultLoadLoc.TabIndex = 1;
 			this.MainTooltip.SetToolTip(this.TextBox_DefaultLoadLoc, "When loading .DAT files, the program will start in this directory.");
 			this.TextBox_DefaultLoadLoc.WordWrap = false;
@@ -205,9 +175,9 @@
 			// 
 			this.TextBox_DefaultSaveLoc.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-			this.TextBox_DefaultSaveLoc.Location = new System.Drawing.Point(138, 29);
+			this.TextBox_DefaultSaveLoc.Location = new System.Drawing.Point(175, 29);
 			this.TextBox_DefaultSaveLoc.Name = "TextBox_DefaultSaveLoc";
-			this.TextBox_DefaultSaveLoc.Size = new System.Drawing.Size(302, 20);
+			this.TextBox_DefaultSaveLoc.Size = new System.Drawing.Size(262, 20);
 			this.TextBox_DefaultSaveLoc.TabIndex = 2;
 			this.MainTooltip.SetToolTip(this.TextBox_DefaultSaveLoc, "When exporting files, the program will go here by default.");
 			this.TextBox_DefaultSaveLoc.WordWrap = false;
@@ -218,7 +188,7 @@
 			this.LabelRsrcDir.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.LabelRsrcDir.AutoSize = true;
-			this.LabelRsrcDir.Location = new System.Drawing.Point(3, 52);
+			this.LabelRsrcDir.Location = new System.Drawing.Point(29, 52);
 			this.LabelRsrcDir.Name = "LabelRsrcDir";
 			this.LabelRsrcDir.Size = new System.Drawing.Size(69, 26);
 			this.LabelRsrcDir.TabIndex = 4;
@@ -231,9 +201,9 @@
 			// 
 			this.TextBox_RsrcDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-			this.TextBox_RsrcDirectory.Location = new System.Drawing.Point(138, 55);
+			this.TextBox_RsrcDirectory.Location = new System.Drawing.Point(175, 55);
 			this.TextBox_RsrcDirectory.Name = "TextBox_RsrcDirectory";
-			this.TextBox_RsrcDirectory.Size = new System.Drawing.Size(302, 20);
+			this.TextBox_RsrcDirectory.Size = new System.Drawing.Size(262, 20);
 			this.TextBox_RsrcDirectory.TabIndex = 3;
 			this.MainTooltip.SetToolTip(this.TextBox_RsrcDirectory, "This should point to the rsrc directory in the Spiral Knights folder. If set inco" +
         "rrectly, CompoundConfigs and other reference-based assets will fail to convert.");
@@ -250,10 +220,10 @@
             "Only export models whose conditions = true",
             "Only export models whose conditions = false",
             "Only export the default model"});
-			this.Option_ConditionalExportMode.Location = new System.Drawing.Point(138, 81);
+			this.Option_ConditionalExportMode.Location = new System.Drawing.Point(175, 81);
 			this.Option_ConditionalExportMode.MaxDropDownItems = 6;
 			this.Option_ConditionalExportMode.Name = "Option_ConditionalExportMode";
-			this.Option_ConditionalExportMode.Size = new System.Drawing.Size(302, 21);
+			this.Option_ConditionalExportMode.Size = new System.Drawing.Size(262, 21);
 			this.Option_ConditionalExportMode.TabIndex = 4;
 			this.Option_ConditionalExportMode.Text = "Ask me when I save the file";
 			this.MainTooltip.SetToolTip(this.Option_ConditionalExportMode, "When handling ConditionalConfigs, this determines what data is exported.");
@@ -263,7 +233,7 @@
 			this.LabelUpAxis.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.LabelUpAxis.AutoSize = true;
-			this.LabelUpAxis.Location = new System.Drawing.Point(3, 78);
+			this.LabelUpAxis.Location = new System.Drawing.Point(29, 78);
 			this.LabelUpAxis.Name = "LabelUpAxis";
 			this.LabelUpAxis.Size = new System.Drawing.Size(122, 26);
 			this.LabelUpAxis.TabIndex = 9;
@@ -280,10 +250,10 @@
             "Ask me when I save the file",
             "Always export all of the models in the set",
             "Only export the target model in the set"});
-			this.Option_StaticSetExportMode.Location = new System.Drawing.Point(138, 107);
+			this.Option_StaticSetExportMode.Location = new System.Drawing.Point(175, 107);
 			this.Option_StaticSetExportMode.MaxDropDownItems = 6;
 			this.Option_StaticSetExportMode.Name = "Option_StaticSetExportMode";
-			this.Option_StaticSetExportMode.Size = new System.Drawing.Size(302, 21);
+			this.Option_StaticSetExportMode.Size = new System.Drawing.Size(262, 21);
 			this.Option_StaticSetExportMode.TabIndex = 5;
 			this.Option_StaticSetExportMode.Text = "Ask me when I save the file";
 			this.MainTooltip.SetToolTip(this.Option_StaticSetExportMode, "What to do when exporting models containing StaticSetConfigs.");
@@ -293,7 +263,7 @@
 			this.LabelStaticSetExportMode.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
 			this.LabelStaticSetExportMode.AutoSize = true;
-			this.LabelStaticSetExportMode.Location = new System.Drawing.Point(3, 104);
+			this.LabelStaticSetExportMode.Location = new System.Drawing.Point(29, 104);
 			this.LabelStaticSetExportMode.Name = "LabelStaticSetExportMode";
 			this.LabelStaticSetExportMode.Size = new System.Drawing.Size(113, 26);
 			this.LabelStaticSetExportMode.TabIndex = 13;
@@ -307,7 +277,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.CheckBox_VerboseLogging.AutoSize = true;
 			this.CheckBox_VerboseLogging.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.CheckBox_VerboseLogging.Location = new System.Drawing.Point(298, 263);
+			this.CheckBox_VerboseLogging.Location = new System.Drawing.Point(295, 263);
 			this.CheckBox_VerboseLogging.Name = "CheckBox_VerboseLogging";
 			this.CheckBox_VerboseLogging.Size = new System.Drawing.Size(142, 18);
 			this.CheckBox_VerboseLogging.TabIndex = 11;
@@ -324,7 +294,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.CheckBox_EmbedTextures.AutoSize = true;
 			this.CheckBox_EmbedTextures.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.CheckBox_EmbedTextures.Location = new System.Drawing.Point(302, 237);
+			this.CheckBox_EmbedTextures.Location = new System.Drawing.Point(299, 237);
 			this.CheckBox_EmbedTextures.Name = "CheckBox_EmbedTextures";
 			this.CheckBox_EmbedTextures.Size = new System.Drawing.Size(138, 20);
 			this.CheckBox_EmbedTextures.TabIndex = 10;
@@ -341,7 +311,7 @@
 			this.CheckBox_MultiplyScaleByHundred.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.CheckBox_MultiplyScaleByHundred.Checked = true;
 			this.CheckBox_MultiplyScaleByHundred.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.CheckBox_MultiplyScaleByHundred.Location = new System.Drawing.Point(325, 211);
+			this.CheckBox_MultiplyScaleByHundred.Location = new System.Drawing.Point(322, 211);
 			this.CheckBox_MultiplyScaleByHundred.Name = "CheckBox_MultiplyScaleByHundred";
 			this.CheckBox_MultiplyScaleByHundred.Size = new System.Drawing.Size(115, 20);
 			this.CheckBox_MultiplyScaleByHundred.TabIndex = 9;
@@ -358,7 +328,7 @@
 			this.CheckBox_ProtectAgainstZeroScale.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
 			this.CheckBox_ProtectAgainstZeroScale.Checked = true;
 			this.CheckBox_ProtectAgainstZeroScale.CheckState = System.Windows.Forms.CheckState.Checked;
-			this.CheckBox_ProtectAgainstZeroScale.Location = new System.Drawing.Point(287, 185);
+			this.CheckBox_ProtectAgainstZeroScale.Location = new System.Drawing.Point(284, 185);
 			this.CheckBox_ProtectAgainstZeroScale.Name = "CheckBox_ProtectAgainstZeroScale";
 			this.CheckBox_ProtectAgainstZeroScale.Size = new System.Drawing.Size(153, 20);
 			this.CheckBox_ProtectAgainstZeroScale.TabIndex = 8;
@@ -374,7 +344,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.CheckBox_RememberLastLoad.AutoSize = true;
 			this.CheckBox_RememberLastLoad.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.CheckBox_RememberLastLoad.Location = new System.Drawing.Point(210, 159);
+			this.CheckBox_RememberLastLoad.Location = new System.Drawing.Point(207, 159);
 			this.CheckBox_RememberLastLoad.Name = "CheckBox_RememberLastLoad";
 			this.CheckBox_RememberLastLoad.Size = new System.Drawing.Size(230, 20);
 			this.CheckBox_RememberLastLoad.TabIndex = 7;
@@ -383,125 +353,13 @@
         "to /rsrc/ every time.");
 			this.CheckBox_RememberLastLoad.UseVisualStyleBackColor = true;
 			// 
-			// PicBox_DefSaveLoc
-			// 
-			this.PicBox_DefSaveLoc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PicBox_DefSaveLoc.Image = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_DefSaveLoc.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_DefSaveLoc.Location = new System.Drawing.Point(446, 29);
-			this.PicBox_DefSaveLoc.Name = "PicBox_DefSaveLoc";
-			this.PicBox_DefSaveLoc.Size = new System.Drawing.Size(35, 20);
-			this.PicBox_DefSaveLoc.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.PicBox_DefSaveLoc.TabIndex = 15;
-			this.PicBox_DefSaveLoc.TabStop = false;
-			// 
-			// PicBox_DefLoadLoc
-			// 
-			this.PicBox_DefLoadLoc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PicBox_DefLoadLoc.Image = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_DefLoadLoc.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_DefLoadLoc.Location = new System.Drawing.Point(446, 3);
-			this.PicBox_DefLoadLoc.Name = "PicBox_DefLoadLoc";
-			this.PicBox_DefLoadLoc.Size = new System.Drawing.Size(35, 20);
-			this.PicBox_DefLoadLoc.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.PicBox_DefLoadLoc.TabIndex = 14;
-			this.PicBox_DefLoadLoc.TabStop = false;
-			// 
-			// PicBox_TexExtrMethod
-			// 
-			this.PicBox_TexExtrMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PicBox_TexExtrMethod.Image = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_TexExtrMethod.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_TexExtrMethod.Location = new System.Drawing.Point(446, 133);
-			this.PicBox_TexExtrMethod.Name = "PicBox_TexExtrMethod";
-			this.PicBox_TexExtrMethod.Size = new System.Drawing.Size(35, 20);
-			this.PicBox_TexExtrMethod.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.PicBox_TexExtrMethod.TabIndex = 19;
-			this.PicBox_TexExtrMethod.TabStop = false;
-			// 
-			// PicBox_RememberLastLoad
-			// 
-			this.PicBox_RememberLastLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PicBox_RememberLastLoad.Image = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_RememberLastLoad.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_RememberLastLoad.Location = new System.Drawing.Point(446, 159);
-			this.PicBox_RememberLastLoad.Name = "PicBox_RememberLastLoad";
-			this.PicBox_RememberLastLoad.Size = new System.Drawing.Size(35, 20);
-			this.PicBox_RememberLastLoad.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.PicBox_RememberLastLoad.TabIndex = 20;
-			this.PicBox_RememberLastLoad.TabStop = false;
-			// 
-			// PicBox_ZeroScale
-			// 
-			this.PicBox_ZeroScale.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PicBox_ZeroScale.Image = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_ZeroScale.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_ZeroScale.Location = new System.Drawing.Point(446, 185);
-			this.PicBox_ZeroScale.Name = "PicBox_ZeroScale";
-			this.PicBox_ZeroScale.Size = new System.Drawing.Size(35, 20);
-			this.PicBox_ZeroScale.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.PicBox_ZeroScale.TabIndex = 21;
-			this.PicBox_ZeroScale.TabStop = false;
-			// 
-			// PicBox_100Scale
-			// 
-			this.PicBox_100Scale.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PicBox_100Scale.Image = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_100Scale.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_100Scale.Location = new System.Drawing.Point(446, 211);
-			this.PicBox_100Scale.Name = "PicBox_100Scale";
-			this.PicBox_100Scale.Size = new System.Drawing.Size(35, 20);
-			this.PicBox_100Scale.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.PicBox_100Scale.TabIndex = 22;
-			this.PicBox_100Scale.TabStop = false;
-			// 
-			// PicBox_EmbedTextures
-			// 
-			this.PicBox_EmbedTextures.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PicBox_EmbedTextures.Image = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_EmbedTextures.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_EmbedTextures.Location = new System.Drawing.Point(446, 237);
-			this.PicBox_EmbedTextures.Name = "PicBox_EmbedTextures";
-			this.PicBox_EmbedTextures.Size = new System.Drawing.Size(35, 20);
-			this.PicBox_EmbedTextures.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.PicBox_EmbedTextures.TabIndex = 23;
-			this.PicBox_EmbedTextures.TabStop = false;
-			// 
-			// PicBox_VerboseLogging
-			// 
-			this.PicBox_VerboseLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-			this.PicBox_VerboseLogging.Image = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_VerboseLogging.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
-			this.PicBox_VerboseLogging.Location = new System.Drawing.Point(446, 263);
-			this.PicBox_VerboseLogging.Name = "PicBox_VerboseLogging";
-			this.PicBox_VerboseLogging.Size = new System.Drawing.Size(35, 18);
-			this.PicBox_VerboseLogging.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-			this.PicBox_VerboseLogging.TabIndex = 24;
-			this.PicBox_VerboseLogging.TabStop = false;
-			// 
 			// CheckBox_TryGettingAllTextures
 			// 
 			this.CheckBox_TryGettingAllTextures.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
 			this.CheckBox_TryGettingAllTextures.AutoSize = true;
 			this.CheckBox_TryGettingAllTextures.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-			this.CheckBox_TryGettingAllTextures.Location = new System.Drawing.Point(304, 133);
+			this.CheckBox_TryGettingAllTextures.Location = new System.Drawing.Point(301, 133);
 			this.CheckBox_TryGettingAllTextures.Name = "CheckBox_TryGettingAllTextures";
 			this.CheckBox_TryGettingAllTextures.Size = new System.Drawing.Size(136, 20);
 			this.CheckBox_TryGettingAllTextures.TabIndex = 26;
@@ -544,6 +402,219 @@
 			this.textBox1.Text = "Mouse over the text and icons for info!";
 			this.textBox1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
+			// PicBox_StaticSetExpMode
+			// 
+			this.PicBox_StaticSetExpMode.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PicBox_StaticSetExpMode.Image = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_StaticSetExpMode.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_StaticSetExpMode.Location = new System.Drawing.Point(443, 107);
+			this.PicBox_StaticSetExpMode.Name = "PicBox_StaticSetExpMode";
+			this.PicBox_StaticSetExpMode.Size = new System.Drawing.Size(38, 20);
+			this.PicBox_StaticSetExpMode.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.PicBox_StaticSetExpMode.TabIndex = 18;
+			this.PicBox_StaticSetExpMode.TabStop = false;
+			// 
+			// PicBox_CndExportMode
+			// 
+			this.PicBox_CndExportMode.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PicBox_CndExportMode.Image = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_CndExportMode.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_CndExportMode.Location = new System.Drawing.Point(443, 81);
+			this.PicBox_CndExportMode.Name = "PicBox_CndExportMode";
+			this.PicBox_CndExportMode.Size = new System.Drawing.Size(38, 20);
+			this.PicBox_CndExportMode.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.PicBox_CndExportMode.TabIndex = 17;
+			this.PicBox_CndExportMode.TabStop = false;
+			// 
+			// PicBox_RsrcDir
+			// 
+			this.PicBox_RsrcDir.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PicBox_RsrcDir.Image = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_RsrcDir.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_RsrcDir.Location = new System.Drawing.Point(443, 55);
+			this.PicBox_RsrcDir.Name = "PicBox_RsrcDir";
+			this.PicBox_RsrcDir.Size = new System.Drawing.Size(38, 20);
+			this.PicBox_RsrcDir.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.PicBox_RsrcDir.TabIndex = 16;
+			this.PicBox_RsrcDir.TabStop = false;
+			// 
+			// PicBox_DefSaveLoc
+			// 
+			this.PicBox_DefSaveLoc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PicBox_DefSaveLoc.Image = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_DefSaveLoc.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_DefSaveLoc.Location = new System.Drawing.Point(443, 29);
+			this.PicBox_DefSaveLoc.Name = "PicBox_DefSaveLoc";
+			this.PicBox_DefSaveLoc.Size = new System.Drawing.Size(38, 20);
+			this.PicBox_DefSaveLoc.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.PicBox_DefSaveLoc.TabIndex = 15;
+			this.PicBox_DefSaveLoc.TabStop = false;
+			// 
+			// PicBox_DefLoadLoc
+			// 
+			this.PicBox_DefLoadLoc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PicBox_DefLoadLoc.Image = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_DefLoadLoc.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_DefLoadLoc.Location = new System.Drawing.Point(443, 3);
+			this.PicBox_DefLoadLoc.Name = "PicBox_DefLoadLoc";
+			this.PicBox_DefLoadLoc.Size = new System.Drawing.Size(38, 20);
+			this.PicBox_DefLoadLoc.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.PicBox_DefLoadLoc.TabIndex = 14;
+			this.PicBox_DefLoadLoc.TabStop = false;
+			// 
+			// PicBox_TexExtrMethod
+			// 
+			this.PicBox_TexExtrMethod.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PicBox_TexExtrMethod.Image = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_TexExtrMethod.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_TexExtrMethod.Location = new System.Drawing.Point(443, 133);
+			this.PicBox_TexExtrMethod.Name = "PicBox_TexExtrMethod";
+			this.PicBox_TexExtrMethod.Size = new System.Drawing.Size(38, 20);
+			this.PicBox_TexExtrMethod.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.PicBox_TexExtrMethod.TabIndex = 19;
+			this.PicBox_TexExtrMethod.TabStop = false;
+			// 
+			// PicBox_RememberLastLoad
+			// 
+			this.PicBox_RememberLastLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PicBox_RememberLastLoad.Image = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_RememberLastLoad.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_RememberLastLoad.Location = new System.Drawing.Point(443, 159);
+			this.PicBox_RememberLastLoad.Name = "PicBox_RememberLastLoad";
+			this.PicBox_RememberLastLoad.Size = new System.Drawing.Size(38, 20);
+			this.PicBox_RememberLastLoad.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.PicBox_RememberLastLoad.TabIndex = 20;
+			this.PicBox_RememberLastLoad.TabStop = false;
+			// 
+			// PicBox_ZeroScale
+			// 
+			this.PicBox_ZeroScale.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PicBox_ZeroScale.Image = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_ZeroScale.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_ZeroScale.Location = new System.Drawing.Point(443, 185);
+			this.PicBox_ZeroScale.Name = "PicBox_ZeroScale";
+			this.PicBox_ZeroScale.Size = new System.Drawing.Size(38, 20);
+			this.PicBox_ZeroScale.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.PicBox_ZeroScale.TabIndex = 21;
+			this.PicBox_ZeroScale.TabStop = false;
+			// 
+			// PicBox_100Scale
+			// 
+			this.PicBox_100Scale.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PicBox_100Scale.Image = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_100Scale.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_100Scale.Location = new System.Drawing.Point(443, 211);
+			this.PicBox_100Scale.Name = "PicBox_100Scale";
+			this.PicBox_100Scale.Size = new System.Drawing.Size(38, 20);
+			this.PicBox_100Scale.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.PicBox_100Scale.TabIndex = 22;
+			this.PicBox_100Scale.TabStop = false;
+			// 
+			// PicBox_EmbedTextures
+			// 
+			this.PicBox_EmbedTextures.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PicBox_EmbedTextures.Image = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_EmbedTextures.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_EmbedTextures.Location = new System.Drawing.Point(443, 237);
+			this.PicBox_EmbedTextures.Name = "PicBox_EmbedTextures";
+			this.PicBox_EmbedTextures.Size = new System.Drawing.Size(38, 20);
+			this.PicBox_EmbedTextures.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.PicBox_EmbedTextures.TabIndex = 23;
+			this.PicBox_EmbedTextures.TabStop = false;
+			// 
+			// PicBox_VerboseLogging
+			// 
+			this.PicBox_VerboseLogging.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.PicBox_VerboseLogging.Image = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_VerboseLogging.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.PicBox_VerboseLogging.Location = new System.Drawing.Point(443, 263);
+			this.PicBox_VerboseLogging.Name = "PicBox_VerboseLogging";
+			this.PicBox_VerboseLogging.Size = new System.Drawing.Size(38, 18);
+			this.PicBox_VerboseLogging.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.PicBox_VerboseLogging.TabIndex = 24;
+			this.PicBox_VerboseLogging.TabStop = false;
+			// 
+			// BtnSelectDefLoadLoc
+			// 
+			this.BtnSelectDefLoadLoc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.BtnSelectDefLoadLoc.Image = global::SKAnimatorTools.Properties.Resources.folder_explore;
+			this.BtnSelectDefLoadLoc.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.BtnSelectDefLoadLoc.Location = new System.Drawing.Point(3, 3);
+			this.BtnSelectDefLoadLoc.Name = "BtnSelectDefLoadLoc";
+			this.BtnSelectDefLoadLoc.Size = new System.Drawing.Size(20, 20);
+			this.BtnSelectDefLoadLoc.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.BtnSelectDefLoadLoc.TabIndex = 27;
+			this.BtnSelectDefLoadLoc.TabStop = false;
+			this.MainTooltip.SetToolTip(this.BtnSelectDefLoadLoc, "Pick Folder");
+			this.BtnSelectDefLoadLoc.Click += new System.EventHandler(this.BtnSelectDefLoadLoc_Click);
+			this.BtnSelectDefLoadLoc.MouseEnter += new System.EventHandler(this.OnFolderSelMouseEnter);
+			this.BtnSelectDefLoadLoc.MouseLeave += new System.EventHandler(this.OnFolderSelMouseLeave);
+			// 
+			// BtnSelectDefSaveLoc
+			// 
+			this.BtnSelectDefSaveLoc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.BtnSelectDefSaveLoc.Image = global::SKAnimatorTools.Properties.Resources.folder_explore;
+			this.BtnSelectDefSaveLoc.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.BtnSelectDefSaveLoc.Location = new System.Drawing.Point(3, 29);
+			this.BtnSelectDefSaveLoc.Name = "BtnSelectDefSaveLoc";
+			this.BtnSelectDefSaveLoc.Size = new System.Drawing.Size(20, 20);
+			this.BtnSelectDefSaveLoc.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.BtnSelectDefSaveLoc.TabIndex = 28;
+			this.BtnSelectDefSaveLoc.TabStop = false;
+			this.MainTooltip.SetToolTip(this.BtnSelectDefSaveLoc, "Pick Folder");
+			this.BtnSelectDefSaveLoc.Click += new System.EventHandler(this.BtnSelectDefSaveLoc_Click);
+			this.BtnSelectDefSaveLoc.MouseEnter += new System.EventHandler(this.OnFolderSelMouseEnter);
+			this.BtnSelectDefSaveLoc.MouseLeave += new System.EventHandler(this.OnFolderSelMouseLeave);
+			// 
+			// BtnSelectDefRsrcLoc
+			// 
+			this.BtnSelectDefRsrcLoc.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.BtnSelectDefRsrcLoc.Image = global::SKAnimatorTools.Properties.Resources.folder_explore;
+			this.BtnSelectDefRsrcLoc.InitialImage = global::SKAnimatorTools.Properties.Resources.accept;
+			this.BtnSelectDefRsrcLoc.Location = new System.Drawing.Point(3, 55);
+			this.BtnSelectDefRsrcLoc.Name = "BtnSelectDefRsrcLoc";
+			this.BtnSelectDefRsrcLoc.Size = new System.Drawing.Size(20, 20);
+			this.BtnSelectDefRsrcLoc.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+			this.BtnSelectDefRsrcLoc.TabIndex = 29;
+			this.BtnSelectDefRsrcLoc.TabStop = false;
+			this.MainTooltip.SetToolTip(this.BtnSelectDefRsrcLoc, "Pick Folder");
+			this.BtnSelectDefRsrcLoc.Click += new System.EventHandler(this.BtnSelectDefRsrcLoc_Click);
+			this.BtnSelectDefRsrcLoc.MouseEnter += new System.EventHandler(this.OnFolderSelMouseEnter);
+			this.BtnSelectDefRsrcLoc.MouseLeave += new System.EventHandler(this.OnFolderSelMouseLeave);
+			// 
+			// openFileDialog1
+			// 
+			this.openFileDialog1.FileName = "PickFolderDialog";
+			this.openFileDialog1.RestoreDirectory = true;
+			// 
 			// ConfigurationForm
 			// 
 			this.AcceptButton = this.BtnSave;
@@ -576,6 +647,9 @@
 			((System.ComponentModel.ISupportInitialize)(this.PicBox_100Scale)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.PicBox_EmbedTextures)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.PicBox_VerboseLogging)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.BtnSelectDefLoadLoc)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.BtnSelectDefSaveLoc)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.BtnSelectDefRsrcLoc)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -607,7 +681,6 @@
 		private System.Windows.Forms.PictureBox PicBox_CndExportMode;
 		private System.Windows.Forms.PictureBox PicBox_RsrcDir;
 		private System.Windows.Forms.PictureBox PicBox_DefSaveLoc;
-		private System.Windows.Forms.PictureBox PicBox_TexExtrMethod;
 		private System.Windows.Forms.PictureBox PicBox_RememberLastLoad;
 		private System.Windows.Forms.PictureBox PicBox_ZeroScale;
 		private System.Windows.Forms.PictureBox PicBox_100Scale;
@@ -615,5 +688,11 @@
 		private System.Windows.Forms.PictureBox PicBox_VerboseLogging;
 		private System.Windows.Forms.TextBox textBox1;
 		private System.Windows.Forms.CheckBox CheckBox_TryGettingAllTextures;
+		private System.Windows.Forms.PictureBox PicBox_TexExtrMethod;
+		private System.Windows.Forms.PictureBox BtnSelectDefLoadLoc;
+		private System.Windows.Forms.PictureBox BtnSelectDefSaveLoc;
+		private System.Windows.Forms.PictureBox BtnSelectDefRsrcLoc;
+		private System.Windows.Forms.OpenFileDialog openFileDialog1;
+		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
 	}
 }
