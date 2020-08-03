@@ -47,7 +47,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
 				meshToModel.Name = depth1Name + meshTitle;
-				if (globalTransform != null) meshToModel.Transform = meshToModel.Transform.compose(globalTransform);
+				if (globalTransform != null) meshToModel.Transform.composeLocal(globalTransform);
 				//meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
 				meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
 				meshToModel.ActiveTexture = mesh.texture;
@@ -58,16 +58,12 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						allInstantiatedArmatures[boneNamesToBones.Key] = boneNamesToBones.Value;
 					}
 				}
-
-				/*
-				string tex = sourceFile.Directory.FullName.Replace("\\", "/") + "/" + mesh.texture;
-				meshToModel.Textures.Add(tex);
-				XanLogger.WriteLine($"Added texture {tex} to model {meshToModel.Name}");
-				*/
-
 				modelCollection.Add(meshToModel);
 				idx++;
 			}
+
+			Dictionary<string, Model3D> nodeModels = new Dictionary<string, Model3D>();
+			RecursivelyIterateNodesForMeshes(baseModel, model, sourceFile, model.root, modelCollection, globalTransform, globalTransform, nodeModels, fullDepthName);
 
 			foreach (Attachment attachment in model.attachments) {
 				List<Model3D> attachmentModels = ConfigReferenceUtil.HandleConfigReference(sourceFile, attachment.model, modelCollection, dataTreeParent, globalTransform);
@@ -76,13 +72,31 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					referencedModel.Transform.composeLocal(attachment.transform);
 					if (allInstantiatedArmatures.ContainsKey(attachment.node ?? string.Empty)) {
 						referencedModel.AttachmentNode = allInstantiatedArmatures[attachment.node];
+						XanLogger.WriteLine("Attached [" + referencedModel.Name + "] to [" + attachment.node + "]", XanLogger.TRACE);
 					} else {
-						XanLogger.WriteLine("Attachment wanted to attach to node [" + attachment.node + "] but this node does not exist!");
+						// New catch case: This might actually be the name of a model!
+						if (nodeModels.ContainsKey(attachment.node ?? string.Empty)) {
+							// Indeed it is!
+
+							referencedModel.AttachmentModel = nodeModels[attachment.node];
+							referencedModel.AttachmentModel.Transform.setScale(1f); // TODO: Is this okay?
+
+							if (referencedModel.Transform.getType() < Transform3D.AFFINE) {
+								float scale = referencedModel.Transform.getScale();
+								referencedModel.Transform.set(new Transform3D(new Vector3f(), Quaternion.IDENTITY, scale));
+							} else {
+								Vector3f scale = referencedModel.Transform.extractScale();
+								referencedModel.Transform.set(new Transform3D(new Vector3f(), Quaternion.IDENTITY, scale));
+							}
+							
+
+							XanLogger.WriteLine("Attached [" + referencedModel.Name + "] to [" + attachment.node + "]", XanLogger.TRACE);
+						} else {
+							XanLogger.WriteLine("Attachment wanted to attach to node or model [" + attachment.node + "] but it does not exist!");
+						}
 					}
 				}
-			}
-
-			// RecursivelyIterateNodesForMeshes(baseModel, model, sourceFile, model.root, modelCollection, globalTransform, fullDepthName);
+			}	
 		}
 
 		/// <summary>
@@ -96,10 +110,9 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// <param name="models">The <see cref="List{T}"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
 		/// <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
 		/// <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
-		private void RecursivelyIterateNodesForMeshes(ModelConfig baseModel, ArticulatedConfig model, FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform, string fullDepthName) {
+		private void RecursivelyIterateNodesForMeshes(ModelConfig baseModel, ArticulatedConfig model, FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform, Transform3D initialTransform, Dictionary<string, Model3D> nodeModels, string fullDepthName) {
 			foreach (Node node in parent.children) {
 				// Transform3D newTransform = latestTransform;
-
 				if (node is MeshNode meshNode) {
 					VisibleMesh mesh = meshNode.visible;
 					if (mesh != null) {
@@ -107,32 +120,35 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						//		-- Some knucklehead at OOO.
 						// ...No offense.
 
-						Transform3D modifiedTransform = node.invRefTransform.invert().compose(node.transform);
-						//Transform3D modifiedTransform = node.transform.compose(node.invRefTransform.invert());
-						string meshTitle = "-Nodes[\"" + node.name + "\"]";
+						string meshTitle = "-MeshNodes[\"" + node.name + "\"]";
 
 						Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
 						meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + meshTitle;
-						meshToModel.Transform = meshToModel.Transform.compose(latestTransform).compose(modifiedTransform);
-						//meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
 						meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
 						meshToModel.ActiveTexture = mesh.texture;
+						// Modify the transform that it already has to the node's transform.						
+						meshToModel.Transform.composeLocal(latestTransform);
+						meshToModel.Transform.composeLocal(node.transform);
 
-						/*
-						string tex = sourceFile.Directory.FullName.Replace("\\", "/") + "/" + mesh.texture;
-						meshToModel.Textures.Add(tex);
-						XanLogger.WriteLine($"Added texture {tex} to model {meshToModel.Name}");
-						*/
-
+						nodeModels[node.name] = meshToModel;
 						models.Add(meshToModel);
 					}
+				} else {
+					string meshTitle = "-Nodes[\"" + node.name + "\"]";
+					Model3D emptyModel = Model3D.NewEmpty();
+					emptyModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + meshTitle;
+					emptyModel.Transform.composeLocal(latestTransform);
+					emptyModel.Transform.composeLocal(node.transform);
+					
+					nodeModels[node.name] = emptyModel;
+					models.Add(emptyModel);
 				}
 
 				//VertexGroup group = new VertexGroup();
 				//group.Name = node.name;
 
 				if (node.children.Length > 0) {
-					RecursivelyIterateNodesForMeshes(baseModel, model, sourceFile, node, models, latestTransform, fullDepthName);
+					RecursivelyIterateNodesForMeshes(baseModel, model, sourceFile, node, models, latestTransform.compose(node.transform), initialTransform, nodeModels, fullDepthName);
 				}
 			}
 		}

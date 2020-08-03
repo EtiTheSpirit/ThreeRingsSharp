@@ -45,6 +45,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 			}
 
 			List<string> retn = new List<string>();
+			if (cfg.implementation is Imported imported) retn.AddRange(GetDefaultTextures(imported).ToList());
 
 			foreach (Parameter param in cfg.parameters) {
 				if (param is Parameter.Choice choice) {
@@ -54,8 +55,8 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 						// Each variant is now a dupe of cfg with the given variant information applied to it.
 						if (variant is ModelConfig mdlVariant) {
 							// This should always be true but it's just here for sanity checking.
-							if (mdlVariant.implementation is Imported imported) {
-								retn.AddRange(GetDefaultTextures(imported));
+							if (mdlVariant.implementation is Imported subImported) {
+								retn.AddRange(GetDefaultTextures(subImported));
 							}
 						}
 

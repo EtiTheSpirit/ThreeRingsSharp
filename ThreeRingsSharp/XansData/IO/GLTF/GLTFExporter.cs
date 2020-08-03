@@ -126,6 +126,10 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 			// A list of node IDs that the scene SHOULD include.
 			List<int> sceneNodes = new List<int>();
 
+			// A list of all empty Model3Ds that have no children (no other Model3D references them as their parent)
+			// This will start as every model that's empty and then things will be removed from it.
+			List<Model3D> childlessEmpties = models.Where(model => model.IsEmptyObject).ToList();
+
 			// TODO: Is this tuple the best way to do this?
 			var glTFToAccessors = new Dictionary<GLTFMesh, (GLTFAccessor, GLTFAccessor, GLTFAccessor, GLTFAccessor, GLTFAccessor, GLTFAccessor)>();
 			#endregion
@@ -699,13 +703,50 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 
 			#region Instantiate Models
 
+			// Prune the childless empty models out.
+			
+			foreach (Model3D model in models) {
+				if (model.AttachmentModel != null && childlessEmpties.Contains(model.AttachmentModel)) {
+					childlessEmpties.Remove(model.AttachmentModel);
+					XanLogger.WriteLine("Flagged " + model.AttachmentModel.Name + " as an empty that DOES have children (and needs to stick around).", XanLogger.DEBUG);
+					
+				}
+				// Catch case: Sometimes nodes want to connect to nodes or other models. Is *this* an empty that goes to something else? All I care about is if it's used.
+				if (model.IsEmptyObject && model.AttachmentModel != null) {
+					// Yes, so save this one too.
+					childlessEmpties.Remove(model);
+					XanLogger.WriteLine("Flagged " + model.Name + " as an empty that DOES have children (and needs to stick around).", XanLogger.DEBUG);
+				}
+			}
+
 			foreach (Model3D model in models) {
 				bool skip = (bool)model.ExtraData.GetOrDefault("SkipExport", false);
 				if (skip) {
 					numModelsSkipped++;
 					continue; // Go to the next iteration.
 				}
+				if (childlessEmpties.Contains(model)) {
+					// This is an empty model and it's got no children that actually make use of it.
+					// Silently skip it.
+					continue;
+				}
 				numModelsCreated++;
+
+				// NEW BEHAVIOR: Empty models.
+				if (model.IsEmptyObject) {
+					// Just create a node and move on.
+					GLTFNode node = new GLTFNode {
+						ThisIndex = currentNodeIndex,
+						Name = model.Name
+					};
+					node.SetTransform(model.Transform);
+					JSONData.Nodes.Add(node);
+					modelToNodeMap[model] = node;
+					currentNodeIndex++;
+					continue;
+				}
+
+
 				// This can get a bit awkward.
 				// For static models, we make one node to represent the model.
 				// For skinned models, we make one node to represent each *bone*.
@@ -911,6 +952,19 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					GLTFNode attachmentBoneNode = armatureToNodeMap[model.AttachmentNode];
 					attachmentBoneNode.Children.Add(associatedNode.ThisIndex);
 					XanLogger.WriteLine("Parented model [" + model.Name + "] to node [" + model.AttachmentNode.Name + "]", XanLogger.TRACE);
+				} else if (model.AttachmentModel != null) {
+					// Attachment takes precedence over this. Only deal with this condition if the first one doesn't happen.
+					Model3D parent = model.AttachmentModel;
+					bool hasParent = modelToNodeMap.ContainsKey(parent);
+					bool hasChild = modelToNodeMap.ContainsKey(model);
+					if (hasParent && hasChild) {
+						GLTFNode associatedParentNode = modelToNodeMap[parent];
+						GLTFNode associatedNode = modelToNodeMap[model];
+						associatedParentNode.Children.Add(associatedNode.ThisIndex);
+						XanLogger.WriteLine("Parented model [" + model.Name + "] to model [" + model.AttachmentModel.Name + "]", XanLogger.TRACE);
+					} else {
+						XanLogger.WriteLine("WARNING: Model [" + model.Name + "] (which " + (hasChild ? "DOES" : "DOES NOT") + " exist) wants to attach to model [" + parent.Name + "] (which " + (hasParent ? "DOES" : "DOES NOT") + " exist)");
+					}
 				}
 			}
 			#endregion

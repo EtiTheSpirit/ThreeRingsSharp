@@ -146,7 +146,7 @@ namespace ThreeRingsSharp.DataHandlers {
 			} else {
 				// If we ever load a new file, give it a fresh transform based on whatever was passed in so that it can be manipulated by this model.
 				transform = transform.Clone();
-				XanLogger.WriteLine("Instantiated global transform by cloning the existing passed in transform of " + transform.toString());
+				XanLogger.WriteLine("Instantiated global transform by cloning the existing passed in transform of " + transform.toString(), XanLogger.TRACE);
 			}
 
 			if (obj is null) {

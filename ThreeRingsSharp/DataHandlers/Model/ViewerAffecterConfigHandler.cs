@@ -66,12 +66,13 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						throw new ClydeDataReadException($"ViewerEffectConfig::Skybox at [{ResourceDirectoryGrabber.GetFormattedPathFromRsrc(sourceFile, false)}] attempted to reference [{filePathRelativeToRsrc}], but this file could not be found!");
 					}
 
-					// Note to self: You only use the x component on scale for a reason.
-					// For some reason, skybox scale is internally stored as a Vector3. I assume this is because they thought they'd need to stretch skyboxes.
-					// In all implementations from the scene viewer, it only uses the x component for a single-float scale.
-					// Why? Ask OOO. This is how it needs to work in seemingly 100% of cases with SK stuff.
-					Transform3D newTrs = new Transform3D(skybox.translationOrigin, Quaternion.IDENTITY, skybox.translationScale.x);
-					newTrs = newTrs.compose(globalTransform);
+					// Note to self: DO NOT USE SCALE.
+					// The scale value of skyboxes is used for a parallax effect (the scale = "how much does the skybox move relative to the camera")
+					// Applying this scale is not proper.
+					Transform3D newTrs = new Transform3D(skybox.translationOrigin, Quaternion.IDENTITY);
+
+					// Now one thing to note is that transforms do NOT affect skyboxes.
+					// As such, the new translation should NOT be affected by the global transform.
 					ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, false, newTrs);
 				}
 			}

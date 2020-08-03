@@ -57,7 +57,7 @@
             </summary>
             <param name="clydeFile"></param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodesForMeshes(com.threerings.opengl.model.config.ModelConfig,com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,System.String)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodesForMeshes(com.threerings.opengl.model.config.ModelConfig,com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,ThreeRingsSharp.XansData.Model3D},System.String)">
             <summary>
             A utility function that iterates through all of the nodes recursively, as some may store mesh data.<para/>
             This does not decode the rig. It strictly grabs meshes out of the rig.
@@ -1710,6 +1710,12 @@
             <param name="logLevel">The level to log. If this is greater than <see cref="P:ThreeRingsSharp.Utility.XanLogger.LoggingLevel"/>, it will not be appended to the log.</param>
             <param name="color">The color of the text in the log.</param>
             <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.LogException(System.Exception)">
+            <summary>
+            Writes an exception to the log file for review in bug reports.
+            </summary>
+            <param name="error"></param>
         </member>
         <member name="M:ThreeRingsSharp.Utility.XanLogger.Clear">
             <summary>
@@ -3404,6 +3410,12 @@
             The display name for this model, used in exporting (i.e. this is the name that will show up in Blender or any other modelling software.)
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.IsEmptyObject">
+            <summary>
+            If true, this <see cref="T:ThreeRingsSharp.XansData.Model3D"/> doesn't actually have any data and is instead an empty object with no data - it's just something that exists.<para/>
+            Note: While data can still be set, it will be ignored by the exporter so long as this property is true.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.Source">
             <summary>
             A reference to the file that the model here came from. This is used to reference textures and other path-dependent extra data.
@@ -3444,6 +3456,11 @@
             The <see cref="T:ThreeRingsSharp.XansData.Armature"/> that this <see cref="T:ThreeRingsSharp.XansData.Model3D"/> is attached to.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.AttachmentModel">
+            <summary>
+            The <see cref="T:ThreeRingsSharp.XansData.Model3D"/> that serves as this <see cref="T:ThreeRingsSharp.XansData.Model3D"/>'s parent. If <see cref="P:ThreeRingsSharp.XansData.Model3D.AttachmentNode"/> is set, it will take precedence over this.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.ExtraData">
             <summary>
             Any extra information attached to this <see cref="T:ThreeRingsSharp.XansData.Model3D"/> that serves as arbitrary data.
@@ -3481,6 +3498,12 @@
             <param name="targetFormat"></param>
             <param name="models"></param>
         </member>
+        <member name="M:ThreeRingsSharp.XansData.Model3D.NewEmpty">
+            <summary>
+            Creates a new <see cref="T:ThreeRingsSharp.XansData.Model3D"/> without any data and with its <see cref="P:ThreeRingsSharp.XansData.Model3D.IsEmptyObject"/> property set to true.
+            </summary>
+            <returns></returns>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper">
             <summary>
             Loads all of the XML config reference files and stores their data.
@@ -3507,6 +3530,11 @@
         <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.OnConfigsPopulatedAction">
             <summary>
             An <see cref="T:System.Action"/> to run when configs are populated.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.ConfigsErroredAction">
+            <summary>
+            An <see cref="T:System.Action"/> to run when something goes wrong while configs are loading.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.UISyncContext">

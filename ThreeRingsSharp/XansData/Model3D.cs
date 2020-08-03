@@ -58,6 +58,12 @@ namespace ThreeRingsSharp.XansData {
 		public string Name { get; set; } = null;
 
 		/// <summary>
+		/// If true, this <see cref="Model3D"/> doesn't actually have any data and is instead an empty object with no data - it's just something that exists.<para/>
+		/// Note: While data can still be set, it will be ignored by the exporter so long as this property is true.
+		/// </summary>
+		public bool IsEmptyObject { get; private set; } = false;
+
+		/// <summary>
 		/// A reference to the file that the model here came from. This is used to reference textures and other path-dependent extra data.
 		/// </summary>
 		public FileInfo Source { get; set; }
@@ -113,6 +119,11 @@ namespace ThreeRingsSharp.XansData {
 		/// The <see cref="Armature"/> that this <see cref="Model3D"/> is attached to.
 		/// </summary>
 		public Armature AttachmentNode { get; set; } = null;
+
+		/// <summary>
+		/// The <see cref="Model3D"/> that serves as this <see cref="Model3D"/>'s parent. If <see cref="AttachmentNode"/> is set, it will take precedence over this.
+		/// </summary>
+		public Model3D AttachmentModel { get; set; } = null;
 
 		/// <summary>
 		/// Any extra information attached to this <see cref="Model3D"/> that serves as arbitrary data.
@@ -201,6 +212,14 @@ namespace ThreeRingsSharp.XansData {
 			var factory = ExporterBindings[targetFormat];
 			AbstractModelExporter exporter = factory.NewInstance();
 			exporter.Export(models, targetFile);
+		}
+
+		/// <summary>
+		/// Creates a new <see cref="Model3D"/> without any data and with its <see cref="IsEmptyObject"/> property set to true.
+		/// </summary>
+		/// <returns></returns>
+		public static Model3D NewEmpty() {
+			return new Model3D { IsEmptyObject = true };
 		}
 	}
 }

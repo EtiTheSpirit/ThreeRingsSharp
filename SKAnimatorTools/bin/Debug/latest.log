@@ -7,7 +7,6 @@
 [DEBUG] Populated [font].
 [DEBUG] Populated [ground].
 [DEBUG] Populated [interface_script].
-Just a second! I'm still loading up the config references. The model will load once that's done.
 [DEBUG] Populated [material].
 [DEBUG] Populated [parameterized_handler].
 [DEBUG] Populated [path].
@@ -24,45 +23,141 @@ Just a second! I'm still loading up the config references. The model will load o
 [DEBUG] Populated [wall].
 Config data has been populated.
 Working. This might take a bit...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\thwacker\model.dat] because it hasn't been initialized before...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\model.dat] because it hasn't been initialized before...
 [TRACE] Read file to grab the raw info.
 [TRACE] Instantiated global transform as identity transform with scale=1
 [TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
-Resolved Model/Skinned/Masked (Soft) as com.threerings.opengl.material.config.MaterialConfig
-Resolved 2D/File/Default as com.threerings.opengl.renderer.config.TextureConfig
-[TRACE] Model has bone data, setting that up.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\weapon\npc\wrench_hammer\model.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\circle.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
 [DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\part_circle.dat] because it hasn't been initialized before...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\part_model.dat] because it hasn't been initialized before...
 [TRACE] Read file to grab the raw info.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'CompoundConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\skybox_skywall.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 0.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ViewerAffecterConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\compound_skywall.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'CompoundConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\model_skywall.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.5, -1.5], [0.0, 0.0, 0.0, 1.0], 3.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\ambient_fogfloor.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.5, -1.5], [0.0, 0.0, 0.0, 1.0], 3.0]
 [TRACE] Clyde object is ModelConfig.
 [DEBUG] 
 ERROR: A ModelConfig had an unknown implementation!
-=> Implementation: SceneInfluencerConfig
-=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
+=> Implementation: ParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/skybox/clockwork_tunnels/parts/ambient_fogfloor.dat
 
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\ambient_floor.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.5, -1.5], [0.0, 0.0, 0.0, 1.0], 3.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: ParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/skybox/clockwork_tunnels/parts/ambient_floor.dat
+
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\skybox_pillar.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ViewerAffecterConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\compound_pillar.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0]]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'CompoundConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\model_pillar.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[1.4900002, 2.09, -4.9800043], [0.0, 0.0, 0.0, 1.0], 1.8]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\model_crane.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[1.4900002, 2.09, -4.9800043], [0.0, 0.0, 0.0, 1.0], 1.8]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\ambient_globemist.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[1.4900002, 2.09, -4.9800043], [0.0, 0.0, 0.0, 1.0], 1.8]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: ParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/skybox/clockwork_tunnels/parts/ambient_globemist.dat
+
+[TRACE] Attached [parts.model_crane-MeshNodes["mesh_crane"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-Nodes["bone_rot"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-Nodes["bonebone"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["lights"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["chains"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["mesh_animated"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["globe"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["mesh_crane_chain"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["mesh_crane_lights"]] to [pivot_crane]
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\model_pillar_nocrane.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[-1.21, 2.7600002, -3.1200001], [0.0, 0.0, -0.70710665, 0.70710695], 2.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
 [TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
-Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[-1.2499993, -0.5999999, -9.400008], [0.0, 0.0, -1.0, 9.099629E-7], 3.09]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[-1.2499993, -0.5999999, -9.400008], [0.0, 0.0, -1.0, 9.099629E-7], 3.09]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[-1.2499993, -0.5999999, -9.400008], [0.0, 0.0, -1.0, 9.099629E-7], 3.09]
 [TRACE] Clyde object is ModelConfig.
 [DEBUG] 
 ERROR: A ModelConfig had an unknown implementation!
-=> Implementation: SceneInfluencerConfig
-=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
+=> Implementation: ParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/skybox/clockwork_tunnels/parts/ambient_globemist.dat
 
-Number of models loaded: 2 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
-Number of unique meshes instantiated: 2
-[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\thwacker\skin_orange.png].
-[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\thwacker\skin_purple.png].
-[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\thwacker\skin_green.png].
-[TRACE] Parented model [wrench_hammer.model-Mesh[0]] to node [bone_weapon_r]
-g
+[TRACE] Attached [parts.model_crane-MeshNodes["mesh_crane"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-Nodes["bone_rot"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-Nodes["bonebone"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["lights"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["chains"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["mesh_animated"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["globe"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["mesh_crane_chain"]] to [pivot_crane]
+[TRACE] Attached [parts.model_crane-MeshNodes["mesh_crane_lights"]] to [pivot_crane]
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.7799996, 5.770037, -6.109993], [0.07844715, 0.017398601, -0.0013692998, 0.9967655], 3.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[-3.0299978, 2.9599977, -8.440098], [0.0, 0.0, 0.0, 1.0], 3.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[4.670013, 4.550009, -7.109947], [-5.0968407E-9, 0.026176952, -0.99965733, 1.9464046E-7], 3.069999]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\render_effect\uniformblur-skybox.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ViewerAffecterConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\global_skybox.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ViewerAffecterConfig'. Accessing handlers...
+Number of models loaded: 156 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
+Number of unique meshes instantiated: 41
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skybox\clockwork_tunnels\parts\textures\skywall.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\particle\texture\bomb_smoke.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\skyb
