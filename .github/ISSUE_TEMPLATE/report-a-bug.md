@@ -7,6 +7,16 @@ assignees: XanTheDragon
 
 ---
 
+#############################################################################
+### Requirement: Is it already going to be fixed? (Erase after you read this) ###
+Check ...
+- This page! Search for your issue first and see if it hasn't been sent by someone else yet.
+- Next Update Plans at https://github.com/XanTheDragon/ThreeRingsSharp/projects/3?fullscreen=true
+
+Is your feature listed here? If it is, please do not submit this feature request.
+#############################################################################
+
+
 ### What's happening?
 Describe what's going on here, and be clear about it! It's helpful if you send the `latest.log` file in the same folder as the exe too (This is created from Beta 0.1.1 onward)
 
