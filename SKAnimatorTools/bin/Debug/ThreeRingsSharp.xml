@@ -3052,7 +3052,8 @@
         <member name="P:ThreeRingsSharp.XansData.MeshData.HasBoneData">
             <summary>
             This should be <see langword="true"/> if this has bone data. If it is false, <see cref="M:ThreeRingsSharp.XansData.MeshData.ConstructGroups"/> will not do anything.<para/>
-            Ensure this is only set to <see langword="true"/> if <see cref="P:ThreeRingsSharp.XansData.MeshData.BoneNames"/>, <see cref="P:ThreeRingsSharp.XansData.MeshData.BoneIndices"/>, and <see cref="P:ThreeRingsSharp.XansData.MeshData.BoneWeights"/> are all populated properly.
+            Ensure this is only set to <see langword="true"/> if <see cref="P:ThreeRingsSharp.XansData.MeshData.BoneNames"/>, <see cref="P:ThreeRingsSharp.XansData.MeshData.BoneIndices"/>, and <see cref="P:ThreeRingsSharp.XansData.MeshData.BoneWeights"/> are all populated properly.<para/>
+            As a temporary fix for a number of issues caused by armors, this property's { <see langword="get;"/> } will only return true if all of the data associated with bones is correct.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.HasTransformed">

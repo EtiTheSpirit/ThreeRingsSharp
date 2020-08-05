@@ -40,7 +40,7 @@ namespace ThreeRingsSharp.Utility {
 		/// <summary>
 		/// The log while <see cref="UpdateAutomatically"/> is false and it's written to (this is used to append all of the data when <see cref="UpdateLog"/> is called)
 		/// </summary>
-		private static List<(string, int)> LogWhileNotUpdating { get; } = new List<(string, int)>();
+		private static List<(string, Color, int)> LogWhileNotUpdating { get; } = new List<(string, Color, int)>();
 
 		/// <summary>
 		/// The level of messages to display.
@@ -102,27 +102,22 @@ namespace ThreeRingsSharp.Utility {
 			if (IsUpdatingGUI) return;
 			if (!IsMainThread) return;
 			if (BoxReference == null) return;
-			if (!UpdateAutomatically) {
-				IsUpdatingGUI = true;
-				UpdateComplete.Reset();
-				WasAtBottom = BoxReference.IsScrolledToBottom();
-				foreach ((string, int) logEntry in LogWhileNotUpdating) {
-					Color defColor = BoxReference.ForeColor;
-					if (logEntry.Item2 == DEBUG) defColor = Color.Gray;
-					if (logEntry.Item2 == TRACE) defColor = Color.LightGray;
-					BoxReference.AppendText(logEntry.Item1, defColor);
-				}
-
-				if (WasAtBottom && !BoxReference.IsScrolledToBottom()) {
-					BoxReference.SelectionStart = BoxReference.TextLength;
-					BoxReference.ScrollToCaret();
-				}
-
-				LogWhileNotUpdating.Clear();
-				BoxReference.Update();
-				IsUpdatingGUI = false;
-				UpdateComplete.Set();
+			IsUpdatingGUI = true;
+			UpdateComplete.Reset();
+			WasAtBottom = BoxReference.IsScrolledToBottom();
+			foreach ((string, Color, int) logEntry in LogWhileNotUpdating) {
+				BoxReference.AppendText(logEntry.Item1, logEntry.Item2);
 			}
+
+			if (WasAtBottom && !BoxReference.IsScrolledToBottom()) {
+				BoxReference.SelectionStart = BoxReference.TextLength;
+				BoxReference.ScrollToCaret();
+			}
+
+			LogWhileNotUpdating.Clear();
+			BoxReference.Update();
+			IsUpdatingGUI = false;
+			UpdateComplete.Set();
 		}
 
 		/// <summary>
@@ -178,6 +173,11 @@ namespace ThreeRingsSharp.Utility {
 				_UpdateAutomatically = false;
 			}
 
+			LogWhileNotUpdating.Add((strippedText, writeColor, logLevel));
+			if (UpdateAutomatically) {
+				UpdateLog();
+			}
+			/*
 			if (UpdateAutomatically) {
 				WasAtBottom = BoxReference.IsScrolledToBottom();
 				BoxReference.AppendText(strippedText, writeColor);
@@ -192,9 +192,9 @@ namespace ThreeRingsSharp.Utility {
 				if (!UpdateComplete.IsSet) {
 					//UpdateComplete.Wait(); // Wait until the latest update is done.
 				} else {
-					LogWhileNotUpdating.Add((strippedText, logLevel));
+					LogWhileNotUpdating.Add((strippedText, writeColor, logLevel));
 				}
-			}
+			}*/
 
 			if (!IsMainThread) {
 				// Yes, set the private member here.

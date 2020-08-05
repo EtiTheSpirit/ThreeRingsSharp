@@ -83,7 +83,7 @@ namespace ThreeRingsSharp.XansData {
 		/// <summary>
 		/// A list of the bones within <see cref="AllBones"/> that are not listed in <see cref="BoneNames"/>
 		/// </summary>
-		public string[] ExtraBoneNames { get; set; }
+		public string[] ExtraBoneNames { get; set; } = new string[0];
 
 		/// <summary>
 		/// The indices for bones. These correspond to an entry in the modified <see cref="BoneNames"/> list.<para/>
@@ -96,7 +96,7 @@ namespace ThreeRingsSharp.XansData {
 		// Not here. You just have null at the start of the list then everything else corresponds linearly. No -1.
 
 		// Thankfully, glTF 2.0 standard says that the limit is 4 bones per vertex.
-		// Incidentally, that is exactly how OOO does it. That means the support is literally perfect.
+		// Incidentally, that is exactly how OOO does it. That means the support is literally perfect and it's a 1:1 translation.
 
 		/// <summary>
 		/// The weights for bones.<para/>
@@ -116,9 +116,20 @@ namespace ThreeRingsSharp.XansData {
 
 		/// <summary>
 		/// This should be <see langword="true"/> if this has bone data. If it is false, <see cref="ConstructGroups"/> will not do anything.<para/>
-		/// Ensure this is only set to <see langword="true"/> if <see cref="BoneNames"/>, <see cref="BoneIndices"/>, and <see cref="BoneWeights"/> are all populated properly.
+		/// Ensure this is only set to <see langword="true"/> if <see cref="BoneNames"/>, <see cref="BoneIndices"/>, and <see cref="BoneWeights"/> are all populated properly.<para/>
+		/// As a temporary fix for a number of issues caused by armors, this property's { <see langword="get;"/> } will only return true if all of the data associated with bones is correct.
 		/// </summary>
-		public bool HasBoneData { get; set; } = false;
+		public bool HasBoneData {
+			get {
+				if (!_HasBoneData) return false;
+				if (BoneNames.Length > 0 && ExtraBoneNames.Length > 0 && BoneIndicesNative.Length > 0 && BoneWeightsNative.Length > 0) {
+					return true;
+				}
+				return false;
+			}
+			set => _HasBoneData = value;
+		}
+		private bool _HasBoneData = false;
 
 		/// <summary>
 		/// If <see langword="true"/>, <see cref="ApplyTransform(Transform3D)"/> has already been called.
