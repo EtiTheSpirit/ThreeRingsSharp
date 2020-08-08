@@ -1,0 +1,8 @@
+[DEBUG] Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!
+[DEBUG] Populated [actor].
+[DEBUG] Populated [area].
+[DEBUG] Populated [behavior].
+[DEBUG] Populated [cursor].
+[DEBUG] Populated [effect].
+[DEBUG] Populated [font].
+[DEBUG] Populated [ground].

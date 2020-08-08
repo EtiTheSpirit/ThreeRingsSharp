@@ -27,9 +27,15 @@ using System.Threading;
 using ThreeRingsSharp.DataHandlers.Properties;
 using ThreeRingsSharp.DataHandlers.Model;
 using System.Runtime.InteropServices;
+using System.Net;
 
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {
+
+		/// <summary>
+		/// The version of this release of the program.
+		/// </summary>
+		public const string THIS_VERSION = "1.2.0";
 
 		[DllImport("user32.dll")]
 		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -39,7 +45,29 @@ namespace SKAnimatorTools {
 
 		public readonly IntPtr ConsolePtr;
 
+		/// <summary>
+		/// Attempts to access the github to acquire the latest version.
+		/// </summary>
+		/// <param name="version"></param>
+		/// <returns></returns>
+		public bool TryGetVersion(out string version) {
+			try {
+				using (WebClient cli = new WebClient()) {
+					version = cli.DownloadString("https://raw.githubusercontent.com/XanTheDragon/ThreeRingsSharp/master/version.txt");
+				}
+				return true;
+			} catch {
+				version = null;
+				return false;
+			}
+		}
+
 		public MainWindow() {
+			if (TryGetVersion(out string version) && version != THIS_VERSION) {
+				Updater updWindow = new Updater();
+				updWindow.ShowDialog(); // Because I want it to yield.
+			}
+
 			VTConsole.EnableVTSupport();
 			System.Console.Title = "Spiral Knights Animator Tools";
 			ConsolePtr = GetConsoleWindow();

@@ -57,3 +57,4 @@ F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Release\SKAnimator
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Release\SKAnimatorTools.csproj.CopyComplete
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Release\SKAnimatorTools.exe
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Release\SKAnimatorTools.pdb
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Release\SKAnimatorTools.Updater.resources
