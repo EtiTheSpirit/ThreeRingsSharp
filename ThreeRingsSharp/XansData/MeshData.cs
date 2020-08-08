@@ -9,6 +9,7 @@ using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.Structs;
 using ThreeRingsSharp.XansData.Extensions;
 using static com.threerings.opengl.model.config.ArticulatedConfig;
+using com.threerings.opengl.model.config;
 
 namespace ThreeRingsSharp.XansData {
 
@@ -122,10 +123,12 @@ namespace ThreeRingsSharp.XansData {
 		public bool HasBoneData {
 			get {
 				if (!_HasBoneData) return false;
-				if (BoneNames.Length > 0 && ExtraBoneNames.Length > 0 && BoneIndicesNative.Length > 0 && BoneWeightsNative.Length > 0) {
-					return true;
-				}
-				return false;
+
+				if (AllBones.Count == 0) return false;
+				foreach (string bname0 in BoneNames) if (bname0 != null && !AllBones.ContainsKey(bname0)) return false;
+				foreach (string bname1 in ExtraBoneNames) if (bname1 != null && !AllBones.ContainsKey(bname1)) return false;
+				
+				return true;
 			}
 			set => _HasBoneData = value;
 		}

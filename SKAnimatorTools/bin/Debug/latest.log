@@ -17,85 +17,68 @@
 [DEBUG] Populated [scene_global].
 [DEBUG] Populated [shader].
 [DEBUG] Populated [sounder].
+Just a second! I'm still loading up the config references. The model will load once that's done.
 [DEBUG] Populated [style].
 [DEBUG] Populated [texture].
 [DEBUG] Populated [tile].
 [DEBUG] Populated [wall].
 Config data has been populated.
 Working. This might take a bit...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\tileset\graveyard\candle_3unit.dat] because it hasn't been initialized before...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\model.dat] because it hasn't been initialized before...
 [TRACE] Read file to grab the raw info.
 [TRACE] Instantiated global transform as identity transform with scale=1
 [TRACE] Clyde object is ModelConfig.
 [DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\particle\mesh\candle\candle_flicker_scroll.dat] because it hasn't been initialized before...
+Resolved Model/Skinned/Masked (Soft) as com.threerings.opengl.material.config.MaterialConfig
+Resolved 2D/File/Default as com.threerings.opengl.renderer.config.TextureConfig
+[TRACE] Model has bone data, setting that up.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\circle.dat] because it hasn't been initialized before...
 [TRACE] Read file to grab the raw info.
 [TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
 [TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
-Resolved Model/Scrolling/Additive (parsed scroll value) as com.threerings.opengl.material.config.MaterialConfig
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-[TRACE] Attached [candle.candle_flicker_scroll-Mesh[0]] to [candle_flame01]
+[DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\part_circle.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: SceneInfluencerConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
+
 [TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
 [TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
 [TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-[TRACE] Attached [candle.candle_flicker_scroll-Mesh[0]] to [candle_flame02]
-[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: SceneInfluencerConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
+
+Number of models loaded: 41 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
+Number of unique meshes instantiated: 2
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_orange.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_thwacker.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_mender.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_scorcher.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_demo.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_dead.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_ember.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\skin_ember_l.png].
+glTF Exporter instantiated 1 models (skipped 0 models).
+Done! Exported to [F:\Users\Xan\Desktop\3D\__SK_TEST\gremlin.glb]
+Working. This might take a bit...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\mender\model.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform as identity transform with scale=1
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[TRACE] Model has bone data, setting that up.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\weapon\npc\wrench_wand\model.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
 [TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
 [TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-[TRACE] Attached [candle.candle_flicker_scroll-Mesh[0]] to [candle_flame03]
-[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
-[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-[TRACE] Attached [candle.candle_flicker_scroll-Mesh[0]] to [candle_flame04]
-[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
-[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-[TRACE] Attached [candle.candle_flicker_scroll-Mesh[0]] to [candle_flame05]
-[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
-[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-ALERT: Model attempted to set value of Direct [lightStateOverride] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!
-[TRACE] Attached [candle.candle_flicker_scroll-Mesh[0]] to [candle_flame06]
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+Resolved Model/Two-Sided/Opaque as com.threerings.opengl.material.config.MaterialConfig
 [DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\particle\ambient_simpleglow.dat] because it hasn't been initialized before...
 [TRACE] Read file to grab the raw info.
 [TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
@@ -105,13 +88,57 @@ ERROR: A ModelConfig had an unknown implementation!
 => Implementation: ParticleSystemConfig
 => Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/particle/ambient_simpleglow.dat
 
+[TRACE] Attached [wrench_wand.model-MeshNodes["mesh_wand"]] to [bone_weapon_r]
+[TRACE] Attached [wrench_wand.model-Nodes["emitter_top"]] to [bone_weapon_r]
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
 [TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
 [TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
 [TRACE] Clyde object is ModelConfig.
 [DEBUG] 
 ERROR: A ModelConfig had an unknown implementation!
-=> Implementation: ParticleSystemConfig
-=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/particle/ambient_simpleglow.dat
+=> Implementation: SceneInfluencerConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
 
-Number of models loaded: 17 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
-Number of unique meshes instantiated: 6
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: SceneInfluencerConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
+
+Number of models loaded: 39 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
+Number of unique meshes instantiated: 3
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\mender\skin_orange.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\mender\skin_purple.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\weapon\npc\wrench_wand\skin_orange.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\weapon\npc\wrench_wand\skin_purple.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\weapon\npc\wrench_wand\skin_green.png].
+[TRACE] Parented model [wrench_wand.model-MeshNodes["mesh_wand"]] to node [bone_weapon_r]
+[DEBUG] Model wants to attach to armature [bone_weapon_r], but this armature has not been created. In this specific case, it was likely an actual model that could not be read (e.g. a visual effect)
+glTF Exporter instantiated 2 models (skipped 0 models).
+Done! Exported to [F:\Users\Xan\Desktop\3D\__SK_TEST\mender.glb]
+Working. This might take a bit...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\lizardsuit\model.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform as identity transform with scale=1
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
+Resolved Model/Skinned/Two-Sided/Masked (Soft) (Dark Back) as com.threerings.opengl.material.config.MaterialConfig
+Number of models loaded: 1 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
+Number of unique meshes instantiated: 1
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\lizardsuit\skin_chroma.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\lizardsuit\skin_sala.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\lizardsuit\skin_sala-vol.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\lizardsuit\skin_viral.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\lizardsuit\skin_viral-deadly.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\lizardsuit\skin_sala-shd.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\lizardsuit\feral\skin_feral_dark.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\lizardsuit\feral\skin_feral_red.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\lizardsuit\feral\skin_feral_tan.png].
+[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\lizardsuit\feral\skin_feral_white.png].
+glTF Exporter instantiated 1 models (skipped 0 models).
+Done! Exported to [F:\Users\Xan\Desktop\3D\__SK_TEST\lizardsuit.glb]

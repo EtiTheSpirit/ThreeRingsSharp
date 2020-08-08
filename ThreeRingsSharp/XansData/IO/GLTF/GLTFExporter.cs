@@ -948,6 +948,10 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						XanLogger.WriteLine("WARNING: Model wants to attach to armature [" + model.AttachmentNode.Name + "], but this armature has not been created in the mesh data!");
 						continue;
 					}
+					if (!modelToNodeMap.ContainsKey(model)) {
+						XanLogger.WriteLine("Model wants to attach to armature [" + model.AttachmentNode.Name + "], but this armature has not been created. In this specific case, it was likely an actual model that could not be read (e.g. a visual effect)", XanLogger.DEBUG);
+						continue;
+					}
 					GLTFNode associatedNode = modelToNodeMap[model];
 					GLTFNode attachmentBoneNode = armatureToNodeMap[model.AttachmentNode];
 					attachmentBoneNode.Children.Add(associatedNode.ThisIndex);

@@ -45,7 +45,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			foreach (VisibleMesh mesh in renderedMeshes) {
 				string meshTitle = "-Skin-Mesh[" + idx + "]";
 
-				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
+				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle, model.root);
 				meshToModel.Name = depth1Name + meshTitle;
 				if (globalTransform != null) meshToModel.Transform.composeLocal(globalTransform);
 				//meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
@@ -53,7 +53,8 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				meshToModel.ActiveTexture = mesh.texture;
 				if (meshToModel.Mesh.HasBoneData) {
 					XanLogger.WriteLine("Model has bone data, setting that up.", XanLogger.TRACE);
-					meshToModel.Mesh.SetBones(model.root);
+					// meshToModel.Mesh.SetBones(model.root);
+					// ^ now called by GetGeometryInformation
 					foreach (KeyValuePair<string, Armature> boneNamesToBones in meshToModel.Mesh.AllBones) {
 						allInstantiatedArmatures[boneNamesToBones.Key] = boneNamesToBones.Value;
 					}
