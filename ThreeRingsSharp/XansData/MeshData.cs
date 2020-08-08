@@ -117,7 +117,7 @@ namespace ThreeRingsSharp.XansData {
 		/// <summary>
 		/// This should be <see langword="true"/> if this has bone data. If it is false, <see cref="ConstructGroups"/> will not do anything.<para/>
 		/// Ensure this is only set to <see langword="true"/> if <see cref="BoneNames"/>, <see cref="BoneIndices"/>, and <see cref="BoneWeights"/> are all populated properly.<para/>
-		/// As a temporary fix for a number of issues caused by armors, this property's { <see langword="get;"/> } will only return true if all of the data associated with bones is correct.
+		/// As a temporary fix for a number of issues caused by armors, this property's { <see langword="get"/>; } will only be able to return <see langword="true"/> if all of the data associated with bones is correct (so setting it to <see langword="true"/> without correct data will cause this to still return <see langword="false"/>).
 		/// </summary>
 		public bool HasBoneData {
 			get {

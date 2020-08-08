@@ -278,7 +278,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 
 												latestAsCfg.getArguments().put(parameterName, ConfigReferenceConstructor.MakeConfigReferenceTo(forwardRefConfig));
 											} else {
-												XanLogger.WriteLine("ALERT: Model attempted to set the value of a Direct but it could not resolve! Certain aspects of this model may not export properly!", XanLogger.STANDARD, System.Drawing.Color.Orange);
+												XanLogger.WriteLine("ALERT: Model attempted to set value of Direct [" + currentIndex + "] but it failed due to a type mismatch! Certain data on this model might be incorrect.", XanLogger.STANDARD, System.Drawing.Color.DarkGoldenrod);
 												return null;
 											}
 										}
@@ -322,7 +322,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 											ReflectionHelper.Set(latestObject, currentIndex, argValueCfg);
 											return null;
 										} else {
-											XanLogger.WriteLine("ALERT: Model attempted to set value of Direct [" + currentIndex + "] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!", XanLogger.STANDARD, System.Drawing.Color.Orange);
+											XanLogger.WriteLine("ALERT: Model attempted to set value of Direct [" + currentIndex + "] but it failed due to a type mismatch! Certain data on this model might be incorrect.", XanLogger.STANDARD, System.Drawing.Color.DarkGoldenrod);
 											return null;
 										}
 									}
@@ -331,7 +331,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 										ReflectionHelper.Set(latestObject, currentIndex, argValueCfg);
 										return null;
 									} else {
-										XanLogger.WriteLine("ALERT: Model attempted to set value of Direct [" + currentIndex + "] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!", XanLogger.STANDARD, System.Drawing.Color.Orange);
+										XanLogger.WriteLine("ALERT: Model attempted to set value of Direct [" + currentIndex + "] but it failed due to a type mismatch! Certain data on this model might be incorrect.", XanLogger.STANDARD, System.Drawing.Color.DarkGoldenrod);
 										return null;
 									}
 								}
@@ -365,7 +365,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 										if (ReflectionHelper.Get(ptr, currentIndex) is ConfigReference cfgRefLow) {
 											return cfgRefLow;
 										} else {
-											XanLogger.WriteLine("ALERT: Model attempted to set value of Direct [" + currentIndex + "] but it failed due to a type mismatch! Certain features pertaining to model variants or other data might fail on this model!", XanLogger.STANDARD, System.Drawing.Color.Orange);
+											XanLogger.WriteLine("ALERT: Model attempted to set value of Direct [" + currentIndex + "] but it failed due to a type mismatch! Certain data on this model might be incorrect.", XanLogger.STANDARD, System.Drawing.Color.DarkGoldenrod);
 											return null;
 										}
 									}

@@ -90,6 +90,10 @@ namespace ThreeRingsSharp.Utility {
 		/// </summary>
 		public static int MainThreadId { get; set; } = 0;
 
+		/// <summary>
+		/// This will be <see langword="true"/> if the program is running in its main thread (and by extension, it is safe to update the GUI).<para/>
+		/// This will only be <see langword="false"/> in async calls, such as that in <see cref="ConfigReferenceBootstrapper"/>'s initialization method.
+		/// </summary>
 		public static bool IsMainThread => Thread.CurrentThread.ManagedThreadId == MainThreadId;
 
 		private static bool IsUpdatingGUI = false;
