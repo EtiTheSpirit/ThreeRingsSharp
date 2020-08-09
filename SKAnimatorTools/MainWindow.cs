@@ -35,7 +35,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The version of this release of the program.
 		/// </summary>
-		public const string THIS_VERSION = "1.2.0";
+		public const string THIS_VERSION = "1.3.0";
 
 		[DllImport("user32.dll")]
 		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
