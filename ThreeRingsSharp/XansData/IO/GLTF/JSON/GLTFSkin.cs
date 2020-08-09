@@ -6,13 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
-	public class GLTFSkin {
-
-		/// <summary>
-		/// Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
-		/// </summary>
-		[JsonIgnore]
-		public int ThisIndex = 0;
+	public class GLTFSkin : GLTFObject {
 
 		/// <summary>
 		/// The index of the accessor containing the floating-point 4x4 inverse-bind matrices. The default is that each matrix is a 4x4 identity matrix, which implies that inverse-bind matrices were pre-applied.

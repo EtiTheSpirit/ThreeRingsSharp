@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// Represents raw asset data for this glTF file, such as the version it's using and the tool that created the file.
 	/// </summary>
-	public class GLTFAsset {
+	public class GLTFAsset : GLTFObject {
 
 		/// <summary>
 		/// The version of glTF that this was designed with.

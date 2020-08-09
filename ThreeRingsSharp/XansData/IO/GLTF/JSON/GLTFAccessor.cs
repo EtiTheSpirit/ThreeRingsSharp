@@ -6,13 +6,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// Provides access to a <see cref="GLTFBufferView"/>.
 	/// </summary>
-	public class GLTFAccessor {
-
-		/// <summary>
-		/// Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
-		/// </summary>
-		[JsonIgnore]
-		public int ThisIndex = 0;
+	public class GLTFAccessor : GLTFObject {
 
 		/// <summary>
 		/// The <see cref="GLTFBufferView"/> this points to.
@@ -44,7 +38,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// <summary>
 		/// The type of model data this accessor represents, which determines is size.
 		/// </summary>
-		[JsonProperty("type")] public string Type = GLTFType.SCALAR;
+		[JsonProperty("type")] public string Type = GLTFDataType.SCALAR;
 
 		/// <summary>
 		/// The offset in the referenced buffer that this accessor should start at.

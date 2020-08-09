@@ -9,7 +9,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 	/// <summary>
 	/// Represents a component type in glTF for use in accessors.
 	/// </summary>
-	public class GLTFComponentType {
+	public static class GLTFComponentType {
 
 		/// <summary>
 		/// A <see langword="sbyte"/> value.
@@ -46,7 +46,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 	/// <summary>
 	/// Represents a type in glTF for use in accessors.
 	/// </summary>
-	public class GLTFType {
+	public static class GLTFDataType {
 
 		/// <summary>
 		/// A scalar value, which contains a single component.
@@ -82,6 +82,28 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 		/// A MAT4 value (4x4 transformation matrix), which contains 16 components.
 		/// </summary>
 		public const string MAT4 = "MAT4";
+
+	}
+
+	/// <summary>
+	/// Represents a method of interpolation for animations.
+	/// </summary>
+	public static class GLTFAnimationInterpolation {
+
+		/// <summary>
+		/// Represents linear motion.
+		/// </summary>
+		public const string LINEAR = "LINEAR";
+
+		/// <summary>
+		/// Represents constant interpolation, or, the latest keyframe is persistent until another keyframe overrides it later on.
+		/// </summary>
+		public const string STEP = "STEP";
+
+		/// <summary>
+		/// Represents a cubic spline interpolation pattern.
+		/// </summary>
+		public const string CUBICSPLINE = "CUBICSPLINE";
 
 	}
 }

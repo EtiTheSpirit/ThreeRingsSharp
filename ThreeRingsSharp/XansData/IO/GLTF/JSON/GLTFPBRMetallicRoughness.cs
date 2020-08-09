@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// The PBR Metallic Roughness material attribute.
 	/// </summary>
-	public class GLTFPBRMetallicRoughness {
+	public class GLTFPBRMetallicRoughness : GLTFObject {
 
 		/// <summary>
 		/// The modifier to the base color of the material. Default is white (so no changes)

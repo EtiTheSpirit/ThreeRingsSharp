@@ -8,14 +8,13 @@ using System.Threading.Tasks;
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 
 	/// <summary>
-	/// Represents a binary data buffer.
+	/// Represents an animation sampler.
 	/// </summary>
-	public class GLTFBuffer : GLTFObject {
+	public class GLTFAnimationChannel : GLTFObject {
 
-		/// <summary>
-		/// The amount of bytes in this buffer.
-		/// </summary>
-		[JsonProperty("byteLength")] public int ByteLength = 0;
+		[JsonProperty("sampler")] public int Sampler;
+
+		[JsonProperty("target")] public GLTFAnimationChannelTarget Target;
 
 	}
 }

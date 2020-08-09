@@ -11,13 +11,7 @@ using ThreeRingsSharp.XansData.Structs;
 using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
-	public class GLTFNode {
-
-		/// <summary>
-		/// Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
-		/// </summary>
-		[JsonIgnore]
-		public int ThisIndex = 0;
+	public class GLTFNode : GLTFObject {
 
 		/// <summary>
 		/// The name of this object as it appears in the 3D editor.

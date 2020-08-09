@@ -161,7 +161,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFType.VEC3,
+						Type = GLTFDataType.VEC3,
 						Count = meshData.Vertices.Count
 					};
 					vertexAccessor.Min.SetListCap(0f, 3);
@@ -201,7 +201,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFType.VEC3,
+						Type = GLTFDataType.VEC3,
 						Count = meshData.Normals.Count
 					};
 
@@ -243,7 +243,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFType.VEC2,
+						Type = GLTFDataType.VEC2,
 						Count = meshData.UVs.Count
 					};
 
@@ -281,7 +281,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.UNSIGNED_SHORT, // OOO models use shorts for indices.
-						Type = GLTFType.SCALAR,
+						Type = GLTFDataType.SCALAR,
 						Count = meshData.Indices.Count
 					};
 
@@ -311,7 +311,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						BufferView = currentBufferViewIndex,
 						ThisIndex = currentAccessorIndex,
 						ComponentType = GLTFComponentType.UNSIGNED_SHORT,
-						Type = GLTFType.VEC4,
+						Type = GLTFDataType.VEC4,
 						Count = meshData.BoneIndicesNative.Length / 4
 					};
 					jointAccessor.Min.SetListCap(0, 4);
@@ -345,7 +345,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						BufferView = currentBufferViewIndex,
 						ThisIndex = currentAccessorIndex,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFType.VEC4,
+						Type = GLTFDataType.VEC4,
 						Count = meshData.BoneWeightsNative.Length / 4
 					};
 					weightAccessor.Min.SetListCap(0, 4);
@@ -416,7 +416,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFType.VEC3,
+						Type = GLTFDataType.VEC3,
 						Count = meshData.Vertices.Count
 					};
 					vertexAccessor.Min.SetListCap(0f, 3);
@@ -456,7 +456,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFType.VEC3,
+						Type = GLTFDataType.VEC3,
 						Count = meshData.Normals.Count
 					};
 					
@@ -498,7 +498,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFType.VEC2,
+						Type = GLTFDataType.VEC2,
 						Count = meshData.UVs.Count
 					};
 					
@@ -536,7 +536,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.UNSIGNED_SHORT, // OOO models use shorts for indices.
-						Type = GLTFType.SCALAR,
+						Type = GLTFDataType.SCALAR,
 						Count = meshData.Indices.Count
 					};
 					
@@ -697,7 +697,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				}
 			}
 
-			if (JSONData.Textures.Count > 0) JSONData.Samplers.Add(new GLTFSampler());
+			if (JSONData.Textures.Count > 0) JSONData.Samplers.Add(new GLTFTextureSampler());
 
 			#endregion
 
@@ -775,7 +775,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						BufferView = currentBufferViewIndex,
 						ThisIndex = currentAccessorIndex,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFType.MAT4,
+						Type = GLTFDataType.MAT4,
 						Count = modelMesh.BoneNames.Length + modelMesh.ExtraBoneNames.Length
 					};
 					bindMatrixAccessor.Min.SetListCap(0f, 16);

@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// The raw json data container.
 	/// </summary>
-	public class GLTFJSONRoot {
+	public class GLTFJSONRoot : GLTFObject {
 
 		/// <summary>
 		/// Asset information for this glTF file.
@@ -50,7 +50,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// <summary>
 		/// A list of samplers, which determine how images are applied to meshes.
 		/// </summary>
-		[JsonProperty("samplers")] public List<GLTFSampler> Samplers = new List<GLTFSampler>();
+		[JsonProperty("samplers")] public List<GLTFTextureSampler> Samplers = new List<GLTFTextureSampler>();
 
 		/// <summary>
 		/// A list of textures, which are used to apply images to meshes.
@@ -66,6 +66,11 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// A list of the skins in this model, which determines rigging and allows for animation.
 		/// </summary>
 		[JsonProperty("skins")] public List<GLTFSkin> Skins = new List<GLTFSkin>();
+
+		/// <summary>
+		/// A list of animations this model has.
+		/// </summary>
+		[JsonProperty("animations")] public List<GLTFAnimation> Animations = new List<GLTFAnimation>();
 
 		/// <summary>
 		/// The scene to use. Points to an entry in <see cref="Scenes"/>.

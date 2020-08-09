@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// Represents a texture.
 	/// </summary>
-	public class GLTFTexture {
+	public class GLTFTexture : GLTFObject {
 
 		/// <summary>
 		/// The index of the sampler that determines how to apply this texture.

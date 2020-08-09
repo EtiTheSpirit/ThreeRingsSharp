@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// Represents the baseColorTexture node in the pbrMetallicRoughness node of materials.
 	/// </summary>
-	public class GLTFPBRBaseColor {
+	public class GLTFPBRBaseColor : GLTFObject {
 
 		/// <summary>
 		/// The texture index

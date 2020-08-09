@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// Represents an entire secene.
 	/// </summary>
-	public class GLTFScene {
+	public class GLTFScene : GLTFObject {
 
 		/// <summary>
 		/// The name of this <see cref="GLTFScene"/>.

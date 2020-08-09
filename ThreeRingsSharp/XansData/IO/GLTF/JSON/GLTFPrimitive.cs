@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// Represents a single piece of geometry.
 	/// </summary>
-	public class GLTFPrimitive {
+	public class GLTFPrimitive : GLTFObject {
 
 		/// <summary>
 		/// Information about this geometry.

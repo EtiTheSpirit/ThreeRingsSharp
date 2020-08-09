@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
-	public class GLTFMaterial {
+	public class GLTFMaterial : GLTFObject {
 
 		/// <summary>
 		/// The name of this material.

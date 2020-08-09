@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// Represents an image sampler, which determines how an image is applied as a texture.
 	/// </summary>
-	public class GLTFSampler {
+	public class GLTFTextureSampler : GLTFObject {
 
 		[JsonProperty("magFilter")] public int MagFilter = 9729;
 

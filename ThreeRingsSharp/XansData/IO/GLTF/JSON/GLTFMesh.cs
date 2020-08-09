@@ -10,12 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// Represents raw mesh data, which stores triangles, normals, uvs, and indices, alongside other mesh-related data.
 	/// </summary>
-	public class GLTFMesh {
-
-		/// <summary>
-		/// The index of this mesh in glTF data.
-		/// </summary>
-		[JsonIgnore] public int ThisIndex = 0;
+	public class GLTFMesh : GLTFObject {
 
 		[JsonProperty("primitives")] public List<GLTFPrimitive> Primitives = new List<GLTFPrimitive>(1);
 

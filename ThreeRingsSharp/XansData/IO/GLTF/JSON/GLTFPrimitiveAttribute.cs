@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// Represents information about a model, namely, what <see cref="GLTFAccessor"/> ids contain the applicable data.
 	/// </summary>
-	public class GLTFPrimitiveAttribute {
+	public class GLTFPrimitiveAttribute : GLTFObject {
 
 		/// <summary>
 		/// The id of the <see cref="GLTFAccessor"/> containing the vertices for this primitive.

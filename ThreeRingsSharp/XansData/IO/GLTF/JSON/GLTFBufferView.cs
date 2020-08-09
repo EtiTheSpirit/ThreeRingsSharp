@@ -10,12 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// Represents a subsection of a complete data buffer.
 	/// </summary>
-	public class GLTFBufferView {
-
-		/// <summary>
-		/// Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
-		/// </summary>
-		[JsonIgnore] public int ThisIndex = 0;
+	public class GLTFBufferView : GLTFObject {
 
 		/// <summary>
 		/// The ID of the buffer to browse.

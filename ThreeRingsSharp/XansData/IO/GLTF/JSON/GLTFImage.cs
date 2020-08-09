@@ -10,7 +10,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// <summary>
 	/// Represents an image, usually for a texture.
 	/// </summary>
-	public class GLTFImage {
+	public class GLTFImage : GLTFObject {
 
 		/// <summary>
 		/// The path to the image. If this is set (not <see langword="null"/>), <see cref="BufferView"/> and <see cref="MimeType"/> will be ignored and this will be used instead.
