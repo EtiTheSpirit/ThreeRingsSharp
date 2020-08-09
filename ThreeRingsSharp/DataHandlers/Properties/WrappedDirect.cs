@@ -347,6 +347,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 									// to the current object. As such, we need to use the current index to reference it.
 									targetIndex = currentIndex;
 								}*/
+								if (previousObject == null || targetIndex == null) return null;
 								object ptr = ReflectionHelper.Get(previousObject, targetIndex);
 								if (ptr is ConfigReference cfgRef) {
 									// Special handling. argValue goes to a property on the config reference
