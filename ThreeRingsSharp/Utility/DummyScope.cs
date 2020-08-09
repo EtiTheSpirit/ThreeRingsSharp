@@ -7,18 +7,31 @@ using System.Threading.Tasks;
 using java.lang;
 using com.threerings.opengl.model.config;
 using ThreeRingsSharp.XansData;
+using com.threerings.expr.util;
 
 namespace ThreeRingsSharp.Utility {
 
 	/// <summary>
-	/// Used for the parsing of <see cref="ConditionalConfig"/>s, this provides an object implementing <see cref="Scope"/> which returns null data.
+	/// Provides an means of lazily implementing <see cref="Scope"/>.<para/>
+	/// A <see cref="Scope"/> is basically a glorified reflection accessor.
 	/// </summary>
-	public class DummyScope : Singleton<DummyScope>, Scope {
+	public class DummyScope : Scope {
 
-		public void addListener(ScopeUpdateListener sul) { }
+		private readonly List<ScopeUpdateListener> UpdateListeners = new List<ScopeUpdateListener>();
+
+		private readonly string InstantiationTime = DateTime.Now.ToBinary().ToString();
+		
+		/// <summary>
+		/// The object that this <see cref="Scope"/> is pointing to.
+		/// </summary>
+		public object ReferenceObject { get; }
+
+		public void addListener(ScopeUpdateListener sul) {
+			UpdateListeners.Add(sul);
+		}
 
 		public object get(string str, Class c) {
-			return null;
+			return ScopeUtil.get(ReferenceObject, str, c);
 		}
 
 		public Scope getParentScope() {
@@ -26,9 +39,20 @@ namespace ThreeRingsSharp.Utility {
 		}
 
 		public string getScopeName() {
-			return string.Empty;
+			return "DummyScope-" + InstantiationTime;
 		}
 
-		public void removeListener(ScopeUpdateListener sul) { }
+		public void removeListener(ScopeUpdateListener sul) {
+			UpdateListeners.Remove(sul);
+		}
+
+		public DummyScope() {
+			ReferenceObject = null;
+		}
+
+		public DummyScope(object reference) {
+			ReferenceObject = reference;
+		}
+
 	}
 }

@@ -14,6 +14,7 @@ using ThreeRingsSharp.XansData.IO.GLTF.JSON;
 using ThreeRingsSharp.XansData.Structs;
 using ThreeRingsSharp.XansData.Extensions;
 using ThreeRingsSharp.XansData.Exceptions;
+using static ThreeRingsSharp.XansData.Animation;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF {
 
@@ -147,7 +148,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				bool skipMesh = meshData.Users.Where(model => (bool)model.ExtraData.GetOrDefault("SkipExport", false) == false).Count() == 0;
 				if (skipMesh) continue;
 
-				if (meshData.HasBoneData && DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS) {
+				if (meshData.HasBoneData) {
 
 					// So for bone data, the target is as follows:
 					// Node that the scene references: The main armature object (a node in glTF is an object)
@@ -161,7 +162,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFDataType.VEC3,
+						Type = GLTFValueType.VEC3,
 						Count = meshData.Vertices.Count
 					};
 					vertexAccessor.Min.SetListCap(0f, 3);
@@ -184,13 +185,12 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						if (z > vertexAccessor.Max[2]) vertexAccessor.Max[2] = z;
 					}
 					accessors.Add(vertexAccessor);
-					int vertexSize = vertexAccessor.Count * 12;
 					bufferViews.Add(new GLTFBufferView {
 						ThisIndex = currentBufferViewIndex,
-						ByteLength = vertexSize,
+						ByteLength = vertexAccessor.Size,
 						ByteOffset = currentOffset
 					});
-					currentOffset += vertexSize; // 4 bytes per float * 3 floats
+					currentOffset += vertexAccessor.Size;
 					currentBufferViewIndex++;
 					currentAccessorIndex++;
 					#endregion
@@ -201,7 +201,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFDataType.VEC3,
+						Type = GLTFValueType.VEC3,
 						Count = meshData.Normals.Count
 					};
 
@@ -226,13 +226,12 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					}
 
 					accessors.Add(normalAccessor);
-					int normalSize = normalAccessor.Count * 12;
 					bufferViews.Add(new GLTFBufferView {
 						ThisIndex = currentBufferViewIndex,
-						ByteLength = normalSize,
+						ByteLength = normalAccessor.Size,
 						ByteOffset = currentOffset
 					});
-					currentOffset += normalSize; // 4 bytes per float * 3 floats
+					currentOffset += normalAccessor.Size; // 4 bytes per float * 3 floats
 					currentBufferViewIndex++;
 					currentAccessorIndex++;
 					#endregion
@@ -243,7 +242,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFDataType.VEC2,
+						Type = GLTFValueType.VEC2,
 						Count = meshData.UVs.Count
 					};
 
@@ -264,13 +263,12 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					}
 
 					accessors.Add(uvAccessor);
-					int uvSize = uvAccessor.Count * 8;
 					bufferViews.Add(new GLTFBufferView {
 						ThisIndex = currentBufferViewIndex,
-						ByteLength = uvSize,
+						ByteLength = uvAccessor.Size,
 						ByteOffset = currentOffset
 					});
-					currentOffset += uvSize; // 4 bytes per float * 2 floats
+					currentOffset += uvAccessor.Size; // 4 bytes per float * 2 floats
 					currentBufferViewIndex++;
 					currentAccessorIndex++;
 					#endregion
@@ -281,7 +279,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.UNSIGNED_SHORT, // OOO models use shorts for indices.
-						Type = GLTFDataType.SCALAR,
+						Type = GLTFValueType.SCALAR,
 						Count = meshData.Indices.Count
 					};
 
@@ -294,13 +292,12 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					}
 
 					accessors.Add(indexAccessor);
-					int indexSize = indexAccessor.Count * 2; // 2 bytes per ushort.
 					bufferViews.Add(new GLTFBufferView {
 						ThisIndex = currentBufferViewIndex,
-						ByteLength = indexSize,
+						ByteLength = indexAccessor.Size,
 						ByteOffset = currentOffset
 					});
-					currentOffset += indexSize; // 4 bytes per float * 2 floats
+					currentOffset += indexAccessor.Size; // 4 bytes per float * 2 floats
 					currentBufferViewIndex++;
 					currentAccessorIndex++;
 					#endregion
@@ -311,7 +308,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						BufferView = currentBufferViewIndex,
 						ThisIndex = currentAccessorIndex,
 						ComponentType = GLTFComponentType.UNSIGNED_SHORT,
-						Type = GLTFDataType.VEC4,
+						Type = GLTFValueType.VEC4,
 						Count = meshData.BoneIndicesNative.Length / 4
 					};
 					jointAccessor.Min.SetListCap(0, 4);
@@ -327,13 +324,12 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 
 					// This can't use min/max.
 					accessors.Add(jointAccessor);
-					int jointSize = jointAccessor.Count * 4 * 2; // 4 elements per vec4, 2 bytes per ushort.
 					bufferViews.Add(new GLTFBufferView {
 						ThisIndex = currentBufferViewIndex,
-						ByteLength = jointSize,
+						ByteLength = jointAccessor.Size,
 						ByteOffset = currentOffset
 					});
-					currentOffset += jointSize;
+					currentOffset += jointAccessor.Size;
 					currentBufferViewIndex++;
 					currentAccessorIndex++;
 
@@ -345,7 +341,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						BufferView = currentBufferViewIndex,
 						ThisIndex = currentAccessorIndex,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFDataType.VEC4,
+						Type = GLTFValueType.VEC4,
 						Count = meshData.BoneWeightsNative.Length / 4
 					};
 					weightAccessor.Min.SetListCap(0, 4);
@@ -361,13 +357,12 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					}
 
 					accessors.Add(weightAccessor);
-					int weightSize = weightAccessor.Count * 4 * 4; // 4 elements per vec4, 4 bytes per float;
 					bufferViews.Add(new GLTFBufferView {
 						ThisIndex = currentBufferViewIndex,
-						ByteLength = weightSize,
+						ByteLength = weightAccessor.Size,
 						ByteOffset = currentOffset
 					});
-					currentOffset += weightSize;
+					currentOffset += weightAccessor.Size;
 					currentBufferViewIndex++;
 					currentAccessorIndex++;
 
@@ -416,7 +411,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFDataType.VEC3,
+						Type = GLTFValueType.VEC3,
 						Count = meshData.Vertices.Count
 					};
 					vertexAccessor.Min.SetListCap(0f, 3);
@@ -456,7 +451,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFDataType.VEC3,
+						Type = GLTFValueType.VEC3,
 						Count = meshData.Normals.Count
 					};
 					
@@ -498,7 +493,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFDataType.VEC2,
+						Type = GLTFValueType.VEC2,
 						Count = meshData.UVs.Count
 					};
 					
@@ -536,7 +531,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						ThisIndex = currentAccessorIndex,
 						// byteOffset = currentBufferViewSize,
 						ComponentType = GLTFComponentType.UNSIGNED_SHORT, // OOO models use shorts for indices.
-						Type = GLTFDataType.SCALAR,
+						Type = GLTFValueType.SCALAR,
 						Count = meshData.Indices.Count
 					};
 					
@@ -703,8 +698,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 
 			#region Instantiate Models
 
-			// Prune the childless empty models out.
-			
+			#region Prune Empty Objects
 			foreach (Model3D model in models) {
 				if (model.AttachmentModel != null && childlessEmpties.Contains(model.AttachmentModel)) {
 					childlessEmpties.Remove(model.AttachmentModel);
@@ -718,8 +712,10 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					XanLogger.WriteLine("Flagged " + model.Name + " as an empty that DOES have children (and needs to stick around).", XanLogger.DEBUG);
 				}
 			}
+			#endregion
 
 			foreach (Model3D model in models) {
+				#region Handle Skipping
 				bool skip = (bool)model.ExtraData.GetOrDefault("SkipExport", false);
 				if (skip) {
 					numModelsSkipped++;
@@ -745,8 +741,9 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					currentNodeIndex++;
 					continue;
 				}
+				#endregion
 
-
+				#region Create Vars
 				// This can get a bit awkward.
 				// For static models, we make one node to represent the model.
 				// For skinned models, we make one node to represent each *bone*.
@@ -765,9 +762,13 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 
 				MeshData modelMesh = model.Mesh;
 				int inverseBindMatrixIndex = -1;
+				int animationSamplerIndex = 0;
+
+				Dictionary<string, int> boneToNodeIndex = new Dictionary<string, int>();
+				#endregion
 
 				#region Write Inverse Bind Matrices
-				if (modelMesh.HasBoneData && DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS) {
+				if (modelMesh.HasBoneData) {
 					List<byte> bindMtxBuffer = new List<byte>();
 
 					#region Create & Append Accessor
@@ -775,7 +776,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						BufferView = currentBufferViewIndex,
 						ThisIndex = currentAccessorIndex,
 						ComponentType = GLTFComponentType.FLOAT,
-						Type = GLTFDataType.MAT4,
+						Type = GLTFValueType.MAT4,
 						Count = modelMesh.BoneNames.Length + modelMesh.ExtraBoneNames.Length
 					};
 					bindMatrixAccessor.Min.SetListCap(0f, 16);
@@ -817,7 +818,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				#endregion
 
 				#region Append Nodes
-				if (modelMesh.HasBoneData && DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS) {
+				if (modelMesh.HasBoneData) {
 
 					#region Create Skin
 
@@ -869,6 +870,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 							Children = armature.GetChildIndices(nodeIndexAtInstantiation).ToList()
 						};
 						nodeForThisBone.SetTransform(armature.Transform);
+						boneToNodeIndex[boneName] = nodeForThisBone.ThisIndex;
 
 						if (boneName == "%ROOT%") {
 							// This is the root bone.
@@ -890,6 +892,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 							Children = armature.GetChildIndices(nodeIndexAtInstantiation).ToList()
 						};
 						nodeForThisBone.SetTransform(armature.Transform);
+						boneToNodeIndex[boneName] = nodeForThisBone.ThisIndex;
 
 						if (boneName == "%ROOT%") {
 							// This is the root bone.
@@ -908,13 +911,244 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				#endregion
 
 				#region Append Animations (WIP)
-				if (modelMesh.HasBoneData && DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS) {
+				if (modelMesh.HasBoneData && DevelopmentFlags.FLAG_ALLOW_ANIMATION_EXPORTS) {
+					// ok so basically animations are retarded
+					foreach (Animation anim in model.Animations) {
+						animationSamplerIndex = 0;
 
+						IReadOnlyList<Keyframe> ordered = anim.OrderedKeyframes;
+
+						GLTFAnimation glAnim = new GLTFAnimation {
+							Name = anim.Name
+						};
+
+						#region Create Time Accessor
+						// This should be straightforward.
+						GLTFAccessor timeAccessor = new GLTFAccessor {
+							ThisIndex = currentAccessorIndex,
+							BufferView = currentBufferViewIndex,
+							ComponentType = GLTFComponentType.FLOAT,
+							Type = GLTFValueType.SCALAR,
+							Count = ordered.Count,
+							Min = new List<dynamic>() { ordered.First().Time },
+							Max = new List<dynamic>() { ordered.Last().Time }
+						};
+						JSONData.Accessors.Add(timeAccessor);
+						JSONData.BufferViews.Add(new GLTFBufferView {
+							ThisIndex = currentBufferViewIndex,
+							ByteLength = timeAccessor.Size,
+							ByteOffset = currentOffset
+						});
+						currentOffset += timeAccessor.Size;
+						currentBufferViewIndex++;
+						currentAccessorIndex++;
+
+						List<byte> timeBuf = new List<byte>();
+						foreach (Keyframe keyframe in ordered) timeBuf.AddRange(BitConverter.GetBytes(keyframe.Time));
+						binBuffer.AddRange(timeBuf);
+						#endregion
+
+						#region Convert Everything
+
+						// Need to create a sampler for every bone for every component.
+						// This also means we need to create dummy buffers for every component.
+						// The reason for this is because each node has x number of entries per path
+						List<byte> buffer = new List<byte>();
+
+						for (int idx = 0; idx < boneToNodeIndex.Count; idx++) {
+							string currentKey = boneToNodeIndex.Keys.ElementAt(idx);
+							int thisNodeIndex = boneToNodeIndex[currentKey];
+
+							if (ordered.Where(keyframe => keyframe.Keys.Where(key => key.Node == currentKey).FirstOrDefault() != null).FirstOrDefault() == null) {
+								continue;
+							}
+
+							#region Populate Transformation Buffers
+							// Now we need to populate the buffers in this EXACT ORDER.
+							// Oh this is so aids. I can probably optimize this lol
+							int numTranslations = 0;
+							int numRotations = 0;
+							int numScales = 0;
+
+							for (int mode = 0; mode < 3; mode++) {
+								foreach (Keyframe keyframe in ordered) {
+									Key key = keyframe.Keys.Where(k => k.Node == currentKey).FirstOrDefault();
+									float[] translation;
+									float[] rotation;
+									float[] scale;
+									if (key != null) {
+										(translation, rotation, scale) = key.Transform.GetAllComponents();
+									} else {
+										//(translation, rotation, scale) = new Transform3D(Transform3D.IDENTITY).GetAllComponents();
+										throw new InvalidDataException("Unable to find key for node " + currentKey);
+									}
+									if (mode == 0) {
+										for (int i = 0; i < translation.Length; i++) {
+											buffer.AddRange(BitConverter.GetBytes(translation[i]));
+										}
+										numTranslations++;
+									} else if (mode == 1) {
+										for (int i = 0; i < rotation.Length; i++) {
+											buffer.AddRange(BitConverter.GetBytes(rotation[i]));
+										}
+										numRotations++;
+									} else if (mode == 2) {
+										for (int i = 0; i < scale.Length; i++) {
+											buffer.AddRange(BitConverter.GetBytes(scale[i]));
+										}
+										numScales++;
+									}
+								}
+							}
+							#endregion
+
+							#region Accessors & Buffers
+
+							#region Translation Accessor & Buffer
+							GLTFAccessor nodeTranslationAccessor = new GLTFAccessor {
+								ThisIndex = currentAccessorIndex,
+								BufferView = currentBufferViewIndex,
+								ComponentType = GLTFComponentType.FLOAT,
+								Type = GLTFValueType.VEC3,
+								Count = numTranslations
+							};
+							JSONData.Accessors.Add(nodeTranslationAccessor);
+
+							// Now create a dummy buffer with the necessary size.
+							JSONData.BufferViews.Add(new GLTFBufferView {
+								ThisIndex = currentBufferViewIndex,
+								ByteLength = nodeTranslationAccessor.Size,
+								ByteOffset = currentOffset
+							});
+							currentAccessorIndex++;
+							currentBufferViewIndex++;
+							currentOffset += nodeTranslationAccessor.Size;
+							#endregion
+
+							#region Rotation Accessor & Buffer
+							GLTFAccessor nodeRotationAccessor = new GLTFAccessor {
+								ThisIndex = currentAccessorIndex,
+								BufferView = currentBufferViewIndex,
+								ComponentType = GLTFComponentType.FLOAT,
+								Type = GLTFValueType.VEC4,
+								Count = numRotations
+							};
+							JSONData.Accessors.Add(nodeRotationAccessor);
+
+							JSONData.BufferViews.Add(new GLTFBufferView {
+								ThisIndex = currentBufferViewIndex,
+								ByteLength = nodeRotationAccessor.Size,
+								ByteOffset = currentOffset
+							});
+
+							currentAccessorIndex++;
+							currentBufferViewIndex++;
+							currentOffset += nodeRotationAccessor.Size;
+							#endregion
+
+							#region Scale Accessor & Buffer
+							GLTFAccessor nodeScaleAccessor = new GLTFAccessor {
+								ThisIndex = currentAccessorIndex,
+								BufferView = currentBufferViewIndex,
+								ComponentType = GLTFComponentType.FLOAT,
+								Type = GLTFValueType.VEC3,
+								Count = numScales
+							};
+							JSONData.Accessors.Add(nodeScaleAccessor);
+
+							JSONData.BufferViews.Add(new GLTFBufferView {
+								ThisIndex = currentBufferViewIndex,
+								ByteLength = nodeScaleAccessor.Size,
+								ByteOffset = currentOffset
+							});
+
+							currentAccessorIndex++;
+							currentBufferViewIndex++;
+							currentOffset += nodeScaleAccessor.Size;
+							#endregion
+
+							#endregion
+
+							#region Samplers & Channels
+
+							#region Translation Sampler & Channel
+							GLTFAnimationSampler translationSampler = new GLTFAnimationSampler {
+								ThisIndex = animationSamplerIndex,
+								Input = timeAccessor.ThisIndex,
+								Interpolation = GLTFAnimationInterpolation.LINEAR,
+								Output = nodeTranslationAccessor.ThisIndex
+							};
+
+							GLTFAnimationChannel translationChannel = new GLTFAnimationChannel {
+								Sampler = translationSampler.ThisIndex,
+								Target = new GLTFAnimationChannelTarget {
+									Node = thisNodeIndex,
+									Path = GLTFAnimationPath.TRANSLATION
+								},
+							};
+							animationSamplerIndex++;
+							#endregion
+
+							#region Rotation Sampler & Channel
+							GLTFAnimationSampler rotationSampler = new GLTFAnimationSampler {
+								ThisIndex = animationSamplerIndex,
+								Input = timeAccessor.ThisIndex,
+								Interpolation = GLTFAnimationInterpolation.LINEAR,
+								Output = nodeRotationAccessor.ThisIndex
+							};
+
+							GLTFAnimationChannel rotationChannel = new GLTFAnimationChannel {
+								Sampler = rotationSampler.ThisIndex,
+								Target = new GLTFAnimationChannelTarget {
+									Node = thisNodeIndex,
+									Path = GLTFAnimationPath.ROTATION
+								},
+							};
+							animationSamplerIndex++;
+							#endregion
+
+							#region Scale Sampler & Channel
+							GLTFAnimationSampler scaleSampler = new GLTFAnimationSampler {
+								ThisIndex = animationSamplerIndex,
+								Input = timeAccessor.ThisIndex,
+								Interpolation = GLTFAnimationInterpolation.LINEAR,
+								Output = nodeScaleAccessor.ThisIndex
+							};
+
+							GLTFAnimationChannel scaleChannel = new GLTFAnimationChannel {
+								Sampler = scaleSampler.ThisIndex,
+								Target = new GLTFAnimationChannelTarget {
+									Node = thisNodeIndex,
+									Path = GLTFAnimationPath.SCALE
+								},
+							};
+							animationSamplerIndex++;
+							#endregion
+
+							#region Register Samplers & Channels
+							glAnim.Samplers.Add(translationSampler);
+							glAnim.Samplers.Add(rotationSampler);
+							glAnim.Samplers.Add(scaleSampler);
+
+							glAnim.Channels.Add(translationChannel);
+							glAnim.Channels.Add(rotationChannel);
+							glAnim.Channels.Add(scaleChannel);
+							#endregion
+
+							#endregion
+						}
+
+						binBuffer.AddRange(buffer);
+
+						#endregion
+
+						JSONData.Animations.Add(glAnim);
+					}
 				}
 				#endregion
 
 				#region Create Object (If Static)
-				if (!modelMesh.HasBoneData || !DevelopmentFlags.FLAG_ALLOW_BONE_EXPORTS) {
+				if (!modelMesh.HasBoneData) {
 					GLTFNode node = new GLTFNode {
 						ThisIndex = currentNodeIndex,
 						Name = model.Name,

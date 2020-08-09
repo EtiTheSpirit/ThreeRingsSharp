@@ -61,7 +61,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 		/// Some of these objects may be other <see cref="WrappedDirect"/>s or <see cref="WrappedChoice"/>s. See <see cref="DirectEndReference"/> for more information on how to handle this.
 		/// </summary>
 		public IReadOnlyList<DirectEndReference> EndReferences => _EndReferences;
-		private List<DirectEndReference> _EndReferences = new List<DirectEndReference>();
+		private readonly List<DirectEndReference> _EndReferences = new List<DirectEndReference>();
 
 		public WrappedDirect(ParameterizedConfig cfg, Parameter.Direct direct, WrappedChoice parentChoice = null, ArgumentMap args = null) {
 			Config = cfg;
@@ -278,7 +278,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 
 												latestAsCfg.getArguments().put(parameterName, ConfigReferenceConstructor.MakeConfigReferenceTo(forwardRefConfig));
 											} else {
-												XanLogger.WriteLine("ALERT: Model attempted to set value of Direct [" + currentIndex + "] but it failed due to a type mismatch! Certain data on this model might be incorrect.", XanLogger.STANDARD, System.Drawing.Color.DarkGoldenrod);
+												XanLogger.WriteLine("ALERT: Model attempted to set value of Direct [" + currentIndex + "] but it failed because the target object was not a ParameterizedConfig! Some information may be incorrect on this model.", XanLogger.STANDARD, System.Drawing.Color.DarkGoldenrod);
 												return null;
 											}
 										}
@@ -385,6 +385,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 					}
 					previousObject = latestObject;
 					latestObject = ReflectionHelper.Get(latestObject, currentIndex);
+					if (previousObject == null || latestObject == null) return null; // Failed to traverse.
 				}
 				previousIndex = currentIndex;
 			}

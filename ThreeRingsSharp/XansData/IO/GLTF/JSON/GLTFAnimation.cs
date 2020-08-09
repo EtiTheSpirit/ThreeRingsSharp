@@ -14,9 +14,9 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 
 		[JsonProperty("name")] public string Name = "NULL";
 
-		[JsonProperty("channels")] public object[] Channels;
+		[JsonProperty("channels")] public List<GLTFAnimationChannel> Channels = new List<GLTFAnimationChannel>();
 
-		[JsonProperty("samplers")] public object[] Samplers;
+		[JsonProperty("samplers")] public List<GLTFAnimationSampler> Samplers = new List<GLTFAnimationSampler>();
 
 	}
 }

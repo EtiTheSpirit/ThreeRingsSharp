@@ -147,7 +147,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataHandlers\AnimationConfigBrancher.cs" />
+    <Compile Include="DataHandlers\AnimationHandlers\AnimationConfigHandler.cs" />
+    <Compile Include="DataHandlers\AnimationHandlers\IAnimationHandler.cs" />
     <Compile Include="DataHandlers\ClydeFileHandler.cs" />
     <Compile Include="DataHandlers\Model\ConditionalConfigHandler.cs" />
     <Compile Include="DataHandlers\Properties\ModelPropertyUtility.cs" />
@@ -192,10 +193,12 @@
     <Compile Include="Utility\TextureGrabber.cs" />
     <Compile Include="Utility\VersionInfoScraper.cs" />
     <Compile Include="Utility\XanLogger.cs" />
+    <Compile Include="XansData\Animation.cs" />
     <Compile Include="XansData\Armature.cs" />
     <Compile Include="XansData\DevelopmentFlags.cs" />
     <Compile Include="XansData\Exceptions\ClydeDataReadException.cs" />
     <Compile Include="XansData\Exceptions\InvalidTypeException.cs" />
+    <Compile Include="XansData\Extensions\AttributeExtension.cs" />
     <Compile Include="XansData\Extensions\ChoiceExtensions.cs" />
     <Compile Include="XansData\Extensions\ConfigReferenceExtension.cs" />
     <Compile Include="XansData\Extensions\DeepObjectExtensions.cs" />
@@ -207,6 +210,10 @@
     <Compile Include="XansData\IO\GLTF\GLTFComponentType.cs" />
     <Compile Include="XansData\IO\GLTF\GLTFExporter.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFAccessor.cs" />
+    <Compile Include="XansData\IO\GLTF\JSON\GLTFAnimation.cs" />
+    <Compile Include="XansData\IO\GLTF\JSON\GLTFAnimationChannel.cs" />
+    <Compile Include="XansData\IO\GLTF\JSON\GLTFAnimationChannelTarget.cs" />
+    <Compile Include="XansData\IO\GLTF\JSON\GLTFAnimationSampler.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFAsset.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFBuffer.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFBufferView.cs" />
@@ -215,11 +222,12 @@
     <Compile Include="XansData\IO\GLTF\JSON\GLTFMaterial.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFMesh.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFNode.cs" />
+    <Compile Include="XansData\IO\GLTF\JSON\GLTFObject.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFPBRBaseColor.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFPBRMetallicRoughness.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFPrimitive.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFPrimitiveAttribute.cs" />
-    <Compile Include="XansData\IO\GLTF\JSON\GLTFSampler.cs" />
+    <Compile Include="XansData\IO\GLTF\JSON\GLTFTextureSampler.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFScene.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFSkin.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFTexture.cs" />
@@ -254,9 +262,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DataHandlers\Animation\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Content Include="ConfigRefs\accessory.xml" />
     <Content Include="ConfigRefs\actor.xml" />

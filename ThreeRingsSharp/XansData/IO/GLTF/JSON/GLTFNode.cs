@@ -110,14 +110,16 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// </summary>
 		/// <param name="transform"></param>
 		public void SetTransform(Transform3D transform) {
-			(Vector3f, Quaternion, Vector3f, float) transformData = transform.GetAllTransforms();
+			(Vector3f Translation, Quaternion Rotation, Vector3f Scale) transformData = transform.GetAllTransforms();
 
-			transformData.Item1 = ((Vector3)transformData.Item1).RotateToAxis(Model3D.TargetUpAxis);
-			transformData.Item2 = transformData.Item2.RotateToUpAxis(Model3D.TargetUpAxis);
+			/*
+			transformData.Translation = ((Vector3)transformData.Translation).RotateToAxis(Model3D.TargetUpAxis);
+			transformData.Rotation = transformData.Rotation.RotateToUpAxis(Model3D.TargetUpAxis);
+			*/
 
-			SetPosition(transformData.Item1);
-			SetRotation(transformData.Item2);
-			SetScale(transformData.Item3);
+			SetPosition(transformData.Translation);
+			SetRotation(transformData.Rotation);
+			SetScale(transformData.Scale);
 		}
 
 		#region Newtonsoft Field Write Conditions

@@ -3,6 +3,7 @@ using com.threerings.math;
 using com.threerings.opengl.model.config;
 using com.threerings.tudey.data;
 using com.threerings.util;
+using java.awt;
 using java.io;
 using System;
 using System.Collections.Generic;
@@ -183,7 +184,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					rootDataTreeObject.Text = modelClass;
 					rootDataTreeObject.ImageKey = SilkImage.Animation;
 				}
-				errToThrow = new ClydeDataReadException("Animations are unsupported! Come back later c:", "Unsupported Implementation", MessageBoxIcon.Warning);
+				errToThrow = new ClydeDataReadException("You can't open animations directly! Please instead load an ArticulatedConfig that references this animation.", "Unsupported Implementation", MessageBoxIcon.Warning);
 
 			} else if (obj is TudeySceneModel scene) {
 				XanLogger.WriteLine("Clyde object is TudeySceneModel.", XanLogger.TRACE);
@@ -196,6 +197,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					rootDataTreeObject.ImageKey = SilkImage.Scene;
 				}
 				//errToThrow = new ClydeDataReadException("Scenes are unsupported! Come back later c:", "Unsupported Implementation", MessageBoxIcon.Warning);
+				XanLogger.WriteLine("WARNING: TudeySceneModel is not fully supported right now! A lot of stuff will export misaligned or in the wrong location.", color: System.Drawing.Color.DarkGoldenrod);
 				TudeySceneConfigBrancher.HandleDataFrom(clydeFile, scene, allGrabbedModels, rootDataTreeObject, useFileName, transform);
 
 			} else {
@@ -220,16 +222,44 @@ namespace ThreeRingsSharp.DataHandlers {
 		}
 
 		/// <summary>
-		/// Directly handles a <see cref="FileInfo"/> that is expected to be a config reference (that is, stored in <c>rsrc/config/</c>).<para/>
-		/// This method is unchecked. It does not look to see if the file is an actual proper file. Please be careful.
+		/// Similar to <see cref="HandleClydeFile(FileInfo, List{Model3D}, bool, dynamic, bool, Transform3D, Dictionary{string, dynamic})"/>, except it just returns the raw object returned by clyde. This will return <see langword="null"/> if the model fails to laod.
 		/// </summary>
 		/// <param name="clydeFile"></param>
-		public static void HandleConfigReferenceLookup(FileInfo clydeFile) {
-			DataInputStream dataInput = new DataInputStream(new FileInputStream(clydeFile.FullName));
-			XMLImporter importer = new XMLImporter(dataInput);
-			var obj = importer.readObject();
-			// 
-			XanLogger.WriteLine(obj.ToString());
+		/// <returns></returns>
+		public static object GetRaw(FileInfo clydeFile) {
+			object obj;
+			
+			if (!ClydeObjectCache.ContainsKey(clydeFile.FullName)) {
+				XanLogger.WriteLine($"Loading [{clydeFile.FullName}] because it hasn't been initialized before...", XanLogger.DEBUG);
+				if (!VersionInfoScraper.IsValidClydeFile(clydeFile)) {
+					XanLogger.WriteLine("Invalid file. Sending error.", XanLogger.DEBUG);
+					throw new ClydeDataReadException("This file isn't a valid Clyde file! (Reason: Incorrect header)");
+				}
+				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(clydeFile);
+				XanLogger.WriteLine($"Read file to grab the raw info.", XanLogger.TRACE);
+				string modelClass = null;
+
+				// Just abort early here. We can't laod these.
+				if (modelClass == "ProjectXModelConfig") {
+					XanLogger.WriteLine("User imported a Player Knight model. These are unsupported.", XanLogger.DEBUG);
+					return null;
+				}
+
+				Importer targetImporter = GetAppropriateImporter(clydeFile);
+				try {
+					obj = targetImporter.readObject();
+					ClydeObjectCache[clydeFile.FullName] = obj;
+					ModelInfoCache[clydeFile.FullName] = cosmeticInfo;
+				} catch {
+					targetImporter.close();
+					return null;
+				}
+			} else {
+				XanLogger.WriteLine("Loading Clyde object from cache because this .dat file has already been loaded.", XanLogger.TRACE);
+				obj = ((DeepObject)ClydeObjectCache[clydeFile.FullName]).clone();
+			}
+
+			return obj;
 		}
 	}
 }

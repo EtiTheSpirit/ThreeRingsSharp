@@ -4,10 +4,45 @@
         <name>ThreeRingsSharp</name>
     </assembly>
     <members>
-        <member name="T:ThreeRingsSharp.DataHandlers.AnimationConfigBrancher">
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.AnimationConfigHandler.HandleAnimationImplementation(System.String,com.threerings.opengl.model.config.AnimationConfig.Implementation,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D})">
             <summary>
-            A class that takes in an <see cref="T:com.threerings.opengl.model.config.AnimationConfig"/> and handles the data appropriately.
+            Handles the given <see cref="T:com.threerings.opengl.model.config.AnimationConfig"/> and applies it to the already loaded <see cref="T:ThreeRingsSharp.XansData.Model3D"/>s.
             </summary>
+            <param name="name"></param>
+            <param name="animationImplementation"></param>
+            <param name="attachToModels"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.AnimationConfigHandler.Dereference(com.threerings.opengl.model.config.AnimationConfig.Derived)">
+            <summary>
+            Takes in a derived animation implementation and resolves its references until it gets to a non-derived type.<para/>
+            This will also handle if the reference is a <see cref="T:com.threerings.opengl.model.config.AnimationConfig.ComponentAnimation"/>.
+            </summary>
+            <param name="derived">The derived animation implementation to get a real animation from.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.AnimationConfigHandler.Dereference(com.threerings.opengl.model.config.AnimationConfig.ComponentAnimation)">
+            <summary>
+            Takes in a derived animation implementation and resolves its references until it gets to a non-derived type.<para/>
+            This will also handle if the reference is a <see cref="T:com.threerings.opengl.model.config.AnimationConfig.Derived"/>.
+            </summary>
+            <param name="component">The component animation instance to get a real animation from.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.AnimationConfigHandler.FinalDereference(com.threerings.config.ConfigReference)">
+            <summary>
+            A helper method for the two <see cref="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.AnimationConfigHandler.Dereference(com.threerings.opengl.model.config.AnimationConfig.Derived)"/> methods that takes in a Clyde object which is expected to be an animation of any type and resolves its refs.
+            </summary>
+            <param name="animationRef">A <see cref="T:com.threerings.config.ConfigReference"/> pointing to an animation.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.IAnimationHandler.HandleAnimationConfig(System.IO.FileInfo,com.threerings.opengl.model.config.AnimationConfig,ThreeRingsSharp.XansData.Model3D,System.Collections.Generic.Dictionary{System.String,System.Object})">
+            <summary>
+            Handles the given <see cref="T:com.threerings.opengl.model.config.AnimationConfig"/>.
+            </summary>
+            <param name="sourceFile"></param>
+            <param name="animation"></param>
+            <param name="targetModel"></param>
+            <param name="extraData"></param>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.ClydeFileHandler">
             <summary>
@@ -50,12 +85,12 @@
             <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If null, it will be created as an identity transform.</param>
             <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.HandleConfigReferenceLookup(System.IO.FileInfo)">
+        <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.GetRaw(System.IO.FileInfo)">
             <summary>
-            Directly handles a <see cref="T:System.IO.FileInfo"/> that is expected to be a config reference (that is, stored in <c>rsrc/config/</c>).<para/>
-            This method is unchecked. It does not look to see if the file is an actual proper file. Please be careful.
+            Similar to <see cref="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.HandleClydeFile(System.IO.FileInfo,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},System.Boolean,System.Object,System.Boolean,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,System.Object})"/>, except it just returns the raw object returned by clyde. This will return <see langword="null"/> if the model fails to laod.
             </summary>
             <param name="clydeFile"></param>
+            <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodesForMeshes(com.threerings.opengl.model.config.ModelConfig,com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,ThreeRingsSharp.XansData.Model3D},System.String)">
             <summary>
@@ -68,6 +103,8 @@
             <param name="parent">The parent node to iterate through.</param>
             <param name="models">The <see cref="T:System.Collections.Generic.List`1"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
             <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
+            <param name="initialTransform"></param>
+            <param name="nodeModels"></param>
             <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil.HandleConfigReference(System.IO.FileInfo,com.threerings.config.ConfigReference,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.Object})">
@@ -694,7 +731,13 @@
         </member>
         <member name="T:ThreeRingsSharp.Utility.DummyScope">
             <summary>
-            Used for the parsing of <see cref="T:com.threerings.opengl.model.config.ConditionalConfig"/>s, this provides an object implementing <see cref="T:com.threerings.expr.Scope"/> which returns null data.
+            Provides an means of lazily implementing <see cref="T:com.threerings.expr.Scope"/>.<para/>
+            A <see cref="T:com.threerings.expr.Scope"/> is basically a glorified reflection accessor.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utility.DummyScope.ReferenceObject">
+            <summary>
+            The object that this <see cref="T:com.threerings.expr.Scope"/> is pointing to.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.Utility.Interface.AsyncMessageBox">
@@ -1735,6 +1778,57 @@
             <param name="text"></param>
             <param name="color"></param>
         </member>
+        <member name="T:ThreeRingsSharp.XansData.Animation">
+            <summary>
+            Represents an animation.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Animation.Name">
+            <summary>
+            The name of this animation.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Animation.Keyframes">
+            <summary>
+            The keyframes of this animation.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Animation.OrderedKeyframes">
+            <summary>
+            Returns <see cref="P:ThreeRingsSharp.XansData.Animation.Keyframes"/> but in a manner where the order of the list reflects the order of the keyframes in time.<para/>
+            Note: This can be expensive to reference.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Animation.Keyframe">
+            <summary>
+            Represents a keyframe in the animation.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Animation.Keyframe.Time">
+            <summary>
+            The time that this <see cref="T:ThreeRingsSharp.XansData.Animation.Keyframe"/> occurs at.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Animation.Keyframe.Keys">
+            <summary>
+            All of the individual animation keys that this <see cref="T:ThreeRingsSharp.XansData.Animation.Keyframe"/> collectively contains.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Animation.Key">
+            <summary>
+            Represents an individual animation key for a specific node. Intended to be parented to a <see cref="T:ThreeRingsSharp.XansData.Animation.Keyframe"/> to get information like time.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Animation.Key.Node">
+            <summary>
+            The bone this <see cref="T:ThreeRingsSharp.XansData.Animation.Key"/> applies to.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Animation.Key.Transform">
+            <summary>
+            The <see cref="T:com.threerings.math.Transform3D"/> that should be applied to the bone this <see cref="T:ThreeRingsSharp.XansData.Animation.Key"/> applies to.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.Armature">
             <summary>
             Intended to represent a bone in a mesh. It is incredibly similar to <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig.Node"/>, with the exception that its matrix is premultiplied for exporting.
@@ -1833,6 +1927,11 @@
             If <see langword="true"/>, texture files will always be imported into glTF even if it's set to reference in the program's configuration.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.DevelopmentFlags.FLAG_ALLOW_ANIMATION_EXPORTS">
+            <summary>
+            If <see langword="true"/>, animations can be exported.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.Exceptions.ClydeDataReadException">
             <summary>
             An exception that is thrown when a critical read error occurs when trying to process files.
@@ -1859,6 +1958,24 @@
         <member name="T:ThreeRingsSharp.XansData.Exceptions.InvalidTypeException">
             <summary>
             An exception thrown when a method that handles an arbitrary class type receives a type that is invalid for the given context (but is otherwise within constraints defined by the language)
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.AttributeExtension.GetSize(System.Type,System.Object)">
+            <summary>
+            Assuming <see cref="T:System.Type"/> is a GLTF value type, this will get the size attribute of the given field.
+            </summary>
+            <param name="type"></param>
+            <param name="fieldValue"></param>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Extensions.SizeAttribute">
+            <summary>
+            Allows an object to define its size. Size is arbitrary, but generally refers to bytes.<para/>
+            This is used by the <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> class in tandem with <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.GLTFComponentType"/> to automatically get the size of an accessor.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Extensions.SizeAttribute.Size">
+            <summary>
+            The size of this element.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.Extensions.ChoiceExtensions">
@@ -1938,6 +2055,23 @@
             <typeparam name="T">The destination type for the new ManagedConfig</typeparam>
             <returns>The ManagedConfig the given ConfigReference is pointing to.</returns>
             <exception cref="T:System.InvalidOperationException">If IsFileReference() returns true on this ConfigReference.</exception>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveFile``1(com.threerings.config.ConfigReference)">
+            <summary>
+            Attempts to resolve this <see cref="T:com.threerings.config.ConfigReference"/>, which is expected to point to a file, and returns the Clyde object that it points to.<para/>
+            This is intended for use in cases where data must absolutely be loaded in-line. Most cases are better suited for <see cref="T:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil"/> and its methods.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="cfgRef"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveFile(com.threerings.config.ConfigReference)">
+            <summary>
+            Attempts to resolve this <see cref="T:com.threerings.config.ConfigReference"/>, which is expected to point to a file, and returns the Clyde object that it points to.<para/>
+            This is intended for use in cases where data must absolutely be loaded in-line. Most cases are better suited for <see cref="T:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil"/> and its methods.
+            </summary>
+            <param name="cfgRef"></param>
+            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.XansData.Extensions.DeepObjectExtensions">
             <summary>
@@ -2200,9 +2334,16 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.SnakeToCamel(System.String)">
             <summary>
-            Converts a snake_case_string to a camelCaseString
+            Converts a <c>snake_case_string</c> to a <c>camelCaseString</c>.
             </summary>
             <param name="snakeCaseString"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.CamelToPascal(System.String)">
+            <summary>
+            Converts a <c>camelCaseString</c> to a <c>PascalCaseString</c>.
+            </summary>
+            <param name="camelCaseString"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.IsAlphanumeric(System.String)">
@@ -2210,6 +2351,27 @@
             Returns true if the string is alphanumeric, or, if it is within the range of a-z, A-Z, and 0-9.
             </summary>
             <param name="inp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.IsLowercase(System.String)">
+            <summary>
+            Returns <see langword="true"/> if all chars in <paramref name="text"/> are lowercase.
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.IsUppercase(System.String)">
+            <summary>
+            Returns <see langword="true"/> if all chars in <paramref name="text"/> are uppercase.
+            </summary>
+            <param name="text"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.IsNumeric(System.String)">
+            <summary>
+            Returns <see langword="true"/> if all the chars in this string are a number (0 - 9).
+            </summary>
+            <param name="text"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.WriteASCIIToByteArray(System.String,System.Byte[]@,System.Int32)">
@@ -2232,6 +2394,27 @@
             <summary>
             Returns the components of this <see cref="T:com.threerings.math.Transform3D"/>'s matrix in column-major order. If it does not have a matrix, one will be created via the promotion of a duplicate <see cref="T:com.threerings.math.Transform3D"/>.
             </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.GetAllComponents(com.threerings.math.Transform3D)">
+            <summary>
+            Returns the translation, rotation, and scale (in this order) of this <see cref="T:com.threerings.math.Transform3D"/> as float arrays.<para/>
+            <list type="number">
+            <item>
+            <term>float Translation[3]</term>
+            <description>{ x, y, z }</description>
+            </item>
+            <item>
+            <term>float Quaternion[4]</term>
+            <description>{ x, y, z, w }</description>
+            </item>
+            <item>
+            <term>float Scale[3]</term>
+            <description>{ x, y, z }</description>
+            </item>
+            </list>
+            </summary>
+            <param name="trs">The <see cref="T:com.threerings.math.Transform3D"/> to extract the components from.</param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.GetMatrixComponents(com.threerings.math.Matrix4f)">
@@ -2356,44 +2539,89 @@
             A <see langword="float"/> value.
             </summary>
         </member>
-        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.GLTFType">
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.GLTFValueType">
             <summary>
             Represents a type in glTF for use in accessors.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.SCALAR">
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFValueType.SCALAR">
             <summary>
             A scalar value, which contains a single component.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.VEC2">
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFValueType.VEC2">
             <summary>
             A Vector2 value, which contains 2 components.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.VEC3">
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFValueType.VEC3">
             <summary>
             A Vector3 value, which contains 3 components.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.VEC4">
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFValueType.VEC4">
             <summary>
             A Vector4 value, which contains 4 components.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.MAT2">
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFValueType.MAT2">
             <summary>
             A MAT2 value (2x2 transformation matrix), which contains 4 components.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.MAT3">
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFValueType.MAT3">
             <summary>
             A MAT3 value (3x3 transformation matrix), which contains 9 components.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFType.MAT4">
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFValueType.MAT4">
             <summary>
             A MAT4 value (4x4 transformation matrix), which contains 16 components.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.GLTFAnimationInterpolation">
+            <summary>
+            Represents a method of interpolation for animations.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFAnimationInterpolation.LINEAR">
+            <summary>
+            Represents linear motion.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFAnimationInterpolation.STEP">
+            <summary>
+            Represents constant interpolation, or, the latest keyframe is persistent until another keyframe overrides it later on.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFAnimationInterpolation.CUBICSPLINE">
+            <summary>
+            Represents a cubic spline interpolation pattern.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.GLTFAnimationPath">
+            <summary>
+            Represents what part of a node's transform a given <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAnimationChannel"/> affects.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFAnimationPath.TRANSLATION">
+            <summary>
+            Represents that this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAnimationChannel"/> affects the translation of the given node.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFAnimationPath.ROTATION">
+            <summary>
+            Represents that this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAnimationChannel"/> affects the rotation of the given node.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFAnimationPath.SCALE">
+            <summary>
+            Represents that this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAnimationChannel"/> affects the scale of the given node.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFAnimationPath.WEIGHTS">
+            <summary>
+            Represents that this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAnimationChannel"/> affects the weights of the given node.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter">
@@ -2451,9 +2679,14 @@
             Provides access to a <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFBufferView"/>.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.ThisIndex">
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.Size">
             <summary>
-            Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
+            The size of this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> in bytes.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.NeedsToCalculateSize">
+            <summary>
+            Will be <see langword="true"/> if <see cref="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.Size"/> needs to be recalculated.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.BufferView">
@@ -2493,6 +2726,31 @@
             The offset in the referenced buffer that this accessor should start at.
             </summary>
         </member>
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAnimation">
+            <summary>
+            Represents an animation object in a GLTF file.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAnimationChannel">
+            <summary>
+            Represents an animation sampler.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAnimationSampler.Input">
+            <summary>
+            The index of an accessor containing keyframe input values, e.g., time.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAnimationSampler.Interpolation">
+            <summary>
+            Interpolation algorithm.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAnimationSampler.Output">
+            <summary>
+            The index of an accessor containing keyframe output values.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAsset">
             <summary>
             Represents raw asset data for this glTF file, such as the version it's using and the tool that created the file.
@@ -2523,11 +2781,6 @@
             Represents a subsection of a complete data buffer.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFBufferView.ThisIndex">
-            <summary>
-            Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
-            </summary>
-        </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFBufferView.Buffer">
             <summary>
             The ID of the buffer to browse.
@@ -2551,11 +2804,6 @@
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFImage.URI">
             <summary>
             The path to the image. If this is set (not <see langword="null"/>), <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFImage.BufferView"/> and <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFImage.MimeType"/> will be ignored and this will be used instead.
-            </summary>
-        </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFImage.ThisIndex">
-            <summary>
-            Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFImage.BufferView">
@@ -2628,6 +2876,11 @@
             A list of the skins in this model, which determines rigging and allows for animation.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFJSONRoot.Animations">
+            <summary>
+            A list of animations this model has.
+            </summary>
+        </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFJSONRoot.Scene">
             <summary>
             The scene to use. Points to an entry in <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFJSONRoot.Scenes"/>.
@@ -2656,16 +2909,6 @@
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFMesh">
             <summary>
             Represents raw mesh data, which stores triangles, normals, uvs, and indices, alongside other mesh-related data.
-            </summary>
-        </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFMesh.ThisIndex">
-            <summary>
-            The index of this mesh in glTF data.
-            </summary>
-        </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.ThisIndex">
-            <summary>
-            Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Name">
@@ -2743,6 +2986,16 @@
             This also applies the up axis from <see cref="P:ThreeRingsSharp.XansData.Model3D.TargetUpAxis"/>.
             </summary>
             <param name="transform"></param>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFObject">
+            <summary>
+            The superclass of all json data in glTF files. This offers a field <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFObject.ThisIndex"/> which is used to track objects when constructing glTF files.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFObject.ThisIndex">
+            <summary>
+            Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
+            </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFPBRBaseColor">
             <summary>
@@ -2849,7 +3102,7 @@
             The ID of the <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> containing the weights for this skinned primitive.
             </summary>
         </member>
-        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFSampler">
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFTextureSampler">
             <summary>
             Represents an image sampler, which determines how an image is applied as a texture.
             </summary>
@@ -2867,11 +3120,6 @@
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFScene.Nodes">
             <summary>
             The IDs of the nodes included in this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFScene"/>.
-            </summary>
-        </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFSkin.ThisIndex">
-            <summary>
-            Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFSkin.InverseBindMatrices">
@@ -3458,6 +3706,11 @@
         <member name="P:ThreeRingsSharp.XansData.Model3D.AttachmentModel">
             <summary>
             The <see cref="T:ThreeRingsSharp.XansData.Model3D"/> that serves as this <see cref="T:ThreeRingsSharp.XansData.Model3D"/>'s parent. If <see cref="P:ThreeRingsSharp.XansData.Model3D.AttachmentNode"/> is set, it will take precedence over this.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.Animations">
+            <summary>
+            All animations that apply to this model.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.ExtraData">

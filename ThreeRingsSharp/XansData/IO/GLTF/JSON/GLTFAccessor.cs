@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System.Collections.Generic;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 
@@ -7,6 +8,38 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	/// Provides access to a <see cref="GLTFBufferView"/>.
 	/// </summary>
 	public class GLTFAccessor : GLTFObject {
+
+		#region Automatic Size
+
+		/// <summary>
+		/// The size of this <see cref="GLTFAccessor"/> in bytes.
+		/// </summary>
+		[JsonIgnore] public int Size { 
+			get {
+				if (NeedsToCalculateSize) {
+					CachedSize = Count * AttributeExtension.GetSize(typeof(GLTFComponentType), ComponentType) * AttributeExtension.GetSize(typeof(GLTFValueType), Type);
+					LastComponentType = ComponentType;
+					LastType = Type;
+					HasCalculatedSize = true;
+				}
+				return CachedSize;
+			}
+		}
+
+		#region Size Helpers
+		[JsonIgnore] private int CachedSize = -1;
+		[JsonIgnore] private bool HasCalculatedSize = false;
+		[JsonIgnore] private int LastComponentType = GLTFComponentType.BYTE;
+		[JsonIgnore] private string LastType = GLTFValueType.SCALAR;
+
+		/// <summary>
+		/// Will be <see langword="true"/> if <see cref="Size"/> needs to be recalculated.
+		/// </summary>
+		[JsonIgnore] private bool NeedsToCalculateSize => !HasCalculatedSize || (LastComponentType != ComponentType) || (LastType != Type);
+
+		#endregion
+
+		#endregion
 
 		/// <summary>
 		/// The <see cref="GLTFBufferView"/> this points to.
@@ -38,7 +71,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// <summary>
 		/// The type of model data this accessor represents, which determines is size.
 		/// </summary>
-		[JsonProperty("type")] public string Type = GLTFDataType.SCALAR;
+		[JsonProperty("type")] public string Type = GLTFValueType.SCALAR;
 
 		/// <summary>
 		/// The offset in the referenced buffer that this accessor should start at.

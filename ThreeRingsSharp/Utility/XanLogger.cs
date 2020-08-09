@@ -177,6 +177,9 @@ namespace ThreeRingsSharp.Utility {
 				_UpdateAutomatically = false;
 			}
 
+			if (IsUpdatingGUI) {
+				UpdateComplete.Wait();
+			}
 			LogWhileNotUpdating.Add((strippedText, writeColor, logLevel));
 			if (UpdateAutomatically) {
 				UpdateLog();

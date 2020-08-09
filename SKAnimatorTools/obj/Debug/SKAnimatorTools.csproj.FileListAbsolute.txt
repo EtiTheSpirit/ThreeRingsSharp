@@ -58,3 +58,4 @@ F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.Wi
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.Shell.xml
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.pdb
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.xml
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.Updater.resources

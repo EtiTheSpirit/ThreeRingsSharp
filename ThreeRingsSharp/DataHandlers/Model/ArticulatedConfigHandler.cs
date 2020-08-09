@@ -15,6 +15,8 @@ using static com.threerings.opengl.model.config.ArticulatedConfig;
 using static com.threerings.opengl.model.config.ModelConfig;
 using static com.threerings.opengl.model.config.ModelConfig.Imported;
 using ThreeRingsSharp.DataHandlers.Properties;
+using com.threerings.config;
+using ThreeRingsSharp.DataHandlers.AnimationHandlers;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
 	class ArticulatedConfigHandler : Singleton<ArticulatedConfigHandler>, IModelDataHandler, IDataTreeInterface<ArticulatedConfig> {
@@ -39,6 +41,8 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			VisibleMesh[] renderedMeshes = meshes.visible;
 			Dictionary<string, Armature> allInstantiatedArmatures = new Dictionary<string, Armature>();
 
+			List<Model3D> riggedVisibleModels = new List<Model3D>();
+
 			int idx = 0;
 			string depth1Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile);
 			string fullDepthName = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile, -1);
@@ -48,7 +52,6 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle, model.root);
 				meshToModel.Name = depth1Name + meshTitle;
 				if (globalTransform != null) meshToModel.Transform.composeLocal(globalTransform);
-				//meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
 				meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
 				meshToModel.ActiveTexture = mesh.texture;
 				if (meshToModel.Mesh.HasBoneData) {
@@ -58,6 +61,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					foreach (KeyValuePair<string, Armature> boneNamesToBones in meshToModel.Mesh.AllBones) {
 						allInstantiatedArmatures[boneNamesToBones.Key] = boneNamesToBones.Value;
 					}
+					riggedVisibleModels.Add(meshToModel);
 				}
 				modelCollection.Add(meshToModel);
 				idx++;
@@ -97,7 +101,19 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						}
 					}
 				}
-			}	
+			}
+
+			
+			foreach (AnimationMapping animationMapping in model.animationMappings) {
+				ConfigReference animationRef = animationMapping.animation;
+				if (animationRef.IsFileReference()) {
+					object animationObj = animationRef.ResolveFile();
+					if (animationObj is AnimationConfig animation) { 
+						AnimationConfigHandler.HandleAnimationImplementation(animationMapping.name, animation.implementation, riggedVisibleModels);
+					}
+				}
+			}
+			
 		}
 
 		/// <summary>
@@ -110,6 +126,8 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// <param name="parent">The parent node to iterate through.</param>
 		/// <param name="models">The <see cref="List{T}"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
 		/// <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
+		/// <param name="initialTransform"></param>
+		/// <param name="nodeModels"></param>
 		/// <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
 		private void RecursivelyIterateNodesForMeshes(ModelConfig baseModel, ArticulatedConfig model, FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform, Transform3D initialTransform, Dictionary<string, Model3D> nodeModels, string fullDepthName) {
 			foreach (Node node in parent.children) {

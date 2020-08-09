@@ -14,12 +14,17 @@ namespace ThreeRingsSharp.XansData {
 		/// <summary>
 		/// If <see langword="true"/>, glTF will export bones. If <see langword="false"/>, glTF will export solid meshes only.
 		/// </summary>
-		public const bool FLAG_ALLOW_BONE_EXPORTS = true;
+		[Obsolete("This feature is fully functional and does not need a development flag.")] public const bool FLAG_ALLOW_BONE_EXPORTS = true;
 
 		/// <summary>
 		/// If <see langword="true"/>, texture files will always be imported into glTF even if it's set to reference in the program's configuration.
 		/// </summary>
-		public const bool FLAG_ALWAYS_EMBED_TEXTURES = false;
+		[Obsolete("This feature is fully functional and does not need a development flag.")] public const bool FLAG_ALWAYS_EMBED_TEXTURES = false;
+
+		/// <summary>
+		/// If <see langword="true"/>, animations can be exported.
+		/// </summary>
+		public const bool FLAG_ALLOW_ANIMATION_EXPORTS = true;
 
 	}
 }

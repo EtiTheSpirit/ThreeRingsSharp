@@ -133,10 +133,29 @@ namespace ThreeRingsSharp.XansData.Extensions {
 			if (!cfgRef.IsFileReference()) throw new InvalidOperationException("Cannot resolve this ConfigReference as a file because the file it points to does not exist (or it references an actual config object)!");
 			object clydeObject = ClydeFileHandler.GetRaw(new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + cfgRef.getName()));
 			if (clydeObject == null) throw new NullReferenceException("Failed to load Clyde file!");
-			
+
 			// Apply any arguments.
 			if (clydeObject is ParameterizedConfig paramCfg) paramCfg.ApplyArguments(cfgRef.getArguments() ?? new ArgumentMap());
 			return clydeObject as T;
+		}
+
+		/// <summary>
+		/// Attempts to resolve this <see cref="ConfigReference"/>, which is expected to point to a file, and returns the Clyde object that it points to.<para/>
+		/// This is intended for use in cases where data must absolutely be loaded in-line. Most cases are better suited for <see cref="ConfigReferenceUtil"/> and its methods.
+		/// </summary>
+		/// <param name="cfgRef"></param>
+		/// <returns></returns>
+		public static object ResolveFile(this ConfigReference cfgRef) {
+			if (!cfgRef.IsFileReference()) throw new InvalidOperationException("Cannot resolve this ConfigReference as a file because the file it points to does not exist (or it references an actual config object)!");
+			object clydeObject = ClydeFileHandler.GetRaw(new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + cfgRef.getName()));
+			if (clydeObject == null) throw new NullReferenceException("Failed to load Clyde file!");
+
+			// Apply any arguments.
+			if (clydeObject is ParameterizedConfig paramCfg) {
+				paramCfg.ApplyArguments(cfgRef.getArguments());
+				return paramCfg;
+			}
+			return clydeObject;
 		}
 
 		#endregion

@@ -55,11 +55,13 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
-		/// Converts a snake_case_string to a camelCaseString
+		/// Converts a <c>snake_case_string</c> to a <c>camelCaseString</c>.
 		/// </summary>
 		/// <param name="snakeCaseString"></param>
 		/// <returns></returns>
 		public static string SnakeToCamel(this string snakeCaseString) {
+			if (snakeCaseString == null) throw new ArgumentNullException("snakeCaseString");
+			if (!snakeCaseString.Contains("_")) return snakeCaseString;
 			string[] parts = snakeCaseString.Split('_');
 			if (parts.Length == 1) return parts[0];
 			string retn = parts[0];
@@ -69,6 +71,18 @@ namespace ThreeRingsSharp.XansData.Extensions {
 				retn += part.Substring(1);
 			}
 			return retn;
+		}
+
+		/// <summary>
+		/// Converts a <c>camelCaseString</c> to a <c>PascalCaseString</c>.
+		/// </summary>
+		/// <param name="camelCaseString"></param>
+		/// <returns></returns>
+		public static string CamelToPascal(this string camelCaseString) {
+			if (camelCaseString == null) throw new ArgumentNullException("camelCaseString");
+			string firstLetter = camelCaseString.Substring(0, 1);
+			if (firstLetter.IsUppercase()) return camelCaseString;
+			return firstLetter.ToUpper() + camelCaseString.Substring(1);
 		}
 
 		/// <summary>
@@ -83,6 +97,45 @@ namespace ThreeRingsSharp.XansData.Extensions {
 				bool isLow = (c >= 97 && c <= 122);
 				bool ok = isNumber || isCap || isLow;
 				if (!ok) return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Returns <see langword="true"/> if all chars in <paramref name="text"/> are lowercase.
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		public static bool IsLowercase(this string text) {
+			foreach (char c in text) {
+				bool isLow = c >= 97 && c <= 122;
+				if (!isLow) return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Returns <see langword="true"/> if all chars in <paramref name="text"/> are uppercase.
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		public static bool IsUppercase(this string text) {
+			foreach (char c in text) {
+				bool isCap = c >= 65 && c <= 90;
+				if (!isCap) return false;
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Returns <see langword="true"/> if all the chars in this string are a number (0 - 9).
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		public static bool IsNumeric(this string text) {
+			foreach (char c in text) {
+				bool isNumber = c >= 48 && c <= 57;
+				if (!isNumber) return false;
 			}
 			return true;
 		}

@@ -14,7 +14,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// </summary>
 		/// <param name="trs"></param>
 		/// <returns></returns>
-		public static (Vector3f, Quaternion, Vector3f, float) GetAllTransforms(this Transform3D trs) {
+		public static (Vector3f, Quaternion, Vector3f) GetAllTransforms(this Transform3D trs) {
 			// Translation will never fail, it directoy references m30, m31, and m32.
 			Vector3f translation = trs.extractTranslation();
 
@@ -30,7 +30,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 				rotation = trs.getRotation();
 			}
 
-			return (translation ?? new Vector3f(), rotation ?? Quaternion.IDENTITY, scale ?? new Vector3f(1, 1, 1), trs.getScale());
+			return (translation ?? new Vector3f(), rotation ?? Quaternion.IDENTITY, scale ?? new Vector3f(trs.getScale(), trs.getScale(), trs.getScale()));
 		}
 
 		/// <summary>
@@ -41,6 +41,36 @@ namespace ThreeRingsSharp.XansData.Extensions {
 			return trs.Clone().promote(Transform3D.GENERAL).getMatrix().GetMatrixComponents();
 		}
 
+
+		/// <summary>
+		/// Returns the translation, rotation, and scale (in this order) of this <see cref="Transform3D"/> as float arrays.<para/>
+		/// <list type="number">
+		/// <item>
+		/// <term>float Translation[3]</term>
+		/// <description>{ x, y, z }</description>
+		/// </item>
+		/// <item>
+		/// <term>float Quaternion[4]</term>
+		/// <description>{ x, y, z, w }</description>
+		/// </item>
+		/// <item>
+		/// <term>float Scale[3]</term>
+		/// <description>{ x, y, z }</description>
+		/// </item>
+		/// </list>
+		/// </summary>
+		/// <param name="trs">The <see cref="Transform3D"/> to extract the components from.</param>
+		/// <returns></returns>
+		public static (float[], float[], float[]) GetAllComponents(this Transform3D trs) {
+			Vector3f translation = trs.extractTranslation() ?? Vector3f.ZERO;
+			Quaternion rotation = trs.extractRotation() ?? Quaternion.IDENTITY;
+			Vector3f scale = trs.extractScale() ?? new Vector3f(trs.getScale(), trs.getScale(), trs.getScale());
+			return (
+				new float[] { translation.x, translation.y, translation.z },
+				new float[] { rotation.x, rotation.y, rotation.z, rotation.w },
+				new float[] { scale.x, scale.y, scale.z }
+			);
+		}
 
 		/// <summary>
 		/// Returns the components of this <see cref="Matrix4f"/> in column-major order.

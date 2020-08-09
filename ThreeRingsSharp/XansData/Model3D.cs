@@ -126,6 +126,11 @@ namespace ThreeRingsSharp.XansData {
 		public Model3D AttachmentModel { get; set; } = null;
 
 		/// <summary>
+		/// All animations that apply to this model.
+		/// </summary>
+		public List<Animation> Animations { get; } = new List<Animation>();
+
+		/// <summary>
 		/// Any extra information attached to this <see cref="Model3D"/> that serves as arbitrary data.
 		/// </summary>
 		public Dictionary<string, object> ExtraData { get; } = new Dictionary<string, object>();

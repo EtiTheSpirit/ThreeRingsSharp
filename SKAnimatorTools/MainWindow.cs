@@ -279,7 +279,7 @@ namespace SKAnimatorTools {
 			//BtnSaveModel.Enabled = CurrentBrancher.OK;
 			BtnSaveModel.Enabled = isOK;
 			XanLogger.UpdateAutomatically = true;
-			XanLogger.WriteLine($"Number of models loaded: {AllModels.Count} ({AllModels.Where(model => model.ExtraData.ContainsKey("UnselectedStaticSetModel")).Count()} as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)");
+			XanLogger.WriteLine($"Number of models loaded: {AllModels.Where(model => model.IsEmptyObject == false).Count()} ({AllModels.Where(model => model.ExtraData.ContainsKey("StaticSetConfig")).Count()} as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)");
 
 			// TODO: Something more efficient.
 			int meshCount = 0;
@@ -313,7 +313,7 @@ namespace SKAnimatorTools {
 					Model3D.ExportIntoOne(saveTo, targetFmt, AllModels.ToArray());
 					XanLogger.WriteLine($"Done! Exported to [{saveTo.FullName}]");
 				} catch (System.Exception ex) {
-					XanLogger.WriteLine($"Failed to save to [{saveTo.FullName}] -- Reason: {ex.GetType().Name} thrown!\n{ex.Message}");
+					XanLogger.WriteLine($"Failed to save to [{saveTo.FullName}] -- Reason: {ex.GetType().Name} thrown!\n{ex.Message}", color: Color.IndianRed);
 				}
 			}
 		}
@@ -326,7 +326,7 @@ namespace SKAnimatorTools {
 			if (associatedDataTreeObject != null) {
 				SetPropertiesMenu(associatedDataTreeObject);
 			} else {
-				Debug.WriteLine("Warning: Props is null!", false, Color.DarkGoldenrod);
+				XanLogger.WriteLine("Warning: Props is null!", XanLogger.DEBUG, Color.DarkGoldenrod);
 			}
 		}
 
