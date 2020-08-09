@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThreeRingsSharp.DataHandlers;
+using ThreeRingsSharp.DataHandlers.Model;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 
@@ -66,6 +68,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 			}
 		}
 
+		#region Resolution
 
 		/// <summary>
 		/// Using the information in this <see cref="ConfigReference"/>, the object this reference points to will be resolved and returned. This <see cref="ConfigReference"/> must point to an actual configuration. If it points to a file, an <see cref="InvalidOperationException"/> will be thrown.<para/>
@@ -114,6 +117,29 @@ namespace ThreeRingsSharp.XansData.Extensions {
 			// For now: Return the object without any changes.
 			return mgCfg;
 		}
+
+		#endregion
+
+		#region Resolution (Files)
+
+		/// <summary>
+		/// Attempts to resolve this <see cref="ConfigReference"/>, which is expected to point to a file, and returns the Clyde object that it points to.<para/>
+		/// This is intended for use in cases where data must absolutely be loaded in-line. Most cases are better suited for <see cref="ConfigReferenceUtil"/> and its methods.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="cfgRef"></param>
+		/// <returns></returns>
+		public static T ResolveFile<T>(this ConfigReference cfgRef) where T : class {
+			if (!cfgRef.IsFileReference()) throw new InvalidOperationException("Cannot resolve this ConfigReference as a file because the file it points to does not exist (or it references an actual config object)!");
+			object clydeObject = ClydeFileHandler.GetRaw(new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + cfgRef.getName()));
+			if (clydeObject == null) throw new NullReferenceException("Failed to load Clyde file!");
+			
+			// Apply any arguments.
+			if (clydeObject is ParameterizedConfig paramCfg) paramCfg.ApplyArguments(cfgRef.getArguments() ?? new ArgumentMap());
+			return clydeObject as T;
+		}
+
+		#endregion
 
 	}
 }
