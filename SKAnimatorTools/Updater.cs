@@ -10,7 +10,11 @@ using System.Windows.Forms;
 
 namespace SKAnimatorTools {
 	public partial class Updater : Form {
-		public Updater() {
+
+		public string LatestVersion { get; set; }
+
+		public Updater(string ver) {
+			LatestVersion = ver;
 			InitializeComponent();
 		}
 
@@ -20,7 +24,7 @@ namespace SKAnimatorTools {
 
 		private void BtnDownload_Click(object sender, EventArgs e) {
 			string dlLink = "https://github.com/XanTheDragon/ThreeRingsSharp/releases/download/{0}/ThreeRingsSharp.zip";
-			System.Diagnostics.Process.Start(string.Format(dlLink, MainWindow.THIS_VERSION));
+			System.Diagnostics.Process.Start(string.Format(dlLink, LatestVersion));
 			Close();
 			Environment.Exit(0);
 		}

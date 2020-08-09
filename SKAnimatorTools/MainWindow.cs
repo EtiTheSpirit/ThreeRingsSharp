@@ -64,7 +64,7 @@ namespace SKAnimatorTools {
 
 		public MainWindow() {
 			if (TryGetVersion(out string version) && version != THIS_VERSION) {
-				Updater updWindow = new Updater();
+				Updater updWindow = new Updater(version);
 				updWindow.ShowDialog(); // Because I want it to yield.
 			}
 
