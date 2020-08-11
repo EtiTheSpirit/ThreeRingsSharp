@@ -1,6 +1,11 @@
 # ThreeRingsSharp
+Abbreviated as TRS, this is port of Grey Havens's *Clyde*, *Narya*, *Nenya*, and *Vilya* libraries (as well as their dependencies) into C# via IKVM, because let's face it: Java is kinda stupid.
 
-Abbreviated as TRS or TR# (usually the former), this is port of Grey Havens's *Clyde*, *Narya*, *Nenya*, and *Vilya* libraries (as well as their dependencies) into C# via IKVM, because let's face it: Java is kinda stupid.
+# Download
+Downloads can be found in the little tiny "Releases" window on the right column. For ease of access, here's a link: https://github.com/XanTheDragon/ThreeRingsSharp/releases
+
+# Updates & Progress
+Check out the [Projects](https://github.com/XanTheDragon/ThreeRingsSharp/projects) tab, or more specifically, [Initial Program Design](https://github.com/XanTheDragon/ThreeRingsSharp/projects/1).
 
 # About
 The collective library is referred to as "ThreeRingsSharp" and provides access to the applicable libraries via IKVM's C#-based Java interface. It also provides a number of utilities designed for the extraction and translation of model data exported by Clyde into common 3D model formats. It is written and compiled with docs, and is intended to be used by other people in their own libraries too.
@@ -9,17 +14,17 @@ This repository effectively represents "Spiral Knights Animator Tools 2".
 
 # Images
 
-## Data Trees!
+## Clean Interface!
 
-![Data Tree](https://i.imgur.com/cDCoaNM.png)
+![Interface](https://i.imgur.com/M75YpwE.png)
 
-## Configuration!
+## Customization!
 
-![Config](https://i.imgur.com/sJi2phV.png)
+![Config](https://i.imgur.com/5uRgxBE.png)
 
-## Scene Exports!!!
+## Support for so much more!
 
-![Export Scenes](https://i.imgur.com/oEmLAsj.png)
+![Implementations](https://i.imgur.com/rdhWgIL.png)
 
 # Licensing Notice
 All referenced DLL files that have been converted with IKVM are, for obvious reasons, not included in the MIT license associated with ThreeRingsSharp. The license included strictly applies to the code I have authored in this project.
