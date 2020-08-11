@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 using java.lang;
 using java.io;
 using com.threerings.export;
@@ -16,6 +15,7 @@ using System.IO.Compression;
 using sun.misc;
 using com.google.common.io;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace ThreeRingsSharp.Utility {
 
@@ -27,7 +27,6 @@ namespace ThreeRingsSharp.Utility {
 
 		// TODO: Not use this.
 		private const string IMPLEMENTATION_TAG = "com.threerings.opengl.model.config.ModelConfig$Implementation";
-
 
 		/// <summary>
 		/// A very hacky method of returning the implementation of this model in its string form so that if Clyde can't read it, we can still see its name. This returns the full class name.<para/>
@@ -59,27 +58,50 @@ namespace ThreeRingsSharp.Utility {
 		}
 
 		/// <summary>
-		/// Returns <see langword="true"/> if the input <see cref="FileInfo"/> represents a file exported by Clyde. This tests the header of the file.
+		/// Returns <see langword="true"/> if the input <see cref="FileInfo"/> represents a file exported by Clyde. This tests the header of the file and searches accordingly:
+		/// <list type="table">
+		/// <item>
+		/// <term>Binary</term>
+		/// <description>Attempts to find <c>0xFACEAF0E</c> as the first four bytes, which is Clyde's header.</description>
+		/// </item>
+		/// <item>
+		/// <term>XML</term>
+		/// <description>Attempts to find the Java Class Attribute (<c>&lt;java class="com.threerings.export.XMLImporter" [...]&gt;</c>) at the start of the file.</description>
+		/// </item>
+		/// </list>
 		/// </summary>
-		/// <param name="datFile"></param>
+		/// <param name="clydeFile">The file to verify as a Clyde file.</param>
 		/// <returns></returns>
-		public static bool IsValidClydeFile(FileInfo datFile) {
-			if (datFile.Extension.ToLower() != ".dat") return true; // This is lazy, but it gives us the benefit of the doubt.
-			using (FileStream inp = datFile.OpenRead()) {
+		public static (bool, ClydeFormat) IsValidClydeFile(FileInfo clydeFile) {
+			using (FileStream inp = clydeFile.OpenRead()) {
 				byte[] header = new byte[4];
 				inp.Read(header, 0, 4);
 				uint headerInt = BitConverter.ToUInt32(header.Reverse().ToArray(), 0);
-				return headerInt == 0xFACEAF0E;
+				if (headerInt == 0xFACEAF0E) {
+					return (true, ClydeFormat.Binary);
+				}
 			}
+			using (FileStream inp = clydeFile.OpenRead()) {
+				try {
+					using (XmlReader reader = XmlReader.Create(inp)) {
+						reader.Read(); // Skip the first node.
+						if (reader.Name == "java" && reader.GetAttribute("class") == "com.threerings.export.XMLImporter") {
+							return (true, ClydeFormat.XML);
+						}
+					}
+				} catch (XmlException) { }
+			}
+			return (false, ClydeFormat.None);
 		}
 
 		/// <summary>
 		/// Returns three <see langword="string"/>, in order, the compression status (as a <see langword="string"/>, "Yes" or "No"), the version name (user friendly), and the implementation.
 		/// </summary>
 		/// <param name="clydeFile"></param>
+		/// <param name="format"></param>
 		/// <returns></returns>
-		public static (string, string, string) GetCosmeticInformation(FileInfo clydeFile) {
-			return clydeFile.Extension.ToLower() == ".dat" ? GetDat(clydeFile) : GetXML(clydeFile);
+		public static (string, string, string) GetCosmeticInformation(FileInfo clydeFile, ClydeFormat format) {
+			return format == ClydeFormat.Binary ? GetDat(clydeFile) : GetXML(clydeFile);
 		}
 
 		/// <summary>
@@ -132,5 +154,27 @@ namespace ThreeRingsSharp.Utility {
 			}
 			return ("N/A", version, impl);
 		}
+	}
+
+	/// <summary>
+	/// Describes the storage medium of a Clyde file (Binary vs XML)
+	/// </summary>
+	public enum ClydeFormat {
+
+		/// <summary>
+		/// This is not a Clyde file.
+		/// </summary>
+		None,
+		
+		/// <summary>
+		/// Represents a Clyde file in its binary format.
+		/// </summary>
+		Binary,
+
+		/// <summary>
+		/// Represents a Clyde file in its XML format.
+		/// </summary>
+		XML
+
 	}
 }

@@ -306,64 +306,6 @@ namespace ThreeRingsSharp.XansData {
 		}
 
 		/// <summary>
-		/// Performs the actual application of a <see cref="Transform3D"/> on this model's data, and also calls <see cref="ApplyAxialTransformationMod"/>.<para/>
-		/// This will do nothing if <see cref="HasTransformed"/> is <see langword="true"/>.
-		/// </summary>
-		/// <param name="transform"></param>
-		[Obsolete]
-		public void ApplyTransform(Transform3D transform) {
-			if (HasTransformed) return;
-
-			// Transform the referenced geometry here.
-			for (int idx = 0; idx < Vertices.Count; idx++) {
-				Vector3 vtx = transform.transformPoint(Vertices[idx]);
-				Vertices[idx] = vtx;
-			}
-
-			foreach (VertexGroup vtxGroup in VertexGroups) {
-				for (int idx = 0; idx < vtxGroup.Vertices.Count; idx++) {
-					Vertex vtx = vtxGroup.Vertices[idx];
-					vtx.Point = transform.transformPoint(vtx.Point);
-					vtxGroup.Vertices[idx] = vtx;
-				}
-			}
-
-			// ApplyAxialTransformationMod();
-
-			HasTransformed = true;
-		}
-
-		/// <summary>
-		/// Rearranges all of the data in this <see cref="MeshData"/> based on <see cref="Model3D.TargetUpAxis"/>.<para/>
-		/// This will do nothing if <see cref="HasAxialTransformed"/> is <see langword="true"/>.
-		/// </summary>
-		[Obsolete("This causes malformed and incorrect exports to occur. It's also now set directly when exporting as to not mutate model data.", true)]
-		public void ApplyAxialTransformationMod() {
-			if (HasAxialTransformed) return;
-			
-			// Transform the referenced geometry here.
-			for (int idx = 0; idx < Vertices.Count; idx++) {
-				Vector3 vtx = Vertices[idx];
-				Vertices[idx] = vtx.RotateToAxis(Model3D.TargetUpAxis);
-			}
-
-			for (int idx = 0; idx < Normals.Count; idx++) {
-				Vector3 vtx = Normals[idx];
-				Normals[idx] = vtx.RotateToAxis(Model3D.TargetUpAxis);
-			}
-
-			foreach (VertexGroup vtxGroup in VertexGroups) {
-				for (int idx = 0; idx < vtxGroup.Vertices.Count; idx++) {
-					Vertex vtx = vtxGroup.Vertices[idx];
-					vtx.Point = vtx.Point.RotateToAxis(Model3D.TargetUpAxis);
-					vtxGroup.Vertices[idx] = vtx;
-				}
-			}
-			
-			HasAxialTransformed = true;
-		}
-
-		/// <summary>
 		/// Clones this <see cref="MeshData"/>.<para/>
 		/// This automatically registers the cloned mesh in <see cref="MeshDataBindings"/>.
 		/// </summary>

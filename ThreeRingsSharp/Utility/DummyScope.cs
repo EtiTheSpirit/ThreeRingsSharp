@@ -31,7 +31,10 @@ namespace ThreeRingsSharp.Utility {
 		}
 
 		public object get(string str, Class c) {
-			return ScopeUtil.get(ReferenceObject, str, c);
+			try {
+				return ScopeUtil.get(ReferenceObject, str ?? "", c ?? null);
+			} catch { }
+			return null;
 		}
 
 		public Scope getParentScope() {

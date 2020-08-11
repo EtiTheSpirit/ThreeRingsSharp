@@ -43,17 +43,32 @@ namespace ThreeRingsSharp.DataHandlers {
 		/// </summary>
 		public static Action<string, string, string, string> UpdateGUIAction { get; set; } = null;
 
+
 		/// <summary>
-		/// Given a <see cref="FileInfo"/> of a clyde file, this will return the appropriate importer (binary or XML)<para/>
-		/// Remember to close the importer after you're done using it c:
+		/// Depending on the value of the input <see cref="ClydeFormat"/>, this will return the appropriate <see cref="Importer"/> to read the given <paramref name="clydeFile"/>. Remember to close the <see cref="Importer"/>!<para/>
+		/// <list type="table">
+		/// <item>
+		/// <term><c>ClydeFormat.Binary</c></term>
+		/// <description><see cref="BinaryImporter"/></description>
+		/// </item>
+		/// <item>
+		/// <term><c>ClydeFormat.XML</c></term>
+		/// <description><see cref="XMLImporter"/></description>
+		/// </item>
+		/// <item>
+		/// <term><c>ClydeFormat.None</c></term>
+		/// <description><see langword="null"/></description>
+		/// </item>
+		/// </list>
 		/// </summary>
+		/// <param name="clydeFile"></param>
+		/// <param name="format"></param>
 		/// <returns></returns>
-		private static Importer GetAppropriateImporter(FileInfo clydeFile) {
+		private static Importer GetAppropriateImporter(FileInfo clydeFile, ClydeFormat format) {
 			DataInputStream dataInput = new DataInputStream(new FileInputStream(clydeFile.FullName));
-			return clydeFile.Extension.ToLower() == ".dat" ? (Importer)new BinaryImporter(dataInput) : (Importer)new XMLImporter(dataInput);
-			// Cast ^ says it's redundant, but this isn't C# 9.0 so it goes apeshit because it can't cast between BinaryImporter and XMLImporter.
-			// (C# 9.0 added the capibility for ternary operators to have different return types should they
-			// share the same base class or use a keyword that allows for it, but I'm not using this.)
+			if (format == ClydeFormat.Binary) return new BinaryImporter(dataInput);
+			if (format == ClydeFormat.XML) return new XMLImporter(dataInput);
+			return null;
 		}
 
 		/// <summary>
@@ -83,11 +98,13 @@ namespace ThreeRingsSharp.DataHandlers {
 			// This isn't really important for single models, but for loading stuff like scenes, this speeds up load speed incredibly.
 			if (!ClydeObjectCache.ContainsKey(clydeFile.FullName)) {
 				XanLogger.WriteLine($"Loading [{clydeFile.FullName}] because it hasn't been initialized before...", XanLogger.DEBUG);
-				if (!VersionInfoScraper.IsValidClydeFile(clydeFile)) {
+				(bool isValidClydeFile, ClydeFormat format) = VersionInfoScraper.IsValidClydeFile(clydeFile);
+
+				if (!isValidClydeFile) {
 					XanLogger.WriteLine("Invalid file. Sending error.", XanLogger.DEBUG);
 					throw new ClydeDataReadException("This file isn't a valid Clyde file! (Reason: Incorrect header)");
 				}
-				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(clydeFile);
+				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(clydeFile, format);
 				XanLogger.WriteLine($"Read file to grab the raw info.", XanLogger.TRACE);
 				string modelFullClass = cosmeticInfo.Item3;
 				string[] modelClassInfo = JavaClassNameStripper.GetSplitClassName(modelFullClass);
@@ -117,7 +134,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					UpdateGUIAction(clydeFile.Name, cosmeticInfo.Item1, cosmeticInfo.Item2, "Processing...");
 				}
 
-				Importer targetImporter = GetAppropriateImporter(clydeFile);
+				Importer targetImporter = GetAppropriateImporter(clydeFile, format);
 				try {
 					obj = targetImporter.readObject();
 					ClydeObjectCache[clydeFile.FullName] = obj;
@@ -231,11 +248,13 @@ namespace ThreeRingsSharp.DataHandlers {
 			
 			if (!ClydeObjectCache.ContainsKey(clydeFile.FullName)) {
 				XanLogger.WriteLine($"Loading [{clydeFile.FullName}] because it hasn't been initialized before...", XanLogger.DEBUG);
-				if (!VersionInfoScraper.IsValidClydeFile(clydeFile)) {
+				(bool isValidClydeFile, ClydeFormat format) = VersionInfoScraper.IsValidClydeFile(clydeFile);
+
+				if (!isValidClydeFile) {
 					XanLogger.WriteLine("Invalid file. Sending error.", XanLogger.DEBUG);
 					throw new ClydeDataReadException("This file isn't a valid Clyde file! (Reason: Incorrect header)");
 				}
-				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(clydeFile);
+				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(clydeFile, format);
 				XanLogger.WriteLine($"Read file to grab the raw info.", XanLogger.TRACE);
 				string modelClass = null;
 
@@ -245,7 +264,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					return null;
 				}
 
-				Importer targetImporter = GetAppropriateImporter(clydeFile);
+				Importer targetImporter = GetAppropriateImporter(clydeFile, format);
 				try {
 					obj = targetImporter.readObject();
 					ClydeObjectCache[clydeFile.FullName] = obj;

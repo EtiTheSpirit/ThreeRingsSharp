@@ -34,11 +34,6 @@ namespace ThreeRingsSharp.XansData {
 		};
 
 		/// <summary>
-		/// The axis that represents the vertical component. This should be set depending on the program the model will be imported to.
-		/// </summary>
-		public static Axis TargetUpAxis { get; set; } = Axis.PositiveY;
-
-		/// <summary>
 		/// Multiplies the scale of exported models by 100. This is really handy for a lot of models but may cause others to be huge.<para/>
 		/// This is <see langword="true"/> by default since it's used more than it isn't.
 		/// </summary>
@@ -146,25 +141,6 @@ namespace ThreeRingsSharp.XansData {
 			var factory = ExporterBindings[targetFormat];
 			AbstractModelExporter exporter = factory.NewInstance();
 			exporter.Export(new Model3D[] { this }, targetFile);
-		}
-
-
-		/// <summary>
-		/// This should only be used in contexts where the exported model format does not have abstractions between objects and mesh data (e.g. formats like OBJ)!<para/>
-		/// This duplicates <see cref="Mesh"/> into a new instance made just for this <see cref="Model3D"/> and then applies <see cref="Transform"/> to its contents.<para/>
-		/// This can only be called once (subsequent calls will do nothing.)
-		/// </summary>
-		[Obsolete]
-		public void ApplyTransformations() {
-			if (HasDoneTransformation) return;
-
-			ApplyScaling();
-			// Now dupe the mesh data since we no longer will be sharing refs.
-			// We need to unregister the old mesh.
-			Mesh = Mesh.Clone();
-			Mesh.ApplyTransform(Transform);
-
-			HasDoneTransformation = true;
 		}
 
 		/// <summary>

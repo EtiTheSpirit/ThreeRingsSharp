@@ -60,7 +60,7 @@ namespace ThreeRingsSharp.Utility {
 				retn += str + separator;
 			}
 			string name = fileIn.Name;
-			if (removeExtension) name = name.Replace(fileIn.Extension, "");
+			if (removeExtension && !string.IsNullOrEmpty(fileIn.Extension)) name = name.Replace(fileIn.Extension, "");
 			retn += name;
 			return retn;
 		}
@@ -92,7 +92,9 @@ namespace ThreeRingsSharp.Utility {
 				retn += str + separator;
 			}
 			string name = fileIn.Name;
-			if (removeExtension) name = name.Replace(fileIn.Extension, "");
+			if (!string.IsNullOrEmpty(fileIn.Extension)) {
+				if (removeExtension) name = name.Replace(fileIn.Extension, "");
+			}
 			retn += name;
 			return retn;
 			

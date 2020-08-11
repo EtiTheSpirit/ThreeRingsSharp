@@ -9,7 +9,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThreeRingsSharp.Utility;
-
 using java.lang;
 using java.io;
 using com.threerings.export;
@@ -35,7 +34,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The version of this release of the program.
 		/// </summary>
-		public const string THIS_VERSION = "1.3.0";
+		public const string THIS_VERSION = "1.3.1";
 
 		[DllImport("user32.dll")]
 		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -96,7 +95,6 @@ namespace SKAnimatorTools {
 			bool restoreDirectoryWhenLoading = ConfigurationInterface.GetConfigurationValue("RememberDirectoryAfterOpen", false, true);
 			Model3D.MultiplyScaleByHundred = ConfigurationInterface.GetConfigurationValue("ScaleBy100", false, true);
 			Model3D.ProtectAgainstZeroScale = ConfigurationInterface.GetConfigurationValue("ProtectAgainstZeroScale", true, true);
-			Model3D.TargetUpAxis = ConfigurationForm.AxisIntMap[(int)ConfigurationInterface.GetConfigurationValue("UpAxisIndex", 1, true)];
 			GLTFExporter.EmbedTextures = ConfigurationInterface.GetConfigurationValue("EmbedTextures", false, true);
 			bool? verboseLogging = (bool?)ConfigurationInterface.GetConfigurationValue("VerboseLogging", null, true);
 			if (verboseLogging != null) {
@@ -219,20 +217,29 @@ namespace SKAnimatorTools {
 
 		private void OpenClicked(object sender, EventArgs e) {
 			if (IsYieldingForModel) return;
-			DialogResult result = OpenModel.ShowDialog();
-			if (result == DialogResult.OK) {
+			OpenModel.ShowDialog();
+		}
 
-				if (!ConfigReferenceBootstrapper.HasPopulatedConfigs) {
-					XanLogger.WriteLine("Just a second! I'm still loading up the config references. The model will load once that's done.");
-					XanLogger.UpdateLog();
-					IsYieldingForModel = true;
-					BtnOpenModel.Enabled = false;
-					ConfigReferenceBootstrapper.OnConfigsPopulatedAction = new Action(OnConfigsPopulated);
-					return;
-				}
-
-				LoadOpenedModel();
+		private void OnFileSelectedOpenModel(object sender, CancelEventArgs e) {
+			FileInfo file = new FileInfo(OpenModel.FileName);
+			if (!VersionInfoScraper.IsValidClydeFile(file).Item1) {
+				XanLogger.WriteLine("Can't open this file! It is not a valid Clyde file.", color: Color.DarkGoldenrod);
+				XanLogger.UpdateLog();
+				e.Cancel = true;
+				return;
 			}
+
+			// Check if the program has loaded up all of the external data, if it hasn't, wait.
+			if (!ConfigReferenceBootstrapper.HasPopulatedConfigs) {
+				XanLogger.WriteLine("Just a second! I'm still loading up the config references. The model will load once that's done.");
+				XanLogger.UpdateLog();
+				IsYieldingForModel = true;
+				BtnOpenModel.Enabled = false;
+				ConfigReferenceBootstrapper.OnConfigsPopulatedAction = new Action(OnConfigsPopulated);
+				return;
+			}
+
+			LoadOpenedModel();
 		}
 
 		private void LoadOpenedModel() {
@@ -540,5 +547,7 @@ namespace SKAnimatorTools {
 				prompt.Show();
 			}
 		}
+
+		
 	}
 }

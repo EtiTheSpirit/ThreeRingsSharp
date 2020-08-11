@@ -232,7 +232,6 @@
     <Compile Include="XansData\IO\GLTF\JSON\GLTFSkin.cs" />
     <Compile Include="XansData\IO\GLTF\JSON\GLTFTexture.cs" />
     <Compile Include="XansData\IO\ModelExporterFactory.cs" />
-    <Compile Include="XansData\IO\OBJExporter.cs" />
     <Compile Include="XansData\Extensions\EnumerableExtension.cs" />
     <Compile Include="XansData\MeshData.cs" />
     <Compile Include="XansData\ModelFormat.cs" />

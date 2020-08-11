@@ -24,6 +24,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// A map from <see cref="int"/> to <see cref="Axis"/> values based on their index in the dropdown menu.
 		/// </summary>
+		[Obsolete("Up axis doesn't exist and has been removed")]
 		public static IReadOnlyDictionary<int, Axis> AxisIntMap = new Dictionary<int, Axis>() {
 			[0] = Axis.PositiveX,
 			[1] = Axis.PositiveY,

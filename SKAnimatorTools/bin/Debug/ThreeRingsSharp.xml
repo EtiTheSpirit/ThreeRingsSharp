@@ -65,11 +65,26 @@
             string type (the base class, e.g. ModelConfig, AnimationConfig, ScriptedConfig)</c>
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.GetAppropriateImporter(System.IO.FileInfo)">
+        <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.GetAppropriateImporter(System.IO.FileInfo,ThreeRingsSharp.Utility.ClydeFormat)">
             <summary>
-            Given a <see cref="T:System.IO.FileInfo"/> of a clyde file, this will return the appropriate importer (binary or XML)<para/>
-            Remember to close the importer after you're done using it c:
+            Depending on the value of the input <see cref="T:ThreeRingsSharp.Utility.ClydeFormat"/>, this will return the appropriate <see cref="T:com.threerings.export.Importer"/> to read the given <paramref name="clydeFile"/>. Remember to close the <see cref="T:com.threerings.export.Importer"/>!<para/>
+            <list type="table">
+            <item>
+            <term><c>ClydeFormat.Binary</c></term>
+            <description><see cref="T:com.threerings.export.BinaryImporter"/></description>
+            </item>
+            <item>
+            <term><c>ClydeFormat.XML</c></term>
+            <description><see cref="T:com.threerings.export.XMLImporter"/></description>
+            </item>
+            <item>
+            <term><c>ClydeFormat.None</c></term>
+            <description><see langword="null"/></description>
+            </item>
+            </list>
             </summary>
+            <param name="clydeFile"></param>
+            <param name="format"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.HandleClydeFile(System.IO.FileInfo,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},System.Boolean,System.Object,System.Boolean,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,System.Object})">
@@ -1631,16 +1646,27 @@
         </member>
         <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.IsValidClydeFile(System.IO.FileInfo)">
             <summary>
-            Returns <see langword="true"/> if the input <see cref="T:System.IO.FileInfo"/> represents a file exported by Clyde. This tests the header of the file.
+            Returns <see langword="true"/> if the input <see cref="T:System.IO.FileInfo"/> represents a file exported by Clyde. This tests the header of the file and searches accordingly:
+            <list type="table">
+            <item>
+            <term>Binary</term>
+            <description>Attempts to find <c>0xFACEAF0E</c> as the first four bytes, which is Clyde's header.</description>
+            </item>
+            <item>
+            <term>XML</term>
+            <description>Attempts to find the Java Class Attribute (<c>&lt;java class="com.threerings.export.XMLImporter" [...]&gt;</c>) at the start of the file.</description>
+            </item>
+            </list>
             </summary>
-            <param name="datFile"></param>
+            <param name="clydeFile">The file to verify as a Clyde file.</param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.GetCosmeticInformation(System.IO.FileInfo)">
+        <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.GetCosmeticInformation(System.IO.FileInfo,ThreeRingsSharp.Utility.ClydeFormat)">
             <summary>
             Returns three <see langword="string"/>, in order, the compression status (as a <see langword="string"/>, "Yes" or "No"), the version name (user friendly), and the implementation.
             </summary>
             <param name="clydeFile"></param>
+            <param name="format"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.GetDat(System.IO.FileInfo)">
@@ -1656,6 +1682,26 @@
             </summary>
             <param name="clydeFile"></param>
             <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.Utility.ClydeFormat">
+            <summary>
+            Describes the storage medium of a Clyde file (Binary vs XML)
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.ClydeFormat.None">
+            <summary>
+            This is not a Clyde file.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.ClydeFormat.Binary">
+            <summary>
+            Represents a Clyde file in its binary format.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.ClydeFormat.XML">
+            <summary>
+            Represents a Clyde file in its XML format.
+            </summary>
         </member>
         <member name="F:ThreeRingsSharp.Utility.XanLogger.STANDARD">
             <summary>
@@ -2983,7 +3029,7 @@
         <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.SetTransform(com.threerings.math.Transform3D)">
             <summary>
             Sets all applicable transformation-related properties from the given <see cref="T:com.threerings.math.Transform3D"/>.<para/>
-            This also applies the up axis from <see cref="P:ThreeRingsSharp.XansData.Model3D.TargetUpAxis"/>.
+            This also applies the up axis from <see cref="!:Model3D.TargetUpAxis"/>.
             </summary>
             <param name="transform"></param>
         </member>
@@ -3169,41 +3215,6 @@
             <returns></returns>
             <exception cref="T:ThreeRingsSharp.XansData.Exceptions.InvalidTypeException">If the user tries to create a <see cref="T:ThreeRingsSharp.XansData.IO.AbstractModelExporter"/> itself.</exception>
         </member>
-        <member name="T:ThreeRingsSharp.XansData.IO.OBJExporter">
-            <summary>
-            Exports model data in the Wavefront OBJ format.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.IO.OBJExporter.WriteVertex(System.Text.StringBuilder,ThreeRingsSharp.XansData.Structs.Vector3)">
-            <summary>
-            Writes a vertex to the given <see cref="T:System.Text.StringBuilder"/>.
-            </summary>
-            <param name="objBuilder">A reference to the <see cref="T:System.Text.StringBuilder"/> which is being used to construct the OBJ file.</param>
-            <param name="vertex">The <see cref="T:ThreeRingsSharp.XansData.Structs.Vector3"/> to write as a vertex.</param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.IO.OBJExporter.WriteNormal(System.Text.StringBuilder,ThreeRingsSharp.XansData.Structs.Vector3)">
-            <summary>
-            Writes a vertex normal to the given <see cref="T:System.Text.StringBuilder"/>.
-            </summary>
-            <param name="objBuilder">A reference to the <see cref="T:System.Text.StringBuilder"/> which is being used to construct the OBJ file.</param>
-            <param name="normal">The <see cref="T:ThreeRingsSharp.XansData.Structs.Vector3"/> to write as a normal.</param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.IO.OBJExporter.WriteUVCoordinate(System.Text.StringBuilder,ThreeRingsSharp.XansData.Structs.Vector2)">
-            <summary>
-            Writes a UV Coordinate to the given <see cref="T:System.Text.StringBuilder"/>.
-            </summary>
-            <param name="objBuilder">A reference to the <see cref="T:System.Text.StringBuilder"/> which is being used to construct the OBJ file.</param>
-            <param name="uv">The <see cref="T:ThreeRingsSharp.XansData.Structs.Vector2"/> to write as a UV Coordinate</param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.IO.OBJExporter.WriteIndexTriplet(System.Text.StringBuilder,System.Collections.Generic.List{System.UInt16},System.Int32,System.Int32)">
-            <summary>
-            Writes the given indices to the given <see cref="T:System.Text.StringBuilder"/>. This adds 1 to all of the indices so that they are compliant with OBJ standards.
-            </summary>
-            <param name="objBuilder">A reference to the <see cref="T:System.Text.StringBuilder"/> which is being used to construct the OBJ file.</param>
-            <param name="indices">The list of indices for this 3D model.</param>
-            <param name="tripletStartIndex">An index multiplied by 3 to represent where to get a triplet from (so an index of 0 would be indices[0], [1], and [2], and an index of 1 would be [3], [4], and [5])</param>
-            <param name="indexOffset">The value to offset geometry indices by.</param>
-        </member>
         <member name="T:ThreeRingsSharp.XansData.MeshData">
             <summary>
             Represents mesh data. This is referenced by <see cref="T:ThreeRingsSharp.XansData.Model3D"/>s to determine their mesh data.<para/>
@@ -3304,12 +3315,12 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.HasTransformed">
             <summary>
-            If <see langword="true"/>, <see cref="M:ThreeRingsSharp.XansData.MeshData.ApplyTransform(com.threerings.math.Transform3D)"/> has already been called.
+            If <see langword="true"/>, <see cref="!:ApplyTransform(Transform3D)"/> has already been called.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.HasAxialTransformed">
             <summary>
-            If <see langword="true"/>, <see cref="M:ThreeRingsSharp.XansData.MeshData.ApplyAxialTransformationMod"/> has already been called. Axial transformations change the up axis based on <see cref="P:ThreeRingsSharp.XansData.Model3D.TargetUpAxis"/>.
+            If <see langword="true"/>, <see cref="!:ApplyAxialTransformationMod"/> has already been called. Axial transformations change the up axis based on <see cref="!:Model3D.TargetUpAxis"/>.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.VertexOffset">
@@ -3364,19 +3375,6 @@
             Constructs all <see cref="T:ThreeRingsSharp.XansData.Structs.VertexGroup"/> instances automatically.
             </summary>
             <exception cref="T:System.ObjectDisposedException">If this <see cref="T:ThreeRingsSharp.XansData.MeshData"/> has been disposed.</exception>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.MeshData.ApplyTransform(com.threerings.math.Transform3D)">
-            <summary>
-            Performs the actual application of a <see cref="T:com.threerings.math.Transform3D"/> on this model's data, and also calls <see cref="M:ThreeRingsSharp.XansData.MeshData.ApplyAxialTransformationMod"/>.<para/>
-            This will do nothing if <see cref="P:ThreeRingsSharp.XansData.MeshData.HasTransformed"/> is <see langword="true"/>.
-            </summary>
-            <param name="transform"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.MeshData.ApplyAxialTransformationMod">
-            <summary>
-            Rearranges all of the data in this <see cref="T:ThreeRingsSharp.XansData.MeshData"/> based on <see cref="P:ThreeRingsSharp.XansData.Model3D.TargetUpAxis"/>.<para/>
-            This will do nothing if <see cref="P:ThreeRingsSharp.XansData.MeshData.HasAxialTransformed"/> is <see langword="true"/>.
-            </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.Clone">
             <summary>
@@ -3633,11 +3631,6 @@
             A list of bindings from <see cref="T:ThreeRingsSharp.XansData.ModelFormat"/>s to a singleton of their applicable <see cref="T:ThreeRingsSharp.XansData.IO.AbstractModelExporter"/>.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.XansData.Model3D.TargetUpAxis">
-            <summary>
-            The axis that represents the vertical component. This should be set depending on the program the model will be imported to.
-            </summary>
-        </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.MultiplyScaleByHundred">
             <summary>
             Multiplies the scale of exported models by 100. This is really handy for a lot of models but may cause others to be huge.<para/>
@@ -3680,7 +3673,7 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.HasDoneTransformation">
             <summary>
-            If true, then <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> has been applied to the mesh data, and <see cref="M:ThreeRingsSharp.XansData.Model3D.ApplyTransformations"/> cannot be called again.
+            If true, then <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> has been applied to the mesh data, and <see cref="!:ApplyTransformations"/> cannot be called again.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.HasAppliedScaleCorrections">
@@ -3724,13 +3717,6 @@
             </summary>
             <param name="targetFile">The file that will be written to.</param>
             <param name="targetFormat">The file format to use for the 3D model.</param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Model3D.ApplyTransformations">
-            <summary>
-            This should only be used in contexts where the exported model format does not have abstractions between objects and mesh data (e.g. formats like OBJ)!<para/>
-            This duplicates <see cref="P:ThreeRingsSharp.XansData.Model3D.Mesh"/> into a new instance made just for this <see cref="T:ThreeRingsSharp.XansData.Model3D"/> and then applies <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> to its contents.<para/>
-            This can only be called once (subsequent calls will do nothing.)
-            </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Model3D.ApplyScaling">
             <summary>

@@ -62,12 +62,15 @@
 			this.SaveModel.Filter = "gLTF 2.0 Binary|*.glb";
 			this.SaveModel.RestoreDirectory = true;
 			this.SaveModel.SupportMultiDottedExtensions = true;
+			this.SaveModel.Title = "Save your Model";
 			this.SaveModel.FileOk += new System.ComponentModel.CancelEventHandler(this.SaveModel_PromptFileExport);
 			// 
 			// OpenModel
 			// 
 			this.OpenModel.FileName = "model.dat";
-			this.OpenModel.Filter = "Clyde Binary|*.dat|Clyde XML|*.xml";
+			this.OpenModel.Filter = "Clyde Files|*.dat;*.xml|All Files|*";
+			this.OpenModel.Title = "Open a Model";
+			this.OpenModel.FileOk += new System.ComponentModel.CancelEventHandler(this.OnFileSelectedOpenModel);
 			// 
 			// ModelStructureTree
 			// 
@@ -388,8 +391,6 @@
 		private System.Windows.Forms.ImageList SilkImages;
 		private System.Windows.Forms.GroupBox GroupBoxProperties;
 		private System.Windows.Forms.TreeView SelectedObjectProperties;
-		//private ThreeRingsSharp.Utility.RTFScrolledBottom ProgramLog;
-		//private System.Windows.Forms.RichTextBox ProgramLog;
 		private System.Windows.Forms.Button BtnConfig;
 		private System.Windows.Forms.RichTextBox ProgramLog;
 		private System.Windows.Forms.ToolTip ProgramTooltip;
