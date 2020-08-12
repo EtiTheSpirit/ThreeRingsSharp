@@ -1,27 +1,14 @@
-﻿using com.threerings.opengl.model.config;
+﻿using com.threerings.config;
+using com.threerings.math;
+using com.threerings.opengl.model.config;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThreeRingsSharp.Utility.Interface;
-using static com.threerings.opengl.model.config.ModelConfig;
-using static com.threerings.opengl.model.config.ModelConfig.Imported;
-using static com.threerings.opengl.model.config.ModelConfig.Implementation;
-using ThreeRingsSharp.Utility;
-using com.google.inject;
-using ThreeRingsSharp.XansData;
 using System.IO;
-using com.threerings.math;
-using ThreeRingsSharp.XansData.Exceptions;
-using System.Diagnostics;
-using com.threerings.editor;
-using com.threerings.config;
+using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Extensions;
-using com.threerings.opengl.material.config;
-using ThreeRingsSharp.XansData.XML.ConfigReferences;
-using com.threerings.opengl.renderer.config;
-using ThreeRingsSharp.DataHandlers.Properties;
+using static com.threerings.opengl.model.config.ModelConfig;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
 	public class ModelConfigHandler {
@@ -122,7 +109,8 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// <param name="sourceFile">The file containing the <see cref="ModelConfig"/> that has defined <paramref name="implementation"/>.</param>
 		/// <param name="implementation">The specific type of model that this is.</param>
 		/// <returns></returns>
-		[Obsolete("Use ModelPropertyUtility.FindTexturesFromDirects instead.", true)] public static List<string> GetTexturesFromModel(FileInfo sourceFile, Implementation implementation) {
+		[Obsolete("Use ModelPropertyUtility.FindTexturesFromDirects instead.", true)]
+		public static List<string> GetTexturesFromModel(FileInfo sourceFile, Implementation implementation) {
 			if (implementation is Imported /*imported*/) {
 				//List<string> textures = new List<string>();
 				// ModelPropertyUtility.TraverseDirectPath(implementation)

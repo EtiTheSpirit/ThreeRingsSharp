@@ -1,10 +1,6 @@
 ﻿using com.threerings.math;
 using com.threerings.opengl.model.config;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static com.threerings.opengl.model.config.ArticulatedConfig;
 
 namespace ThreeRingsSharp.XansData {
@@ -144,7 +140,7 @@ namespace ThreeRingsSharp.XansData {
 			GetDescendants(descendants);
 			return descendants;
 		}
-		
+
 		private void GetDescendants(List<Armature> parentList) {
 			foreach (Armature node in Children) {
 				parentList.Add(node);

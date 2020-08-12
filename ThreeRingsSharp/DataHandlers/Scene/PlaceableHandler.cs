@@ -1,20 +1,16 @@
-﻿using static com.threerings.tudey.data.TudeySceneModel;
-using System;
+﻿using com.threerings.math;
+using com.threerings.tudey.config;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThreeRingsSharp.XansData;
-using ThreeRingsSharp.Utility.Interface;
 using System.IO;
-using com.threerings.math;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using ThreeRingsSharp.DataHandlers.Model;
-using com.threerings.tudey.config;
-using ThreeRingsSharp.XansData.XML.ConfigReferences;
-using ThreeRingsSharp.XansData.Extensions;
 using ThreeRingsSharp.Utility;
-using com.threerings.config;
+using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.XansData;
+using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.XansData.XML.ConfigReferences;
+using static com.threerings.tudey.data.TudeySceneModel;
 
 namespace ThreeRingsSharp.DataHandlers.Scene {
 
@@ -53,7 +49,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			individualPlacementCtr.AddSimpleProperty("Reference", data.getReference()?.getName() ?? "null", SilkImage.Reference);
 			placeableContainer.AddSimpleProperty("Entry", individualPlacementCtr);
 		}
-		
+
 		public void HandleEntry(FileInfo sourceFile, Entry entry, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null) {
 			PlaceableEntry placeable = (PlaceableEntry)entry;
 			SetupCosmeticInformation(placeable, dataTreeParent);

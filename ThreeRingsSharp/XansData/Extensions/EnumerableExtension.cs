@@ -1,13 +1,8 @@
 ﻿using com.threerings.config;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.DataHandlers.Model;
-using ThreeRingsSharp.Utility;
 
 namespace ThreeRingsSharp.XansData.Extensions {
 
@@ -315,7 +310,8 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <param name="array"></param>
 		/// <param name="name"></param>
 		/// <returns></returns>
-		[Obsolete("Use GetEntryByName with the typed parameter instead.")] public static ManagedConfig GetEntryByNameMG(this ManagedConfig[] array, string name) {
+		[Obsolete("Use GetEntryByName with the typed parameter instead.")]
+		public static ManagedConfig GetEntryByNameMG(this ManagedConfig[] array, string name) {
 			try {
 				return array.Where(obj => obj.getName() == name).FirstOrDefault();
 			} catch { }

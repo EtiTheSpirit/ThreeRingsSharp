@@ -14,7 +14,8 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// <summary>
 		/// The size of this <see cref="GLTFAccessor"/> in bytes.
 		/// </summary>
-		[JsonIgnore] public int Size { 
+		[JsonIgnore]
+		public int Size {
 			get {
 				if (NeedsToCalculateSize) {
 					CachedSize = Count * AttributeExtension.GetSize(typeof(GLTFComponentType), ComponentType) * AttributeExtension.GetSize(typeof(GLTFValueType), Type);

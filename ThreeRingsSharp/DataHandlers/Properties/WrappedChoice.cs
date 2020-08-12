@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.DataHandlers.Properties {
@@ -64,7 +62,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 			DefaultChoice = choice.GetDefaultOption()?.name ?? choice.options.First()?.name;
 			Config = cfg;
 			BaseChoice = choice;
-			
+
 			List<WrappedChoiceOption> options = new List<WrappedChoiceOption>();
 			foreach (Parameter.Choice.Option option in choice.options) {
 				WrappedChoiceOption wrappedChoice = new WrappedChoiceOption(this, option, args);

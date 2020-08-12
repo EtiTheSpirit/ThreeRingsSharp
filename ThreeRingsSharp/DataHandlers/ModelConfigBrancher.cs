@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using com.threerings.math;
+﻿using com.threerings.math;
 using com.threerings.opengl.model.config;
 using com.threerings.opengl.scene.config;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
 using ThreeRingsSharp.DataHandlers.Model;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
@@ -60,7 +56,7 @@ namespace ThreeRingsSharp.DataHandlers {
 			ModelConfigHandler.SetupCosmeticInformation(model, currentDataTreeObject, useImplementation);
 
 			SKAnimatorToolsTransfer.IncrementProgress(); // Got model display data.
-			// Next one is to load the data.
+														 // Next one is to load the data.
 			if (implementation is ArticulatedConfig) {
 				XanLogger.WriteLine("Model is of the type 'ArticulatedConfig'. Accessing handlers...", XanLogger.DEBUG);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Articulated;

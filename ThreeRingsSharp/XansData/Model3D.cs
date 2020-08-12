@@ -1,19 +1,10 @@
-﻿using com.google.inject;
-using com.sun.org.apache.xalan.@internal.xsltc.cmdline;
-using com.threerings.math;
-using java.nio.channels;
+﻿using com.threerings.math;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.IO;
 using ThreeRingsSharp.XansData.IO.GLTF;
-using ThreeRingsSharp.XansData.Structs;
-using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.XansData {
 

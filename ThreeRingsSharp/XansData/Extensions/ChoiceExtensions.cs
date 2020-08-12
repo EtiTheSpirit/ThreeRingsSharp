@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using com.threerings.config;
+using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using com.threerings.config;
 
 namespace ThreeRingsSharp.XansData.Extensions {
 

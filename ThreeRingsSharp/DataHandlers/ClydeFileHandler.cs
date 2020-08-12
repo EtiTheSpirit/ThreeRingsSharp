@@ -3,15 +3,9 @@ using com.threerings.math;
 using com.threerings.opengl.model.config;
 using com.threerings.tudey.data;
 using com.threerings.util;
-using java.awt;
 using java.io;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
@@ -154,7 +148,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					//if (modelClassInfo.Length == 2) modelSubclass = modelClassInfo[1];
 				}
 			}
-			
+
 			SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.OK);
 			SKAnimatorToolsTransfer.IncrementProgress();
 
@@ -236,7 +230,7 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			}
 
-			FINALIZE_NODES:
+		FINALIZE_NODES:
 			if (lastNodeParent is TreeNode || lastNodeParent is TreeView) {
 				//lastNodeParent.Nodes.Add(rootDataTreeObject.ConvertHierarchyToTreeNodes());
 				SKAnimatorToolsTransfer.RegisterNodes(lastNodeParent, rootDataTreeObject);
@@ -252,7 +246,7 @@ namespace ThreeRingsSharp.DataHandlers {
 		/// <returns></returns>
 		public static object GetRaw(FileInfo clydeFile) {
 			object obj;
-			
+
 			if (!ClydeObjectCache.ContainsKey(clydeFile.FullName)) {
 				XanLogger.WriteLine($"Loading [{clydeFile.FullName}] because it hasn't been initialized before...", XanLogger.DEBUG);
 				(bool isValidClydeFile, ClydeFormat format) = VersionInfoScraper.IsValidClydeFile(clydeFile);

@@ -1,12 +1,6 @@
 ﻿using com.threerings.config;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.DataHandlers.Properties;
 using ThreeRingsSharp.XansData.Extensions;
-using static ThreeRingsSharp.DataHandlers.Properties.WrappedDirect;
 
 namespace ThreeRingsSharp.Utility {
 	public static class ConfigReferenceConstructor {

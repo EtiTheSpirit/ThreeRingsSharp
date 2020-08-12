@@ -42,41 +42,14 @@
     <Reference Include="IKVM.OpenJDK.Beans">
       <HintPath>..\libs\IKVM.OpenJDK.Beans.dll</HintPath>
     </Reference>
-    <Reference Include="IKVM.OpenJDK.Charsets">
-      <HintPath>..\libs\IKVM.OpenJDK.Charsets.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.Cldrdata">
-      <HintPath>..\libs\IKVM.OpenJDK.Cldrdata.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.Corba">
-      <HintPath>..\libs\IKVM.OpenJDK.Corba.dll</HintPath>
-    </Reference>
     <Reference Include="IKVM.OpenJDK.Core">
       <HintPath>..\libs\IKVM.OpenJDK.Core.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Jdbc">
       <HintPath>..\libs\IKVM.OpenJDK.Jdbc.dll</HintPath>
     </Reference>
-    <Reference Include="IKVM.OpenJDK.Localedata">
-      <HintPath>..\libs\IKVM.OpenJDK.Localedata.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.Management">
-      <HintPath>..\libs\IKVM.OpenJDK.Management.dll</HintPath>
-    </Reference>
     <Reference Include="IKVM.OpenJDK.Media">
       <HintPath>..\libs\IKVM.OpenJDK.Media.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.Misc">
-      <HintPath>..\libs\IKVM.OpenJDK.Misc.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.Naming">
-      <HintPath>..\libs\IKVM.OpenJDK.Naming.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.Nashorn">
-      <HintPath>..\libs\IKVM.OpenJDK.Nashorn.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.Remoting">
-      <HintPath>..\libs\IKVM.OpenJDK.Remoting.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Security">
       <HintPath>..\libs\IKVM.OpenJDK.Security.dll</HintPath>
@@ -87,35 +60,11 @@
     <Reference Include="IKVM.OpenJDK.Text">
       <HintPath>..\libs\IKVM.OpenJDK.Text.dll</HintPath>
     </Reference>
-    <Reference Include="IKVM.OpenJDK.Tools">
-      <HintPath>..\libs\IKVM.OpenJDK.Tools.dll</HintPath>
-    </Reference>
     <Reference Include="IKVM.OpenJDK.Util">
       <HintPath>..\libs\IKVM.OpenJDK.Util.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.XML.API">
       <HintPath>..\libs\IKVM.OpenJDK.XML.API.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.XML.Bind">
-      <HintPath>..\libs\IKVM.OpenJDK.XML.Bind.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.XML.Crypto">
-      <HintPath>..\libs\IKVM.OpenJDK.XML.Crypto.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.XML.Parse">
-      <HintPath>..\libs\IKVM.OpenJDK.XML.Parse.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.XML.Transform">
-      <HintPath>..\libs\IKVM.OpenJDK.XML.Transform.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.XML.WebServices">
-      <HintPath>..\libs\IKVM.OpenJDK.XML.WebServices.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.OpenJDK.XML.XPath">
-      <HintPath>..\libs\IKVM.OpenJDK.XML.XPath.dll</HintPath>
-    </Reference>
-    <Reference Include="IKVM.Reflection">
-      <HintPath>..\libs\IKVM.Reflection.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.Runtime">
       <HintPath>..\libs\IKVM.Runtime.dll</HintPath>

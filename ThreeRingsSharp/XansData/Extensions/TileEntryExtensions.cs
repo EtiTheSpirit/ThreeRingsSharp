@@ -1,11 +1,5 @@
 ﻿using com.threerings.math;
-using com.threerings.tudey.config;
 using com.threerings.tudey.util;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.DataHandlers.Scene.Data;
 using static com.threerings.tudey.data.TudeySceneModel;
 

@@ -1,9 +1,4 @@
 ﻿using com.threerings.config;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.Utility {
 	public class ReferenceRoot {

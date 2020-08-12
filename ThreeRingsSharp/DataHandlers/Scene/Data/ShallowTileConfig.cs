@@ -2,14 +2,7 @@
 using com.threerings.opengl.model.config;
 using com.threerings.tudey.config;
 using com.threerings.tudey.data;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
-using ThreeRingsSharp.Utility;
-using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.DataHandlers.Scene.Data {

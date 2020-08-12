@@ -1,22 +1,16 @@
-﻿using static com.threerings.tudey.data.TudeySceneModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThreeRingsSharp.XansData;
-using ThreeRingsSharp.Utility.Interface;
-using System.IO;
-using com.threerings.math;
-using ThreeRingsSharp.DataHandlers.Model;
-using com.threerings.tudey.data;
-using ThreeRingsSharp.DataHandlers.Scene.Data;
-using ThreeRingsSharp.Utility;
-using ThreeRingsSharp.XansData.XML.ConfigReferences;
-using com.threerings.tudey.util;
-using ThreeRingsSharp.XansData.Extensions;
-using System.Diagnostics;
+﻿using com.threerings.math;
 using com.threerings.tudey.config;
+using com.threerings.tudey.util;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using ThreeRingsSharp.DataHandlers.Model;
+using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.XansData;
+using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.XansData.XML.ConfigReferences;
+using static com.threerings.tudey.data.TudeySceneModel;
 
 namespace ThreeRingsSharp.DataHandlers.Scene {
 
@@ -116,6 +110,6 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			}
 			SKAnimatorToolsTransfer.IncrementProgress();
 		}
-		
+
 	}
 }

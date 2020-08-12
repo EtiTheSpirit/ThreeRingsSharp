@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.Utility.Interface {
@@ -329,6 +327,6 @@ namespace ThreeRingsSharp.Utility.Interface {
 
 		private static Dictionary<ConsoleColor, ConsoleColorVT> _Colors = null;
 
-		
+
 	}
 }

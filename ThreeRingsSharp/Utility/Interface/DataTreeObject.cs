@@ -1,15 +1,6 @@
-﻿using com.sun.codemodel.@internal.fmt;
-using com.sun.org.apache.xml.@internal.resolver.helpers;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using com.threerings.opengl.model.config;
-using com.threerings.opengl.scene;
-using com.threerings.opengl.scene.config;
-using org.lwjgl.opengl;
 
 namespace ThreeRingsSharp.Utility.Interface {
 

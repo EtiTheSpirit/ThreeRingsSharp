@@ -1,9 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 
@@ -21,7 +16,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// The indices used to determine triangles in this geometry.
 		/// </summary>
 		[JsonProperty("indices")] public int Indices;
-		
+
 		/// <summary>
 		/// The material index of this primitive.
 		/// </summary>
@@ -29,6 +24,6 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 
 		// This is referenced by newtonsoft during runtime.
 		public bool ShouldSerializeMaterial() => Material >= 0;
-		
+
 	}
 }

@@ -1,15 +1,10 @@
-﻿using com.threerings.math;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThreeRingsSharp.Utility;
-using ThreeRingsSharp.XansData.Structs;
 using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.XansData.Structs;
 using static com.threerings.opengl.model.config.ArticulatedConfig;
-using com.threerings.opengl.model.config;
 
 namespace ThreeRingsSharp.XansData {
 
@@ -127,7 +122,7 @@ namespace ThreeRingsSharp.XansData {
 				if (AllBones.Count == 0) return false;
 				foreach (string bname0 in BoneNames) if (bname0 != null && !AllBones.ContainsKey(bname0)) return false;
 				foreach (string bname1 in ExtraBoneNames) if (bname1 != null && !AllBones.ContainsKey(bname1)) return false;
-				
+
 				return true;
 			}
 			set => _HasBoneData = value;
@@ -252,7 +247,7 @@ namespace ThreeRingsSharp.XansData {
 			if (Disposed) throw new ObjectDisposedException("MeshData");
 			if (!HasBoneData) return;
 			VertexGroups.Clear(); // Just in case its a second+ call
-			// To reiterate this from GeometryConfigTranslater since this is where looking back at the program is going to get confusing...
+								  // To reiterate this from GeometryConfigTranslater since this is where looking back at the program is going to get confusing...
 
 			// Consider it literally: boneIndices and boneWeights for bones are vertex *attribute* arrays.
 			// This means that we iterate through the indices of the model itself, then...

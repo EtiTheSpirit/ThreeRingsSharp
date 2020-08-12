@@ -1,23 +1,16 @@
-﻿using com.threerings.math;
+﻿using com.threerings.config;
+using com.threerings.math;
 using com.threerings.opengl.model.config;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ThreeRingsSharp.DataHandlers.AnimationHandlers;
+using ThreeRingsSharp.DataHandlers.Properties;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
-using ThreeRingsSharp.XansData.Structs;
 using ThreeRingsSharp.XansData.Extensions;
 using static com.threerings.opengl.model.config.ArticulatedConfig;
 using static com.threerings.opengl.model.config.ModelConfig;
-using static com.threerings.opengl.model.config.ModelConfig.Imported;
-using ThreeRingsSharp.DataHandlers.Properties;
-using com.threerings.config;
-using ThreeRingsSharp.DataHandlers.AnimationHandlers;
-using System.Diagnostics;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
 	class ArticulatedConfigHandler : Singleton<ArticulatedConfigHandler>, IModelDataHandler, IDataTreeInterface<ArticulatedConfig> {

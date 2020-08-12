@@ -1,18 +1,12 @@
-﻿using com.sun.tools.javac.main;
-using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using SKAnimatorTools.Configuration;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThreeRingsSharp.Utility;
-using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Structs;
 
 namespace SKAnimatorTools {
@@ -226,7 +220,7 @@ namespace SKAnimatorTools {
 		}
 
 		private void OnFolderSelMouseEnter(object sender, EventArgs e) {
-			((Control)sender).BackColor = ((SolidBrush)SystemBrushes.ControlLight).Color; 
+			((Control)sender).BackColor = ((SolidBrush)SystemBrushes.ControlLight).Color;
 		}
 
 		private void OnFolderSelMouseLeave(object sender, EventArgs e) {

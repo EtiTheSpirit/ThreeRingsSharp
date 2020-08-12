@@ -1,17 +1,10 @@
 ﻿using com.threerings.config;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThreeRingsSharp.XansData.Extensions;
-using ThreeRingsSharp.Utility;
-using com.threerings.opengl.material.config;
-using static com.threerings.opengl.model.config.ModelConfig.Imported;
-using ThreeRingsSharp.XansData.XML.ConfigReferences;
-using System.Diagnostics;
-using com.threerings.opengl.renderer.config;
 using System.IO;
+using System.Linq;
+using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.XansData.XML.ConfigReferences;
 //using java.io;
 
 namespace ThreeRingsSharp.DataHandlers.Properties {
@@ -196,7 +189,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 				string path = paths[index];
 				refs.Add(SetDataOn(config, path, argValue, setToNull));
 			}
-			
+
 			return refs.Count > 0 ? refs.ToArray() : null;
 		}
 

@@ -1,9 +1,5 @@
 ﻿using com.threerings.config;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.DataHandlers.Properties {

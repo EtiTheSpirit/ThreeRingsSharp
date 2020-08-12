@@ -2,11 +2,9 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
@@ -99,7 +97,7 @@ namespace ThreeRingsSharp.Utility {
 
 		private static bool IsUpdatingGUI = false;
 		private static readonly ManualResetEventSlim UpdateComplete = new ManualResetEventSlim();
-		
+
 		/// <summary>
 		/// Manually update the contents of <see cref="BoxReference"/>. Only works if <see cref="UpdateAutomatically"/> is <see langword="false"/>, and of course, if <see cref="BoxReference"/> is not <see langword="null"/>.
 		/// </summary>

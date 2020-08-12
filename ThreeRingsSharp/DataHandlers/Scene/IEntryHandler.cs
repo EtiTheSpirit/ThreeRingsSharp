@@ -1,14 +1,10 @@
-﻿using com.threerings.tudey.data;
-using static com.threerings.tudey.data.TudeySceneModel;
-using System;
+﻿using com.threerings.math;
+using com.threerings.tudey.data;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.Utility.Interface;
-using com.threerings.math;
+using ThreeRingsSharp.XansData;
+using static com.threerings.tudey.data.TudeySceneModel;
 
 namespace ThreeRingsSharp.DataHandlers.Scene {
 	public interface IEntryHandler {

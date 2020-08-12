@@ -1,33 +1,27 @@
-﻿using System;
+﻿using com.threerings.opengl.model.config;
+using SKAnimatorTools.Configuration;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Net;
+using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
-using ThreeRingsSharp.Utility;
-using java.lang;
-using java.io;
-using com.threerings.export;
-using System.Diagnostics;
-using com.threerings.opengl.model.config;
+using ThreeRingsSharp;
 using ThreeRingsSharp.DataHandlers;
+using ThreeRingsSharp.DataHandlers.Properties;
+using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
-using SKAnimatorTools.Configuration;
 using ThreeRingsSharp.XansData.Exceptions;
-using ThreeRingsSharp.XansData.IO.GLTF;
 using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.XansData.IO.GLTF;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
-using System.Threading;
-using ThreeRingsSharp.DataHandlers.Properties;
-using ThreeRingsSharp.DataHandlers.Model;
-using System.Runtime.InteropServices;
-using System.Net;
-using ThreeRingsSharp;
 
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {
@@ -35,7 +29,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The version of this release of the program.
 		/// </summary>
-		public readonly int[] THIS_VERSION = { 1, 4, 1 };
+		public readonly int[] THIS_VERSION = { 1, 4, 2 };
 
 		[DllImport("user32.dll")]
 		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -320,7 +314,7 @@ namespace SKAnimatorTools {
 			SKAnimatorToolsTransfer.UISyncContext?.Send(callback => {
 				ModelStructureTree.Nodes.Clear();
 			}, null);
-			
+
 			FileInfo clydeFile = new FileInfo(OpenModel.FileName);
 			AllModels.Clear();
 			bool isOK = true;
@@ -373,7 +367,7 @@ namespace SKAnimatorTools {
 					SetPropertiesMenu(DataTreeObjectEventMarshaller.GetDataObjectOf(modelStructureTree.Nodes[0]));
 				}
 			}, ModelStructureTree);
-			
+
 
 			Debug.WriteLine(SKAnimatorToolsTransfer.UISyncContext);
 			SKAnimatorToolsTransfer.UISyncContext?.Send(callbackParam => {
@@ -414,7 +408,7 @@ namespace SKAnimatorTools {
 				XanLogger.WriteLine("Warning: Props is null!", XanLogger.DEBUG, Color.DarkGoldenrod);
 			}
 		}
-		
+
 		private void SetPropertiesMenu(DataTreeObject propsContainer) {
 			if (propsContainer == null) return;
 
@@ -436,7 +430,7 @@ namespace SKAnimatorTools {
 							nodeObj.ToolTipText = "Click on this to change the target model.";
 						}
 						nodeObj.Text += ": " + propValues[0].Text;
-						
+
 					}
 					if (!propValues[0].CreatedFromProperty) {
 						// TreeNode propZeroNode = propValues[0].ToTreeNode();
@@ -476,7 +470,7 @@ namespace SKAnimatorTools {
 					if (!propValues[0].CreatedFromProperty) {
 						// TreeNode propZeroNode = propValues[0].ToTreeNode();
 						// nodeObj.Nodes.Add(propZeroNode);
-						PopulateTreeNodeForProperties(nodeObj, propValues[0]); 
+						PopulateTreeNodeForProperties(nodeObj, propValues[0]);
 					}
 				} else {
 					foreach (DataTreeObject property in propValues) {
@@ -500,15 +494,15 @@ namespace SKAnimatorTools {
 			ConfigForm = new ConfigurationForm();
 			// todo: better method of doing this
 			ConfigForm.SetDataFromConfig(
-				OpenModel.InitialDirectory, 
-				SaveModel.InitialDirectory, 
-				ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\", 
-				OpenModel.RestoreDirectory, 
-				Model3D.MultiplyScaleByHundred, 
-				Model3D.ProtectAgainstZeroScale, 
-				ConditionalExportMode, 
-				GLTFExporter.EmbedTextures, 
-				XanLogger.LoggingLevel, 
+				OpenModel.InitialDirectory,
+				SaveModel.InitialDirectory,
+				ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\",
+				OpenModel.RestoreDirectory,
+				Model3D.MultiplyScaleByHundred,
+				Model3D.ProtectAgainstZeroScale,
+				ConditionalExportMode,
+				GLTFExporter.EmbedTextures,
+				XanLogger.LoggingLevel,
 				StaticSetExportMode,
 				ModelPropertyUtility.TryGettingAllTextures
 			);

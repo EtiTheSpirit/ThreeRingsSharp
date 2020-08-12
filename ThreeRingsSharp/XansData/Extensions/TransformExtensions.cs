@@ -1,9 +1,5 @@
 ﻿using com.threerings.math;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.XansData.Structs;
 
 namespace ThreeRingsSharp.XansData.Extensions {
@@ -115,7 +111,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <param name="rotation">The amount of radians to rotate.</param>
 		/// <returns></returns>
 		public static Transform3D RotateOnAxisDegrees(this Transform3D trs, Axis axis, float rotation) => RotateOnAxis(trs, axis, (float)(Math.PI / 180) * rotation);
-		
+
 		/// <summary>
 		/// Clones this <see cref="Transform3D"/> into a new instance with the same data.
 		/// </summary>
@@ -140,6 +136,6 @@ namespace ThreeRingsSharp.XansData.Extensions {
 
 			return new Quaternion(quat); // pos y and default
 		}
-		
+
 	}
 }

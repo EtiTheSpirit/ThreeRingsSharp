@@ -1,19 +1,14 @@
-﻿using com.threerings.math;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.XansData.Exceptions;
+using ThreeRingsSharp.XansData.Extensions;
 using ThreeRingsSharp.XansData.IO.GLTF.JSON;
 using ThreeRingsSharp.XansData.Structs;
-using ThreeRingsSharp.XansData.Extensions;
-using ThreeRingsSharp.XansData.Exceptions;
 using static ThreeRingsSharp.XansData.Animation;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF {
@@ -87,7 +82,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 			jsonStr.WriteASCIIToByteArray(ref jsonBuffer, 8);
 			return jsonBuffer;
 		}
-		
+
 		/// <summary>
 		/// Returns the GLB portion of the file, which stores all of the necessary data. This also populates the json.
 		/// </summary>
@@ -454,7 +449,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						Type = GLTFValueType.VEC3,
 						Count = meshData.Normals.Count
 					};
-					
+
 					normalAccessor.Min.SetListCap(0f, 3);
 					normalAccessor.Max.SetListCap(0f, 3);
 					foreach (Vector3 normal in meshData.Normals) {
@@ -474,7 +469,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						if (y > normalAccessor.Max[1]) normalAccessor.Max[1] = y;
 						if (z > normalAccessor.Max[2]) normalAccessor.Max[2] = z;
 					}
-					
+
 					accessors.Add(normalAccessor);
 					int normalSize = normalAccessor.Count * 12;
 					bufferViews.Add(new GLTFBufferView {
@@ -496,7 +491,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						Type = GLTFValueType.VEC2,
 						Count = meshData.UVs.Count
 					};
-					
+
 					uvAccessor.Min.SetListCap(0f, 2);
 					uvAccessor.Max.SetListCap(0f, 2);
 					foreach (Vector2 uv in meshData.UVs) {
@@ -512,7 +507,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						if (x > uvAccessor.Max[0]) uvAccessor.Max[0] = x;
 						if (y > uvAccessor.Max[1]) uvAccessor.Max[1] = y;
 					}
-					
+
 					accessors.Add(uvAccessor);
 					int uvSize = uvAccessor.Count * 8;
 					bufferViews.Add(new GLTFBufferView {
@@ -534,7 +529,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						Type = GLTFValueType.SCALAR,
 						Count = meshData.Indices.Count
 					};
-					
+
 					indexAccessor.Min.SetListCap((ushort)0, 1);
 					indexAccessor.Max.SetListCap((ushort)0, 1);
 					foreach (ushort index in meshData.Indices) {
@@ -542,7 +537,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						if (index < indexAccessor.Min[0]) indexAccessor.Min[0] = index;
 						if (index > indexAccessor.Max[0]) indexAccessor.Max[0] = index;
 					}
-					
+
 					accessors.Add(indexAccessor);
 					int indexSize = indexAccessor.Count * 2; // 2 bytes per ushort.
 					bufferViews.Add(new GLTFBufferView {
@@ -703,7 +698,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				if (model.AttachmentModel != null && childlessEmpties.Contains(model.AttachmentModel)) {
 					childlessEmpties.Remove(model.AttachmentModel);
 					XanLogger.WriteLine("Flagged " + model.AttachmentModel.Name + " as an empty that DOES have children (and needs to stick around).", XanLogger.DEBUG);
-					
+
 				}
 				// Catch case: Sometimes nodes want to connect to nodes or other models. Is *this* an empty that goes to something else? All I care about is if it's used.
 				if (model.IsEmptyObject && model.AttachmentModel != null) {

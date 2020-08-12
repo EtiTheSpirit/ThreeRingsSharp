@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using com.threerings.util;
+﻿using com.threerings.util;
 
 namespace ThreeRingsSharp.XansData.Extensions {
 
@@ -29,7 +24,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		public static T CloneAs<T>(this DeepObject original) where T : DeepObject {
 			return original.clone() as T;
 		}
-		
+
 
 	}
 }

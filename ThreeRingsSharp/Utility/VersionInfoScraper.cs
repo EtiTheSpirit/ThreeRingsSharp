@@ -1,21 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using com.google.common.io;
+using com.threerings.export;
+using com.threerings.opengl.model.config;
+using java.io;
+using java.lang;
+using java.util.zip;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using java.lang;
-using java.io;
-using com.threerings.export;
-using com.threerings.opengl.model.config;
-using java.awt;
-using java.util.zip;
-using System.IO.Compression;
-using sun.misc;
-using com.google.common.io;
 using System.Xml;
-using System.Xml.Linq;
 
 namespace ThreeRingsSharp.Utility {
 
@@ -165,7 +158,7 @@ namespace ThreeRingsSharp.Utility {
 		/// This is not a Clyde file.
 		/// </summary>
 		None,
-		
+
 		/// <summary>
 		/// Represents a Clyde file in its binary format.
 		/// </summary>

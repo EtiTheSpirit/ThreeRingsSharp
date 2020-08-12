@@ -1,13 +1,8 @@
 ﻿using com.threerings.expr;
+using com.threerings.expr.util;
+using java.lang;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using java.lang;
-using com.threerings.opengl.model.config;
-using ThreeRingsSharp.XansData;
-using com.threerings.expr.util;
 
 namespace ThreeRingsSharp.Utility {
 
@@ -20,7 +15,7 @@ namespace ThreeRingsSharp.Utility {
 		private readonly List<ScopeUpdateListener> UpdateListeners = new List<ScopeUpdateListener>();
 
 		private readonly string InstantiationTime = DateTime.Now.ToBinary().ToString();
-		
+
 		/// <summary>
 		/// The object that this <see cref="Scope"/> is pointing to.
 		/// </summary>

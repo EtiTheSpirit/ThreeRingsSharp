@@ -3,10 +3,6 @@ using com.threerings.opengl.model.config;
 using com.threerings.opengl.scene.config;
 using com.threerings.tudey.data;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.Utility.Interface {
 	/// <summary>

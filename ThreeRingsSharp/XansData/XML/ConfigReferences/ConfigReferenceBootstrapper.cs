@@ -1,26 +1,22 @@
-﻿using System;
+﻿using com.google.common.io;
+using com.threerings.config;
+using com.threerings.export;
+using com.threerings.export.tools;
+using com.threerings.opengl.material.config;
+using com.threerings.opengl.model.config;
+using java.io;
+using java.lang;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Reflection;
 using System.Xml.Linq;
 using ThreeRingsSharp.Utility;
-using java.io;
-using com.threerings.export;
-using java.lang;
-using com.threerings.export.tools;
-using com.google.common.io;
-using com.threerings.opengl.material.config;
 using ThreeRingsSharp.XansData.Extensions;
-using System.Drawing;
-using System.Threading;
-using com.threerings.opengl.model.config;
-using System.ComponentModel;
-using com.threerings.config;
-using System.Diagnostics;
 
 namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
@@ -378,7 +374,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 						List<XElement> newElements = element.Elements().ToList();
 						foreach (XElement entryElement in newElements) {
 							if (!HasLegalClasses(entryElement)) entryElement.Remove(); //element.Add(entryElement);
-							//PruneIllegalClasses(entryElement);
+																					   //PruneIllegalClasses(entryElement);
 						}
 
 						newXML.AppendLine(element.ToString());

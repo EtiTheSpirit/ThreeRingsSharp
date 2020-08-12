@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.Utility {
 
@@ -97,7 +95,7 @@ namespace ThreeRingsSharp.Utility {
 			}
 			retn += name;
 			return retn;
-			
+
 		}
 
 	}

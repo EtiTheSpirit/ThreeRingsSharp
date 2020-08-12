@@ -1,11 +1,7 @@
 ﻿using com.threerings.config;
 using com.threerings.opengl.material.config;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.XansData.Extensions;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 

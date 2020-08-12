@@ -1,12 +1,7 @@
-﻿using System;
+﻿using com.threerings.math;
+using com.threerings.opengl.model.config;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using com.threerings.math;
-using com.threerings.opengl.model.config;
-using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
 

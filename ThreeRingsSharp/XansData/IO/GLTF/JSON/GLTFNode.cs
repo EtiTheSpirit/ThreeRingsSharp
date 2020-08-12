@@ -1,14 +1,8 @@
 ﻿using com.threerings.math;
-using java.nio.channels;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThreeRingsSharp.Utility;
-using ThreeRingsSharp.XansData.Structs;
 using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.XansData.Structs;
 
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 	public class GLTFNode : GLTFObject {
@@ -46,7 +40,8 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// <summary>
 		/// A transformation matrix representing the position, size, and scale of this <see cref="GLTFNode"/>.
 		/// </summary>
-		[JsonProperty("matrix")] public float[] Matrix = new float[16] {
+		[JsonProperty("matrix")]
+		public float[] Matrix = new float[16] {
 			1, 0, 0, 0,
 			0, 1, 0, 0,
 			0, 0, 1, 0,
@@ -84,7 +79,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 			Rotation[1] = rotation.y;
 			Rotation[2] = rotation.z;
 			Rotation[3] = rotation.w;
-			
+
 		}
 
 		/// <summary>

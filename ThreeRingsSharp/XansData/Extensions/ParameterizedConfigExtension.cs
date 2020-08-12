@@ -1,12 +1,5 @@
 ﻿using com.threerings.config;
-using com.threerings.opengl.model.config;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.DataHandlers.Properties;
-using ThreeRingsSharp.Utility;
 
 namespace ThreeRingsSharp.XansData.Extensions {
 	public static class ParameterizedConfigExtension {

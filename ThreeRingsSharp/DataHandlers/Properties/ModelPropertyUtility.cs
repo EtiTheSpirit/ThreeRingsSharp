@@ -1,22 +1,9 @@
 ﻿using com.threerings.config;
-using com.threerings.opengl.material.config;
 using com.threerings.opengl.model.config;
-using com.threerings.opengl.renderer.config;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThreeRingsSharp.XansData.Extensions;
-using ThreeRingsSharp.XansData.XML.ConfigReferences;
-using com.threerings.editor;
 using static com.threerings.opengl.model.config.ModelConfig;
 using static com.threerings.opengl.model.config.ModelConfig.Imported;
-using System.Reflection;
-using ThreeRingsSharp.Utility;
-using com.threerings.tudey.config;
-using java.io;
-using static ThreeRingsSharp.DataHandlers.Properties.WrappedDirect;
 
 namespace ThreeRingsSharp.DataHandlers.Properties {
 
@@ -77,7 +64,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 		/// <param name="model"></param>
 		/// <returns></returns>
 		public static string[] GetDefaultTextures(Imported model) {
-			
+
 			string[] textures = new string[model.materialMappings.Length];
 			SKAnimatorToolsTransfer.IncrementEnd(textures.Length);
 

@@ -1,24 +1,19 @@
-﻿using System;
+﻿using com.threerings.opengl.geometry.config;
+using com.threerings.opengl.model.config;
+using java.nio;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using com.threerings.opengl.geometry.config;
+using System.Runtime.CompilerServices;
+using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.XansData;
+using ThreeRingsSharp.XansData.Exceptions;
+using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.XansData.Structs;
 using static com.threerings.opengl.geometry.config.GeometryConfig;
 using static com.threerings.opengl.model.config.ArticulatedConfig;
-using ThreeRingsSharp.XansData;
-using System.Windows.Forms;
-using java.nio;
-using ThreeRingsSharp.XansData.Structs;
-using com.threerings.opengl.renderer.config;
-using ThreeRingsSharp.Utility;
-using ThreeRingsSharp.XansData.Exceptions;
-using System.Runtime.CompilerServices;
-using System.IO;
-using System.Diagnostics;
-using ThreeRingsSharp.XansData.Extensions;
-using System.Drawing;
-using com.threerings.opengl.model.config;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
 
@@ -95,7 +90,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 					meshData.HasBoneData = true;
 					if (rootNode != null) meshData.SetBones(rootNode);
-					
+
 				} else if (geometry is IndexedStored indexedStored) {
 					vertices = indexedStored.getFloatArray(false, indexedStored.vertexArray);
 					uvs = indexedStored.getFloatArray(false, indexedStored.texCoordArrays);
@@ -161,7 +156,8 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// <summary>
 		/// A container class for bone indices and weights.
 		/// </summary>
-		[Obsolete] private class BoneDataContainer {
+		[Obsolete]
+		private class BoneDataContainer {
 
 			/// <summary>
 			/// Bone indices are an array of four <see cref="float"/> values. It traverses the chain of bones. An index of 0 means stop traversing (this is because bone 0 is always %ROOT%).

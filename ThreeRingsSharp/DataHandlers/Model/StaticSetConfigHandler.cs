@@ -1,18 +1,14 @@
-﻿using com.threerings.math;
+﻿using com.threerings.config;
+using com.threerings.math;
 using com.threerings.opengl.model.config;
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.DataHandlers.Properties;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Extensions;
-using com.threerings.config;
 using static com.threerings.opengl.model.config.ModelConfig;
 
 namespace ThreeRingsSharp.DataHandlers.Model {
@@ -30,7 +26,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			// In SK Animator Tools V1 I was an idiot and thought the "model" property was the only key. This is false.
 			// Instead, model represents the *default selection*. There may be more models. Iterate through the keys like damn lol.
 
-			
+
 			DataTreeObjectProperty targetProp = dataTreeParent.AddSimpleProperty("Target Set Model", model.model);
 			targetProp.ExtraData["StaticSetConfig"] = model;
 			// if (useOnlyTargetModel) dataTreeParent.AddSimpleProperty("Special Directive", "Only export target model", SilkImage.Scripted);
@@ -53,7 +49,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						subModels.Add(new DataTreeObjectProperty("Mesh " + idx, SilkImage.Triangle));
 						idx++;
 					}
-					
+
 					subModelRef.AddSimpleProperty("Geometry", subModels.ToArray(), SilkImage.Variant, SilkImage.Value, false);
 					objects.Add(subModelRef);
 					msIdx++;

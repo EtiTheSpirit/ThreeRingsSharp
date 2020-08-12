@@ -1,14 +1,8 @@
 ﻿using com.threerings.config;
-using com.threerings.expr;
-using com.threerings.expr.util;
 using com.threerings.math;
 using com.threerings.opengl.model.config;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Extensions;
@@ -111,41 +105,41 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 					HandleAnimationImplementation(name, Dereference(component), attachToModels);
 					SKAnimatorToolsTransfer.IncrementProgress();
 				}
-			/*
-			 
-			
-				// Something's wrong with directs that I gotta fix.
+				/*
 
-			} else if (animationImplementation is AnimationConfig.Procedural proc) {
-				AnimationConfig.TargetTransform[] targets = proc.transforms;
-				
 
-				Animation animation = new Animation(name);
-				float timeIncrement = proc.duration / targets.Length;
-				int currentFrame = 0;
-				foreach (AnimationConfig.TargetTransform targetTrs in targets) {
-					Transform3DExpression expr = targetTrs.expression;
-					Transform3D transform = (Transform3D)expr.createEvaluator(null).evaluate();
+					// Something's wrong with directs that I gotta fix.
 
-					Animation.Keyframe keyframe = new Animation.Keyframe();
-					for (int targetIndex = 0; targetIndex < targetTrs.targets.Length; targetIndex++) {
-						
-						string target = targetTrs.targets[targetIndex];
-						XanLogger.WriteLine(target, color: Color.Blue);
-						keyframe.Keys.Add(new Animation.Key {
-							Node = target,
-							Transform = transform
-						});
-						keyframe.Time = currentFrame * timeIncrement;
+				} else if (animationImplementation is AnimationConfig.Procedural proc) {
+					AnimationConfig.TargetTransform[] targets = proc.transforms;
+
+
+					Animation animation = new Animation(name);
+					float timeIncrement = proc.duration / targets.Length;
+					int currentFrame = 0;
+					foreach (AnimationConfig.TargetTransform targetTrs in targets) {
+						Transform3DExpression expr = targetTrs.expression;
+						Transform3D transform = (Transform3D)expr.createEvaluator(null).evaluate();
+
+						Animation.Keyframe keyframe = new Animation.Keyframe();
+						for (int targetIndex = 0; targetIndex < targetTrs.targets.Length; targetIndex++) {
+
+							string target = targetTrs.targets[targetIndex];
+							XanLogger.WriteLine(target, color: Color.Blue);
+							keyframe.Keys.Add(new Animation.Key {
+								Node = target,
+								Transform = transform
+							});
+							keyframe.Time = currentFrame * timeIncrement;
+						}
+						animation.Keyframes.Add(keyframe);
+						currentFrame++;
 					}
-					animation.Keyframes.Add(keyframe);
-					currentFrame++;
-				}
 
-				foreach (Model3D model in attachToModels) {
-					model.Animations.Add(animation);
-				}
-			*/
+					foreach (Model3D model in attachToModels) {
+						model.Animations.Add(animation);
+					}
+				*/
 			} else {
 				XanLogger.WriteLine(string.Format(ERR_IMPL_NOT_SUPPORTED, animationImplementation.GetType().Name), color: Color.DarkGoldenrod);
 			}
@@ -182,7 +176,7 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 		}
 
 
-		#pragma warning disable CS0419 // Ambiguous reference in cref attribute
+#pragma warning disable CS0419 // Ambiguous reference in cref attribute
 		/// <summary>
 		/// A helper method for the two <see cref="Dereference"/> methods that takes in a Clyde object which is expected to be an animation of any type and resolves its refs.
 		/// </summary>

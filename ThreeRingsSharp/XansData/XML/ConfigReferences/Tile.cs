@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using ThreeRingsSharp.DataHandlers.Scene.Data;
@@ -14,7 +11,8 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 	/// <summary>
 	/// Handles iterating through tile elements.
 	/// </summary>
-	[Obsolete] public class Tile {
+	[Obsolete]
+	public class Tile {
 
 		/// <summary>
 		/// Go through all of the tile data and get its entries.

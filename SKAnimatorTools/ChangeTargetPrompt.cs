@@ -1,14 +1,10 @@
 ﻿using com.threerings.opengl.model.config;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static com.threerings.opengl.model.config.ModelConfig;
 
 namespace SKAnimatorTools {
 	public partial class ChangeTargetPrompt : Form {
@@ -52,7 +48,7 @@ namespace SKAnimatorTools {
 				Option_NewTarget.ForeColor = Color.Black;
 			} else {
 				BtnSave.Enabled = false;
-				Option_NewTarget.ForeColor = Color.Red; 
+				Option_NewTarget.ForeColor = Color.Red;
 			}
 		}
 

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace ThreeRingsSharp.XansData {
 
@@ -16,7 +12,7 @@ namespace ThreeRingsSharp.XansData {
 		/// </summary>
 		GLTF,
 	}
-	
+
 	public class ModelFormatUtil {
 		/// <summary>
 		/// A binding from <see cref="string"/> file extensions to <see cref="ModelFormat"/>s, e.g. the string <c>".glb"</c> corresponds to <see cref="ModelFormat.GLTF"/>.

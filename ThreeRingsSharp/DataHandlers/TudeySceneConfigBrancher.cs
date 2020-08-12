@@ -1,19 +1,12 @@
 ﻿using com.threerings.math;
 using com.threerings.tudey.data;
-using static com.threerings.tudey.data.TudeySceneModel;
-using java.util;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ThreeRingsSharp.DataHandlers.Scene;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
-using com.threerings.config;
-using ThreeRingsSharp.DataHandlers.Model;
-using ThreeRingsSharp.DataHandlers.Scene;
+using static com.threerings.tudey.data.TudeySceneModel;
 
 namespace ThreeRingsSharp.DataHandlers {
 
@@ -22,7 +15,7 @@ namespace ThreeRingsSharp.DataHandlers {
 	/// </summary>
 	public class TudeySceneConfigBrancher {
 
-		
+
 		public static void SetupCosmeticData(TudeySceneModel scene, DataTreeObject dataTreeParent) {
 			if (dataTreeParent == null) return;
 

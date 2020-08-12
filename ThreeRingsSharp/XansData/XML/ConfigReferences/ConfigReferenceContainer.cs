@@ -3,11 +3,7 @@ using com.threerings.opengl.material.config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ThreeRingsSharp.DataHandlers.Model;
 using ThreeRingsSharp.Utility;
-using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
