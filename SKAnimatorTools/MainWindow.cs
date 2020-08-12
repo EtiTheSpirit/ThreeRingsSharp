@@ -35,7 +35,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The version of this release of the program.
 		/// </summary>
-		public const string THIS_VERSION = "1.4.0";
+		public readonly int[] THIS_VERSION = { 1, 4, 1 };
 
 		[DllImport("user32.dll")]
 		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -52,10 +52,22 @@ namespace SKAnimatorTools {
 		/// </summary>
 		/// <param name="version"></param>
 		/// <returns></returns>
-		public bool TryGetVersion(out string version) {
+		public bool TryGetVersion(out (int, int, int)? version) {
 			try {
 				using (WebClient cli = new WebClient()) {
-					version = cli.DownloadString("https://raw.githubusercontent.com/XanTheDragon/ThreeRingsSharp/master/version.txt");
+					string v = cli.DownloadString("https://raw.githubusercontent.com/XanTheDragon/ThreeRingsSharp/master/version.txt");
+					string[] revs = v.Split('.');
+					int major = 0;
+					int minor = 0;
+					int patch = 0;
+					if (revs.Length == 3) {
+						major = int.Parse(revs[0]);
+						minor = int.Parse(revs[1]);
+						patch = int.Parse(revs[2]);
+						version = (major, minor, patch);
+						return true;
+					}
+					version = null;
 				}
 				return true;
 			} catch {
@@ -66,9 +78,19 @@ namespace SKAnimatorTools {
 
 		public MainWindow() {
 			UISyncContext = SynchronizationContext.Current;
-			if (TryGetVersion(out string version) && version != THIS_VERSION) {
-				Updater updWindow = new Updater(version);
-				updWindow.ShowDialog(); // Because I want it to yield.
+			if (TryGetVersion(out (int, int, int)? newVersion) && newVersion.HasValue) {
+				(int major, int minor, int patch) = newVersion.Value;
+				bool newMajor = major > THIS_VERSION[0];
+				bool newMinor = minor > THIS_VERSION[1];
+				bool newPatch = patch > THIS_VERSION[2];
+				bool newUpdate = newMajor || newMinor || newPatch;
+				// Benefit of semver: ALL increments = new update.
+
+				if (newUpdate) {
+					string verStr = major + "." + minor + "." + patch;
+					Updater updWindow = new Updater(verStr);
+					updWindow.ShowDialog(); // Because I want it to yield.
+				}
 			}
 
 			VTConsole.EnableVTSupport();
