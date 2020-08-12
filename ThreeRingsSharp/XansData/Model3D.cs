@@ -91,11 +91,6 @@ namespace ThreeRingsSharp.XansData {
 		private MeshData _Mesh = null;
 
 		/// <summary>
-		/// If true, then <see cref="Transform"/> has been applied to the mesh data, and <see cref="ApplyTransformations"/> cannot be called again.
-		/// </summary>
-		public bool HasDoneTransformation { get; private set; } = false;
-
-		/// <summary>
 		/// If true, <see cref="ApplyScaling"/> has already been called and cannot be called again. This applies transformations like the zero-scale check and the x100 scale prefs.
 		/// </summary>
 		public bool HasAppliedScaleCorrections { get; private set; } = false;

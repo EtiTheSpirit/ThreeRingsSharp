@@ -16,85 +16,9 @@
 [DEBUG] Populated [render_scheme].
 [DEBUG] Populated [scene_global].
 [DEBUG] Populated [shader].
-Just a second! I'm still loading up the config references. The model will load once that's done.
 [DEBUG] Populated [sounder].
 [DEBUG] Populated [style].
 [DEBUG] Populated [texture].
 [DEBUG] Populated [tile].
 [DEBUG] Populated [wall].
 Config data has been populated.
-Working. This might take a bit...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\CustomGrem] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[TRACE] Instantiated global transform as identity transform with scale=1
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
-Resolved Model/Skinned/Masked (Soft) as com.threerings.opengl.material.config.MaterialConfig
-Resolved 2D/File/Default as com.threerings.opengl.renderer.config.TextureConfig
-[TRACE] Model has bone data, setting that up.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\weapon\npc\wrench_hammer\model.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
-[TRACE] Attached [wrench_hammer.model-Mesh[0]] to [bone_weapon_r]
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\circle.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\part_circle.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] 
-ERROR: A ModelConfig had an unknown implementation!
-=> Implementation: SceneInfluencerConfig
-=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
-
-[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
-[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
-[TRACE] Clyde object is ModelConfig.
-[DEBUG] 
-ERROR: A ModelConfig had an unknown implementation!
-=> Implementation: SceneInfluencerConfig
-=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
-
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\standing.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\walking.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\animation\sequential\simple.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\reacting_knockback.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\reacting_recover.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\dying.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\attack_1_start.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\attack_1_fire.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-Resolved Clip/Default (Gain) as com.threerings.openal.config.SounderConfig
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\attack_1_end.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\skill_charging.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\skill_directional.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\skill_omni.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-Resolved Clip/Default (Gain) (Pitch) as com.threerings.openal.config.SounderConfig
-[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\emote_working.dat] because it hasn't been initialized before...
-[TRACE] Read file to grab the raw info.
-Number of models loaded: 2 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
-Number of unique meshes instantiated: 3
-[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\thwacker\skin_orange.png].
-[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\thwacker\skin_purple.png].
-[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\thwacker\skin_green.png].
-[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\swarm\shadows\skin_gremlin.png].
-[DEBUG] Adding reference to [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\weapon\npc\wrench_hammer\skin_orange.png].
-[TRACE] Parented model [wrench_hammer.model-Mesh[0]] to node [bone_weapon_r]
-glTF Exporter instantiated 2 models (skipped 0 models).
-Done! Exported to [F:\Users\Xan\Desktop\3D\__SK_TEST\CustomGrem.glb]

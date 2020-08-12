@@ -54,17 +54,6 @@
             An object cache of files that have already been read. Should drastically speed up models with a lot of references.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.ClydeFileHandler.UpdateGUIAction">
-            <summary>
-            A delegate action that is called when the GUI needs to update. This can safely be <see langword="null"/> for contexts that do not have a GUI, as it is used for the SK Animator Tools UI.<para/>
-            Pass in <see langword="null"/> for arguments to make their data remain unchanged.<para/>
-            This is designed to work with the UI offered by SK Animator Tools V2. The parameters are as follows:<para/>
-            <c>string fileName (the name of the file that was opened)<para/>
-            string isCompressed (a string of true/false, yes/no, etc.)<para/>
-            string formatVersion (represents clyde file version. Classic, Intermediate, or VarInt for example)<para/>
-            string type (the base class, e.g. ModelConfig, AnimationConfig, ScriptedConfig)</c>
-            </summary>
-        </member>
         <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.GetAppropriateImporter(System.IO.FileInfo,ThreeRingsSharp.Utility.ClydeFormat)">
             <summary>
             Depending on the value of the input <see cref="T:ThreeRingsSharp.Utility.ClydeFormat"/>, this will return the appropriate <see cref="T:com.threerings.export.Importer"/> to read the given <paramref name="clydeFile"/>. Remember to close the <see cref="T:com.threerings.export.Importer"/>!<para/>
@@ -121,6 +110,13 @@
             <param name="initialTransform"></param>
             <param name="nodeModels"></param>
             <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.GetNodeCount(com.threerings.opengl.model.config.ArticulatedConfig.Node)">
+            <summary>
+            Gets the node count.
+            </summary>
+            <param name="parent"></param>
+            <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Model.ConfigReferenceUtil.HandleConfigReference(System.IO.FileInfo,com.threerings.config.ConfigReference,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,com.threerings.math.Transform3D,System.Boolean,System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>
@@ -663,6 +659,136 @@
             <param name="currentDataTreeObject">The current element in the data tree hierarchy to use.</param>
             <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name. Additionally, it will not have its implementation property.</param>
             <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="T:com.threerings.math.Transform3D"/>.</param>
+        </member>
+        <member name="T:ThreeRingsSharp.SKAnimatorToolsTransfer">
+            <summary>
+            Offers various bits and pieces that are used by the GUI portion of the program that are separate from this library.<para/>
+            Its most important capability is to transfer data from the background worker thread to the main thread.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UISyncContext">
+            <summary>
+            A reference to the synchronization context for the GUI.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UpdateGUIAction">
+            <summary>
+            A delegate action that is called when the GUI needs to update. This can safely be <see langword="null"/> for contexts that do not have a GUI, as it is used for the SK Animator Tools UI.<para/>
+            Pass in <see langword="null"/> for arguments to make their data remain unchanged.<para/>
+            It is advised that you call this via <see cref="M:ThreeRingsSharp.SKAnimatorToolsTransfer.UpdateGUIThroughSync(System.String,System.String,System.String,System.String)"/> as this protects cross-thread actions.
+            This is designed to work with the UI offered by SK Animator Tools V2. The parameters are as follows:<para/>
+            <c>string fileName (the name of the file that was opened)<para/>
+            string isCompressed (a string of true/false, yes/no, etc.)<para/>
+            string formatVersion (represents clyde file version. Classic, Intermediate, or VarInt for example)<para/>
+            string type (the base class, e.g. ModelConfig, AnimationConfig, ScriptedConfig)</c>
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsErroredAction">
+            <summary>
+            An <see cref="T:System.Action"/> to run when something goes wrong while configs are loading.<para/>
+            Implemented by <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsErroredThroughSync(System.Exception)"/>
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsLoadingAction">
+            <summary>
+            An action that fires whenever a single config reference file is loaded.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsPopulatedAction">
+            <summary>
+            An <see cref="T:System.Action"/> to run when configs are populated.<para/>
+            Implemented by <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsPopulatedThroughSync"/>
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ModelLoaderWorker">
+            <summary>
+            A reference to the <see cref="T:System.ComponentModel.BackgroundWorker"/> that handles loading models.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.Progress">
+            <summary>
+            A reference to the <see cref="T:System.Windows.Forms.ProgressBar"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.UpdateGUIThroughSync(System.String,System.String,System.String,System.String)">
+            <summary>
+            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UpdateGUIAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UISyncContext"/>.<para/>
+            This will do nothing if one or both of these is not defined.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsErroredThroughSync(System.Exception)">
+            <summary>
+            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsErroredAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UISyncContext"/>.<para/>
+            This will do nothing if one or both of these is not defined.
+            </summary>
+            <param name="error"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsPopulatedThroughSync">
+            <summary>
+            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsPopulatedAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UISyncContext"/>.<para/>
+            This will do nothing if one or both of these is not defined.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{ThreeRingsSharp.ProgressBarState})">
+            <summary>
+            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsLoadingAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UISyncContext"/>. Any parameters that are null implicitly mean "keep them the same" to the code.<para/>
+            This will do nothing if one or both of these is not defined.
+            </summary>
+            <param name="numCfgsLoaded"></param>
+            <param name="totalNumCfgs"></param>
+            <param name="state"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ReportProgress(System.Int32)">
+            <summary>
+            Reports progress to <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ModelLoaderWorker"/> if it is not <see langword="null"/>.<para/>
+            Unlike the typical <see cref="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ReportProgress(System.Int32)"/> method of <see cref="T:System.ComponentModel.BackgroundWorker"/>, this takes in an arbitrary number that directly sets the progress bar's value.
+            </summary>
+            <param name="numLoaded"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.IncrementProgress(System.Int32)">
+            <summary>
+            Increments the progress of <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ModelLoaderWorker"/> forward by <paramref name="num"/> units.
+            </summary>
+            <param name="num"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.IncrementEnd(System.Int32)">
+            <summary>
+            Increments the maximum value of the progress bar.
+            </summary>
+            <param name="num"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.SetProgressState(ThreeRingsSharp.ProgressBarState)">
+            <summary>
+            Alters the progress bar's appearance.
+            </summary>
+            <param name="state"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ResetProgress">
+            <summary>
+            Resets the progress bar.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.RegisterNodes(System.Object,ThreeRingsSharp.Utility.Interface.DataTreeObject)">
+            <summary>
+            Used to register the virtual data tree to the main UI
+            </summary>
+            <param name="lastNodeParent"></param>
+            <param name="rootDataTreeObject"></param>
+        </member>
+        <member name="F:ThreeRingsSharp.ProgressBarState.OK">
+            <summary>
+            A green progress bar to represent typical behavior.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.ProgressBarState.Error">
+            <summary>
+            A red progress bar to represent that something has failed.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.ProgressBarState.ExtraWork">
+            <summary>
+            A yellow progress bar to represent that some additional work is being done (e.g. resolving references).
+            </summary>
         </member>
         <member name="T:ThreeRingsSharp.Utility.JavaClassNameStripper">
             <summary>
@@ -1765,7 +1891,7 @@
         <member name="P:ThreeRingsSharp.Utility.XanLogger.IsMainThread">
             <summary>
             This will be <see langword="true"/> if the program is running in its main thread (and by extension, it is safe to update the GUI).<para/>
-            This will only be <see langword="false"/> in async calls, such as that in <see cref="!:ConfigReferenceBootstrapper"/>'s initialization method.
+            This will only be <see langword="false"/> in async calls, such as that in <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>'s initialization method.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.Utility.XanLogger.UpdateLog">
@@ -3028,8 +3154,7 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.SetTransform(com.threerings.math.Transform3D)">
             <summary>
-            Sets all applicable transformation-related properties from the given <see cref="T:com.threerings.math.Transform3D"/>.<para/>
-            This also applies the up axis from <see cref="!:Model3D.TargetUpAxis"/>.
+            Sets all applicable transformation-related properties from the given <see cref="T:com.threerings.math.Transform3D"/>.
             </summary>
             <param name="transform"></param>
         </member>
@@ -3313,16 +3438,6 @@
             As a temporary fix for a number of issues caused by armors, this property's { <see langword="get"/>; } will only be able to return <see langword="true"/> if all of the data associated with bones is correct (so setting it to <see langword="true"/> without correct data will cause this to still return <see langword="false"/>).
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.XansData.MeshData.HasTransformed">
-            <summary>
-            If <see langword="true"/>, <see cref="!:ApplyTransform(Transform3D)"/> has already been called.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.XansData.MeshData.HasAxialTransformed">
-            <summary>
-            If <see langword="true"/>, <see cref="!:ApplyAxialTransformationMod"/> has already been called. Axial transformations change the up axis based on <see cref="!:Model3D.TargetUpAxis"/>.
-            </summary>
-        </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.VertexOffset">
             <summary>
             All vertices will be moved by this value when exporting.
@@ -3353,7 +3468,8 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.SetOffsetToAABBCenter">
             <summary>
-            Since this is used by every tile when exporting scenes, it has its own method. This iterates through <see cref="P:ThreeRingsSharp.XansData.MeshData.Vertices"/> and then sets <see cref="P:ThreeRingsSharp.XansData.MeshData.VertexOffset"/> to the center of their axis-aligned bounding box.
+            Since this is used by every tile when exporting scenes, it has its own method. This iterates through <see cref="P:ThreeRingsSharp.XansData.MeshData.Vertices"/> and then sets <see cref="P:ThreeRingsSharp.XansData.MeshData.VertexOffset"/> to the center of their axis-aligned bounding box.<para/>
+            This skips the Y axis.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.SetBones(com.threerings.opengl.model.config.ArticulatedConfig.Node)">
@@ -3671,11 +3787,6 @@
             A reference to the geometry stored in this <see cref="T:ThreeRingsSharp.XansData.Model3D"/>, since multiple models may share the same mesh data.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.XansData.Model3D.HasDoneTransformation">
-            <summary>
-            If true, then <see cref="P:ThreeRingsSharp.XansData.Model3D.Transform"/> has been applied to the mesh data, and <see cref="!:ApplyTransformations"/> cannot be called again.
-            </summary>
-        </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.HasAppliedScaleCorrections">
             <summary>
             If true, <see cref="M:ThreeRingsSharp.XansData.Model3D.ApplyScaling"/> has already been called and cannot be called again. This applies transformations like the zero-scale check and the x100 scale prefs.
@@ -3763,21 +3874,6 @@
         <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.HasPopulatedConfigs">
             <summary>
             This will be <see langword="true"/> if all of the config references have loaded.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.OnConfigsPopulatedAction">
-            <summary>
-            An <see cref="T:System.Action"/> to run when configs are populated.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.ConfigsErroredAction">
-            <summary>
-            An <see cref="T:System.Action"/> to run when something goes wrong while configs are loading.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.UISyncContext">
-            <summary>
-            A reference to the GUI thread's <see cref="T:System.Threading.SynchronizationContext"/>.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper.PopulateConfigRefsAsync">

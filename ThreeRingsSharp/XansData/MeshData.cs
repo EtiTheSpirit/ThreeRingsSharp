@@ -135,16 +135,6 @@ namespace ThreeRingsSharp.XansData {
 		private bool _HasBoneData = false;
 
 		/// <summary>
-		/// If <see langword="true"/>, <see cref="ApplyTransform(Transform3D)"/> has already been called.
-		/// </summary>
-		public bool HasTransformed { get; private set; } = false;
-
-		/// <summary>
-		/// If <see langword="true"/>, <see cref="ApplyAxialTransformationMod"/> has already been called. Axial transformations change the up axis based on <see cref="Model3D.TargetUpAxis"/>.
-		/// </summary>
-		public bool HasAxialTransformed { get; private set; } = false;
-
-		/// <summary>
 		/// All vertices will be moved by this value when exporting.
 		/// </summary>
 		public Vector3 VertexOffset { get; set; } = new Vector3();
@@ -177,28 +167,29 @@ namespace ThreeRingsSharp.XansData {
 		}
 
 		/// <summary>
-		/// Since this is used by every tile when exporting scenes, it has its own method. This iterates through <see cref="Vertices"/> and then sets <see cref="VertexOffset"/> to the center of their axis-aligned bounding box.
+		/// Since this is used by every tile when exporting scenes, it has its own method. This iterates through <see cref="Vertices"/> and then sets <see cref="VertexOffset"/> to the center of their axis-aligned bounding box.<para/>
+		/// This skips the Y axis.
 		/// </summary>
 		public void SetOffsetToAABBCenter() {
 			float maxX = 0;
-			float maxY = 0;
+			//float maxY = 0;
 			float maxZ = 0;
 			float minX = 0;
-			float minY = 0;
+			//float minY = 0;
 			float minZ = 0;
 			foreach (Vector3 vertex in Vertices) {
 				float x = vertex.X;
-				float y = vertex.Y;
+				//float y = vertex.Y;
 				float z = vertex.Z;
 				if (x > maxX) maxX = x;
-				if (y > maxY) maxY = y;
+				//if (y > maxY) maxY = y;
 				if (z > maxZ) maxZ = z;
 				if (x < minX) minX = x;
-				if (y < minY) minY = y;
+				//if (y < minY) minY = y;
 				if (z < minZ) minZ = z;
 			}
 
-			VertexOffset = new Vector3((maxX - minX) / 2f, (maxY - minY) / 2f, (maxZ - minZ) / 2f);
+			VertexOffset = new Vector3((maxX - minX) / 2f, 0, (maxZ - minZ) / 2f);
 		}
 
 		/// <summary>

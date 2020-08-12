@@ -63,37 +63,29 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		}
 
 		public void HandleModelConfig(FileInfo sourceFile, ModelConfig baseModel, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null, Dictionary<string, dynamic> extraData = null) {
-			// ModelConfigHandler.SetupCosmeticInformation(baseModel, dataTreeParent);
 			StaticSetConfig staticSet = (StaticSetConfig)baseModel.implementation;
 
-			// Some unique stuff
-			/*
-			bool useOnlyTargetModel = extraData?.ContainsKey("TargetModel") ?? false; // If we explicitly define this then we only want one of the meshes.
-			if (useOnlyTargetModel) {
-				if (staticSet.meshes.containsKey(extraData["TargetModel"])) {
-					staticSet.model = extraData["TargetModel"];
-				} else {
-					staticSet.model = (string)staticSet.meshes.firstEntry().getKey();
-					XanLogger.WriteLine($"WARNING: StaticSet attempted to reference model [{ extraData["TargetModel"] }] but this model is not one that it contains!");
-				}
-			}
-			*/
-			//SetupCosmeticInformation(staticSet, dataTreeParent, useOnlyTargetModel);
 			SetupCosmeticInformation(staticSet, dataTreeParent);
 
 			string depth1Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile);
 			string fullDepthName = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile, -1);
 
 			if (staticSet.meshes != null) {
+				SKAnimatorToolsTransfer.IncrementEnd(staticSet.meshes.size());
 
 				if (extraData != null && extraData.ContainsKey("DirectArgs")) {
 					Dictionary<string, dynamic> directs = extraData["DirectArgs"];
+					SKAnimatorToolsTransfer.IncrementEnd(1);
+					SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.ExtraWork);
+					bool got = false;
 					foreach (string key in directs.Keys) {
 						Parameter param = baseModel.getParameter(key);
 						if (param is Parameter.Direct direct) {
 							if (direct.paths.Contains("implementation.model")) {
 								staticSet.model = directs[key];
 								XanLogger.WriteLine("Set model to " + staticSet.model, XanLogger.DEBUG);
+								SKAnimatorToolsTransfer.IncrementProgress();
+								got = true;
 								break;
 							}
 						} else if (param is Parameter.Choice choice) {
@@ -101,20 +93,25 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 								if (dir.paths.Contains("implementation.model")) {
 									staticSet.model = directs[key];
 									XanLogger.WriteLine("Set model to " + staticSet.model, XanLogger.DEBUG);
+									SKAnimatorToolsTransfer.IncrementProgress();
+									got = true;
 									break;
 								}
 							}
 						}
 					}
+					if (!got) SKAnimatorToolsTransfer.IncrementProgress(); // Just inc anyway
 				}
 
 				// Export them all!
 				object[] keys = staticSet.meshes.keySet().toArray();
+				SKAnimatorToolsTransfer.IncrementEnd(keys.Length);
 				foreach (object key in keys) {
-					bool isSelectedModel = (string)key == staticSet.model; // Whether or not this specific mesh is the one selected by the set.
 					MeshSet subModel = (MeshSet)staticSet.meshes.get(key);
 					VisibleMesh[] meshes = subModel.visible;
 					int idx = 0;
+
+					SKAnimatorToolsTransfer.IncrementEnd(meshes.Length);
 					foreach (VisibleMesh mesh in meshes) {
 						string meshTitle = "-MeshSets[" + key.ToString() + "].Mesh[" + idx + "]";
 
@@ -123,24 +120,17 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						meshToModel.ExtraData["StaticSetEntryName"] = key.ToString();
 						meshToModel.ExtraData["StaticSetConfig"] = staticSet;
 						if (globalTransform != null) meshToModel.Transform = globalTransform.compose(meshToModel.Transform);
-						//meshToModel.Transform = meshToModel.Transform.compose(new Transform3D(subModel.bounds.getCenter(), Quaternion.IDENTITY).promote(4));
-						
-						
+
 						meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
 						meshToModel.ActiveTexture = mesh.texture;
-						/*
-						if (!isSelectedModel) {
-							// Tell the model's extradata that this model is part of a StaticSetConfig and it's NOT the selected variant.
-							// This is used by the confirmation dialog on the exporter.
-							meshToModel.ExtraData["UnselectedStaticSetModel"] = true;
-						}
-						*/
 
 						modelCollection.Add(meshToModel);
 						idx++;
+						SKAnimatorToolsTransfer.IncrementProgress();
 					}
+
+					SKAnimatorToolsTransfer.IncrementProgress();
 				}
-				//}
 			}
 		}
 	}

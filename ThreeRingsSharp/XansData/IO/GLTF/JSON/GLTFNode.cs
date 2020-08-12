@@ -105,17 +105,11 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		public void SetScale(float scale) => SetScale(new Vector3(scale, scale, scale));
 
 		/// <summary>
-		/// Sets all applicable transformation-related properties from the given <see cref="Transform3D"/>.<para/>
-		/// This also applies the up axis from <see cref="Model3D.TargetUpAxis"/>.
+		/// Sets all applicable transformation-related properties from the given <see cref="Transform3D"/>.
 		/// </summary>
 		/// <param name="transform"></param>
 		public void SetTransform(Transform3D transform) {
 			(Vector3f Translation, Quaternion Rotation, Vector3f Scale) transformData = transform.GetAllTransforms();
-
-			/*
-			transformData.Translation = ((Vector3)transformData.Translation).RotateToAxis(Model3D.TargetUpAxis);
-			transformData.Rotation = transformData.Rotation.RotateToUpAxis(Model3D.TargetUpAxis);
-			*/
 
 			SetPosition(transformData.Translation);
 			SetRotation(transformData.Rotation);

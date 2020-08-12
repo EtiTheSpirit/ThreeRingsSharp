@@ -35,6 +35,8 @@ namespace ThreeRingsSharp.DataHandlers {
 			transform = transform ?? new Transform3D();
 			//transform.promote(Transform3D.GENERAL);
 
+			SKAnimatorToolsTransfer.IncrementEnd(2);
+
 			ModelConfig.Implementation implementation = model.implementation;
 			if (implementation == null) {
 				XanLogger.WriteLine("Implementation is null! Sending error.", XanLogger.DEBUG);
@@ -42,6 +44,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					currentDataTreeObject.Text = "Unknown Implementation";
 					currentDataTreeObject.ImageKey = SilkImage.Generic;
 				}
+				SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.Error);
 				throw new ClydeDataReadException("This specific model does not have an implementation, which is the data for the model itself. This generally happens if the implementation is from another game that uses Clyde and has defined its own custom model types (e.g. Spiral Knights does this). As a result, the program cannot extract any information from this file. Sorry!", "Can't Read Model", MessageBoxIcon.Error);
 			}
 
@@ -56,6 +59,8 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			ModelConfigHandler.SetupCosmeticInformation(model, currentDataTreeObject, useImplementation);
 
+			SKAnimatorToolsTransfer.IncrementProgress(); // Got model display data.
+			// Next one is to load the data.
 			if (implementation is ArticulatedConfig) {
 				XanLogger.WriteLine("Model is of the type 'ArticulatedConfig'. Accessing handlers...", XanLogger.DEBUG);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Articulated;
@@ -106,6 +111,8 @@ namespace ThreeRingsSharp.DataHandlers {
 				// AsyncMessageBox.ShowAsync("This specific implementation is valid, but it has no handler! (There's no code that can translate this data for you :c).\nImplementation: " + implementation.getClass().getTypeName(), "Can't Handle Model", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Generic;
 			}
+			SKAnimatorToolsTransfer.IncrementProgress();
+			// Handled model.
 		}
 
 	}

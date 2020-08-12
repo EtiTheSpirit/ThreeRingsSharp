@@ -46,6 +46,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			MeshSet meshes = model.meshes;
 			VisibleMesh[] renderedMeshes = meshes.visible;
 
+			SKAnimatorToolsTransfer.IncrementEnd(renderedMeshes.Length);
 			int idx = 0;
 			string depth1Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile);
 			string fullDepthName = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile, -1);
@@ -62,6 +63,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 				modelCollection.Add(meshToModel);
 				idx++;
+				SKAnimatorToolsTransfer.IncrementProgress();
 			}
 		}
 	}

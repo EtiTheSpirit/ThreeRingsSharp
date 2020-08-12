@@ -33,18 +33,6 @@ namespace ThreeRingsSharp.DataHandlers {
 		private static readonly Dictionary<string, (string, string, string)> ModelInfoCache = new Dictionary<string, (string, string, string)>();
 
 		/// <summary>
-		/// A delegate action that is called when the GUI needs to update. This can safely be <see langword="null"/> for contexts that do not have a GUI, as it is used for the SK Animator Tools UI.<para/>
-		/// Pass in <see langword="null"/> for arguments to make their data remain unchanged.<para/>
-		/// This is designed to work with the UI offered by SK Animator Tools V2. The parameters are as follows:<para/>
-		/// <c>string fileName (the name of the file that was opened)<para/>
-		/// string isCompressed (a string of true/false, yes/no, etc.)<para/>
-		/// string formatVersion (represents clyde file version. Classic, Intermediate, or VarInt for example)<para/>
-		/// string type (the base class, e.g. ModelConfig, AnimationConfig, ScriptedConfig)</c>
-		/// </summary>
-		public static Action<string, string, string, string> UpdateGUIAction { get; set; } = null;
-
-
-		/// <summary>
 		/// Depending on the value of the input <see cref="ClydeFormat"/>, this will return the appropriate <see cref="Importer"/> to read the given <paramref name="clydeFile"/>. Remember to close the <see cref="Importer"/>!<para/>
 		/// <list type="table">
 		/// <item>
@@ -83,9 +71,9 @@ namespace ThreeRingsSharp.DataHandlers {
 		/// <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If null, it will be created as an identity transform.</param>
 		/// <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
 		public static void HandleClydeFile(FileInfo clydeFile, List<Model3D> allGrabbedModels, bool isBaseFile = false, dynamic lastNodeParent = null, bool useFileName = false, Transform3D transform = null, Dictionary<string, dynamic> extraData = null) {
-			object obj = null;
+			object obj;
 			string modelClass = null;
-			string modelSubclass = null;
+			//string modelSubclass;
 			DataTreeObject rootDataTreeObject = new DataTreeObject();
 			// Other case was put at the bottom
 			if (lastNodeParent is DataTreeObject datObj) {
@@ -96,29 +84,38 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			// Cache models we've already read. 
 			// This isn't really important for single models, but for loading stuff like scenes, this speeds up load speed incredibly.
+
+			// New task.
+			SKAnimatorToolsTransfer.IncrementEnd();
+
 			if (!ClydeObjectCache.ContainsKey(clydeFile.FullName)) {
 				XanLogger.WriteLine($"Loading [{clydeFile.FullName}] because it hasn't been initialized before...", XanLogger.DEBUG);
+				SKAnimatorToolsTransfer.IncrementEnd(2);
+				SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.ExtraWork);
+
 				(bool isValidClydeFile, ClydeFormat format) = VersionInfoScraper.IsValidClydeFile(clydeFile);
 
 				if (!isValidClydeFile) {
 					XanLogger.WriteLine("Invalid file. Sending error.", XanLogger.DEBUG);
 					throw new ClydeDataReadException("This file isn't a valid Clyde file! (Reason: Incorrect header)");
 				}
-				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(clydeFile, format);
+				(string isCompressed, string formatVersion, string modelFullClass) = VersionInfoScraper.GetCosmeticInformation(clydeFile, format);
 				XanLogger.WriteLine($"Read file to grab the raw info.", XanLogger.TRACE);
-				string modelFullClass = cosmeticInfo.Item3;
 				string[] modelClassInfo = JavaClassNameStripper.GetSplitClassName(modelFullClass);
 
 				if (modelClassInfo != null) {
 					modelClass = modelClassInfo[0];
-					if (modelClassInfo.Length == 2) modelSubclass = modelClassInfo[1];
+					//if (modelClassInfo.Length == 2) modelSubclass = modelClassInfo[1];
 				}
+				SKAnimatorToolsTransfer.IncrementProgress();
 
-				// Just abort early here. We can't laod these.
+				// Just abort early here. We can't load these.
 				if (modelClass == "ProjectXModelConfig") {
+					SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.Error);
+
 					XanLogger.WriteLine("User imported a Player Knight model. These are unsupported. Sending warning.", XanLogger.DEBUG);
-					if (isBaseFile && UpdateGUIAction != null) {
-						UpdateGUIAction(null, null, null, "ModelConfig");
+					if (isBaseFile) {
+						SKAnimatorToolsTransfer.UpdateGUIThroughSync(modelType: "ModelConfig");
 					}
 					if (rootDataTreeObject != null) {
 						rootDataTreeObject.Text = "ProjectXModelConfig";
@@ -129,18 +126,20 @@ namespace ThreeRingsSharp.DataHandlers {
 				}
 
 				// So if this is the file we actually opened (not a referenced file) and we've defined the action necessary to update the GUI...
-				if (isBaseFile && UpdateGUIAction != null) {
+				if (isBaseFile) {
 					// Then update the display text in the top right to reflect on this.
-					UpdateGUIAction(clydeFile.Name, cosmeticInfo.Item1, cosmeticInfo.Item2, "Processing...");
+					SKAnimatorToolsTransfer.UpdateGUIThroughSync(clydeFile.Name, isCompressed, formatVersion, "Processing...");
 				}
 
 				Importer targetImporter = GetAppropriateImporter(clydeFile, format);
 				try {
 					obj = targetImporter.readObject();
 					ClydeObjectCache[clydeFile.FullName] = obj;
-					ModelInfoCache[clydeFile.FullName] = cosmeticInfo;
+					ModelInfoCache[clydeFile.FullName] = (isCompressed, formatVersion, modelFullClass);
+					SKAnimatorToolsTransfer.IncrementProgress();
 				} catch {
 					targetImporter.close();
+					SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.Error);
 					throw;
 				}
 			} else {
@@ -152,9 +151,12 @@ namespace ThreeRingsSharp.DataHandlers {
 
 				if (modelClassInfo != null) {
 					modelClass = modelClassInfo[0];
-					if (modelClassInfo.Length == 2) modelSubclass = modelClassInfo[1];
+					//if (modelClassInfo.Length == 2) modelSubclass = modelClassInfo[1];
 				}
 			}
+			
+			SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.OK);
+			SKAnimatorToolsTransfer.IncrementProgress();
 
 			// This is kind of hacky behavior but it (ab)uses the fact that this will only run on the first call for any given chain of .DAT files.
 			// That is, all external referenced files by this .dat have this value passed into the method we're in right now instead of it being null.
@@ -169,20 +171,21 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			if (obj is null) {
 				XanLogger.WriteLine("Clyde object is null. Unknown object type.", XanLogger.TRACE);
-				if (isBaseFile && UpdateGUIAction != null) {
-					UpdateGUIAction(null, null, null, "Unknown");
+				if (isBaseFile) {
+					SKAnimatorToolsTransfer.UpdateGUIThroughSync(modelType: "Unknown");
 				}
 				if (rootDataTreeObject != null) {
 					rootDataTreeObject.Text = "Unknown Base";
 					rootDataTreeObject.ImageKey = SilkImage.Generic;
 				}
 				errToThrow = new ClydeDataReadException("The root type of this data is null!\nThis usually happens if the implementation is from an outside source that uses Clyde (e.g. Spiral Knights itself) which has its own custom classes that are not part of Clyde.\n\nAs a result of this issue, the program is unfortunately unable to extract any meaningful information from this file.", "Unsupported Implementation");
+				SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.Error);
 			}
 
 			if (obj is ModelConfig model) {
 				XanLogger.WriteLine("Clyde object is ModelConfig.", XanLogger.TRACE);
-				if (isBaseFile && UpdateGUIAction != null) {
-					UpdateGUIAction(null, null, null, "ModelConfig");
+				if (isBaseFile) {
+					SKAnimatorToolsTransfer.UpdateGUIThroughSync(modelType: "ModelConfig");
 				}
 
 				try {
@@ -191,10 +194,10 @@ namespace ThreeRingsSharp.DataHandlers {
 					errToThrow = exc;
 				}
 
-			} else if (obj is AnimationConfig animation) {
+			} else if (obj is AnimationConfig) {
 				XanLogger.WriteLine("Clyde object is AnimationConfig.", XanLogger.TRACE);
-				if (isBaseFile && UpdateGUIAction != null) {
-					UpdateGUIAction(null, null, null, "AnimationConfig");
+				if (isBaseFile) {
+					SKAnimatorToolsTransfer.UpdateGUIThroughSync(modelType: "AnimationConfig");
 				}
 
 				if (rootDataTreeObject != null) {
@@ -202,11 +205,12 @@ namespace ThreeRingsSharp.DataHandlers {
 					rootDataTreeObject.ImageKey = SilkImage.Animation;
 				}
 				errToThrow = new ClydeDataReadException("You can't open animations directly! Please instead load an ArticulatedConfig that references this animation.", "Unsupported Implementation", MessageBoxIcon.Warning);
+				SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.Error);
 
 			} else if (obj is TudeySceneModel scene) {
 				XanLogger.WriteLine("Clyde object is TudeySceneModel.", XanLogger.TRACE);
-				if (isBaseFile && UpdateGUIAction != null) {
-					UpdateGUIAction(null, null, null, "TudeySceneModel");
+				if (isBaseFile) {
+					SKAnimatorToolsTransfer.UpdateGUIThroughSync(modelType: "TudeySceneModel");
 				}
 
 				if (rootDataTreeObject != null) {
@@ -220,19 +224,22 @@ namespace ThreeRingsSharp.DataHandlers {
 			} else {
 				string mdlClass = modelClass ?? obj.GetType().Name;
 				XanLogger.WriteLine("Clyde object is an unknown class [" + mdlClass + "]", XanLogger.TRACE);
-				if (isBaseFile && UpdateGUIAction != null) {
-					UpdateGUIAction(null, null, null, mdlClass);
+				if (isBaseFile) {
+					SKAnimatorToolsTransfer.UpdateGUIThroughSync(modelType: mdlClass);
 				}
 				if (rootDataTreeObject != null) {
 					rootDataTreeObject.Text = mdlClass;
 					rootDataTreeObject.ImageKey = SilkImage.Generic;
 				}
 				errToThrow = new ClydeDataReadException($"This implementation type ({mdlClass}) is unsupported by the program.", "Unsupported Implementation", MessageBoxIcon.Warning);
+				SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.Error);
+
 			}
 
 			FINALIZE_NODES:
 			if (lastNodeParent is TreeNode || lastNodeParent is TreeView) {
-				lastNodeParent.Nodes.Add(rootDataTreeObject.ConvertHierarchyToTreeNodes());
+				//lastNodeParent.Nodes.Add(rootDataTreeObject.ConvertHierarchyToTreeNodes());
+				SKAnimatorToolsTransfer.RegisterNodes(lastNodeParent, rootDataTreeObject);
 			}
 
 			if (errToThrow != null) throw errToThrow;

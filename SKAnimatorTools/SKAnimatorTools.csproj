@@ -148,6 +148,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Component\ColoredProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ConditionalConfigOptions.cs">
       <SubType>Form</SubType>
     </Compile>

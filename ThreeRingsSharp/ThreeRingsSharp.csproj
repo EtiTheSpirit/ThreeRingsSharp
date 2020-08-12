@@ -179,6 +179,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="SKAnimatorToolsTransfer.cs" />
     <Compile Include="Utility\ClassNameStripper.cs" />
     <Compile Include="Utility\ConfigReferenceConstructor.cs" />
     <Compile Include="Utility\DummyScope.cs" />

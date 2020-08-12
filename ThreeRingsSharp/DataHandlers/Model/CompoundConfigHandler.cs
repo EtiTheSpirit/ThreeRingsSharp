@@ -39,8 +39,10 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			// 3: Choice -- The currently selected option (or default option)
 
 			ComponentModel[] componentModels = compound.models;
+			SKAnimatorToolsTransfer.IncrementEnd(componentModels.Length);
 			foreach (ComponentModel model in componentModels) {
 				ConfigReferenceUtil.HandleComponentModel(sourceFile, model, modelCollection, dataTreeParent, globalTransform, true, extraData);
+				SKAnimatorToolsTransfer.IncrementProgress();
 			}
 		}
 	}

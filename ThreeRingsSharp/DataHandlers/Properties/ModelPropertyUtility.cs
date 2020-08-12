@@ -43,10 +43,12 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 					return new List<string>(); // Can't grab anything from this.
 				}
 			}
+			SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.ExtraWork);
 
 			List<string> retn = new List<string>();
 			if (cfg.implementation is Imported imported) retn.AddRange(GetDefaultTextures(imported).ToList());
 
+			SKAnimatorToolsTransfer.IncrementEnd(cfg.parameters.Length);
 			foreach (Parameter param in cfg.parameters) {
 				if (param is Parameter.Choice choice) {
 					WrappedChoice wChoice = new WrappedChoice(cfg, choice);
@@ -61,7 +63,10 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 						}
 					}
 				}
+				SKAnimatorToolsTransfer.IncrementProgress();
 			}
+
+			SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.OK);
 			return retn;
 		}
 
@@ -72,13 +77,17 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 		/// <param name="model"></param>
 		/// <returns></returns>
 		public static string[] GetDefaultTextures(Imported model) {
+			
 			string[] textures = new string[model.materialMappings.Length];
+			SKAnimatorToolsTransfer.IncrementEnd(textures.Length);
+
 			for (int index = 0; index < model.materialMappings.Length; index++) {
 				MaterialMapping mapping = model.materialMappings[index];
 				ConfigReference texRef = (ConfigReference)mapping.material.getArguments().getOrDefault("Texture", null);
 				if (texRef != null) {
 					textures[index] = (string)texRef.getArguments().getOrDefault("File", null);
 				}
+				SKAnimatorToolsTransfer.IncrementProgress();
 			}
 			return textures;
 		}

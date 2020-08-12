@@ -58,29 +58,12 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			set {
 				_HasPopulatedConfigs = value;
 				if (value) {
-					UISyncContext?.Send(callback => {
-						OnConfigsPopulatedAction?.Invoke();
-					}, null);
+					SKAnimatorToolsTransfer.ConfigsPopulatedThroughSync();
 				}
 			}
 		}
 		private static bool _HasPopulatedConfigs = false;
 		private static readonly string CurrentExeDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).Replace("\\", "/");
-
-		/// <summary>
-		/// An <see cref="Action"/> to run when configs are populated.
-		/// </summary>
-		public static Action OnConfigsPopulatedAction { get; set; } = null;
-
-		/// <summary>
-		/// An <see cref="Action"/> to run when something goes wrong while configs are loading.
-		/// </summary>
-		public static Action<System.Exception> ConfigsErroredAction { get; set; } = null;
-
-		/// <summary>
-		/// A reference to the GUI thread's <see cref="SynchronizationContext"/>.
-		/// </summary>
-		public static SynchronizationContext UISyncContext { get; set; } = null;
 
 		static ConfigReferenceBootstrapper() {
 			if (!CurrentExeDir.EndsWith("/")) CurrentExeDir += '/';
@@ -116,6 +99,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				using (BinaryReader reader = new BinaryReader(mergedBinFile.OpenRead())) {
 					if (reader.ReadInt32() == MERGED_FILE_VERSION) {
 						int numFiles = reader.ReadInt32();
+						SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(0, numFiles, ProgressBarState.OK);
 						for (int index = 0; index < numFiles; index++) {
 							int size = reader.ReadInt32();
 							int nameLength = reader.ReadByte();
@@ -137,14 +121,17 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 							ManagedConfig[] cfgs = objArr.OfType<ManagedConfig>().ToArray();
 							_ConfigReferences.Put(name, (cfgs, type));
 
+							SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(index, numFiles + cfgs.Length, ProgressBarState.ExtraWork);
+							int idx = 0;
 							foreach (ManagedConfig cfgObj in cfgs) {
 								_ConfigReferences.ConfigEntryToContainerName[cfgObj.getName()] = name;
+								SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(index + idx);
+								idx++;
 							}
-
 							importer.close();
 							XanLogger.WriteLine("Populated [" + name + "].", XanLogger.DEBUG);
 							XanLogger.UpdateLog();
-
+							SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(index + 1, numFiles, ProgressBarState.OK);
 						}
 					} else {
 						XanLogger.WriteLine("Special merged binary file is out of date! Manually iterating through ConfigRefs...", XanLogger.DEBUG);
@@ -154,14 +141,19 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 					}
 				}
 
-				XanLogger.WriteLine("Config data has been populated.");
-				XanLogger.UpdateLog();
+				if (XanLogger.IsMainThread) {
+					XanLogger.WriteLine("Config data has been populated.");
+					XanLogger.UpdateLog();
+				} else {
+					SKAnimatorToolsTransfer.UISyncContext?.Send(param => {
+						XanLogger.WriteLine("Config data has been populated.");
+						XanLogger.UpdateLog();
+					}, null);
+				}
 
 				HasPopulatedConfigs = true;
 			} catch (System.Exception error) {
-				UISyncContext.Send(callback => {
-					ConfigsErroredAction?.Invoke(error);
-				}, null);
+				SKAnimatorToolsTransfer.ConfigsErroredThroughSync(error);
 			}
 		}
 
@@ -285,7 +277,10 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 			if (PruneXMLAndMakeBinaries()) return;
 
-			foreach (FileInfo configRef in prunedRefsDir.EnumerateFiles("*.dat")) {
+			List<FileInfo> allDatFiles = prunedRefsDir.EnumerateFiles("*.dat").ToList();
+			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(0, allDatFiles.Count, ProgressBarState.ExtraWork);
+			int allFiles = 0;
+			foreach (FileInfo configRef in allDatFiles) {
 				string fName = configRef.Name.Replace(configRef.Extension, "");
 
 				FileInputStream cfgStream = new FileInputStream(configRef.FullName);
@@ -295,6 +290,8 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				if (obj == null) {
 					XanLogger.WriteLine("WARNING: Reference for [" + fName + "] returned null!");
 					XanLogger.UpdateLog();
+					allFiles++;
+					SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(allFiles);
 					continue;
 				}
 				Array objArr = obj as Array;
@@ -310,11 +307,11 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				importer.close();
 				XanLogger.WriteLine("Populated [" + fName + "].", XanLogger.DEBUG);
 				XanLogger.UpdateLog();
-
+				allFiles++;
+				SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(allFiles);
 			}
+			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(state: ProgressBarState.OK);
 		}
-
-
 
 		/// <summary>
 		/// Populates a list of XML Configs from the existing default config refs that don't include entries referencing classes that don't exist (e.g. SK-specific stuff).<para/>
@@ -328,7 +325,6 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			if (!prunedRefsDir.Exists) {
 				prunedRefsDir.Create();
 			} else {
-
 				JustMakeBinaries(prunedRefsDir);
 				return true;
 			}
@@ -343,11 +339,15 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 			List<FileInfo> allXMLFiles = configRefsDir.EnumerateFiles("*.xml").ToList();
 
+			int totalNumFiles = allXMLFiles.Count;
+			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(0, totalNumFiles, ProgressBarState.ExtraWork);
+
 			// Write a placeholder int, which will be replaced with the version and number of entries respectively.
 			writer.Write(0);
 			writer.Write(0);
 			int numFiles = 0;
 
+			int allFiles = 0;
 			foreach (FileInfo configRef in allXMLFiles) {
 				string fName = configRef.Name.Replace(configRef.Extension, "");
 
@@ -405,6 +405,8 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				}
 				XanLogger.WriteLine("Pruned [" + fName + "] and converted it to binary.");
 				XanLogger.UpdateLog();
+				allFiles++;
+				SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(allFiles);
 
 			}
 			str.Flush();
@@ -418,13 +420,13 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			XanLogger.WriteLine("Pruning complete! The merged binary file is done too.");
 			XanLogger.UpdateLog();
 
+			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(state: ProgressBarState.OK);
 			return false;
 		}
 
 		private static void JustMakeBinaries(DirectoryInfo prunedRefsDir) {
 			XanLogger.WriteLine("Existing .DAT files found! Only creating merged binaries...");
 			XanLogger.UpdateLog();
-
 
 			FileInfo mergedBinFile = new FileInfo(CurrentExeDir + "MergedConfigReferences.bin");
 			FileStream str = mergedBinFile.OpenWriteNew();
@@ -434,8 +436,13 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			writer.Write(0);
 			writer.Write(0);
 			int numFiles = 0;
+			int allFiles = 0;
 
-			foreach (FileInfo configRef in prunedRefsDir.EnumerateFiles("*.dat")) {
+			//SKAnimatorToolsTransfer.ConfigsLoadingThroughSync
+			List<FileInfo> allDatFiles = prunedRefsDir.EnumerateFiles("*.dat").ToList();
+			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(0, allDatFiles.Count, ProgressBarState.ExtraWork);
+
+			foreach (FileInfo configRef in allDatFiles) {
 				string fName = configRef.Name.Replace(configRef.Extension, "");
 
 				FileInputStream cfgStream = new FileInputStream(configRef.FullName);
@@ -445,7 +452,8 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				if (obj == null) {
 					XanLogger.WriteLine("WARNING: Reference for [" + fName + "] returned null!");
 					XanLogger.UpdateLog();
-
+					allFiles++;
+					SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(allFiles);
 					continue;
 				}
 				Type type = obj.GetType().GetElementType(); // Always an array
@@ -469,6 +477,8 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				}
 
 				numFiles++;
+				allFiles++;
+				SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(allFiles);
 			}
 			str.Flush();
 			str.Close();
@@ -480,7 +490,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			}
 			XanLogger.WriteLine("The merged binary file has been created.");
 			XanLogger.UpdateLog();
-
+			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(state: ProgressBarState.OK);
 		}
 
 		/// <summary>

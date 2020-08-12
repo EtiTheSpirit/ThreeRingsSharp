@@ -28,6 +28,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			MergedStaticConfig mergedStatic = (MergedStaticConfig)baseModel.implementation;
 
 			ComponentModel[] componentModels = mergedStatic.models;
+			SKAnimatorToolsTransfer.IncrementEnd(componentModels.Length);
 			foreach (ComponentModel model in componentModels) {
 				string filePathRelativeToRsrc = model.model.getName();
 				if (filePathRelativeToRsrc.StartsWith("/")) filePathRelativeToRsrc = filePathRelativeToRsrc.Substring(1);
@@ -38,6 +39,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				Transform3D newTrs = model.transform;
 				newTrs = globalTransform.compose(newTrs);
 				ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, transform: newTrs);
+				SKAnimatorToolsTransfer.IncrementProgress();
 			}
 		}
 

@@ -24,6 +24,8 @@ namespace SKAnimatorTools {
 
 		private void BtnDownload_Click(object sender, EventArgs e) {
 			string dlLink = "https://github.com/XanTheDragon/ThreeRingsSharp/releases/download/{0}/ThreeRingsSharp.zip";
+			//string releaseLink = "https://github.com/XanTheDragon/ThreeRingsSharp/releases/{0}";
+			//System.Diagnostics.Process.Start(string.Format(releaseLink, LatestVersion));
 			System.Diagnostics.Process.Start(string.Format(dlLink, LatestVersion));
 			Close();
 			Environment.Exit(0);

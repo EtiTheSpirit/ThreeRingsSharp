@@ -49,6 +49,8 @@
 			this.ProgramLog = new System.Windows.Forms.RichTextBox();
 			this.BtnConfig = new System.Windows.Forms.Button();
 			this.ProgramTooltip = new System.Windows.Forms.ToolTip(this.components);
+			this.ModelLoaderBGWorker = new System.ComponentModel.BackgroundWorker();
+			this.ModelLoadProgress = new SKAnimatorTools.Component.ColoredProgressBar();
 			this.GroupBoxModelInfo.SuspendLayout();
 			this.GroupBoxProperties.SuspendLayout();
 			this.GroupBoxModelTree.SuspendLayout();
@@ -75,6 +77,8 @@
 			// ModelStructureTree
 			// 
 			this.ModelStructureTree.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ModelStructureTree.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.ModelStructureTree.HideSelection = false;
 			this.ModelStructureTree.ImageIndex = 1;
 			this.ModelStructureTree.ImageList = this.SilkImages;
 			this.ModelStructureTree.Location = new System.Drawing.Point(3, 16);
@@ -130,6 +134,7 @@
 			this.GroupBoxModelInfo.Controls.Add(this.GroupBoxProperties);
 			this.GroupBoxModelInfo.Controls.Add(this.GroupBoxModelTree);
 			this.GroupBoxModelInfo.Controls.Add(this.GroupBoxCoreModelInfo);
+			this.GroupBoxModelInfo.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.GroupBoxModelInfo.Location = new System.Drawing.Point(363, 12);
 			this.GroupBoxModelInfo.Name = "GroupBoxModelInfo";
 			this.GroupBoxModelInfo.Size = new System.Drawing.Size(413, 545);
@@ -140,6 +145,7 @@
 			// GroupBoxProperties
 			// 
 			this.GroupBoxProperties.Controls.Add(this.SelectedObjectProperties);
+			this.GroupBoxProperties.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.GroupBoxProperties.Location = new System.Drawing.Point(6, 341);
 			this.GroupBoxProperties.Name = "GroupBoxProperties";
 			this.GroupBoxProperties.Size = new System.Drawing.Size(401, 198);
@@ -150,6 +156,8 @@
 			// SelectedObjectProperties
 			// 
 			this.SelectedObjectProperties.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.SelectedObjectProperties.ForeColor = System.Drawing.SystemColors.ControlText;
+			this.SelectedObjectProperties.HideSelection = false;
 			this.SelectedObjectProperties.ImageIndex = 0;
 			this.SelectedObjectProperties.ImageList = this.SilkImages;
 			this.SelectedObjectProperties.Location = new System.Drawing.Point(3, 16);
@@ -162,6 +170,7 @@
 			// GroupBoxModelTree
 			// 
 			this.GroupBoxModelTree.Controls.Add(this.ModelStructureTree);
+			this.GroupBoxModelTree.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.GroupBoxModelTree.Location = new System.Drawing.Point(6, 118);
 			this.GroupBoxModelTree.Name = "GroupBoxModelTree";
 			this.GroupBoxModelTree.Size = new System.Drawing.Size(401, 217);
@@ -172,6 +181,7 @@
 			// GroupBoxCoreModelInfo
 			// 
 			this.GroupBoxCoreModelInfo.Controls.Add(this.ModelCoreDataTable);
+			this.GroupBoxCoreModelInfo.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.GroupBoxCoreModelInfo.Location = new System.Drawing.Point(6, 20);
 			this.GroupBoxCoreModelInfo.Name = "GroupBoxCoreModelInfo";
 			this.GroupBoxCoreModelInfo.Size = new System.Drawing.Size(401, 98);
@@ -311,24 +321,28 @@
 			// GroupBoxProgramInfo
 			// 
 			this.GroupBoxProgramInfo.Controls.Add(this.ProgramLog);
+			this.GroupBoxProgramInfo.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.GroupBoxProgramInfo.Location = new System.Drawing.Point(12, 12);
 			this.GroupBoxProgramInfo.Name = "GroupBoxProgramInfo";
-			this.GroupBoxProgramInfo.Size = new System.Drawing.Size(345, 516);
+			this.GroupBoxProgramInfo.Size = new System.Drawing.Size(345, 500);
 			this.GroupBoxProgramInfo.TabIndex = 0;
 			this.GroupBoxProgramInfo.TabStop = false;
 			this.GroupBoxProgramInfo.Text = "Program Information Feed";
 			// 
 			// ProgramLog
 			// 
+			this.ProgramLog.BackColor = System.Drawing.SystemColors.Control;
 			this.ProgramLog.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.ProgramLog.ForeColor = System.Drawing.SystemColors.ControlText;
 			this.ProgramLog.HideSelection = false;
 			this.ProgramLog.Location = new System.Drawing.Point(3, 16);
 			this.ProgramLog.Name = "ProgramLog";
 			this.ProgramLog.ReadOnly = true;
 			this.ProgramLog.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedVertical;
-			this.ProgramLog.Size = new System.Drawing.Size(339, 497);
+			this.ProgramLog.Size = new System.Drawing.Size(339, 481);
 			this.ProgramLog.TabIndex = 0;
-			this.ProgramLog.Text = "Welcome to ThreeRingsSharp!\n";
+			this.ProgramLog.Text = "Welcome to ThreeRingsSharp!\nPlease wait while I load up the config references...\n" +
+    "";
 			// 
 			// BtnConfig
 			// 
@@ -340,16 +354,40 @@
 			this.BtnConfig.UseVisualStyleBackColor = true;
 			this.BtnConfig.Click += new System.EventHandler(this.OnConfigClicked);
 			// 
+			// ModelLoaderBGWorker
+			// 
+			this.ModelLoaderBGWorker.WorkerReportsProgress = true;
+			this.ModelLoaderBGWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ModelLoaderBGWorker_DoWork);
+			this.ModelLoaderBGWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.ModelLoaderBGWorker_ProgressChanged);
+			this.ModelLoaderBGWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ModelLoaderBGWorker_RunWorkerCompleted);
+			// 
+			// ModelLoadProgress
+			// 
+			this.ModelLoadProgress.BackColor = System.Drawing.SystemColors.ControlLight;
+			this.ModelLoadProgress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(192)))), ((int)(((byte)(31)))));
+			this.ModelLoadProgress.Location = new System.Drawing.Point(15, 515);
+			this.ModelLoadProgress.Maximum = 1;
+			this.ModelLoadProgress.Name = "ModelLoadProgress";
+			this.ModelLoadProgress.RightToLeftLayout = true;
+			this.ModelLoadProgress.Size = new System.Drawing.Size(339, 16);
+			this.ModelLoadProgress.Step = 100;
+			this.ModelLoadProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+			this.ModelLoadProgress.TabIndex = 5;
+			this.ModelLoadProgress.UseSystemBar = false;
+			// 
 			// MainWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackColor = System.Drawing.SystemColors.Control;
 			this.ClientSize = new System.Drawing.Size(788, 569);
+			this.Controls.Add(this.ModelLoadProgress);
 			this.Controls.Add(this.BtnConfig);
 			this.Controls.Add(this.GroupBoxProgramInfo);
 			this.Controls.Add(this.BtnOpenModel);
 			this.Controls.Add(this.BtnSaveModel);
 			this.Controls.Add(this.GroupBoxModelInfo);
+			this.DoubleBuffered = true;
 			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MaximizeBox = false;
 			this.MaximumSize = new System.Drawing.Size(804, 608);
@@ -370,30 +408,32 @@
 
 		#endregion
 
-		private System.Windows.Forms.SaveFileDialog SaveModel;
-		private System.Windows.Forms.OpenFileDialog OpenModel;
-		private System.Windows.Forms.TreeView ModelStructureTree;
-		private System.Windows.Forms.GroupBox GroupBoxModelInfo;
-		private System.Windows.Forms.Button BtnSaveModel;
-		private System.Windows.Forms.Button BtnOpenModel;
-		private System.Windows.Forms.GroupBox GroupBoxProgramInfo;
-		private System.Windows.Forms.GroupBox GroupBoxModelTree;
-		private System.Windows.Forms.GroupBox GroupBoxCoreModelInfo;
-		private System.Windows.Forms.TableLayoutPanel ModelCoreDataTable;
-		private System.Windows.Forms.Label LabelFileName_Left;
-		private System.Windows.Forms.Label LabelFileName;
-		private System.Windows.Forms.Label LabelFormatVersion_Left;
-		private System.Windows.Forms.Label LabelFormatVersion;
-		private System.Windows.Forms.Label LabelModelCompressed_Left;
-		private System.Windows.Forms.Label LabelModelCompressed;
-		private System.Windows.Forms.Label LabelType_Left;
-		private System.Windows.Forms.Label LabelType;
-		private System.Windows.Forms.ImageList SilkImages;
-		private System.Windows.Forms.GroupBox GroupBoxProperties;
-		private System.Windows.Forms.TreeView SelectedObjectProperties;
-		private System.Windows.Forms.Button BtnConfig;
-		private System.Windows.Forms.RichTextBox ProgramLog;
-		private System.Windows.Forms.ToolTip ProgramTooltip;
+		public System.Windows.Forms.SaveFileDialog SaveModel;
+		public System.Windows.Forms.OpenFileDialog OpenModel;
+		public System.Windows.Forms.TreeView ModelStructureTree;
+		public System.Windows.Forms.GroupBox GroupBoxModelInfo;
+		public System.Windows.Forms.Button BtnSaveModel;
+		public System.Windows.Forms.Button BtnOpenModel;
+		public System.Windows.Forms.GroupBox GroupBoxProgramInfo;
+		public System.Windows.Forms.GroupBox GroupBoxModelTree;
+		public System.Windows.Forms.GroupBox GroupBoxCoreModelInfo;
+		public System.Windows.Forms.TableLayoutPanel ModelCoreDataTable;
+		public System.Windows.Forms.Label LabelFileName_Left;
+		public System.Windows.Forms.Label LabelFileName;
+		public System.Windows.Forms.Label LabelFormatVersion_Left;
+		public System.Windows.Forms.Label LabelFormatVersion;
+		public System.Windows.Forms.Label LabelModelCompressed_Left;
+		public System.Windows.Forms.Label LabelModelCompressed;
+		public System.Windows.Forms.Label LabelType_Left;
+		public System.Windows.Forms.Label LabelType;
+		public System.Windows.Forms.ImageList SilkImages;
+		public System.Windows.Forms.GroupBox GroupBoxProperties;
+		public System.Windows.Forms.TreeView SelectedObjectProperties;
+		public System.Windows.Forms.Button BtnConfig;
+		public System.Windows.Forms.RichTextBox ProgramLog;
+		public System.Windows.Forms.ToolTip ProgramTooltip;
+		private System.ComponentModel.BackgroundWorker ModelLoaderBGWorker;
+		private SKAnimatorTools.Component.ColoredProgressBar ModelLoadProgress;
 	}
 }
 

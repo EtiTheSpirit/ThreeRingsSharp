@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.XansData.XML.ConfigReferences;
 
 namespace ThreeRingsSharp.Utility {
 	public static class XanLogger {
