@@ -88,7 +88,7 @@ namespace SKAnimatorTools {
 			}
 
 			VTConsole.EnableVTSupport();
-			System.Console.Title = "Spiral Knights Animator Tools";
+			Console.Title = "Spiral Knights Animator Tools";
 			ConsolePtr = GetConsoleWindow();
 			InitializeComponent();
 			XanLogger.BoxReference = ProgramLog;

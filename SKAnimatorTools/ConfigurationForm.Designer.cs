@@ -635,7 +635,7 @@
 			this.LabelCurrentVersion.ReadOnly = true;
 			this.LabelCurrentVersion.Size = new System.Drawing.Size(484, 20);
 			this.LabelCurrentVersion.TabIndex = 33;
-			this.LabelCurrentVersion.Text = "ThreeRingsSharp v1.4.1";
+			this.LabelCurrentVersion.Text = "ThreeRingsSharp v1.4.2";
 			this.LabelCurrentVersion.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
 			// 
 			// ConfigurationForm
@@ -717,6 +717,6 @@
 		private System.Windows.Forms.PictureBox BtnSelectDefRsrcLoc;
 		private System.Windows.Forms.ComboBox Option_LogLevel;
 		private System.Windows.Forms.Label LabelLogLevel;
-		private System.Windows.Forms.TextBox LabelCurrentVersion;
+		public System.Windows.Forms.TextBox LabelCurrentVersion;
 	}
 }
