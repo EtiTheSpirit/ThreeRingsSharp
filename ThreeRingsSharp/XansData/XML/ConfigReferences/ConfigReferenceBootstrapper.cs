@@ -139,11 +139,11 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 				if (XanLogger.IsMainThread) {
 					XanLogger.WriteLine("Config data has been populated.");
-					XanLogger.UpdateLog();
+					XanLogger.ForceUpdateLog();
 				} else {
 					SKAnimatorToolsTransfer.UISyncContext?.Send(param => {
 						XanLogger.WriteLine("Config data has been populated.");
-						XanLogger.UpdateLog();
+						XanLogger.ForceUpdateLog();
 					}, null);
 				}
 

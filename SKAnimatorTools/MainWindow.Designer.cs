@@ -48,9 +48,9 @@
 			this.GroupBoxProgramInfo = new System.Windows.Forms.GroupBox();
 			this.ProgramLog = new System.Windows.Forms.RichTextBox();
 			this.BtnConfig = new System.Windows.Forms.Button();
-			this.ProgramTooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.ModelLoaderBGWorker = new System.ComponentModel.BackgroundWorker();
 			this.ModelLoadProgress = new SKAnimatorTools.Component.ColoredProgressBar();
+			this.ProgramTooltip = new SKAnimatorTools.Component.FastToolTip(this.components);
 			this.GroupBoxModelInfo.SuspendLayout();
 			this.GroupBoxProperties.SuspendLayout();
 			this.GroupBoxModelTree.SuspendLayout();
@@ -127,7 +127,8 @@
 			this.SilkImages.Images.SetKeyName(32, "Matrix");
 			this.SilkImages.Images.SetKeyName(33, "Missing");
 			this.SilkImages.Images.SetKeyName(34, "Tag");
-			this.SilkImages.Images.SetKeyName(35, "None");
+			this.SilkImages.Images.SetKeyName(35, "Wrench");
+			this.SilkImages.Images.SetKeyName(36, "None");
 			// 
 			// GroupBoxModelInfo
 			// 
@@ -152,6 +153,8 @@
 			this.GroupBoxProperties.TabIndex = 7;
 			this.GroupBoxProperties.TabStop = false;
 			this.GroupBoxProperties.Text = "Selected Object\'s Properties [Click Blue Entries To Edit]";
+			this.ProgramTooltip.SetToolTip(this.GroupBoxProperties, "The Properties view allows you to see more precise details on an item in the Hier" +
+        "archy.");
 			// 
 			// SelectedObjectProperties
 			// 
@@ -177,6 +180,8 @@
 			this.GroupBoxModelTree.TabIndex = 6;
 			this.GroupBoxModelTree.TabStop = false;
 			this.GroupBoxModelTree.Text = "Hierarchy";
+			this.ProgramTooltip.SetToolTip(this.GroupBoxModelTree, "The Hierarchy view allows you to visualize the models and any of their attachment" +
+        "s or other referenced files.");
 			// 
 			// GroupBoxCoreModelInfo
 			// 
@@ -231,6 +236,9 @@
 			this.LabelFormatVersion_Left.TabIndex = 2;
 			this.LabelFormatVersion_Left.Text = "Format Version:";
 			this.LabelFormatVersion_Left.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.ProgramTooltip.SetToolTip(this.LabelFormatVersion_Left, "Clyde supports three formats:\r\n - 0x1000 CLASSIC\r\n - 0x1001 INTERMEDIATE\r\n - 0x10" +
+        "02 VARINT\r\n\r\nThese three formats dictate how the data is stored within the binar" +
+        "y file.\r\n");
 			// 
 			// LabelModelCompressed_Left
 			// 
@@ -241,6 +249,7 @@
 			this.LabelModelCompressed_Left.TabIndex = 4;
 			this.LabelModelCompressed_Left.Text = "Compressed:";
 			this.LabelModelCompressed_Left.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.ProgramTooltip.SetToolTip(this.LabelModelCompressed_Left, "Whether or not the file has been compressed to save space.");
 			// 
 			// LabelModelCompressed
 			// 
@@ -262,6 +271,8 @@
 			this.LabelType_Left.TabIndex = 6;
 			this.LabelType_Left.Text = "Core Type:";
 			this.LabelType_Left.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.ProgramTooltip.SetToolTip(this.LabelType_Left, "The base-level type of the loaded data. For instance, ModelConfig \r\nrefers to eve" +
+        "ry single possible type of 3D model stored in the game.\r\n");
 			// 
 			// LabelType
 			// 
@@ -364,16 +375,26 @@
 			// ModelLoadProgress
 			// 
 			this.ModelLoadProgress.BackColor = System.Drawing.SystemColors.ControlLight;
+			this.ModelLoadProgress.ErrorColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+			this.ModelLoadProgress.ExtraWorkColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(180)))), ((int)(((byte)(0)))));
 			this.ModelLoadProgress.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(192)))), ((int)(((byte)(31)))));
+			this.ModelLoadProgress.HashingColor = System.Drawing.Color.FromArgb(((int)(((byte)(127)))), ((int)(((byte)(127)))), ((int)(((byte)(127)))));
 			this.ModelLoadProgress.Location = new System.Drawing.Point(15, 515);
 			this.ModelLoadProgress.Maximum = 1;
 			this.ModelLoadProgress.Name = "ModelLoadProgress";
+			this.ModelLoadProgress.OKColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(192)))), ((int)(((byte)(31)))));
 			this.ModelLoadProgress.RightToLeftLayout = true;
 			this.ModelLoadProgress.Size = new System.Drawing.Size(339, 16);
 			this.ModelLoadProgress.Step = 100;
 			this.ModelLoadProgress.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
 			this.ModelLoadProgress.TabIndex = 5;
-			this.ModelLoadProgress.UseSystemBar = false;
+			// 
+			// ProgramTooltip
+			// 
+			this.ProgramTooltip.AutoPopDelay = 32767;
+			this.ProgramTooltip.InitialDelay = 100;
+			this.ProgramTooltip.ReshowDelay = 100;
+			this.ProgramTooltip.ShowAlways = true;
 			// 
 			// MainWindow
 			// 
@@ -431,7 +452,7 @@
 		public System.Windows.Forms.TreeView SelectedObjectProperties;
 		public System.Windows.Forms.Button BtnConfig;
 		public System.Windows.Forms.RichTextBox ProgramLog;
-		public System.Windows.Forms.ToolTip ProgramTooltip;
+		public SKAnimatorTools.Component.FastToolTip ProgramTooltip;
 		private System.ComponentModel.BackgroundWorker ModelLoaderBGWorker;
 		private SKAnimatorTools.Component.ColoredProgressBar ModelLoadProgress;
 	}

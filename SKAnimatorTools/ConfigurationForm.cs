@@ -14,19 +14,7 @@ namespace SKAnimatorTools {
 
 		public const string DEFAULT_DIRECTORY = @"C:\Program Files (x86)\Steam\steamapps\common\Spiral Knights\rsrc";
 
-
-		/// <summary>
-		/// A map from <see cref="int"/> to <see cref="Axis"/> values based on their index in the dropdown menu.
-		/// </summary>
-		[Obsolete("Up axis doesn't exist and has been removed")]
-		public static IReadOnlyDictionary<int, Axis> AxisIntMap = new Dictionary<int, Axis>() {
-			[0] = Axis.PositiveX,
-			[1] = Axis.PositiveY,
-			[2] = Axis.PositiveZ,
-			[3] = Axis.NegativeX,
-			[4] = Axis.NegativeY,
-			[5] = Axis.NegativeZ
-		};
+		public static string CurrentVersion { get; set; } = "0.0.0";
 
 		/// <summary>
 		/// True if the values in the UI are all okay and it's safe to save the configuration values.
@@ -36,29 +24,25 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// An image of a green circle with a white checkmark.
 		/// </summary>
-		private static readonly Bitmap Accepted = Properties.Resources.accept;
+		private static readonly Bitmap Accepted = Properties.Resources.Accept;
 
 		/// <summary>
 		/// An image of a yellow triangle with an exclamation point.
 		/// </summary>
-		private static readonly Bitmap Warning = Properties.Resources.error;
+		private static readonly Bitmap Warning = Properties.Resources.Warning;
 
 		/// <summary>
 		/// An image of a red circle with an exclamation point.
 		/// </summary>
-		private static readonly Bitmap Error = Properties.Resources.exclamation;
+		private static readonly Bitmap Error = Properties.Resources.Exclamation;
 
 		public ConfigurationForm() {
 			InitializeComponent();
-			MainTooltip.ShowAlways = true;
-			MainTooltip.AutoPopDelay = short.MaxValue;
-			MainTooltip.ShowAlways = true;
-			MainTooltip.InitialDelay = 200;
-			MainTooltip.ReshowDelay = 200;
+			LabelCurrentVersion.Text = "ThreeRingsSharp v" + CurrentVersion;
 			IsOK = true;
 		}
 
-		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int cndExportModeIndex, bool embedTextures, int logLevel, int exportStaticSetMode, bool getAllTextures) {
+		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int cndExportModeIndex, bool embedTextures, int logLevel, int exportStaticSetMode, bool getAllTextures, bool preferSpeed) {
 			TextBox_DefaultLoadLoc.Text = defaultLoad;
 			TextBox_DefaultSaveLoc.Text = defaultSave;
 			TextBox_RsrcDirectory.Text = defaultRsrc;
@@ -70,6 +54,7 @@ namespace SKAnimatorTools {
 			Option_LogLevel.SelectedIndex = logLevel;
 			Option_StaticSetExportMode.SelectedIndex = exportStaticSetMode;
 			CheckBox_TryGettingAllTextures.Checked = getAllTextures;
+			CheckBox_PreferSpeed.Checked = preferSpeed;
 			VerifyAllPathIntegrity();
 		}
 
@@ -89,6 +74,7 @@ namespace SKAnimatorTools {
 			ConfigurationInterface.SetConfigurationValue("LoggingLevel", Option_LogLevel.SelectedIndex);
 			ConfigurationInterface.SetConfigurationValue("StaticSetExportMode", Option_StaticSetExportMode.SelectedIndex);
 			ConfigurationInterface.SetConfigurationValue("GetAllTextures", CheckBox_TryGettingAllTextures.Checked);
+			ConfigurationInterface.SetConfigurationValue("PreferSpeed", CheckBox_PreferSpeed.Checked);
 			ConfigurationInterface.SetConfigurationValue("IsFirstTimeOpening", false);
 			Close();
 		}

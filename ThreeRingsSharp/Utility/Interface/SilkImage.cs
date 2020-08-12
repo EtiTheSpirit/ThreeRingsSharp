@@ -8,7 +8,7 @@ namespace ThreeRingsSharp.Utility.Interface {
 	/// <summary>
 	/// An enum that represents the available icons in the data tree. Certain images are not part of the stock Silk image package.<para/>
 	/// Silk Images come from https://famfamfam.com/ <para/>
-	/// Note to self: Keep this list updated, and ensure its order is identical to the order in which they are defined by the generated code.
+	/// To determine the icon of a TreeNode, simply cast one of these enums to an int and set ImageIndex to the int value.
 	/// </summary>
 	public enum SilkImage {
 		/// <summary>
@@ -185,6 +185,11 @@ namespace ThreeRingsSharp.Utility.Interface {
 		/// A tag, like a cardboard price tag that hangs off of an object.
 		/// </summary>
 		Tag,
+
+		/// <summary>
+		/// An orange wrench.
+		/// </summary>
+		Wrench,
 
 		/// <summary>
 		/// A transparent space.

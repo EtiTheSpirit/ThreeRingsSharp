@@ -115,6 +115,9 @@
     <Compile Include="Component\ColoredProgressBar.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Component\FastToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ConditionalConfigOptions.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -161,7 +164,7 @@
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
+      <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -216,6 +219,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CautionTape.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

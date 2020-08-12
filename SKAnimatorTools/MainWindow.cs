@@ -29,7 +29,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The version of this release of the program.
 		/// </summary>
-		public readonly int[] THIS_VERSION = { 1, 4, 2 };
+		public readonly int[] THIS_VERSION = { 1, 4, 3 };
 
 		[DllImport("user32.dll")]
 		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -80,6 +80,9 @@ namespace SKAnimatorTools {
 				bool newUpdate = newMajor || newMinor || newPatch;
 				// Benefit of semver: ALL increments = new update.
 
+				// Set the current version display.
+				ConfigurationForm.CurrentVersion = THIS_VERSION[0] + "." + THIS_VERSION[1] + "." + THIS_VERSION[2];
+
 				if (newUpdate) {
 					string verStr = major + "." + minor + "." + patch;
 					Updater updWindow = new Updater(verStr);
@@ -127,6 +130,12 @@ namespace SKAnimatorTools {
 			Model3D.MultiplyScaleByHundred = ConfigurationInterface.GetConfigurationValue("ScaleBy100", false, true);
 			Model3D.ProtectAgainstZeroScale = ConfigurationInterface.GetConfigurationValue("ProtectAgainstZeroScale", true, true);
 			GLTFExporter.EmbedTextures = ConfigurationInterface.GetConfigurationValue("EmbedTextures", false, true);
+			SKAnimatorToolsTransfer.PreferSpeedOverFeedback = ConfigurationInterface.GetConfigurationValue("PreferSpeed", false, true);
+			if (SKAnimatorToolsTransfer.PreferSpeedOverFeedback) {
+				ModelLoadProgress.SpecialDisabled = true;
+				ProgramTooltip.SetToolTip(ModelLoadProgress, "The loading bar will not render if Prefer Speed Over Feedback is enabled.");
+			}
+
 			bool? verboseLogging = (bool?)ConfigurationInterface.GetConfigurationValue("VerboseLogging", null, true);
 			if (verboseLogging != null) {
 				bool verbose = verboseLogging.Value;
@@ -220,6 +229,16 @@ namespace SKAnimatorTools {
 				ModelPropertyUtility.TryGettingAllTextures = newValue;
 			} else if (configKey == "ConditionalConfigExportMode") {
 				ConditionalExportMode = newValue;
+			} else if (configKey == "PreferSpeed") {
+				SKAnimatorToolsTransfer.PreferSpeedOverFeedback = newValue;
+				if (newValue == true) {
+					// Render the progress bar a different color. All progress bar changes will be deferred.
+					ModelLoadProgress.SpecialDisabled = true;
+					ProgramTooltip.SetToolTip(ModelLoadProgress, "The loading bar will not render if Prefer Speed Over Feedback is enabled.");
+				} else {
+					ModelLoadProgress.SpecialDisabled = false;
+					ProgramTooltip.SetToolTip(ModelLoadProgress, string.Empty);
+				}
 			}
 		}
 
@@ -250,7 +269,7 @@ namespace SKAnimatorTools {
 			FileInfo file = new FileInfo(OpenModel.FileName);
 			if (!VersionInfoScraper.IsValidClydeFile(file).Item1) {
 				XanLogger.WriteLine("Can't open this file! It is not a valid Clyde file.", color: Color.DarkGoldenrod);
-				XanLogger.UpdateLog();
+				XanLogger.ForceUpdateLog();
 				e.Cancel = true;
 				return;
 			}
@@ -258,7 +277,7 @@ namespace SKAnimatorTools {
 			// Check if the program has loaded up all of the external data, if it hasn't, wait.
 			if (!ConfigReferenceBootstrapper.HasPopulatedConfigs) {
 				XanLogger.WriteLine("Just a second! I'm still loading up the config references. The model will load once that's done.");
-				XanLogger.UpdateLog();
+				XanLogger.ForceUpdateLog();
 				IsYieldingForModel = true;
 				BtnOpenModel.Enabled = false;
 				SKAnimatorToolsTransfer.ConfigsPopulatedAction = new Action(OnConfigsPopulated);
@@ -270,6 +289,8 @@ namespace SKAnimatorTools {
 		}
 
 		private void OnConfigsPopulated() {
+			XanLogger.WriteLine("Alright. Let's load it up now.");
+			XanLogger.ForceUpdateLog();
 			SKAnimatorToolsTransfer.ResetProgress();
 			ModelLoaderBGWorker.RunWorkerAsync(UISyncContext);
 			IsYieldingForModel = false;
@@ -333,7 +354,7 @@ namespace SKAnimatorTools {
 				Busy = false;
 				throw;
 			} catch (TypeInitializationException tExc) {
-				System.Exception err = tExc.InnerException;
+				Exception err = tExc.InnerException;
 				if (err is ClydeDataReadException exc) {
 					XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, color: Color.IndianRed);
 					AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
@@ -349,7 +370,7 @@ namespace SKAnimatorTools {
 				}, null);
 				Busy = false;
 				throw;
-			} catch (System.Exception err) {
+			} catch (Exception err) {
 				XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", color: Color.IndianRed);
 				XanLogger.LogException(err);
 				AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
@@ -426,8 +447,10 @@ namespace SKAnimatorTools {
 						// To create nested containers, it's easier to just create another data tree object without text, populate that new object with the sub-properties, and then add the new object as a property to something else.
 						if (propName.ExtraData.ContainsKey("StaticSetConfig")) {
 							nodeObj.Tag = propName.ExtraData["StaticSetConfig"];
+							nodeObj.ImageIndex = (int)SilkImage.Wrench;
 							nodeObj.ForeColor = Color.Blue;
 							nodeObj.ToolTipText = "Click on this to change the target model.";
+							nodeObj.NodeFont = new Font(FontFamily.GenericSansSerif, 8.25f, FontStyle.Underline);
 						}
 						nodeObj.Text += ": " + propValues[0].Text;
 
@@ -504,7 +527,8 @@ namespace SKAnimatorTools {
 				GLTFExporter.EmbedTextures,
 				XanLogger.LoggingLevel,
 				StaticSetExportMode,
-				ModelPropertyUtility.TryGettingAllTextures
+				ModelPropertyUtility.TryGettingAllTextures,
+				SKAnimatorToolsTransfer.PreferSpeedOverFeedback
 			);
 			ConfigForm.Show();
 			ConfigForm.Activate();
@@ -635,6 +659,9 @@ namespace SKAnimatorTools {
 		}
 
 		private void ModelLoaderBGWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
+			if (SKAnimatorToolsTransfer.PreferSpeedOverFeedback) return;
+			
+
 			if (e.UserState is int maxProgress) {
 				ModelLoadProgress.Maximum = maxProgress;
 			} else if (e.UserState is ProgressBarState state) {
@@ -649,7 +676,7 @@ namespace SKAnimatorTools {
 		}
 
 		private void ModelLoaderBGWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-			XanLogger.UpdateLog();
+			XanLogger.ForceUpdateLog();
 			Update();
 		}
 	}

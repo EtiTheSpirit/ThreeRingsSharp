@@ -58,6 +58,11 @@ namespace ThreeRingsSharp {
 		public static ProgressBar Progress { get; set; } = null;
 
 		/// <summary>
+		/// If <see langword="true"/>, the program will avoid updating the GUI and progress bar in favor of focusing solely on processing data.
+		/// </summary>
+		public static bool PreferSpeedOverFeedback { get; set; } = false;
+
+		/// <summary>
 		/// Calls <see cref="UpdateGUIAction"/> through <see cref="UISyncContext"/>.<para/>
 		/// This will do nothing if one or both of these is not defined.
 		/// </summary>

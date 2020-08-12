@@ -99,12 +99,21 @@ namespace ThreeRingsSharp.Utility {
 		private static readonly ManualResetEventSlim UpdateComplete = new ManualResetEventSlim();
 
 		/// <summary>
-		/// Manually update the contents of <see cref="BoxReference"/>. Only works if <see cref="UpdateAutomatically"/> is <see langword="false"/>, and of course, if <see cref="BoxReference"/> is not <see langword="null"/>.
+		/// Calls <see cref="ForceUpdateLog"/>, but respects user preferences that dictate to not write to the log (for instance, <see cref="SKAnimatorToolsTransfer.PreferSpeedOverFeedback"/>.
 		/// </summary>
 		public static void UpdateLog() {
+			if (SKAnimatorToolsTransfer.PreferSpeedOverFeedback) return;
+			ForceUpdateLog();
+		}
+
+		/// <summary>
+		/// Manually update the contents of <see cref="BoxReference"/>. Only works if <see cref="UpdateAutomatically"/> is <see langword="false"/>, and of course, if <see cref="BoxReference"/> is not <see langword="null"/>.
+		/// </summary>
+		public static void ForceUpdateLog() {
 			if (IsUpdatingGUI) return;
 			if (!IsMainThread) return;
 			if (BoxReference == null) return;
+
 			IsUpdatingGUI = true;
 			UpdateComplete.Reset();
 			WasAtBottom = BoxReference.IsScrolledToBottom();
