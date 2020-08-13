@@ -12,17 +12,17 @@ namespace SKAnimatorTools {
 			Close();
 		}
 
-		private void BtnOnlyDefault_Click(object sender, EventArgs e) {
+		private void BtnOnlyEnabled_Click(object sender, EventArgs e) {
 			DialogResult = (DialogResult)2;
 			Close();
 		}
 
-		private void BtnOnlyEnabled_Click(object sender, EventArgs e) {
+		private void BtnOnlyDisabled_Click(object sender, EventArgs e) {
 			DialogResult = (DialogResult)3;
 			Close();
 		}
 
-		private void BtnOnlyDisabled_Click(object sender, EventArgs e) {
+		private void BtnOnlyDefault_Click(object sender, EventArgs e) {
 			DialogResult = (DialogResult)4;
 			Close();
 		}
