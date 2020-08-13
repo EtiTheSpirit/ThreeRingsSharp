@@ -30,7 +30,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			// ModelConfigHandler.SetupCosmeticInformation(baseModel, dataTreeParent);
 
 			// ArticulatedConfig has a lot of steps.
-			SKAnimatorToolsTransfer.IncrementEnd(4);
+			SKAnimatorToolsProxy.IncrementEnd(4);
 
 			ArticulatedConfig model = (ArticulatedConfig)baseModel.implementation;
 			SetupCosmeticInformation(model, dataTreeParent);
@@ -42,13 +42,13 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			List<Model3D> riggedVisibleModels = new List<Model3D>();
 
 			// 1
-			SKAnimatorToolsTransfer.IncrementProgress();
+			SKAnimatorToolsProxy.IncrementProgress();
 
 			int idx = 0;
 			string depth1Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile);
 			string fullDepthName = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile, -1);
 
-			SKAnimatorToolsTransfer.IncrementEnd(renderedMeshes.Length);
+			SKAnimatorToolsProxy.IncrementEnd(renderedMeshes.Length);
 			foreach (VisibleMesh mesh in renderedMeshes) {
 				string meshTitle = "-Skin-Mesh[" + idx + "]";
 
@@ -69,25 +69,25 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				modelCollection.Add(meshToModel);
 				idx++;
 
-				SKAnimatorToolsTransfer.IncrementProgress();
+				SKAnimatorToolsProxy.IncrementProgress();
 			}
 			// 2
-			SKAnimatorToolsTransfer.IncrementProgress();
+			SKAnimatorToolsProxy.IncrementProgress();
 
-			SKAnimatorToolsTransfer.IncrementEnd(GetNodeCount(model.root));
+			SKAnimatorToolsProxy.IncrementEnd(GetNodeCount(model.root));
 			Dictionary<string, Model3D> nodeModels = new Dictionary<string, Model3D>();
 			RecursivelyIterateNodesForMeshes(baseModel, model, sourceFile, model.root, modelCollection, globalTransform, globalTransform, nodeModels, fullDepthName);
 
-			SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.ExtraWork);
-			SKAnimatorToolsTransfer.IncrementEnd(model.attachments.Length);
+			SKAnimatorToolsProxy.SetProgressState(ProgressBarState.ExtraWork);
+			SKAnimatorToolsProxy.IncrementEnd(model.attachments.Length);
 			foreach (Attachment attachment in model.attachments) {
 				List<Model3D> attachmentModels = ConfigReferenceUtil.HandleConfigReference(sourceFile, attachment.model, modelCollection, dataTreeParent, globalTransform);
 				if (attachmentModels == null) {
-					SKAnimatorToolsTransfer.IncrementProgress();
+					SKAnimatorToolsProxy.IncrementProgress();
 					continue; // A lot of attachments have null models and I'm not sure why.
 				}
 
-				SKAnimatorToolsTransfer.IncrementEnd(attachmentModels.Count);
+				SKAnimatorToolsProxy.IncrementEnd(attachmentModels.Count);
 				foreach (Model3D referencedModel in attachmentModels) {
 					referencedModel.Transform.composeLocal(attachment.transform);
 					if (allInstantiatedArmatures.ContainsKey(attachment.node ?? string.Empty)) {
@@ -115,30 +115,30 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 							XanLogger.WriteLine("Attachment wanted to attach to node or model [" + attachment.node + "] but it does not exist!");
 						}
 					}
-					SKAnimatorToolsTransfer.IncrementProgress();
+					SKAnimatorToolsProxy.IncrementProgress();
 				}
-				SKAnimatorToolsTransfer.IncrementProgress();
+				SKAnimatorToolsProxy.IncrementProgress();
 			}
-			SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.OK);
+			SKAnimatorToolsProxy.SetProgressState(ProgressBarState.OK);
 			// 3
-			SKAnimatorToolsTransfer.IncrementProgress();
+			SKAnimatorToolsProxy.IncrementProgress();
 
-			SKAnimatorToolsTransfer.IncrementEnd(model.animationMappings.Length);
+			SKAnimatorToolsProxy.IncrementEnd(model.animationMappings.Length);
 			foreach (AnimationMapping animationMapping in model.animationMappings) {
 				ConfigReference animationRef = animationMapping.animation;
 				if (animationRef.IsFileReference()) {
 					object animationObj = animationRef.ResolveFile();
 					if (animationObj is AnimationConfig animation) {
-						SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.ExtraWork);
+						SKAnimatorToolsProxy.SetProgressState(ProgressBarState.ExtraWork);
 						AnimationConfigHandler.HandleAnimationImplementation(animationMapping.name, animation.implementation, riggedVisibleModels);
-						SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.OK);
+						SKAnimatorToolsProxy.SetProgressState(ProgressBarState.OK);
 					}
 				}
-				SKAnimatorToolsTransfer.IncrementProgress();
+				SKAnimatorToolsProxy.IncrementProgress();
 			}
 
 			// 4
-			SKAnimatorToolsTransfer.IncrementProgress();
+			SKAnimatorToolsProxy.IncrementProgress();
 		}
 
 		/// <summary>
@@ -191,7 +191,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				//VertexGroup group = new VertexGroup();
 				//group.Name = node.name;
 
-				SKAnimatorToolsTransfer.IncrementProgress();
+				SKAnimatorToolsProxy.IncrementProgress();
 				if (node.children.Length > 0) {
 					RecursivelyIterateNodesForMeshes(baseModel, model, sourceFile, node, models, latestTransform.compose(node.transform), initialTransform, nodeModels, fullDepthName);
 				}

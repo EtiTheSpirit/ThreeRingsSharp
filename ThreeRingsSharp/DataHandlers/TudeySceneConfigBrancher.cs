@@ -39,7 +39,7 @@ namespace ThreeRingsSharp.DataHandlers {
 			SetupCosmeticData(scene, currentDataTreeObject);
 			XanLogger.WriteLine("Iterating through scene entries...", XanLogger.DEBUG);
 
-			SKAnimatorToolsTransfer.IncrementEnd();
+			SKAnimatorToolsProxy.IncrementEnd();
 			string implName = (JavaClassNameStripper.GetWholeClassName(scene.getClass()) ?? scene.getClass().getTypeName()).Replace("$", "::");
 			if (currentDataTreeObject != null) {
 				if (useImplementation) {
@@ -50,7 +50,7 @@ namespace ThreeRingsSharp.DataHandlers {
 			}
 
 			object[] entries = scene.getEntries().toArray();
-			SKAnimatorToolsTransfer.IncrementEnd(entries.Length);
+			SKAnimatorToolsProxy.IncrementEnd(entries.Length);
 			foreach (object entryObj in entries) {
 				// Now each entry will be one of three types (at least, in the context that we care about)
 				Entry entry = (Entry)entryObj;
@@ -60,9 +60,9 @@ namespace ThreeRingsSharp.DataHandlers {
 					PlaceableHandler.Instance.HandleEntry(sourceFile, entry, models, currentDataTreeObject, transform);
 				}
 				// Other entry types are more for game data and less for the visual scene (e.g. pathfinding nodes, area markers, etc.)
-				SKAnimatorToolsTransfer.IncrementProgress();
+				SKAnimatorToolsProxy.IncrementProgress();
 			}
-			SKAnimatorToolsTransfer.IncrementProgress();
+			SKAnimatorToolsProxy.IncrementProgress();
 		}
 	}
 }

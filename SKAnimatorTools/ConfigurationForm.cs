@@ -36,25 +36,27 @@ namespace SKAnimatorTools {
 		/// </summary>
 		private static readonly Bitmap Error = Properties.Resources.Exclamation;
 
+		/// <summary>
+		/// A blue circle with a lowercase letter <c>i</c> within it.
+		/// </summary>
+		private static readonly Bitmap Information = Properties.Resources.Info;
+
 		public ConfigurationForm() {
 			InitializeComponent();
 			LabelCurrentVersion.Text = "ThreeRingsSharp v" + CurrentVersion;
 			IsOK = true;
-		}
 
-		public void SetDataFromConfig(string defaultLoad, string defaultSave, string defaultRsrc, bool rememberLoad, bool scale100, bool protectZeroScale, int cndExportModeIndex, bool embedTextures, int logLevel, int exportStaticSetMode, bool getAllTextures, bool preferSpeed) {
-			TextBox_DefaultLoadLoc.Text = defaultLoad;
-			TextBox_DefaultSaveLoc.Text = defaultSave;
-			TextBox_RsrcDirectory.Text = defaultRsrc;
-			CheckBox_RememberLastLoad.Checked = rememberLoad;
-			CheckBox_MultiplyScaleByHundred.Checked = scale100;
-			CheckBox_ProtectAgainstZeroScale.Checked = protectZeroScale;
-			Option_ConditionalExportMode.SelectedIndex = cndExportModeIndex;
-			CheckBox_EmbedTextures.Checked = embedTextures;
-			Option_LogLevel.SelectedIndex = logLevel;
-			Option_StaticSetExportMode.SelectedIndex = exportStaticSetMode;
-			CheckBox_TryGettingAllTextures.Checked = getAllTextures;
-			CheckBox_PreferSpeed.Checked = preferSpeed;
+			TextBox_DefaultLoadLoc.Text = UserConfiguration.DefaultLoadDirectory;
+			TextBox_DefaultSaveLoc.Text = UserConfiguration.LastSaveDirectory;
+			TextBox_RsrcDirectory.Text = UserConfiguration.RsrcDirectory;
+			CheckBox_RememberLastLoad.Checked = UserConfiguration.RememberDirectoryAfterOpen;
+			CheckBox_MultiplyScaleByHundred.Checked = UserConfiguration.ScaleBy100;
+			CheckBox_ProtectAgainstZeroScale.Checked = UserConfiguration.ProtectAgainstZeroScale;
+			Option_ConditionalExportMode.SelectedIndex = UserConfiguration.ConditionalConfigExportMode;
+			CheckBox_EmbedTextures.Checked = UserConfiguration.EmbedTextures;
+			Option_LogLevel.SelectedIndex = UserConfiguration.LoggingLevel;
+			Option_StaticSetExportMode.SelectedIndex = UserConfiguration.StaticSetExportMode;
+			CheckBox_PreferSpeed.Checked = UserConfiguration.PreferSpeed;
 			VerifyAllPathIntegrity();
 		}
 
@@ -63,19 +65,19 @@ namespace SKAnimatorTools {
 		}
 
 		private void BtnSave_Click(object sender, EventArgs e) {
-			ConfigurationInterface.SetConfigurationValue("DefaultLoadDirectory", TextBox_DefaultLoadLoc.Text);
-			ConfigurationInterface.SetConfigurationValue("LastSaveDirectory", TextBox_DefaultSaveLoc.Text);
-			ConfigurationInterface.SetConfigurationValue("RsrcDirectory", TextBox_RsrcDirectory.Text);
-			ConfigurationInterface.SetConfigurationValue("RememberDirectoryAfterOpen", CheckBox_RememberLastLoad.Checked);
-			ConfigurationInterface.SetConfigurationValue("ScaleBy100", CheckBox_MultiplyScaleByHundred.Checked);
-			ConfigurationInterface.SetConfigurationValue("ProtectAgainstZeroScale", CheckBox_ProtectAgainstZeroScale.Checked);
-			ConfigurationInterface.SetConfigurationValue("ConditionalConfigExportMode", Option_ConditionalExportMode.SelectedIndex);
-			ConfigurationInterface.SetConfigurationValue("EmbedTextures", CheckBox_EmbedTextures.Checked);
-			ConfigurationInterface.SetConfigurationValue("LoggingLevel", Option_LogLevel.SelectedIndex);
-			ConfigurationInterface.SetConfigurationValue("StaticSetExportMode", Option_StaticSetExportMode.SelectedIndex);
-			ConfigurationInterface.SetConfigurationValue("GetAllTextures", CheckBox_TryGettingAllTextures.Checked);
-			ConfigurationInterface.SetConfigurationValue("PreferSpeed", CheckBox_PreferSpeed.Checked);
-			ConfigurationInterface.SetConfigurationValue("IsFirstTimeOpening", false);
+			UserConfiguration.DefaultLoadDirectory = TextBox_DefaultLoadLoc.Text;
+			UserConfiguration.LastSaveDirectory = TextBox_DefaultSaveLoc.Text;
+			UserConfiguration.RsrcDirectory = TextBox_RsrcDirectory.Text;
+			UserConfiguration.RememberDirectoryAfterOpen = CheckBox_RememberLastLoad.Checked;
+			UserConfiguration.ScaleBy100 = CheckBox_MultiplyScaleByHundred.Checked;
+			UserConfiguration.ProtectAgainstZeroScale = CheckBox_ProtectAgainstZeroScale.Checked;
+			UserConfiguration.ConditionalConfigExportMode = Option_ConditionalExportMode.SelectedIndex;
+			UserConfiguration.StaticSetExportMode = Option_StaticSetExportMode.SelectedIndex;
+			UserConfiguration.EmbedTextures = CheckBox_EmbedTextures.Checked;
+			UserConfiguration.PreferSpeed = CheckBox_PreferSpeed.Checked;
+			UserConfiguration.IsFirstTimeOpening = false;
+
+			UserConfiguration.SaveConfiguration();
 			Close();
 		}
 
@@ -121,17 +123,6 @@ namespace SKAnimatorTools {
 				MainTooltip.SetToolTip(PicBox_RsrcDir, "The given directory is invalid (you didn't input a path) or it doesn't exist!");
 			}
 
-			/*
-			TextBox_DefaultLoadLoc.BackColor = loadOK ? SystemColors.Window : RedColor;
-			TextBox_DefaultSaveLoc.BackColor = saveOK ? SystemColors.Window : RedColor;
-			TextBox_RsrcDirectory.BackColor = rsrcOK ? (new DirectoryInfo(rsrcPath).Name == "rsrc" ? SystemColors.Window : YellowColor) : RedColor;
-
-			if (TextBox_RsrcDirectory.BackColor == YellowColor) {
-				MainTooltip.SetToolTip(TextBox_RsrcDirectory, "WARNING: rsrc directory isn't named rsrc! Please consider verifying that this is the correct directory. Example:\nC:\\Program Files (x86)\\Steam\\steamapps\\common\\Spiral Knights\\rsrc");
-			} else {
-				MainTooltip.SetToolTip(TextBox_RsrcDirectory, MainTooltip.GetToolTip(LabelRsrcDir));
-			}
-			*/
 			BtnSave.Enabled = IsOK;
 		}
 
@@ -164,8 +155,13 @@ namespace SKAnimatorTools {
 		private void VerboseLoggingChanged(object sender, EventArgs e) {
 			// SelectedIndex translates to the level nicely.
 			if (Option_LogLevel.SelectedIndex > XanLogger.STANDARD) {
-				PicBox_VerboseLogging.Image = Warning;
-				MainTooltip.SetToolTip(PicBox_VerboseLogging, "Enabling debug or trace logging can slow down the program (it has to wait while the text is written to the console). This does not need to be set to change how latest.log is written, and is only useful for debugging during runtime.");
+				if (!CheckBox_PreferSpeed.Checked) {
+					PicBox_VerboseLogging.Image = Warning;
+					MainTooltip.SetToolTip(PicBox_VerboseLogging, "Enabling debug or trace logging can slow down the program\n(it has to wait while the text is written to the console). This does not need to be set\nto change how latest.log is written, and is only useful for debugging during runtime.");
+				} else {
+					PicBox_VerboseLogging.Image = Information;
+					MainTooltip.SetToolTip(PicBox_VerboseLogging, "Generally, setting this above standard is not advised, however since\nPrefer Speed Over Feedback is enabled, the effects of this option do not apply.");
+				}
 			} else {
 				PicBox_VerboseLogging.Image = Accepted;
 				MainTooltip.SetToolTip(PicBox_VerboseLogging, string.Empty);
@@ -211,6 +207,10 @@ namespace SKAnimatorTools {
 
 		private void OnFolderSelMouseLeave(object sender, EventArgs e) {
 			((Control)sender).BackColor = ((SolidBrush)SystemBrushes.Control).Color;
+		}
+
+		private void CheckBox_PreferSpeed_CheckedChanged(object sender, EventArgs e) {
+			VerboseLoggingChanged(sender, e);
 		}
 	}
 }

@@ -4,5 +4,5 @@
 [assembly: AssemblyDescription("Converts models from Grey Havens's \"Clyde\" library into the glTF 2.0 format.")]
 [assembly: AssemblyCompany("Xan the Dragon // Eti the Spirit")]
 [assembly: AssemblyProduct("ThreeRingsSharp")]
-[assembly: AssemblyVersion("1.4.3")]
-[assembly: AssemblyFileVersion("1.4.3")]
+[assembly: AssemblyVersion("1.4.4")]
+[assembly: AssemblyFileVersion("1.4.4")]

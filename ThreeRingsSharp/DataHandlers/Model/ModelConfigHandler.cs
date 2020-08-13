@@ -202,11 +202,11 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			public void HandleModelConfig(FileInfo sourceFile, ModelConfig baseModel, List<Model3D> modelCollection, DataTreeObject dataTreeParent = null, Transform3D globalTransform = null, Dictionary<string, dynamic> extraData = null) {
 				Schemed schemed = (Schemed)baseModel.implementation;
 				SchemedModel[] models = schemed.models;
-				SKAnimatorToolsTransfer.IncrementEnd(models.Length);
+				SKAnimatorToolsProxy.IncrementEnd(models.Length);
 				foreach (SchemedModel schemedModel in models) {
 					// These shouldn't send the extra data over(?)
 					ConfigReferenceUtil.HandleConfigReference(sourceFile, schemedModel.model, modelCollection, dataTreeParent, globalTransform);
-					SKAnimatorToolsTransfer.IncrementProgress();
+					SKAnimatorToolsProxy.IncrementProgress();
 				}
 			}
 

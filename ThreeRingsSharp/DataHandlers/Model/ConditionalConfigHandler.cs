@@ -54,7 +54,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 
 			if (model.defaultModel != null) {
-				SKAnimatorToolsTransfer.IncrementEnd();
+				SKAnimatorToolsProxy.IncrementEnd();
 				List<Model3D> mdls = ConfigReferenceUtil.HandleConfigReference(sourceFile, model.defaultModel, modelCollection, dataTreeParent, globalTransform, false, extraData);
 				if (mdls != null) {
 					foreach (Model3D mdl in mdls) {
@@ -64,10 +64,10 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						modelCollection.Add(mdl);
 					}
 				}
-				SKAnimatorToolsTransfer.IncrementProgress();
+				SKAnimatorToolsProxy.IncrementProgress();
 			}
 
-			SKAnimatorToolsTransfer.IncrementEnd(model.cases.Length);
+			SKAnimatorToolsProxy.IncrementEnd(model.cases.Length);
 			foreach (ConditionalConfig.Case condition in model.cases) {
 				List<Model3D> mdls = ConfigReferenceUtil.HandleConfigReference(sourceFile, condition.model, modelCollection, dataTreeParent, globalTransform, false, extraData);
 				if (mdls != null) {
@@ -82,7 +82,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						modelCollection.Add(mdl);
 					}
 				}
-				SKAnimatorToolsTransfer.IncrementProgress();
+				SKAnimatorToolsProxy.IncrementProgress();
 			}
 		}
 	}

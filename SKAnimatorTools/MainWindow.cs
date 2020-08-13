@@ -26,10 +26,7 @@ using ThreeRingsSharp.XansData.XML.ConfigReferences;
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {
 
-		/// <summary>
-		/// The version of this release of the program.
-		/// </summary>
-		public readonly int[] THIS_VERSION = { 1, 4, 3 };
+		#region Externs for console
 
 		[DllImport("user32.dll")]
 		static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
@@ -37,9 +34,59 @@ namespace SKAnimatorTools {
 		[DllImport("kernel32.dll")]
 		static extern IntPtr GetConsoleWindow();
 
-		public readonly IntPtr ConsolePtr;
+		public IntPtr ConsolePtr;
 
+		#endregion
+
+		#region Properties
+
+		/// <summary>
+		/// The synchronization context used to allow various asynchronous operations to communicate with the GUI.
+		/// </summary>
 		public static SynchronizationContext UISyncContext { get; private set; }
+
+		#region GUI Information
+
+		/// <summary>
+		/// The root <see cref="DataTreeObject"/> that represents the loaded model in the object hierarchy.<para/>
+		/// Rather than creating a new instance for every time a model is loaded, call <see cref="DataTreeObject.ClearAllChildren"/> instead.
+		/// </summary>
+		public DataTreeObject RootDataTreeObject { get; } = new DataTreeObject();
+
+		/// <summary>
+		/// All models from the latest opened .DAT file.
+		/// </summary>
+		private List<Model3D> AllModels { get; set; } = new List<Model3D>();
+
+		/// <summary>
+		/// The current configuration form, if it exists.
+		/// </summary>
+		private ConfigurationForm ConfigForm { get; set; }
+
+		#endregion
+
+		#region Program State
+
+		/// <summary>
+		/// This will be true of we've opened a model before configs were loaded. This is used to prevent two delays at once.
+		/// </summary>
+		private bool IsYieldingForModel { get; set; } = false;
+
+		/// <summary>
+		/// If true, any other models shouldn't load because one is loading right now.
+		/// </summary>
+		private bool Busy { get; set; } = false;
+
+		#endregion
+
+		#endregion
+
+		#region Version Information
+
+		/// <summary>
+		/// The version of this release of the program.
+		/// </summary>
+		public readonly int[] THIS_VERSION = { 1, 4, 4 };
 
 		/// <summary>
 		/// Attempts to access the github to acquire the latest version.
@@ -70,8 +117,11 @@ namespace SKAnimatorTools {
 			}
 		}
 
-		public MainWindow() {
-			UISyncContext = SynchronizationContext.Current;
+		/// <summary>
+		/// Checks the version of the program, and shows the update window if this instance of the program is out of date.
+		/// </summary>
+		/// <returns></returns>
+		public void ShowUpdateDialogIfNeeded() {
 			if (TryGetVersion(out (int, int, int)? newVersion) && newVersion.HasValue) {
 				(int major, int minor, int patch) = newVersion.Value;
 				bool newMajor = major > THIS_VERSION[0];
@@ -80,33 +130,48 @@ namespace SKAnimatorTools {
 				bool newUpdate = newMajor || newMinor || newPatch;
 				// Benefit of semver: ALL increments = new update.
 
-				// Set the current version display.
-				ConfigurationForm.CurrentVersion = THIS_VERSION[0] + "." + THIS_VERSION[1] + "." + THIS_VERSION[2];
-
 				if (newUpdate) {
 					string verStr = major + "." + minor + "." + patch;
 					Updater updWindow = new Updater(verStr);
 					updWindow.ShowDialog(); // Because I want it to yield.
 				}
 			}
+		}
 
-			VTConsole.EnableVTSupport();
+		#endregion
+
+		#region Initialization Code
+
+		/// <summary>
+		/// Sets up the Windows console by enabling VT (if possible), setting it's title, and preparing other necessary information.
+		/// </summary>
+		public void SetupConsole() {
 			Console.Title = "Spiral Knights Animator Tools";
+			VTConsole.EnableVTSupport();
 			ConsolePtr = GetConsoleWindow();
-			InitializeComponent();
+		}
+
+		/// <summary>
+		/// Populates proxy references which allows the DLL library if TRS to communicate with this portion of the program.
+		/// </summary>
+		public void PopulateProxyReferences() {
 			XanLogger.BoxReference = ProgramLog;
-			SKAnimatorToolsTransfer.UpdateGUIAction = (string fileName, string isCompressed, string formatVersion, string type) => {
+
+			#region Actions
+			SKAnimatorToolsProxy.UpdateGUIAction = (string fileName, string isCompressed, string formatVersion, string type) => {
 				LabelFileName.Text = fileName ?? LabelFileName.Text;
 				LabelModelCompressed.Text = isCompressed ?? LabelModelCompressed.Text;
 				LabelFormatVersion.Text = formatVersion ?? LabelFormatVersion.Text;
 				LabelType.Text = type ?? LabelType.Text;
 				Update(); // Update all of the display data.
 			};
-			SKAnimatorToolsTransfer.ConfigsErroredAction = error => {
+
+			SKAnimatorToolsProxy.ConfigsErroredAction = error => {
 				MessageBox.Show(error.Message + "\n\nThe program cannot continue when this error occurs and must exit, as this data is 100% required for it to function properly.", "Configuration Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				Environment.Exit(1);
 			};
-			SKAnimatorToolsTransfer.ConfigsLoadingAction = (int? progress, int? max, ProgressBarState? state) => {
+
+			SKAnimatorToolsProxy.ConfigsLoadingAction = (int? progress, int? max, ProgressBarState? state) => {
 				if (state.HasValue) {
 					ModelLoadProgress.SetColorFromState(state.Value);
 				}
@@ -117,53 +182,65 @@ namespace SKAnimatorTools {
 					ModelLoadProgress.Value = progress.Value;
 				}
 			};
-			SKAnimatorToolsTransfer.ModelLoaderWorker = ModelLoaderBGWorker;
-			SKAnimatorToolsTransfer.Progress = ModelLoadProgress;
-			SKAnimatorToolsTransfer.UISyncContext = UISyncContext;
-			AsyncMessageBox.IsInGUIContext = true;
+			#endregion
 
-			bool isFreshLoad = ConfigurationInterface.GetConfigurationValue("IsFirstTimeOpening", true, true);
-			string loadDir = ConfigurationInterface.GetConfigurationValue("DefaultLoadDirectory", ConfigurationForm.DEFAULT_DIRECTORY, true);
-			string saveDir = ConfigurationInterface.GetConfigurationValue("LastSaveDirectory", @"C:\", true);
-			string rsrcDir = ConfigurationInterface.GetConfigurationValue("RsrcDirectory", ConfigurationForm.DEFAULT_DIRECTORY, true);
-			bool restoreDirectoryWhenLoading = ConfigurationInterface.GetConfigurationValue("RememberDirectoryAfterOpen", false, true);
-			Model3D.MultiplyScaleByHundred = ConfigurationInterface.GetConfigurationValue("ScaleBy100", false, true);
-			Model3D.ProtectAgainstZeroScale = ConfigurationInterface.GetConfigurationValue("ProtectAgainstZeroScale", true, true);
-			GLTFExporter.EmbedTextures = ConfigurationInterface.GetConfigurationValue("EmbedTextures", false, true);
-			SKAnimatorToolsTransfer.PreferSpeedOverFeedback = ConfigurationInterface.GetConfigurationValue("PreferSpeed", false, true);
-			if (SKAnimatorToolsTransfer.PreferSpeedOverFeedback) {
+			#region Elements
+			SKAnimatorToolsProxy.ModelLoaderWorker = ModelLoaderBGWorker;
+			SKAnimatorToolsProxy.Progress = ModelLoadProgress;
+			SKAnimatorToolsProxy.UISyncContext = UISyncContext;
+			#endregion
+
+			AsyncMessageBox.IsInGUIContext = true;
+		}
+
+		/// <summary>
+		/// Loads user configurations.
+		/// </summary>
+		public void LoadConfigs() {
+			Model3D.MultiplyScaleByHundred = UserConfiguration.ScaleBy100;
+			Model3D.ProtectAgainstZeroScale = UserConfiguration.ProtectAgainstZeroScale;
+			GLTFExporter.EmbedTextures = UserConfiguration.EmbedTextures;
+
+			SKAnimatorToolsProxy.PreferSpeedOverFeedback = UserConfiguration.PreferSpeed;
+			XanLogger.LoggingLevel = UserConfiguration.LoggingLevel;
+
+			#region Prepare Information
+			if (SKAnimatorToolsProxy.PreferSpeedOverFeedback) {
 				ModelLoadProgress.SpecialDisabled = true;
 				ProgramTooltip.SetToolTip(ModelLoadProgress, "The loading bar will not render if Prefer Speed Over Feedback is enabled.");
 			}
-
-			bool? verboseLogging = (bool?)ConfigurationInterface.GetConfigurationValue("VerboseLogging", null, true);
-			if (verboseLogging != null) {
-				bool verbose = verboseLogging.Value;
-				ConfigurationInterface.RemoveConfigurationValue("VerboseLogging");
-				XanLogger.LoggingLevel = ConfigurationInterface.GetConfigurationValue("LoggingLevel", XanLogger.DEBUG, true);
-			} else {
-				XanLogger.LoggingLevel = (int)ConfigurationInterface.GetConfigurationValue("LoggingLevel", XanLogger.STANDARD, true);
+			if (Directory.Exists(UserConfiguration.DefaultLoadDirectory)) {
+				OpenModel.InitialDirectory = UserConfiguration.DefaultLoadDirectory;
+				OpenModel.Tag = UserConfiguration.DefaultLoadDirectory; // Store it in the tag which makes it easy to keep track of.
 			}
-			StaticSetExportMode = (int)ConfigurationInterface.GetConfigurationValue("StaticSetExportMode", 0L, true);
-			ModelPropertyUtility.TryGettingAllTextures = ConfigurationInterface.GetConfigurationValue("GetAllTextures", true, true);
-			if (Directory.Exists(loadDir)) {
-				OpenModel.InitialDirectory = loadDir;
+			if (Directory.Exists(UserConfiguration.LastSaveDirectory)) {
+				SaveModel.InitialDirectory = UserConfiguration.LastSaveDirectory;
 			}
-			if (Directory.Exists(saveDir)) {
-				SaveModel.InitialDirectory = saveDir;
+			if (Directory.Exists(UserConfiguration.RsrcDirectory)) {
+				ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(UserConfiguration.RsrcDirectory);
 			}
-			if (Directory.Exists(rsrcDir)) {
-				ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(rsrcDir);
-			}
-			OpenModel.RestoreDirectory = restoreDirectoryWhenLoading;
-
-			_ = ConfigReferenceBootstrapper.PopulateConfigRefsAsync();
+			OpenModel.RestoreDirectory = UserConfiguration.RememberDirectoryAfterOpen;
+			#endregion
 
 			ConfigurationInterface.OnConfigurationChanged += OnConfigChanged;
-			if (isFreshLoad) {
+			if (UserConfiguration.IsFirstTimeOpening) {
 				MessageBox.Show("Welcome to ThreeRingsSharp! Before you can use the program, you need to set up your configuration so that the program knows where to look for game data.", "ThreeRingsSharp Setup", MessageBoxButtons.OK);
 				OnConfigClicked(null, null);
 			}
+		}
+
+		#endregion
+
+		public MainWindow() {
+			UISyncContext = SynchronizationContext.Current;
+			InitializeComponent();
+
+			SetupConsole();
+			PopulateProxyReferences();
+			LoadConfigs();
+
+			ConfigurationForm.CurrentVersion = THIS_VERSION[0] + "." + THIS_VERSION[1] + "." + THIS_VERSION[2];
+			ConfigReferenceBootstrapper.PopulateConfigRefsAsync();
 
 			XanLogger.UpdateAutomatically = false;
 			if (XanLogger.LoggingLevel > XanLogger.STANDARD) {
@@ -172,34 +249,6 @@ namespace SKAnimatorTools {
 				ShowWindow(ConsolePtr, 0);
 			}
 		}
-
-		/// <summary>
-		/// The mode to use when dealing with <see cref="StaticSetConfig"/> instances in the export.<para/>
-		/// <c>0 = Prompt Me</c><para/>
-		/// <c>1 = All</c><para/>
-		/// <c>2 = One</c><para/>
-		/// </summary>
-		public int StaticSetExportMode { get; set; } = 0;
-
-		/// <summary>
-		/// The mode to use when dealing with <see cref="ConditionalConfig"/> instances in the export.<para/>
-		/// <c>0 = Prompt Me</c><para/>
-		/// <c>1 = All models</c><para/>
-		/// <c>2 = Enabled models</c><para/>
-		/// <c>3 = Disabled models</c><para/>
-		/// <c>4 = Default model</c><para/>
-		/// </summary>
-		public int ConditionalExportMode { get; set; } = 0;
-
-		/// <summary>
-		/// If true, any other models shouldn't load because one is loading right now.
-		/// </summary>
-		private bool Busy { get; set; } = false;
-
-		/// <summary>
-		/// The current configuration form, if it exists.
-		/// </summary>
-		private ConfigurationForm ConfigForm { get; set; }
 
 		private void OnConfigChanged(string configKey, dynamic oldValue, dynamic newValue) {
 			if (configKey == "RememberDirectoryAfterOpen") {
@@ -223,14 +272,8 @@ namespace SKAnimatorTools {
 				}
 			} else if (configKey == "EmbedTextures") {
 				GLTFExporter.EmbedTextures = newValue;
-			} else if (configKey == "StaticSetExportMode") {
-				StaticSetExportMode = newValue;
-			} else if (configKey == "GetAllTextures") {
-				ModelPropertyUtility.TryGettingAllTextures = newValue;
-			} else if (configKey == "ConditionalConfigExportMode") {
-				ConditionalExportMode = newValue;
 			} else if (configKey == "PreferSpeed") {
-				SKAnimatorToolsTransfer.PreferSpeedOverFeedback = newValue;
+				SKAnimatorToolsProxy.PreferSpeedOverFeedback = newValue;
 				if (newValue == true) {
 					// Render the progress bar a different color. All progress bar changes will be deferred.
 					ModelLoadProgress.SpecialDisabled = true;
@@ -241,22 +284,6 @@ namespace SKAnimatorTools {
 				}
 			}
 		}
-
-		/// <summary>
-		/// The root <see cref="DataTreeObject"/> that represents the loaded model in the object hierarchy.<para/>
-		/// Rather than creating a new instance for every time a model is loaded, call <see cref="DataTreeObject.ClearAllChildren"/> instead.
-		/// </summary>
-		public static DataTreeObject RootDataTreeObject { get; } = new DataTreeObject();
-
-		/// <summary>
-		/// All models from the latest opened .DAT file.
-		/// </summary>
-		private static List<Model3D> AllModels { get; set; } = new List<Model3D>();
-
-		/// <summary>
-		/// This will be true of we've opened a model before configs were loaded. This is used to prevent two delays at once.
-		/// </summary>
-		private static bool IsYieldingForModel = false;
 
 		#region Opening Files
 
@@ -280,22 +307,22 @@ namespace SKAnimatorTools {
 				XanLogger.ForceUpdateLog();
 				IsYieldingForModel = true;
 				BtnOpenModel.Enabled = false;
-				SKAnimatorToolsTransfer.ConfigsPopulatedAction = new Action(OnConfigsPopulated);
+				SKAnimatorToolsProxy.ConfigsPopulatedAction = new Action(OnConfigsPopulated);
 				return;
 			}
 
-			SKAnimatorToolsTransfer.ResetProgress();
+			SKAnimatorToolsProxy.ResetProgress();
 			ModelLoaderBGWorker.RunWorkerAsync(UISyncContext);
 		}
 
 		private void OnConfigsPopulated() {
 			XanLogger.WriteLine("Alright. Let's load it up now.");
 			XanLogger.ForceUpdateLog();
-			SKAnimatorToolsTransfer.ResetProgress();
+			SKAnimatorToolsProxy.ResetProgress();
 			ModelLoaderBGWorker.RunWorkerAsync(UISyncContext);
 			IsYieldingForModel = false;
 			BtnOpenModel.Enabled = true;
-			SKAnimatorToolsTransfer.ConfigsPopulatedAction = null;
+			SKAnimatorToolsProxy.ConfigsPopulatedAction = null;
 		}
 
 		#endregion
@@ -312,7 +339,7 @@ namespace SKAnimatorTools {
 				try {
 					Model3D.ExportIntoOne(saveTo, targetFmt, AllModels.ToArray());
 					XanLogger.WriteLine($"Done! Exported to [{saveTo.FullName}]");
-				} catch (System.Exception ex) {
+				} catch (Exception ex) {
 					XanLogger.WriteLine($"Failed to save to [{saveTo.FullName}] -- Reason: {ex.GetType().Name} thrown!\n{ex.Message}", color: Color.IndianRed);
 				}
 			}
@@ -325,14 +352,14 @@ namespace SKAnimatorTools {
 		/// </summary>
 		private void LoadOpenedModel() {
 			if (Busy) return;
-			SKAnimatorToolsTransfer.UISyncContext?.Send(callback => {
+			SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
 				BtnOpenModel.Enabled = false;
 			}, null);
 			DataTreeObjectEventMarshaller.ClearAllNodeBindings();
 			RootDataTreeObject.ClearAllChildren();
 			RootDataTreeObject.Properties.Clear();
 
-			SKAnimatorToolsTransfer.UISyncContext?.Send(callback => {
+			SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
 				ModelStructureTree.Nodes.Clear();
 			}, null);
 
@@ -348,7 +375,7 @@ namespace SKAnimatorTools {
 				XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, color: Color.IndianRed);
 				AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
 				isOK = false;
-				SKAnimatorToolsTransfer.UISyncContext?.Send(callback => {
+				SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
 					BtnOpenModel.Enabled = true;
 				}, null);
 				Busy = false;
@@ -365,7 +392,7 @@ namespace SKAnimatorTools {
 					AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
 					isOK = false;
 				}
-				SKAnimatorToolsTransfer.UISyncContext?.Send(callback => {
+				SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
 					BtnOpenModel.Enabled = true;
 				}, null);
 				Busy = false;
@@ -375,14 +402,14 @@ namespace SKAnimatorTools {
 				XanLogger.LogException(err);
 				AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
 				isOK = false;
-				SKAnimatorToolsTransfer.UISyncContext?.Send(callback => {
+				SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
 					BtnOpenModel.Enabled = true;
 				}, null);
 				Busy = false;
 				throw;
 			}
 
-			SKAnimatorToolsTransfer.UISyncContext?.Send(callbackParam => {
+			SKAnimatorToolsProxy.UISyncContext?.Send(callbackParam => {
 				TreeView modelStructureTree = callbackParam as TreeView;
 				if (modelStructureTree.Nodes.Count != 0 && modelStructureTree.Nodes[0] != null) {
 					SetPropertiesMenu(DataTreeObjectEventMarshaller.GetDataObjectOf(modelStructureTree.Nodes[0]));
@@ -390,8 +417,8 @@ namespace SKAnimatorTools {
 			}, ModelStructureTree);
 
 
-			Debug.WriteLine(SKAnimatorToolsTransfer.UISyncContext);
-			SKAnimatorToolsTransfer.UISyncContext?.Send(callbackParam => {
+			Debug.WriteLine(SKAnimatorToolsProxy.UISyncContext);
+			SKAnimatorToolsProxy.UISyncContext?.Send(callbackParam => {
 				Debug.WriteLine(BtnSaveModel.Enabled);
 				Debug.WriteLine(callbackParam);
 				BtnSaveModel.Enabled = (bool)callbackParam;
@@ -411,7 +438,7 @@ namespace SKAnimatorTools {
 			alreadyCountedMeshes.Clear();
 
 			XanLogger.WriteLine("Number of unique meshes instantiated: " + meshCount);
-			SKAnimatorToolsTransfer.UISyncContext?.Send(callback => {
+			SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
 				BtnOpenModel.Enabled = true;
 			}, null);
 		}
@@ -515,21 +542,6 @@ namespace SKAnimatorTools {
 
 		private void OnConfigClicked(object sender, EventArgs e) {
 			ConfigForm = new ConfigurationForm();
-			// todo: better method of doing this
-			ConfigForm.SetDataFromConfig(
-				OpenModel.InitialDirectory,
-				SaveModel.InitialDirectory,
-				ResourceDirectoryGrabber.ResourceDirectory?.FullName ?? @"C:\",
-				OpenModel.RestoreDirectory,
-				Model3D.MultiplyScaleByHundred,
-				Model3D.ProtectAgainstZeroScale,
-				ConditionalExportMode,
-				GLTFExporter.EmbedTextures,
-				XanLogger.LoggingLevel,
-				StaticSetExportMode,
-				ModelPropertyUtility.TryGettingAllTextures,
-				SKAnimatorToolsTransfer.PreferSpeedOverFeedback
-			);
 			ConfigForm.Show();
 			ConfigForm.Activate();
 			ConfigForm.FormClosed += OnConfigFormClosed;
@@ -539,6 +551,11 @@ namespace SKAnimatorTools {
 			ConfigForm = null;
 		}
 
+		/// <summary>
+		/// Force the config window to be the top window if it's open.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void OnMainWindowFocused(object sender, EventArgs e) {
 			if (ConfigForm == null) return;
 			ConfigForm.Activate();
@@ -554,7 +571,7 @@ namespace SKAnimatorTools {
 			if (hasStaticSetConfig) {
 				// NEW: If their model includes a StaticSetConfig, we need to give them the choice to export all or one model.
 				DialogResult saveAllStaticSetModels = DialogResult.Cancel;
-				if (StaticSetExportMode == 0) {
+				if (UserConfiguration.StaticSetExportMode == 0) {
 					saveAllStaticSetModels = MessageBox.Show(
 						"The model you're saving contains one or more StaticSetConfigs! " +
 						"This type of model is used like a variant selection (it provides " +
@@ -577,8 +594,8 @@ namespace SKAnimatorTools {
 						return;
 					}
 				} else {
-					if (StaticSetExportMode == 1) saveAllStaticSetModels = DialogResult.Yes;
-					if (StaticSetExportMode == 2) saveAllStaticSetModels = DialogResult.No;
+					if (UserConfiguration.StaticSetExportMode == 1) saveAllStaticSetModels = DialogResult.Yes;
+					if (UserConfiguration.StaticSetExportMode == 2) saveAllStaticSetModels = DialogResult.No;
 				}
 
 				bool onlyExportActive = saveAllStaticSetModels == DialogResult.No;
@@ -598,24 +615,28 @@ namespace SKAnimatorTools {
 				}
 			}
 			if (hasConditionalConfig) {
-				ConditionalConfigOptions cfgOpts = new ConditionalConfigOptions();
-				int expType = (int)cfgOpts.ShowDialog();
-				cfgOpts = null;
+				int expType = 5;
+				if (UserConfiguration.ConditionalConfigExportMode == 0) {
+					ConditionalConfigOptions cfgOpts = new ConditionalConfigOptions();
+					expType = (int)cfgOpts.ShowDialog();
+				} else {
+					expType = UserConfiguration.ConditionalConfigExportMode;
+				}
 				if (expType == 5) {
 					// 5 = cancel
 					e.Cancel = true;
 					return;
 				} else {
 					// 1 = all
-					// 2 = default
-					// 3 = enabled
-					// 4 = disabled
+					// 2 = enabled
+					// 3 = disabled
+					// 4 = default
 					foreach (Model3D model in AllModels) {
 						if (model.ExtraData.GetOrDefault("ConditionalConfigFlag", null) != null) {
 							if (expType != 1) {
 								bool isDefault = (bool)model.ExtraData.GetOrDefault("ConditionalConfigDefault", false) == true;
 								bool isEnabled = (bool)model.ExtraData.GetOrDefault("ConditionalConfigValue", false) == true;
-								bool skipExport = (expType == 2 && !isDefault) || (expType == 3 && !isEnabled) || (expType == 4 && isEnabled);
+								bool skipExport = (expType == 2 && !isEnabled) || (expType == 3 && isEnabled) || (expType == 4 && !isDefault);
 								// Skip conditions:
 								// Export type is default only and it's not default
 								// Export type is enabled and it's not enabled
@@ -654,12 +675,12 @@ namespace SKAnimatorTools {
 		#endregion
 
 		private void ModelLoaderBGWorker_DoWork(object sender, DoWorkEventArgs e) {
-			if (SKAnimatorToolsTransfer.UISyncContext == null) SKAnimatorToolsTransfer.UISyncContext = e.Argument as SynchronizationContext;
+			if (SKAnimatorToolsProxy.UISyncContext == null) SKAnimatorToolsProxy.UISyncContext = e.Argument as SynchronizationContext;
 			LoadOpenedModel();
 		}
 
 		private void ModelLoaderBGWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
-			if (SKAnimatorToolsTransfer.PreferSpeedOverFeedback) return;
+			if (SKAnimatorToolsProxy.PreferSpeedOverFeedback) return;
 			
 
 			if (e.UserState is int maxProgress) {

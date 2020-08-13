@@ -51,7 +51,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			ViewerEffectConfig effect = vac.effect;
 			SetupCosmeticInformation(vac, dataTreeParent);
 
-			SKAnimatorToolsTransfer.IncrementEnd();
+			SKAnimatorToolsProxy.IncrementEnd();
 			if (effect is Skybox skybox) {
 				string filePathRelativeToRsrc = skybox.model?.getName();
 				if (filePathRelativeToRsrc != null) {
@@ -74,7 +74,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					ClydeFileHandler.HandleClydeFile(referencedModel, modelCollection, false, dataTreeParent, false, newTrs);
 				}
 			}
-			SKAnimatorToolsTransfer.IncrementProgress();
+			SKAnimatorToolsProxy.IncrementProgress();
 		}
 	}
 }

@@ -73,7 +73,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 
 			// First things first: Tiles are offset and in the wrong position. Fix it.
 
-			SKAnimatorToolsTransfer.IncrementEnd();
+			SKAnimatorToolsProxy.IncrementEnd();
 			TileConfig.Original originalImpl;
 			do {
 				if (tileCfg == null) {
@@ -108,7 +108,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			foreach (Model3D model in acquiredModels) {
 				model.Mesh.SetOffsetToAABBCenter();
 			}
-			SKAnimatorToolsTransfer.IncrementProgress();
+			SKAnimatorToolsProxy.IncrementProgress();
 		}
 
 	}

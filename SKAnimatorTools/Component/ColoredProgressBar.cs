@@ -210,7 +210,6 @@ namespace SKAnimatorTools.Component {
 
 					offscreen.FillRectangle(foreBrush, BAR_INSET, BAR_INSET, rect.Width, rect.Height);
 					e.Graphics.DrawImage(offscreenImage, 0, 0);
-					
 				}
 			}
 		}

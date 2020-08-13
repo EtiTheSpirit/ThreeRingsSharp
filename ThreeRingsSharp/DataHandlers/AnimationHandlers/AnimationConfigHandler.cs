@@ -20,7 +20,7 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 		/// <param name="attachToModels"></param>
 		public static void HandleAnimationImplementation(string name, AnimationConfig.Implementation animationImplementation, List<Model3D> attachToModels) {
 
-			SKAnimatorToolsTransfer.IncrementEnd();
+			SKAnimatorToolsProxy.IncrementEnd();
 			// Clear out any derived references all the way until we dig down to an original implementation.
 			if (animationImplementation is AnimationConfig.Derived derived) {
 				animationImplementation = Dereference(derived);
@@ -43,7 +43,7 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 				int numIterations = transforms.Length;
 				if (imported.skipLastFrame) numIterations--;
 
-				SKAnimatorToolsTransfer.IncrementEnd(numIterations);
+				SKAnimatorToolsProxy.IncrementEnd(numIterations);
 				for (int frameIndex = 0; frameIndex < numIterations; frameIndex++) {
 					Transform3D[] targetFrames = transforms[frameIndex];
 					Animation.Keyframe keyframe = new Animation.Keyframe();
@@ -89,7 +89,7 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 						keyframe.Time = frameIndex / fps;
 					}
 					animation.Keyframes.Add(keyframe);
-					SKAnimatorToolsTransfer.IncrementProgress();
+					SKAnimatorToolsProxy.IncrementProgress();
 				}
 
 				foreach (Model3D model in attachToModels) {
@@ -99,11 +99,11 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 			} else if (animationImplementation is AnimationConfig.Sequential sequential) {
 				//AnimationConfig.Implementation[] subs = new AnimationConfig.Implementation[sequential.animations.Length];
 
-				SKAnimatorToolsTransfer.IncrementEnd(sequential.animations.Length);
+				SKAnimatorToolsProxy.IncrementEnd(sequential.animations.Length);
 				for (int index = 0; index < sequential.animations.Length; index++) {
 					AnimationConfig.ComponentAnimation component = sequential.animations[index];
 					HandleAnimationImplementation(name, Dereference(component), attachToModels);
-					SKAnimatorToolsTransfer.IncrementProgress();
+					SKAnimatorToolsProxy.IncrementProgress();
 				}
 				/*
 
@@ -144,7 +144,7 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 				XanLogger.WriteLine(string.Format(ERR_IMPL_NOT_SUPPORTED, animationImplementation.GetType().Name), color: Color.DarkGoldenrod);
 			}
 
-			SKAnimatorToolsTransfer.IncrementProgress();
+			SKAnimatorToolsProxy.IncrementProgress();
 		}
 
 		/// <summary>

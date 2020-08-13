@@ -264,11 +264,6 @@
             Specialized methods to pull specific data out of models via their directs.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.TryGettingAllTextures">
-            <summary>
-            Set by the main code. If this is <see langword="true"/>, the directs on a given model will be traversed to try to find its textures. If false, only the active materials will be used.
-            </summary>
-        </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.FindTexturesFromDirects(com.threerings.opengl.model.config.ModelConfig)">
             <summary>
             Assuming this is a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> storing textures, this will try to find the textures from its parameters.
@@ -660,22 +655,22 @@
             <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name. Additionally, it will not have its implementation property.</param>
             <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="T:com.threerings.math.Transform3D"/>.</param>
         </member>
-        <member name="T:ThreeRingsSharp.SKAnimatorToolsTransfer">
+        <member name="T:ThreeRingsSharp.SKAnimatorToolsProxy">
             <summary>
             Offers various bits and pieces that are used by the GUI portion of the program that are separate from this library.<para/>
             Its most important capability is to transfer data from the background worker thread to the main thread.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UISyncContext">
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.UISyncContext">
             <summary>
             A reference to the synchronization context for the GUI.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UpdateGUIAction">
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.UpdateGUIAction">
             <summary>
             A delegate action that is called when the GUI needs to update. This can safely be <see langword="null"/> for contexts that do not have a GUI, as it is used for the SK Animator Tools UI.<para/>
             Pass in <see langword="null"/> for arguments to make their data remain unchanged.<para/>
-            It is advised that you call this via <see cref="M:ThreeRingsSharp.SKAnimatorToolsTransfer.UpdateGUIThroughSync(System.String,System.String,System.String,System.String)"/> as this protects cross-thread actions.
+            It is advised that you call this via <see cref="M:ThreeRingsSharp.SKAnimatorToolsProxy.UpdateGUIThroughSync(System.String,System.String,System.String,System.String)"/> as this protects cross-thread actions.
             This is designed to work with the UI offered by SK Animator Tools V2. The parameters are as follows:<para/>
             <c>string fileName (the name of the file that was opened)<para/>
             string isCompressed (a string of true/false, yes/no, etc.)<para/>
@@ -683,92 +678,97 @@
             string type (the base class, e.g. ModelConfig, AnimationConfig, ScriptedConfig)</c>
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsErroredAction">
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsErroredAction">
             <summary>
             An <see cref="T:System.Action"/> to run when something goes wrong while configs are loading.<para/>
-            Implemented by <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsErroredThroughSync(System.Exception)"/>
+            Implemented by <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="M:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsErroredThroughSync(System.Exception)"/>
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsLoadingAction">
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsLoadingAction">
             <summary>
             An action that fires whenever a single config reference file is loaded.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsPopulatedAction">
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsPopulatedAction">
             <summary>
             An <see cref="T:System.Action"/> to run when configs are populated.<para/>
-            Implemented by <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsPopulatedThroughSync"/>
+            Implemented by <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="M:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsPopulatedThroughSync"/>
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ModelLoaderWorker">
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.ModelLoaderWorker">
             <summary>
             A reference to the <see cref="T:System.ComponentModel.BackgroundWorker"/> that handles loading models.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.SKAnimatorToolsTransfer.Progress">
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.Progress">
             <summary>
             A reference to the <see cref="T:System.Windows.Forms.ProgressBar"/>.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.UpdateGUIThroughSync(System.String,System.String,System.String,System.String)">
+        <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.PreferSpeedOverFeedback">
             <summary>
-            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UpdateGUIAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UISyncContext"/>.<para/>
+            If <see langword="true"/>, the program will avoid updating the GUI and progress bar in favor of focusing solely on processing data.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.UpdateGUIThroughSync(System.String,System.String,System.String,System.String)">
+            <summary>
+            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.UpdateGUIAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.UISyncContext"/>.<para/>
             This will do nothing if one or both of these is not defined.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsErroredThroughSync(System.Exception)">
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsErroredThroughSync(System.Exception)">
             <summary>
-            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsErroredAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UISyncContext"/>.<para/>
+            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsErroredAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.UISyncContext"/>.<para/>
             This will do nothing if one or both of these is not defined.
             </summary>
             <param name="error"></param>
         </member>
-        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsPopulatedThroughSync">
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsPopulatedThroughSync">
             <summary>
-            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsPopulatedAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UISyncContext"/>.<para/>
+            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsPopulatedAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.UISyncContext"/>.<para/>
             This will do nothing if one or both of these is not defined.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{ThreeRingsSharp.ProgressBarState})">
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsLoadingThroughSync(System.Nullable{System.Int32},System.Nullable{System.Int32},System.Nullable{ThreeRingsSharp.ProgressBarState})">
             <summary>
-            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ConfigsLoadingAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.UISyncContext"/>. Any parameters that are null implicitly mean "keep them the same" to the code.<para/>
+            Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsLoadingAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.UISyncContext"/>. Any parameters that are null implicitly mean "keep them the same" to the code.<para/>
             This will do nothing if one or both of these is not defined.
             </summary>
             <param name="numCfgsLoaded"></param>
             <param name="totalNumCfgs"></param>
             <param name="state"></param>
         </member>
-        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ReportProgress(System.Int32)">
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.ReportProgress(System.Int32)">
             <summary>
-            Reports progress to <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ModelLoaderWorker"/> if it is not <see langword="null"/>.<para/>
-            Unlike the typical <see cref="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ReportProgress(System.Int32)"/> method of <see cref="T:System.ComponentModel.BackgroundWorker"/>, this takes in an arbitrary number that directly sets the progress bar's value.
+            Reports progress to <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.ModelLoaderWorker"/> if it is not <see langword="null"/>.<para/>
+            Unlike the typical <see cref="M:ThreeRingsSharp.SKAnimatorToolsProxy.ReportProgress(System.Int32)"/> method of <see cref="T:System.ComponentModel.BackgroundWorker"/>, this takes in an arbitrary number that directly sets the progress bar's value.
             </summary>
             <param name="numLoaded"></param>
         </member>
-        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.IncrementProgress(System.Int32)">
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.IncrementProgress(System.Int32)">
             <summary>
-            Increments the progress of <see cref="P:ThreeRingsSharp.SKAnimatorToolsTransfer.ModelLoaderWorker"/> forward by <paramref name="num"/> units.
+            Increments the progress of <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.ModelLoaderWorker"/> forward by <paramref name="num"/> units.
             </summary>
             <param name="num"></param>
         </member>
-        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.IncrementEnd(System.Int32)">
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.IncrementEnd(System.Int32)">
             <summary>
             Increments the maximum value of the progress bar.
             </summary>
             <param name="num"></param>
         </member>
-        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.SetProgressState(ThreeRingsSharp.ProgressBarState)">
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.SetProgressState(ThreeRingsSharp.ProgressBarState)">
             <summary>
             Alters the progress bar's appearance.
             </summary>
             <param name="state"></param>
         </member>
-        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.ResetProgress">
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.ResetProgress">
             <summary>
             Resets the progress bar.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.SKAnimatorToolsTransfer.RegisterNodes(System.Object,ThreeRingsSharp.Utility.Interface.DataTreeObject)">
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.RegisterNodes(System.Object,ThreeRingsSharp.Utility.Interface.DataTreeObject)">
             <summary>
             Used to register the virtual data tree to the main UI
             </summary>
@@ -1320,7 +1320,7 @@
             <summary>
             An enum that represents the available icons in the data tree. Certain images are not part of the stock Silk image package.<para/>
             Silk Images come from https://famfamfam.com/ <para/>
-            Note to self: Keep this list updated, and ensure its order is identical to the order in which they are defined by the generated code.
+            To determine the icon of a TreeNode, simply cast one of these enums to an int and set ImageIndex to the int value.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.Utility.Interface.SilkImage.Generic">
@@ -1496,6 +1496,11 @@
         <member name="F:ThreeRingsSharp.Utility.Interface.SilkImage.Tag">
             <summary>
             A tag, like a cardboard price tag that hangs off of an object.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.Interface.SilkImage.Wrench">
+            <summary>
+            An orange wrench.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.Utility.Interface.SilkImage.None">
@@ -1895,6 +1900,11 @@
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.Utility.XanLogger.UpdateLog">
+            <summary>
+            Calls <see cref="M:ThreeRingsSharp.Utility.XanLogger.ForceUpdateLog"/>, but respects user preferences that dictate to not write to the log (for instance, <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.PreferSpeedOverFeedback"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.XanLogger.ForceUpdateLog">
             <summary>
             Manually update the contents of <see cref="P:ThreeRingsSharp.Utility.XanLogger.BoxReference"/>. Only works if <see cref="P:ThreeRingsSharp.Utility.XanLogger.UpdateAutomatically"/> is <see langword="false"/>, and of course, if <see cref="P:ThreeRingsSharp.Utility.XanLogger.BoxReference"/> is not <see langword="null"/>.
             </summary>

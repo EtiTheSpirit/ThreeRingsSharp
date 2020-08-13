@@ -67,12 +67,12 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			string fullDepthName = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile, -1);
 
 			if (staticSet.meshes != null) {
-				SKAnimatorToolsTransfer.IncrementEnd(staticSet.meshes.size());
+				SKAnimatorToolsProxy.IncrementEnd(staticSet.meshes.size());
 
 				if (extraData != null && extraData.ContainsKey("DirectArgs")) {
 					Dictionary<string, dynamic> directs = extraData["DirectArgs"];
-					SKAnimatorToolsTransfer.IncrementEnd(1);
-					SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.ExtraWork);
+					SKAnimatorToolsProxy.IncrementEnd(1);
+					SKAnimatorToolsProxy.SetProgressState(ProgressBarState.ExtraWork);
 					bool got = false;
 					foreach (string key in directs.Keys) {
 						Parameter param = baseModel.getParameter(key);
@@ -80,7 +80,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 							if (direct.paths.Contains("implementation.model")) {
 								staticSet.model = directs[key];
 								XanLogger.WriteLine("Set model to " + staticSet.model, XanLogger.DEBUG);
-								SKAnimatorToolsTransfer.IncrementProgress();
+								SKAnimatorToolsProxy.IncrementProgress();
 								got = true;
 								break;
 							}
@@ -89,25 +89,25 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 								if (dir.paths.Contains("implementation.model")) {
 									staticSet.model = directs[key];
 									XanLogger.WriteLine("Set model to " + staticSet.model, XanLogger.DEBUG);
-									SKAnimatorToolsTransfer.IncrementProgress();
+									SKAnimatorToolsProxy.IncrementProgress();
 									got = true;
 									break;
 								}
 							}
 						}
 					}
-					if (!got) SKAnimatorToolsTransfer.IncrementProgress(); // Just inc anyway
+					if (!got) SKAnimatorToolsProxy.IncrementProgress(); // Just inc anyway
 				}
 
 				// Export them all!
 				object[] keys = staticSet.meshes.keySet().toArray();
-				SKAnimatorToolsTransfer.IncrementEnd(keys.Length);
+				SKAnimatorToolsProxy.IncrementEnd(keys.Length);
 				foreach (object key in keys) {
 					MeshSet subModel = (MeshSet)staticSet.meshes.get(key);
 					VisibleMesh[] meshes = subModel.visible;
 					int idx = 0;
 
-					SKAnimatorToolsTransfer.IncrementEnd(meshes.Length);
+					SKAnimatorToolsProxy.IncrementEnd(meshes.Length);
 					foreach (VisibleMesh mesh in meshes) {
 						string meshTitle = "-MeshSets[" + key.ToString() + "].Mesh[" + idx + "]";
 
@@ -122,10 +122,10 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 						modelCollection.Add(meshToModel);
 						idx++;
-						SKAnimatorToolsTransfer.IncrementProgress();
+						SKAnimatorToolsProxy.IncrementProgress();
 					}
 
-					SKAnimatorToolsTransfer.IncrementProgress();
+					SKAnimatorToolsProxy.IncrementProgress();
 				}
 			}
 		}

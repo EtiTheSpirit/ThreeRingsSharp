@@ -99,10 +99,10 @@ namespace ThreeRingsSharp.Utility {
 		private static readonly ManualResetEventSlim UpdateComplete = new ManualResetEventSlim();
 
 		/// <summary>
-		/// Calls <see cref="ForceUpdateLog"/>, but respects user preferences that dictate to not write to the log (for instance, <see cref="SKAnimatorToolsTransfer.PreferSpeedOverFeedback"/>.
+		/// Calls <see cref="ForceUpdateLog"/>, but respects user preferences that dictate to not write to the log (for instance, <see cref="SKAnimatorToolsProxy.PreferSpeedOverFeedback"/>.
 		/// </summary>
 		public static void UpdateLog() {
-			if (SKAnimatorToolsTransfer.PreferSpeedOverFeedback) return;
+			if (SKAnimatorToolsProxy.PreferSpeedOverFeedback) return;
 			ForceUpdateLog();
 		}
 

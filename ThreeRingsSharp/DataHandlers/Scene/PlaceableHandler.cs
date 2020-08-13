@@ -59,7 +59,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 			// EDIT: Yeah it is. Entry has a method called "transform", but placeable has a field called "transform". Great.
 			// This may have been caused by the transpiler, which is to be expected. I'm actually quite suprised that I've not run into any errors until now.
 
-			SKAnimatorToolsTransfer.IncrementEnd();
+			SKAnimatorToolsProxy.IncrementEnd();
 			// TEST: Is this, by some slim chance, a file ref? (This can happen!)
 			if (placeable.placeable.IsRealReference()) {
 				PlaceableConfig[] placeableCfgs = ConfigReferenceBootstrapper.ConfigReferences["placeable"].OfType<PlaceableConfig>().ToArray();
@@ -103,7 +103,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 				XanLogger.WriteLine("Grabbing placeable at " + placeable.placeable.getName(), XanLogger.DEBUG);
 				ConfigReferenceUtil.HandleConfigReference(sourceFile, placeable.placeable, modelCollection, dataTreeParent, globalTransform.compose(trs));
 			}
-			SKAnimatorToolsTransfer.IncrementProgress();
+			SKAnimatorToolsProxy.IncrementProgress();
 		}
 
 		/// <summary>

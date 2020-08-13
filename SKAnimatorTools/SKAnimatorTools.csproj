@@ -130,6 +130,8 @@
     <Compile Include="ConfigurationForm.Designer.cs">
       <DependentUpon>ConfigurationForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\Attributes\ConfigEntryAttribute.cs" />
+    <Compile Include="Configuration\Attributes\DefaultValueAttribute.cs" />
     <Compile Include="Configuration\ConfigurationInterface.cs" />
     <Compile Include="ChangeTargetPrompt.cs">
       <SubType>Form</SubType>
@@ -137,6 +139,7 @@
     <Compile Include="ChangeTargetPrompt.Designer.cs">
       <DependentUpon>ChangeTargetPrompt.cs</DependentUpon>
     </Compile>
+    <Compile Include="Configuration\UserConfiguration.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -222,6 +225,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\CautionTape.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\information.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

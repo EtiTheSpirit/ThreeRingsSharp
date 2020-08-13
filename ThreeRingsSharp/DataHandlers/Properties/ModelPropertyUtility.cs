@@ -1,5 +1,6 @@
 ﻿using com.threerings.config;
 using com.threerings.opengl.model.config;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using static com.threerings.opengl.model.config.ModelConfig;
@@ -13,29 +14,17 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 	public class ModelPropertyUtility {
 
 		/// <summary>
-		/// Set by the main code. If this is <see langword="true"/>, the directs on a given model will be traversed to try to find its textures. If false, only the active materials will be used.
-		/// </summary>
-		public static bool TryGettingAllTextures { get; set; } = true;
-
-		/// <summary>
 		/// Assuming this is a <see cref="ModelConfig"/> storing textures, this will try to find the textures from its parameters.
 		/// </summary>
 		/// <param name="cfg"></param>
 		/// <returns></returns>
 		public static List<string> FindTexturesFromDirects(ModelConfig cfg) {
-			if (!TryGettingAllTextures) {
-				if (cfg.implementation is Imported importedModel) {
-					return GetDefaultTextures(importedModel).ToList();
-				} else {
-					return new List<string>(); // Can't grab anything from this.
-				}
-			}
-			SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.ExtraWork);
+			SKAnimatorToolsProxy.SetProgressState(ProgressBarState.ExtraWork);
 
 			List<string> retn = new List<string>();
 			if (cfg.implementation is Imported imported) retn.AddRange(GetDefaultTextures(imported).ToList());
 
-			SKAnimatorToolsTransfer.IncrementEnd(cfg.parameters.Length);
+			SKAnimatorToolsProxy.IncrementEnd(cfg.parameters.Length);
 			foreach (Parameter param in cfg.parameters) {
 				if (param is Parameter.Choice choice) {
 					WrappedChoice wChoice = new WrappedChoice(cfg, choice);
@@ -50,10 +39,10 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 						}
 					}
 				}
-				SKAnimatorToolsTransfer.IncrementProgress();
+				SKAnimatorToolsProxy.IncrementProgress();
 			}
 
-			SKAnimatorToolsTransfer.SetProgressState(ProgressBarState.OK);
+			SKAnimatorToolsProxy.SetProgressState(ProgressBarState.OK);
 			return retn;
 		}
 
@@ -66,7 +55,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 		public static string[] GetDefaultTextures(Imported model) {
 
 			string[] textures = new string[model.materialMappings.Length];
-			SKAnimatorToolsTransfer.IncrementEnd(textures.Length);
+			SKAnimatorToolsProxy.IncrementEnd(textures.Length);
 
 			for (int index = 0; index < model.materialMappings.Length; index++) {
 				MaterialMapping mapping = model.materialMappings[index];
@@ -74,7 +63,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 				if (texRef != null) {
 					textures[index] = (string)texRef.getArguments().getOrDefault("File", null);
 				}
-				SKAnimatorToolsTransfer.IncrementProgress();
+				SKAnimatorToolsProxy.IncrementProgress();
 			}
 			return textures;
 		}

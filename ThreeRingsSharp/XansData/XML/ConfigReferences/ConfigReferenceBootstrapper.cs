@@ -54,7 +54,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			set {
 				_HasPopulatedConfigs = value;
 				if (value) {
-					SKAnimatorToolsTransfer.ConfigsPopulatedThroughSync();
+					SKAnimatorToolsProxy.ConfigsPopulatedThroughSync();
 				}
 			}
 		}
@@ -95,7 +95,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				using (BinaryReader reader = new BinaryReader(mergedBinFile.OpenRead())) {
 					if (reader.ReadInt32() == MERGED_FILE_VERSION) {
 						int numFiles = reader.ReadInt32();
-						SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(0, numFiles, ProgressBarState.OK);
+						SKAnimatorToolsProxy.ConfigsLoadingThroughSync(0, numFiles, ProgressBarState.OK);
 						for (int index = 0; index < numFiles; index++) {
 							int size = reader.ReadInt32();
 							int nameLength = reader.ReadByte();
@@ -117,17 +117,17 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 							ManagedConfig[] cfgs = objArr.OfType<ManagedConfig>().ToArray();
 							_ConfigReferences.Put(name, (cfgs, type));
 
-							SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(index, numFiles + cfgs.Length, ProgressBarState.ExtraWork);
+							SKAnimatorToolsProxy.ConfigsLoadingThroughSync(index, numFiles + cfgs.Length, ProgressBarState.ExtraWork);
 							int idx = 0;
 							foreach (ManagedConfig cfgObj in cfgs) {
 								_ConfigReferences.ConfigEntryToContainerName[cfgObj.getName()] = name;
-								SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(index + idx);
+								SKAnimatorToolsProxy.ConfigsLoadingThroughSync(index + idx);
 								idx++;
 							}
 							importer.close();
 							XanLogger.WriteLine("Populated [" + name + "].", XanLogger.DEBUG);
 							XanLogger.UpdateLog();
-							SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(index + 1, numFiles, ProgressBarState.OK);
+							SKAnimatorToolsProxy.ConfigsLoadingThroughSync(index + 1, numFiles, ProgressBarState.OK);
 						}
 					} else {
 						XanLogger.WriteLine("Special merged binary file is out of date! Manually iterating through ConfigRefs...", XanLogger.DEBUG);
@@ -141,7 +141,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 					XanLogger.WriteLine("Config data has been populated.");
 					XanLogger.ForceUpdateLog();
 				} else {
-					SKAnimatorToolsTransfer.UISyncContext?.Send(param => {
+					SKAnimatorToolsProxy.UISyncContext?.Send(param => {
 						XanLogger.WriteLine("Config data has been populated.");
 						XanLogger.ForceUpdateLog();
 					}, null);
@@ -149,7 +149,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 				HasPopulatedConfigs = true;
 			} catch (System.Exception error) {
-				SKAnimatorToolsTransfer.ConfigsErroredThroughSync(error);
+				SKAnimatorToolsProxy.ConfigsErroredThroughSync(error);
 			}
 		}
 
@@ -274,7 +274,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			if (PruneXMLAndMakeBinaries()) return;
 
 			List<FileInfo> allDatFiles = prunedRefsDir.EnumerateFiles("*.dat").ToList();
-			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(0, allDatFiles.Count, ProgressBarState.ExtraWork);
+			SKAnimatorToolsProxy.ConfigsLoadingThroughSync(0, allDatFiles.Count, ProgressBarState.ExtraWork);
 			int allFiles = 0;
 			foreach (FileInfo configRef in allDatFiles) {
 				string fName = configRef.Name.Replace(configRef.Extension, "");
@@ -287,7 +287,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 					XanLogger.WriteLine("WARNING: Reference for [" + fName + "] returned null!");
 					XanLogger.UpdateLog();
 					allFiles++;
-					SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(allFiles);
+					SKAnimatorToolsProxy.ConfigsLoadingThroughSync(allFiles);
 					continue;
 				}
 				Array objArr = obj as Array;
@@ -304,9 +304,9 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				XanLogger.WriteLine("Populated [" + fName + "].", XanLogger.DEBUG);
 				XanLogger.UpdateLog();
 				allFiles++;
-				SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(allFiles);
+				SKAnimatorToolsProxy.ConfigsLoadingThroughSync(allFiles);
 			}
-			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(state: ProgressBarState.OK);
+			SKAnimatorToolsProxy.ConfigsLoadingThroughSync(state: ProgressBarState.OK);
 		}
 
 		/// <summary>
@@ -336,7 +336,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			List<FileInfo> allXMLFiles = configRefsDir.EnumerateFiles("*.xml").ToList();
 
 			int totalNumFiles = allXMLFiles.Count;
-			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(0, totalNumFiles, ProgressBarState.ExtraWork);
+			SKAnimatorToolsProxy.ConfigsLoadingThroughSync(0, totalNumFiles, ProgressBarState.ExtraWork);
 
 			// Write a placeholder int, which will be replaced with the version and number of entries respectively.
 			writer.Write(0);
@@ -402,7 +402,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				XanLogger.WriteLine("Pruned [" + fName + "] and converted it to binary.");
 				XanLogger.UpdateLog();
 				allFiles++;
-				SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(allFiles);
+				SKAnimatorToolsProxy.ConfigsLoadingThroughSync(allFiles);
 
 			}
 			str.Flush();
@@ -416,7 +416,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			XanLogger.WriteLine("Pruning complete! The merged binary file is done too.");
 			XanLogger.UpdateLog();
 
-			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(state: ProgressBarState.OK);
+			SKAnimatorToolsProxy.ConfigsLoadingThroughSync(state: ProgressBarState.OK);
 			return false;
 		}
 
@@ -436,7 +436,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 			//SKAnimatorToolsTransfer.ConfigsLoadingThroughSync
 			List<FileInfo> allDatFiles = prunedRefsDir.EnumerateFiles("*.dat").ToList();
-			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(0, allDatFiles.Count, ProgressBarState.ExtraWork);
+			SKAnimatorToolsProxy.ConfigsLoadingThroughSync(0, allDatFiles.Count, ProgressBarState.ExtraWork);
 
 			foreach (FileInfo configRef in allDatFiles) {
 				string fName = configRef.Name.Replace(configRef.Extension, "");
@@ -449,7 +449,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 					XanLogger.WriteLine("WARNING: Reference for [" + fName + "] returned null!");
 					XanLogger.UpdateLog();
 					allFiles++;
-					SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(allFiles);
+					SKAnimatorToolsProxy.ConfigsLoadingThroughSync(allFiles);
 					continue;
 				}
 				Type type = obj.GetType().GetElementType(); // Always an array
@@ -474,7 +474,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 
 				numFiles++;
 				allFiles++;
-				SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(allFiles);
+				SKAnimatorToolsProxy.ConfigsLoadingThroughSync(allFiles);
 			}
 			str.Flush();
 			str.Close();
@@ -486,7 +486,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 			}
 			XanLogger.WriteLine("The merged binary file has been created.");
 			XanLogger.UpdateLog();
-			SKAnimatorToolsTransfer.ConfigsLoadingThroughSync(state: ProgressBarState.OK);
+			SKAnimatorToolsProxy.ConfigsLoadingThroughSync(state: ProgressBarState.OK);
 		}
 
 		/// <summary>
