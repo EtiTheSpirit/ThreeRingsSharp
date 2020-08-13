@@ -49,8 +49,7 @@
 			this.BtnDownload.Size = new System.Drawing.Size(96, 23);
 			this.BtnDownload.TabIndex = 1;
 			this.BtnDownload.Text = "Download";
-			this.UpdaterTooltip.SetToolTip(this.BtnDownload, "Close the program and automatically open the webpage\r\nto the zip file download fo" +
-        "r the new version of TRS.");
+			this.UpdaterTooltip.SetToolTip(this.BtnDownload, "Close the program and automatically download + install\r\nthe new version of TRS.");
 			this.BtnDownload.UseVisualStyleBackColor = true;
 			this.BtnDownload.Click += new System.EventHandler(this.BtnDownload_Click);
 			// 
@@ -76,6 +75,13 @@
         "ing the new version of the program. This is so you can see the\r\nnew features.");
 			this.BtnOpenPage.UseVisualStyleBackColor = true;
 			this.BtnOpenPage.Click += new System.EventHandler(this.BtnOpenPage_Click);
+			// 
+			// UpdaterTooltip
+			// 
+			this.UpdaterTooltip.AutoPopDelay = 32767;
+			this.UpdaterTooltip.InitialDelay = 100;
+			this.UpdaterTooltip.ReshowDelay = 100;
+			this.UpdaterTooltip.ShowAlways = true;
 			// 
 			// Updater
 			// 

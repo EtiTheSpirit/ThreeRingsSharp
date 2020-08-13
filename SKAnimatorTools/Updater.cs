@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 
 namespace SKAnimatorTools {
@@ -16,8 +18,12 @@ namespace SKAnimatorTools {
 		}
 
 		private void BtnDownload_Click(object sender, EventArgs e) {
-			string dlLink = "https://github.com/XanTheDragon/ThreeRingsSharp/releases/download/{0}/ThreeRingsSharp.zip";
-			System.Diagnostics.Process.Start(string.Format(dlLink, LatestVersion));
+			if (File.Exists(@".\TRSUpdater.exe")) {
+				Process.Start(@".\TRSUpdater.exe");
+			} else {
+				string dlLink = "https://github.com/XanTheDragon/ThreeRingsSharp/releases/download/{0}/ThreeRingsSharp.zip";
+				Process.Start(string.Format(dlLink, LatestVersion));
+			}
 			Close();
 			Environment.Exit(0);
 		}
