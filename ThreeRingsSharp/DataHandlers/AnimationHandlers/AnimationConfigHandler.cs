@@ -15,7 +15,7 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 
 		private const string ERR_IMPL_NOT_SUPPORTED = "AnimationConfig type [{0}] is not yet supported!";
 
-		private const string ERR_PROC_NOT_YET_SUPPORTED = "This Procedural animation [{0}] cannot be loaded yet! Only certain instances of this type work right now.";
+		// private const string ERR_PROC_NOT_YET_SUPPORTED = "This Procedural animation [{0}] cannot be loaded yet! Only certain instances of this type work right now.";
 
 		/// <summary>
 		/// Handles the given <see cref="AnimationConfig"/> and applies it to the already loaded <see cref="Model3D"/>s.
@@ -26,7 +26,7 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 		/// <param name="animationImplementation"></param>
 		/// <param name="attachToModels"></param>
 		public static void HandleAnimationImplementation(ConfigReference srcConfig, string name, AnimationConfig original, AnimationConfig.Implementation animationImplementation, List<Model3D> attachToModels) {
-			FileInfo srcFile = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + srcConfig.getName());
+			// FileInfo srcFile = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + srcConfig.getName());
 			SKAnimatorToolsProxy.IncrementEnd();
 			// Clear out any derived references all the way until we dig down to an original implementation.
 			if (animationImplementation is AnimationConfig.Derived derived) {

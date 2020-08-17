@@ -51,8 +51,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <returns></returns>
 		public static ConfigReference SetArgumentOnClone(this ConfigReference cfgRef, string key, object value) {
 			ConfigReference configReference;
-			ConfigReference configReference1;
-			(configReference1 = configReference = (ConfigReference)(configReference1 = cfgRef).clone()).getArguments().put(key, value);
+			(configReference = (ConfigReference)cfgRef.clone()).getArguments().put(key, value);
 			return configReference;
 		}
 

@@ -273,7 +273,7 @@ namespace ThreeRingsSharp.DataHandlers {
 				}
 				(string, string, string) cosmeticInfo = VersionInfoScraper.GetCosmeticInformation(clydeFile, format);
 				XanLogger.WriteLine($"Read file to grab the raw info.", XanLogger.TRACE);
-				string modelClass = null;
+				string modelClass;
 
 				// Just abort early here. We can't laod these.
 				if (!DevelopmentFlags.FLAG_ALLOW_LOAD_PROJECTX) {
