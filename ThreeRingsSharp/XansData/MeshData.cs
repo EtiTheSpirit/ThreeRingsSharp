@@ -1,4 +1,5 @@
-﻿using System;
+﻿using com.threerings.opengl.model.config;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -128,6 +129,13 @@ namespace ThreeRingsSharp.XansData {
 			set => _HasBoneData = value;
 		}
 		private bool _HasBoneData = false;
+
+		/// <summary>
+		/// If <see langword="true"/>, this mesh didn't come with a root node (wasn't an <see cref="ArticulatedConfig"/>) which means that it likely uses a different model for its root.<para/>
+		/// This is observable in knights, where the main knight model provides the skeleton, and then the other meshes attach to that skeleton but otherwise have their own vertex groups.<para/>
+		/// Unfortunately, keeping track of that root is not very easy, because we don't actually know hat it is when this MeshData is instantiated.
+		/// </summary>
+		public bool UsesExternalRoot { get; set; } = false;
 
 		/// <summary>
 		/// All vertices will be moved by this value when exporting.

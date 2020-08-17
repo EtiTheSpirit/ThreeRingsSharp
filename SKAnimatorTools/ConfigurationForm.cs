@@ -75,6 +75,7 @@ namespace SKAnimatorTools {
 			UserConfiguration.StaticSetExportMode = Option_StaticSetExportMode.SelectedIndex;
 			UserConfiguration.EmbedTextures = CheckBox_EmbedTextures.Checked;
 			UserConfiguration.PreferSpeed = CheckBox_PreferSpeed.Checked;
+			UserConfiguration.LoggingLevel = Option_LogLevel.SelectedIndex;
 			UserConfiguration.IsFirstTimeOpening = false;
 
 			UserConfiguration.SaveConfiguration();

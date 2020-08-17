@@ -1,1 +1,218 @@
 [DEBUG] Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!
+[DEBUG] Populated [actor].
+[DEBUG] Populated [area].
+[DEBUG] Populated [behavior].
+[DEBUG] Populated [cursor].
+[DEBUG] Populated [effect].
+[DEBUG] Populated [font].
+[DEBUG] Populated [ground].
+[DEBUG] Populated [interface_script].
+[DEBUG] Populated [material].
+[DEBUG] Populated [parameterized_handler].
+[DEBUG] Populated [path].
+[DEBUG] Populated [placeable].
+[DEBUG] Populated [render_effect].
+[DEBUG] Populated [render_queue].
+[DEBUG] Populated [render_scheme].
+[DEBUG] Populated [scene_global].
+[DEBUG] Populated [shader].
+[DEBUG] Populated [sounder].
+[DEBUG] Populated [style].
+Just a second! I'm still loading up the config references. The model will load once that's done.
+[DEBUG] Populated [texture].
+[DEBUG] Populated [tile].
+[DEBUG] Populated [wall].
+Config data has been populated.
+Alright. Let's load it up now.
+Working. This might take a bit...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\xan\knight_test_2.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform as identity transform with scale=1
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\pith\model.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
+Resolved target Model/Two-Sided/Masked (Soft) as a MaterialConfig
+[TRACE] Attached [pith.model-Mesh[0]] to [bone_helmet]
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\doublebelt\parts\compound_hd.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'CompoundConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\doublebelt\parts\model_hd.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\armor\hands\model.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ModelConfig::Derived'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\model\schemed\high_medium_low.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
+[TRACE] Attached [parts.model_hd-Mesh[0]] to [Root]
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\shield\owilite\model_r5.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\particle\ambient_colorizationglow.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\particle\part_ambient_colorizationglow-ld.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: ParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/particle/part_ambient_colorizationglow-ld.dat
+
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\particle\part_ambient_colorizationglow-hd.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: ParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/particle/part_ambient_colorizationglow-hd.dat
+
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: ParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/particle/part_ambient_colorizationglow-hd.dat
+
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: ParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/particle/part_ambient_colorizationglow-ld.dat
+
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: ParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/particle/part_ambient_colorizationglow-hd.dat
+
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: ParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/particle/part_ambient_colorizationglow-hd.dat
+
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\particle\ambient_halo.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: ParticleSystemConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/particle/ambient_halo.dat
+
+[TRACE] Attached [owilite.model_r5-MeshNodes["owl_r4"]] to [bone_shield]
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\face\part_model_face.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'StaticConfig'. Accessing handlers...
+[TRACE] Attached [face.part_model_face-Mesh[0]] to [bone_helmet]
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\idle.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\use_inventory_start.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\use_inventory_loop.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\use_inventory_end.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\use_interact.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\sleeping\loop.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\emotes\animation_talk.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\emotes\animation_shout.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\walk_forward.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\use_item_blend.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\animation_heightadjust.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+AnimationConfig type [Procedural] is not yet supported!
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\idle\default\001.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\idle\default\002.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\idle\default\003.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\idle\default\004.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\idle\default\005.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\animation\sequential\simple.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\hurt_hard.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\hurt_recover.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\hurt_soft.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\laying\animation_laying_bed_loop.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\lift.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\hold.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\throw.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\hold_rotate.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\animation_guardian.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\animation_onhip.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\animation_overshoulder.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\animation_pose_dash.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\animation_vaelyn.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\levelcomplete\anim_pose_bomber1.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+Number of models loaded: 4 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
+Number of unique meshes instantiated: 5
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\helm\pith\helm_grey.png].
+Attempt to create texture image failed -- Image is null!
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\item\gear\shield\owilite\owlite_r5.png].
+[DEBUG] Embedding [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\pc\face\eye_default.png].
+[DEBUG] Flagged xan.knight_test_2-Nodes["bone_helmet"] as an empty that DOES have children (and needs to stick around).
+[DEBUG] Flagged xan.knight_test_2-Nodes["Root"] as an empty that DOES have children (and needs to stick around).
+[DEBUG] Flagged xan.knight_test_2-Nodes["bone_shield"] as an empty that DOES have children (and needs to stick around).
+[TRACE] Parented model [pith.model-Mesh[0]] to model [xan.knight_test_2-Nodes["bone_helmet"]]
+[TRACE] Parented model [parts.model_hd-Mesh[0]] to model [xan.knight_test_2-Nodes["Root"]]
+[TRACE] Parented model [owilite.model_r5-MeshNodes["owl_r4"]] to model [xan.knight_test_2-Nodes["bone_shield"]]
+[TRACE] Parented model [face.part_model_face-Mesh[0]] to model [xan.knight_test_2-Nodes["bone_helmet"]]
+glTF Exporter instantiated 4 models (skipped 0 models and 3 empty or unused attachment nodes).
+Done! Exported to [F:\Users\Xan\Desktop\3D\__SK_TEST\knight_test_2.glb]

@@ -44,6 +44,12 @@ namespace ThreeRingsSharp.XansData {
 		public string Name { get; set; } = null;
 
 		/// <summary>
+		/// Used mostly for keeping track of nodes, this is the bare-bones name of the model without any formatting.<para/>
+		/// This may be <see langword="null"/>.
+		/// </summary>
+		public string RawName { get; set; } = null;
+
+		/// <summary>
 		/// If <see langword="true"/>, this <see cref="Model3D"/> doesn't actually have any data and is instead an empty object with no data - it's just something that exists.<para/>
 		/// Note: While other data in this <see cref="Model3D"/> can still be set at any time, all data will be ignored by the exporter so long as this property is <see langword="true"/>.
 		/// </summary>

@@ -1,14 +1,17 @@
 ﻿using com.threerings.math;
 using com.threerings.opengl.model.config;
 using com.threerings.opengl.scene.config;
+using com.threerings.opengl.util;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 using ThreeRingsSharp.DataHandlers.Model;
+using com.threerings.opengl.model;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Exceptions;
+using com.threerings.projectx.config;
 
 namespace ThreeRingsSharp.DataHandlers {
 
@@ -60,8 +63,14 @@ namespace ThreeRingsSharp.DataHandlers {
 			if (implementation is ArticulatedConfig) {
 				XanLogger.WriteLine("Model is of the type 'ArticulatedConfig'. Accessing handlers...", XanLogger.DEBUG);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Articulated;
-				ArticulatedConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
 
+				// New special case: Is it a knight?
+				//if (sourceFile.Directory.Name == "crew" && sourceFile.Name == "model.dat") {
+				//	XanLogger.WriteLine("Model was a knight. Performing special behavior for knights...", XanLogger.DEBUG);
+				//	NPCKnightHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
+				//} else {
+					ArticulatedConfigHandler.Instance.HandleModelConfig(sourceFile, model, models, currentDataTreeObject, transform, extraData);
+				//}
 			} else if (implementation is StaticConfig) {
 				XanLogger.WriteLine("Model is of the type 'StaticConfig'. Accessing handlers...", XanLogger.DEBUG);
 				if (currentDataTreeObject != null) currentDataTreeObject.ImageKey = SilkImage.Static;

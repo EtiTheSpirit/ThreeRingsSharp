@@ -1,5 +1,6 @@
 ﻿using com.threerings.math;
 using com.threerings.tudey.util;
+using System;
 using ThreeRingsSharp.DataHandlers.Scene.Data;
 using static com.threerings.tudey.data.TudeySceneModel;
 
@@ -11,7 +12,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <param name="entry"></param>
 		/// <param name="shallowTile"></param>
 		/// <param name="result"></param>
-		public static void GetTransformFromShallow(this TileEntry entry, ShallowTileConfig shallowTile, out Transform3D result) {
+		[Obsolete] public static void GetTransformFromShallow(this TileEntry entry, ShallowTileConfig shallowTile, out Transform3D result) {
 			result = new Transform3D();
 			int x = entry.getLocation().x;
 			int y = entry.getLocation().y;
@@ -24,13 +25,13 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// Gets the width of this tile, but factors in the rotation of the tile too.
 		/// </summary>
 		/// <returns></returns>
-		public static int GetWidth(this TileEntry entry, ShallowTileConfig shallowTile) => TudeySceneMetrics.getTileWidth(shallowTile.Width, shallowTile.Height, entry.rotation);
+		[Obsolete] public static int GetWidth(this TileEntry entry, ShallowTileConfig shallowTile) => TudeySceneMetrics.getTileWidth(shallowTile.Width, shallowTile.Height, entry.rotation);
 
 		/// <summary>
 		/// Gets the height of this tile, but factors in the rotation of the tile too.
 		/// </summary>
 		/// <returns></returns>
-		public static int GetHeight(this TileEntry entry, ShallowTileConfig shallowTile) => TudeySceneMetrics.getTileHeight(shallowTile.Width, shallowTile.Height, entry.rotation);
+		[Obsolete] public static int GetHeight(this TileEntry entry, ShallowTileConfig shallowTile) => TudeySceneMetrics.getTileHeight(shallowTile.Width, shallowTile.Height, entry.rotation);
 
 	}
 }

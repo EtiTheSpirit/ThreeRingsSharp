@@ -89,8 +89,16 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					meshData.BoneWeights = boneWeights;
 
 					meshData.HasBoneData = true;
-					if (rootNode != null) meshData.SetBones(rootNode);
 
+					if (rootNode == null) {
+						// The model supplied no root node. This can happen for implementations (e.g. StaticConfig) that has a GeometryConfig
+						// that is skinned.
+						// PRESUMABLY this means that it uses an external reference for its root node (e.g. the knight model has a common root)
+						// But in my case, I really can't read that right now.
+						meshData.UsesExternalRoot = true;
+					} else {
+						meshData.SetBones(rootNode);
+					}
 				} else if (geometry is IndexedStored indexedStored) {
 					vertices = indexedStored.getFloatArray(false, indexedStored.vertexArray);
 					uvs = indexedStored.getFloatArray(false, indexedStored.texCoordArrays);

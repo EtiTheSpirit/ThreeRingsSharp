@@ -22,5 +22,15 @@ namespace ThreeRingsSharp.XansData {
 		/// </summary>
 		public const bool FLAG_ALLOW_ANIMATION_EXPORTS = true;
 
+		/// <summary>
+		/// If <see langword="true"/>, ProjectXModelConfigs can load.
+		/// </summary>
+		public const bool FLAG_ALLOW_LOAD_PROJECTX = true;
+
+		/// <summary>
+		/// If <see langword="true"/>, any loaded XML files will be converted to dat internally, *then* they will be loaded.
+		/// </summary>
+		public const bool FLAG_CONVERT_XML_TO_DAT = false;
+
 	}
 }

@@ -1,0 +1,10 @@
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\bin\Debug\TRSUpdater.exe.config
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\bin\Debug\TRSUpdater.exe
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\bin\Debug\TRSUpdater.pdb
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Debug\AppUpdater.csprojAssemblyReference.cache
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Debug\AppUpdater.AutoUpdater.resources
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Debug\AppUpdater.Properties.Resources.resources
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Debug\AppUpdater.csproj.GenerateResource.cache
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Debug\AppUpdater.csproj.CoreCompileInputs.cache
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Debug\TRSUpdater.exe
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Debug\TRSUpdater.pdb

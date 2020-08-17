@@ -40,9 +40,15 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <exception cref="ArgumentNullException">If choice is null</exception>
 		public static ArgumentMap GetArguments(this Parameter.Choice.Option option) {
 			if (option == null) throw new ArgumentNullException("option");
-			// TODO: Go back into IL and hide _arguments again.
-			// I did that as a lazy method of accessing it but I'd rather do it like this as odd as that might be.
-			return option.GetType().GetField("_arguments").GetValue(option) as ArgumentMap;
+			try {
+				// TODO: Go back into IL and hide _arguments again.
+				// I did that as a lazy method of accessing it but I'd rather do it like this as odd as that might be.
+				return option.GetType().GetField("_arguments").GetValue(option) as ArgumentMap;
+			} catch {
+				// So for some god-awful reason, there's SOME CASES where _arguments flat out doesn't exist. Like GetField returns null.
+				// wat
+				return new ArgumentMap();
+			}
 		}
 	}
 }

@@ -4,11 +4,13 @@
         <name>ThreeRingsSharp</name>
     </assembly>
     <members>
-        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.AnimationConfigHandler.HandleAnimationImplementation(System.String,com.threerings.opengl.model.config.AnimationConfig.Implementation,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D})">
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.AnimationConfigHandler.HandleAnimationImplementation(com.threerings.config.ConfigReference,System.String,com.threerings.opengl.model.config.AnimationConfig,com.threerings.opengl.model.config.AnimationConfig.Implementation,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D})">
             <summary>
             Handles the given <see cref="T:com.threerings.opengl.model.config.AnimationConfig"/> and applies it to the already loaded <see cref="T:ThreeRingsSharp.XansData.Model3D"/>s.
             </summary>
+            <param name="srcConfig"></param>
             <param name="name"></param>
+            <param name="original"></param>
             <param name="animationImplementation"></param>
             <param name="attachToModels"></param>
         </member>
@@ -33,6 +35,46 @@
             A helper method for the two <see cref="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.AnimationConfigHandler.Dereference(com.threerings.opengl.model.config.AnimationConfig.Derived)"/> methods that takes in a Clyde object which is expected to be an animation of any type and resolves its refs.
             </summary>
             <param name="animationRef">A <see cref="T:com.threerings.config.ConfigReference"/> pointing to an animation.</param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.AnimationHandlers.HardcodedAnimations">
+            <summary>
+            Intended to be used for certain procedural animations that are common, such as <c>rotate_x.dat</c> (and its two other axes)
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.DataHandlers.AnimationHandlers.HardcodedAnimations.TAU">
+            <summary>
+            The mathematical constant τ, or 2π
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.HardcodedAnimations.CreateRotateX(System.String,System.Single,System.Single,System.Int32)">
+            <summary>
+            Creates a new animation for rotation on the X (left/right) axis.
+            </summary>
+            <param name="onNode">The node that the animation targets.</param>
+            <param name="speed">The speed multiplier of the animation.</param>
+            <param name="durationSeconds">How long the animation lasts. It is recommended to keep this relatively low.</param>
+            <param name="framerate">The framerate to generate the animation with.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.HardcodedAnimations.CreateRotateY(System.String,System.Single,System.Single,System.Int32)">
+            <summary>
+            Creates a new animation for rotation on the Y (up/down) axis.
+            </summary>
+            <param name="onNode">The node that the animation targets.</param>
+            <param name="speed">The speed multiplier of the animation.</param>
+            <param name="durationSeconds">How long the animation lasts. It is recommended to keep this relatively low.</param>
+            <param name="framerate">The framerate to generate the animation with.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.HardcodedAnimations.CreateRotateZ(System.String,System.Single,System.Single,System.Int32)">
+            <summary>
+            Creates a new animation for rotation on the Z (forward/backward) axis.
+            </summary>
+            <param name="onNode">The node that the animation targets.</param>
+            <param name="speed">The speed multiplier of the animation.</param>
+            <param name="durationSeconds">How long the animation lasts. It is recommended to keep this relatively low.</param>
+            <param name="framerate">The framerate to generate the animation with.</param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.IAnimationHandler.HandleAnimationConfig(System.IO.FileInfo,com.threerings.opengl.model.config.AnimationConfig,ThreeRingsSharp.XansData.Model3D,System.Collections.Generic.Dictionary{System.String,System.Object})">
@@ -76,6 +118,13 @@
             <param name="format"></param>
             <returns></returns>
         </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.GetAppropriateImporter(System.IO.FileInfo)">
+            <summary>
+            Identical to <see cref="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.GetAppropriateImporter(System.IO.FileInfo,ThreeRingsSharp.Utility.ClydeFormat)"/> but this will attempt to resolve the <see cref="T:ThreeRingsSharp.Utility.ClydeFormat"/> for you.
+            </summary>
+            <param name="clydeFile"></param>
+            <returns></returns>
+        </member>
         <member name="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.HandleClydeFile(System.IO.FileInfo,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},System.Boolean,System.Object,System.Boolean,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>
             Takes in a <see cref="T:System.IO.FileInfo"/> representing a file that was created with the Clyde library.<para/>
@@ -96,7 +145,7 @@
             <param name="clydeFile"></param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodesForMeshes(com.threerings.opengl.model.config.ModelConfig,com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,ThreeRingsSharp.XansData.Model3D},System.String)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodes(com.threerings.opengl.model.config.ModelConfig,com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,ThreeRingsSharp.XansData.Model3D},System.String)">
             <summary>
             A utility function that iterates through all of the nodes recursively, as some may store mesh data.<para/>
             This does not decode the rig. It strictly grabs meshes out of the rig.
@@ -108,7 +157,7 @@
             <param name="models">The <see cref="T:System.Collections.Generic.List`1"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
             <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
             <param name="initialTransform"></param>
-            <param name="nodeModels"></param>
+            <param name="nodeModels">A lookup from a <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig.Node"/> to a <see cref="T:ThreeRingsSharp.XansData.Model3D"/>, which does include potentially empty models for standard, non-mesh nodes.</param>
             <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.GetNodeCount(com.threerings.opengl.model.config.ArticulatedConfig.Node)">
@@ -534,7 +583,7 @@
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.IDataTreeInterface`1.SetupCosmeticInformation(`0,ThreeRingsSharp.Utility.Interface.DataTreeObject)">
             <summary>
-            Sets up the cosmetic data for instance, or, what's displayed in the GUI for the program.
+            Sets up the cosmetic data, or what's displayed in the GUI for the program.
             </summary>
             <param name="data">The object to pull data from.</param>
             <param name="dataTreeParent">This is the instance in the data tree that represents this object in the hierarchy.</param>
@@ -1800,16 +1849,16 @@
             <param name="format"></param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.GetDat(System.IO.FileInfo)">
+        <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.GetDatInfo(System.IO.FileInfo)">
             <summary>
-            Handles the input <see cref="T:System.IO.FileInfo"/> as if it's a binary .DAT file.
+            Handles the input <see cref="T:System.IO.FileInfo"/> as if it's a binary .DAT file. This reads whether or not it's compressed, its version, and its implementation.
             </summary>
             <param name="clydeFile"></param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.GetXML(System.IO.FileInfo)">
+        <member name="M:ThreeRingsSharp.Utility.VersionInfoScraper.GetXMLInfo(System.IO.FileInfo)">
             <summary>
-            Handles the input <see cref="T:System.IO.FileInfo"/> as if it's an XML file.
+            Handles the input <see cref="T:System.IO.FileInfo"/> as if it's an XML file. This reads its version and implementation.
             </summary>
             <param name="clydeFile"></param>
             <returns></returns>
@@ -2114,6 +2163,16 @@
             If <see langword="true"/>, animations can be exported.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.XansData.DevelopmentFlags.FLAG_ALLOW_LOAD_PROJECTX">
+            <summary>
+            If <see langword="true"/>, ProjectXModelConfigs can load.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.DevelopmentFlags.FLAG_CONVERT_XML_TO_DAT">
+            <summary>
+            If <see langword="true"/>, any loaded XML files will be converted to dat internally, *then* they will be loaded.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.Exceptions.ClydeDataReadException">
             <summary>
             An exception that is thrown when a critical read error occurs when trying to process files.
@@ -2210,6 +2269,15 @@
             <param name="newArgMap">The new ArgumentMap that this ConfigReference will use.</param>
             <exception cref="T:System.ArgumentNullException">If args is null</exception>
         </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.SetArgumentOnClone(com.threerings.config.ConfigReference,System.String,System.Object)">
+            <summary>
+            Directly copied from SK jar for now. Sets the given key to the given value on a clone of this config reference, then returns the clone.
+            </summary>
+            <param name="cfgRef"></param>
+            <param name="key"></param>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ArgumentsToExtraData(com.threerings.config.ConfigReference,System.Boolean)">
             <summary>
             Takes the <see cref="T:com.threerings.config.ArgumentMap"/> within this <see cref="T:com.threerings.config.ConfigReference"/> and translates it into the dictionary format used by TRS's extra data containers.
@@ -2274,6 +2342,40 @@
             </summary>
             <typeparam name="T"></typeparam>
             <param name="original"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Extensions.JavaExtensions">
+            <summary>
+            Utilities go to between <see cref="T:System.Type"/> and <see cref="T:java.lang.Class"/>
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Extensions.JavaExtensions.CurrentTimeMillis">
+            <summary>
+            Equivalent to java's <c>System.currentTimeMillis</c>
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.JavaExtensions.EquivalentType(java.lang.Class)">
+            <summary>
+            Returns the C# <see cref="T:System.Type"/> that represents this <paramref name="class"/>.
+            </summary>
+            <param name="class"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.JavaExtensions.IsA(java.lang.Class,System.Type)">
+            <summary>
+            Returns <see langword="true"/> if this class is equivalent to the given C# type, and <see langword="false"/> if it is not.<para/>
+            This should be used when the instance is a java type via some form of reflection or is passed in as a literal class.
+            </summary>
+            <param name="javaClass"></param>
+            <param name="objectType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.JavaExtensions.IsA(System.Object,java.lang.Class)">
+            <summary>
+            Returns <see langword="true"/> if this object's type is equivalent to the given class as a C# type, and <see langword="false"/> if they are not.
+            </summary>
+            <param name="obj"></param>
+            <param name="classEquivalent"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ParameterizedConfigExtension.ApplyArguments(com.threerings.config.ParameterizedConfig,com.threerings.config.ArgumentMap,System.String)">
@@ -3448,6 +3550,13 @@
             As a temporary fix for a number of issues caused by armors, this property's { <see langword="get"/>; } will only be able to return <see langword="true"/> if all of the data associated with bones is correct (so setting it to <see langword="true"/> without correct data will cause this to still return <see langword="false"/>).
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.XansData.MeshData.UsesExternalRoot">
+            <summary>
+            If <see langword="true"/>, this mesh didn't come with a root node (wasn't an <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/>) which means that it likely uses a different model for its root.<para/>
+            This is observable in knights, where the main knight model provides the skeleton, and then the other meshes attach to that skeleton but otherwise have their own vertex groups.<para/>
+            Unfortunately, keeping track of that root is not very easy, because we don't actually know hat it is when this MeshData is instantiated.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.VertexOffset">
             <summary>
             All vertices will be moved by this value when exporting.
@@ -3774,6 +3883,12 @@
         <member name="P:ThreeRingsSharp.XansData.Model3D.Name">
             <summary>
             The display name for this model, used in exporting (i.e. this is the name that will show up in Blender or any other modelling software.)
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.RawName">
+            <summary>
+            Used mostly for keeping track of nodes, this is the bare-bones name of the model without any formatting.<para/>
+            This may be <see langword="null"/>.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.IsEmptyObject">

@@ -46,11 +46,25 @@ namespace ThreeRingsSharp.DataHandlers {
 		/// <param name="clydeFile"></param>
 		/// <param name="format"></param>
 		/// <returns></returns>
-		private static Importer GetAppropriateImporter(FileInfo clydeFile, ClydeFormat format) {
+		public static Importer GetAppropriateImporter(FileInfo clydeFile, ClydeFormat format) {
 			DataInputStream dataInput = new DataInputStream(new FileInputStream(clydeFile.FullName));
 			if (format == ClydeFormat.Binary) return new BinaryImporter(dataInput);
-			if (format == ClydeFormat.XML) return new XMLImporter(dataInput);
+			if (format == ClydeFormat.XML) {
+
+				return new XMLImporter(dataInput);
+			}
 			return null;
+		}
+
+		/// <summary>
+		/// Identical to <see cref="GetAppropriateImporter(FileInfo, ClydeFormat)"/> but this will attempt to resolve the <see cref="ClydeFormat"/> for you.
+		/// </summary>
+		/// <param name="clydeFile"></param>
+		/// <returns></returns>
+		public static Importer GetAppropriateImporter(FileInfo clydeFile) {
+			(bool isValidClydeFile, ClydeFormat format) = VersionInfoScraper.IsValidClydeFile(clydeFile);
+			if (!isValidClydeFile) return null;
+			return GetAppropriateImporter(clydeFile, format);
 		}
 
 		/// <summary>
@@ -104,19 +118,21 @@ namespace ThreeRingsSharp.DataHandlers {
 				SKAnimatorToolsProxy.IncrementProgress();
 
 				// Just abort early here. We can't load these.
-				if (modelClass == "ProjectXModelConfig") {
-					SKAnimatorToolsProxy.SetProgressState(ProgressBarState.Error);
+				if (!DevelopmentFlags.FLAG_ALLOW_LOAD_PROJECTX) {
+					if (modelClass == "ProjectXModelConfig") {
+						SKAnimatorToolsProxy.SetProgressState(ProgressBarState.Error);
 
-					XanLogger.WriteLine("User imported a Player Knight model. These are unsupported. Sending warning.", XanLogger.DEBUG);
-					if (isBaseFile) {
-						SKAnimatorToolsProxy.UpdateGUIThroughSync(modelType: "ModelConfig");
+						XanLogger.WriteLine("User imported a Player Knight model. These are unsupported. Sending warning.", XanLogger.DEBUG);
+						if (isBaseFile) {
+							SKAnimatorToolsProxy.UpdateGUIThroughSync(modelType: "ModelConfig");
+						}
+						if (rootDataTreeObject != null) {
+							rootDataTreeObject.Text = "ProjectXModelConfig";
+							rootDataTreeObject.ImageKey = SilkImage.Articulated;
+						}
+						errToThrow = new ClydeDataReadException("Player Knights do not use the standard ArticulatedConfig type (used for all animated character models) and instead use a unique type called ProjectXModelConfig. Unfortunately, this type cannot be read by the program (I had to use some hacky data skimming to even get this error message to work)!\n\nConsider using /character/npc/crew/model.dat instead.", "Knights are not supported!", MessageBoxIcon.Error);
+						goto FINALIZE_NODES;
 					}
-					if (rootDataTreeObject != null) {
-						rootDataTreeObject.Text = "ProjectXModelConfig";
-						rootDataTreeObject.ImageKey = SilkImage.Articulated;
-					}
-					errToThrow = new ClydeDataReadException("Player Knights do not use the standard ArticulatedConfig type (used for all animated character models) and instead use a unique type called ProjectXModelConfig. Unfortunately, this type cannot be read by the program (I had to use some hacky data skimming to even get this error message to work)!\n\nConsider using /character/npc/crew/model.dat instead.", "Knights are not supported!", MessageBoxIcon.Error);
-					goto FINALIZE_NODES;
 				}
 
 				// So if this is the file we actually opened (not a referenced file) and we've defined the action necessary to update the GUI...
@@ -260,9 +276,11 @@ namespace ThreeRingsSharp.DataHandlers {
 				string modelClass = null;
 
 				// Just abort early here. We can't laod these.
-				if (modelClass == "ProjectXModelConfig") {
-					XanLogger.WriteLine("User imported a Player Knight model. These are unsupported.", XanLogger.DEBUG);
-					return null;
+				if (!DevelopmentFlags.FLAG_ALLOW_LOAD_PROJECTX) {
+					if (modelClass == "ProjectXModelConfig") {
+						XanLogger.WriteLine("User imported a Player Knight model. These are unsupported.", XanLogger.DEBUG);
+						return null;
+					}
 				}
 
 				Importer targetImporter = GetAppropriateImporter(clydeFile, format);

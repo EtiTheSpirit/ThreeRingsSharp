@@ -39,7 +39,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			VisibleMesh[] renderedMeshes = meshes.visible;
 			Dictionary<string, Armature> allInstantiatedArmatures = new Dictionary<string, Armature>();
 
-			List<Model3D> riggedVisibleModels = new List<Model3D>();
+			List<Model3D> allModelsAndNodes = new List<Model3D>();
 
 			// 1
 			SKAnimatorToolsProxy.IncrementProgress();
@@ -64,7 +64,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					foreach (KeyValuePair<string, Armature> boneNamesToBones in meshToModel.Mesh.AllBones) {
 						allInstantiatedArmatures[boneNamesToBones.Key] = boneNamesToBones.Value;
 					}
-					riggedVisibleModels.Add(meshToModel);
+					allModelsAndNodes.Add(meshToModel);
 				}
 				modelCollection.Add(meshToModel);
 				idx++;
@@ -76,15 +76,25 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 			SKAnimatorToolsProxy.IncrementEnd(GetNodeCount(model.root));
 			Dictionary<string, Model3D> nodeModels = new Dictionary<string, Model3D>();
-			RecursivelyIterateNodesForMeshes(baseModel, model, sourceFile, model.root, modelCollection, globalTransform, globalTransform, nodeModels, fullDepthName);
+			RecursivelyIterateNodes(baseModel, model, sourceFile, model.root, modelCollection, globalTransform, globalTransform, nodeModels, fullDepthName);
+			allModelsAndNodes.AddRange(nodeModels.Values);
 
 			SKAnimatorToolsProxy.SetProgressState(ProgressBarState.ExtraWork);
 			SKAnimatorToolsProxy.IncrementEnd(model.attachments.Length);
+
 			foreach (Attachment attachment in model.attachments) {
 				List<Model3D> attachmentModels = ConfigReferenceUtil.HandleConfigReference(sourceFile, attachment.model, modelCollection, dataTreeParent, globalTransform);
 				if (attachmentModels == null) {
 					SKAnimatorToolsProxy.IncrementProgress();
 					continue; // A lot of attachments have null models and I'm not sure why.
+				}
+
+				// NEW BEHAVIOR: Is the model root-less but rigged?
+				// Set its root to *this* model
+				foreach (Model3D mdl in attachmentModels) {
+					if (mdl.Mesh != null && mdl.Mesh.UsesExternalRoot) {
+						mdl.Mesh.SetBones(model.root);
+					}
 				}
 
 				SKAnimatorToolsProxy.IncrementEnd(attachmentModels.Count);
@@ -119,6 +129,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				}
 				SKAnimatorToolsProxy.IncrementProgress();
 			}
+			
 			SKAnimatorToolsProxy.SetProgressState(ProgressBarState.OK);
 			// 3
 			SKAnimatorToolsProxy.IncrementProgress();
@@ -130,7 +141,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					object animationObj = animationRef.ResolveFile();
 					if (animationObj is AnimationConfig animation) {
 						SKAnimatorToolsProxy.SetProgressState(ProgressBarState.ExtraWork);
-						AnimationConfigHandler.HandleAnimationImplementation(animationMapping.name, animation.implementation, riggedVisibleModels);
+						AnimationConfigHandler.HandleAnimationImplementation(animationRef, animationMapping.name, animation, animation.implementation, allModelsAndNodes);
 						SKAnimatorToolsProxy.SetProgressState(ProgressBarState.OK);
 					}
 				}
@@ -152,9 +163,9 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// <param name="models">The <see cref="List{T}"/> of all models ripped from the source .dat file in this current chain (which may include references to other .dat files)</param>
 		/// <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
 		/// <param name="initialTransform"></param>
-		/// <param name="nodeModels"></param>
+		/// <param name="nodeModels">A lookup from a <see cref="Node"/> to a <see cref="Model3D"/>, which does include potentially empty models for standard, non-mesh nodes.</param>
 		/// <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
-		private void RecursivelyIterateNodesForMeshes(ModelConfig baseModel, ArticulatedConfig model, FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform, Transform3D initialTransform, Dictionary<string, Model3D> nodeModels, string fullDepthName) {
+		public static void RecursivelyIterateNodes(ModelConfig baseModel, ArticulatedConfig model, FileInfo sourceFile, Node parent, List<Model3D> models, Transform3D latestTransform, Transform3D initialTransform, Dictionary<string, Model3D> nodeModels, string fullDepthName) {
 			foreach (Node node in parent.children) {
 				// Transform3D newTransform = latestTransform;
 				if (node is MeshNode meshNode) {
@@ -168,6 +179,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 						Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
 						meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + meshTitle;
+						meshToModel.RawName = node.name;
 						meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
 						meshToModel.ActiveTexture = mesh.texture;
 						// Modify the transform that it already has to the node's transform.						
@@ -193,7 +205,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 
 				SKAnimatorToolsProxy.IncrementProgress();
 				if (node.children.Length > 0) {
-					RecursivelyIterateNodesForMeshes(baseModel, model, sourceFile, node, models, latestTransform.compose(node.transform), initialTransform, nodeModels, fullDepthName);
+					RecursivelyIterateNodes(baseModel, model, sourceFile, node, models, latestTransform.compose(node.transform), initialTransform, nodeModels, fullDepthName);
 				}
 			}
 		}
@@ -203,7 +215,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 		/// </summary>
 		/// <param name="parent"></param>
 		/// <returns></returns>
-		private int GetNodeCount(Node parent) {
+		public static int GetNodeCount(Node parent) {
 			int count = 0;
 			foreach (Node child in parent.children) {
 				count++;

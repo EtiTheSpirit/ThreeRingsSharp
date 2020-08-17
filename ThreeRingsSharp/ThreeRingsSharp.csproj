@@ -78,7 +78,8 @@
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="OOOLibAndDeps">
+    <Reference Include="OOOLibAndDeps, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\OOOLibAndDeps.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -97,6 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataHandlers\AnimationHandlers\AnimationConfigHandler.cs" />
+    <Compile Include="DataHandlers\AnimationHandlers\HardcodedAnimations.cs" />
     <Compile Include="DataHandlers\AnimationHandlers\IAnimationHandler.cs" />
     <Compile Include="DataHandlers\ClydeFileHandler.cs" />
     <Compile Include="DataHandlers\Model\ConditionalConfigHandler.cs" />
@@ -152,6 +154,7 @@
     <Compile Include="XansData\Extensions\ChoiceExtensions.cs" />
     <Compile Include="XansData\Extensions\ConfigReferenceExtension.cs" />
     <Compile Include="XansData\Extensions\DeepObjectExtensions.cs" />
+    <Compile Include="XansData\Extensions\JavaExtensions.cs" />
     <Compile Include="XansData\Extensions\ParameterizedConfigExtension.cs" />
     <Compile Include="XansData\Extensions\TileEntryExtensions.cs" />
     <Compile Include="XansData\FileUtils.cs" />

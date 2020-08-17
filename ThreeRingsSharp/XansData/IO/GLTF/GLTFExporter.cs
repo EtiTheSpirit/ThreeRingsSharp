@@ -91,7 +91,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 		private byte[] GetBinaryData(Model3D[] models) {
 			List<byte> binBuffer = new List<byte>();
 			binBuffer.AddRange(BitConverter.GetBytes(0));
-			binBuffer.AddRange(BitConverter.GetBytes(0x004E4942)); // The text ".BIN" (. is null)
+			binBuffer.AddRange(BitConverter.GetBytes(0x004E4942)); // The text " BIN" (starting with null)
 
 			#region Set Up Vars
 			int currentAccessorIndex = 0; // This is identical to currentBufferViewIndex for now, it's just here in case I decide to change this behavior
@@ -103,6 +103,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 
 			int numModelsSkipped = 0;
 			int numModelsCreated = 0;
+			int numModelsEmpty = 0;
 
 			int currentSkinIndex = 0;
 			int currentNodeIndex = 0;
@@ -679,10 +680,10 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 								totalImageCount++;
 							}
 						} else {
-							XanLogger.WriteLine($"Attempt to create image [{texFile.FullName}] failed -- File does not exist.", XanLogger.STANDARD);
+							XanLogger.WriteLine($"Attempt to create texture image [{texFile.FullName}] failed -- File does not exist.", XanLogger.STANDARD, Color.Gray);
 						}
 					} else {
-						XanLogger.WriteLine($"Attempt to create image failed -- Image is null!", XanLogger.STANDARD);
+						XanLogger.WriteLine($"Attempt to create texture image failed -- Image is null!", XanLogger.STANDARD, Color.Gray);
 					}
 				}
 			}
@@ -700,12 +701,19 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					XanLogger.WriteLine("Flagged " + model.AttachmentModel.Name + " as an empty that DOES have children (and needs to stick around).", XanLogger.DEBUG);
 
 				}
+				/*
 				// Catch case: Sometimes nodes want to connect to nodes or other models. Is *this* an empty that goes to something else? All I care about is if it's used.
 				if (model.IsEmptyObject && model.AttachmentModel != null) {
 					// Yes, so save this one too.
 					childlessEmpties.Remove(model);
 					XanLogger.WriteLine("Flagged " + model.Name + " as an empty that DOES have children (and needs to stick around).", XanLogger.DEBUG);
 				}
+				// Finally: Does it have an animation? If so, it's probably needed for something.
+				if (model.Animations.Count > 0) {
+					childlessEmpties.Remove(model);
+					XanLogger.WriteLine("Flagged " + model.Name + " as an empty that needs to be kept because it has animations on it.", XanLogger.DEBUG);
+				}
+				*/
 			}
 			#endregion
 
@@ -721,7 +729,6 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					// Silently skip it.
 					continue;
 				}
-				numModelsCreated++;
 
 				// NEW BEHAVIOR: Empty models.
 				if (model.IsEmptyObject) {
@@ -734,8 +741,11 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					JSONData.Nodes.Add(node);
 					modelToNodeMap[model] = node;
 					currentNodeIndex++;
+					numModelsEmpty++;
 					continue;
 				}
+
+				numModelsCreated++;
 				#endregion
 
 				#region Create Vars
@@ -905,241 +915,240 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				}
 				#endregion
 
-				#region Append Animations (WIP)
-				if (modelMesh.HasBoneData && DevelopmentFlags.FLAG_ALLOW_ANIMATION_EXPORTS) {
-					// ok so basically animations are retarded
-					foreach (Animation anim in model.Animations) {
-						animationSamplerIndex = 0;
+				#region Append Animations
+				// ok so basically animations are retarded
+				foreach (Animation anim in model.Animations) {
+					animationSamplerIndex = 0;
 
-						IReadOnlyList<Keyframe> ordered = anim.OrderedKeyframes;
+					IReadOnlyList<Keyframe> ordered = anim.OrderedKeyframes;
 
-						GLTFAnimation glAnim = new GLTFAnimation {
-							Name = anim.Name
-						};
+					GLTFAnimation glAnim = new GLTFAnimation {
+						Name = anim.Name
+					};
 
-						#region Create Time Accessor
-						// This should be straightforward.
-						GLTFAccessor timeAccessor = new GLTFAccessor {
+					#region Create Time Accessor
+					// This should be straightforward.
+					GLTFAccessor timeAccessor = new GLTFAccessor {
+						ThisIndex = currentAccessorIndex,
+						BufferView = currentBufferViewIndex,
+						ComponentType = GLTFComponentType.FLOAT,
+						Type = GLTFValueType.SCALAR,
+						Count = ordered.Count,
+						Min = new List<dynamic>() { ordered.First().Time },
+						Max = new List<dynamic>() { ordered.Last().Time }
+					};
+					JSONData.Accessors.Add(timeAccessor);
+					JSONData.BufferViews.Add(new GLTFBufferView {
+						ThisIndex = currentBufferViewIndex,
+						ByteLength = timeAccessor.Size,
+						ByteOffset = currentOffset
+					});
+					currentOffset += timeAccessor.Size;
+					currentBufferViewIndex++;
+					currentAccessorIndex++;
+
+					List<byte> timeBuf = new List<byte>();
+					foreach (Keyframe keyframe in ordered) timeBuf.AddRange(BitConverter.GetBytes(keyframe.Time));
+					binBuffer.AddRange(timeBuf);
+					#endregion
+
+					#region Convert Everything
+
+					// Need to create a sampler for every bone for every component.
+					// This also means we need to create dummy buffers for every component.
+					// The reason for this is because each node has x number of entries per path
+					List<byte> buffer = new List<byte>();
+
+					for (int idx = 0; idx < boneToNodeIndex.Count; idx++) {
+						string currentKey = boneToNodeIndex.Keys.ElementAt(idx);
+						int thisNodeIndex = boneToNodeIndex[currentKey];
+
+						if (ordered.Where(keyframe => keyframe.Keys.Where(key => key.Node == currentKey).FirstOrDefault() != null).FirstOrDefault() == null) {
+							continue;
+						}
+
+						#region Populate Transformation Buffers
+						// Now we need to populate the buffers in this EXACT ORDER.
+						// Oh this is so aids. I can probably optimize this lol
+						int numTranslations = 0;
+						int numRotations = 0;
+						int numScales = 0;
+
+						for (int mode = 0; mode < 3; mode++) {
+							foreach (Keyframe keyframe in ordered) {
+								Key key = keyframe.Keys.Where(k => k.Node == currentKey).FirstOrDefault();
+								float[] translation;
+								float[] rotation;
+								float[] scale;
+								if (key != null) {
+									(translation, rotation, scale) = key.Transform.GetAllComponents();
+								} else {
+									//(translation, rotation, scale) = new Transform3D(Transform3D.IDENTITY).GetAllComponents();
+									throw new InvalidDataException("Unable to find key for node " + currentKey);
+								}
+								if (mode == 0) {
+									for (int i = 0; i < translation.Length; i++) {
+										buffer.AddRange(BitConverter.GetBytes(translation[i]));
+									}
+									numTranslations++;
+								} else if (mode == 1) {
+									for (int i = 0; i < rotation.Length; i++) {
+										buffer.AddRange(BitConverter.GetBytes(rotation[i]));
+									}
+									numRotations++;
+								} else if (mode == 2) {
+									for (int i = 0; i < scale.Length; i++) {
+										buffer.AddRange(BitConverter.GetBytes(scale[i]));
+									}
+									numScales++;
+								}
+							}
+						}
+						#endregion
+
+						#region Accessors & Buffers
+
+						#region Translation Accessor & Buffer
+						GLTFAccessor nodeTranslationAccessor = new GLTFAccessor {
 							ThisIndex = currentAccessorIndex,
 							BufferView = currentBufferViewIndex,
 							ComponentType = GLTFComponentType.FLOAT,
-							Type = GLTFValueType.SCALAR,
-							Count = ordered.Count,
-							Min = new List<dynamic>() { ordered.First().Time },
-							Max = new List<dynamic>() { ordered.Last().Time }
+							Type = GLTFValueType.VEC3,
+							Count = numTranslations
 						};
-						JSONData.Accessors.Add(timeAccessor);
+						JSONData.Accessors.Add(nodeTranslationAccessor);
+
+						// Now create a dummy buffer with the necessary size.
 						JSONData.BufferViews.Add(new GLTFBufferView {
 							ThisIndex = currentBufferViewIndex,
-							ByteLength = timeAccessor.Size,
+							ByteLength = nodeTranslationAccessor.Size,
 							ByteOffset = currentOffset
 						});
-						currentOffset += timeAccessor.Size;
-						currentBufferViewIndex++;
 						currentAccessorIndex++;
-
-						List<byte> timeBuf = new List<byte>();
-						foreach (Keyframe keyframe in ordered) timeBuf.AddRange(BitConverter.GetBytes(keyframe.Time));
-						binBuffer.AddRange(timeBuf);
+						currentBufferViewIndex++;
+						currentOffset += nodeTranslationAccessor.Size;
 						#endregion
 
-						#region Convert Everything
+						#region Rotation Accessor & Buffer
+						GLTFAccessor nodeRotationAccessor = new GLTFAccessor {
+							ThisIndex = currentAccessorIndex,
+							BufferView = currentBufferViewIndex,
+							ComponentType = GLTFComponentType.FLOAT,
+							Type = GLTFValueType.VEC4,
+							Count = numRotations
+						};
+						JSONData.Accessors.Add(nodeRotationAccessor);
 
-						// Need to create a sampler for every bone for every component.
-						// This also means we need to create dummy buffers for every component.
-						// The reason for this is because each node has x number of entries per path
-						List<byte> buffer = new List<byte>();
+						JSONData.BufferViews.Add(new GLTFBufferView {
+							ThisIndex = currentBufferViewIndex,
+							ByteLength = nodeRotationAccessor.Size,
+							ByteOffset = currentOffset
+						});
 
-						for (int idx = 0; idx < boneToNodeIndex.Count; idx++) {
-							string currentKey = boneToNodeIndex.Keys.ElementAt(idx);
-							int thisNodeIndex = boneToNodeIndex[currentKey];
+						currentAccessorIndex++;
+						currentBufferViewIndex++;
+						currentOffset += nodeRotationAccessor.Size;
+						#endregion
 
-							if (ordered.Where(keyframe => keyframe.Keys.Where(key => key.Node == currentKey).FirstOrDefault() != null).FirstOrDefault() == null) {
-								continue;
-							}
+						#region Scale Accessor & Buffer
+						GLTFAccessor nodeScaleAccessor = new GLTFAccessor {
+							ThisIndex = currentAccessorIndex,
+							BufferView = currentBufferViewIndex,
+							ComponentType = GLTFComponentType.FLOAT,
+							Type = GLTFValueType.VEC3,
+							Count = numScales
+						};
+						JSONData.Accessors.Add(nodeScaleAccessor);
 
-							#region Populate Transformation Buffers
-							// Now we need to populate the buffers in this EXACT ORDER.
-							// Oh this is so aids. I can probably optimize this lol
-							int numTranslations = 0;
-							int numRotations = 0;
-							int numScales = 0;
+						JSONData.BufferViews.Add(new GLTFBufferView {
+							ThisIndex = currentBufferViewIndex,
+							ByteLength = nodeScaleAccessor.Size,
+							ByteOffset = currentOffset
+						});
 
-							for (int mode = 0; mode < 3; mode++) {
-								foreach (Keyframe keyframe in ordered) {
-									Key key = keyframe.Keys.Where(k => k.Node == currentKey).FirstOrDefault();
-									float[] translation;
-									float[] rotation;
-									float[] scale;
-									if (key != null) {
-										(translation, rotation, scale) = key.Transform.GetAllComponents();
-									} else {
-										//(translation, rotation, scale) = new Transform3D(Transform3D.IDENTITY).GetAllComponents();
-										throw new InvalidDataException("Unable to find key for node " + currentKey);
-									}
-									if (mode == 0) {
-										for (int i = 0; i < translation.Length; i++) {
-											buffer.AddRange(BitConverter.GetBytes(translation[i]));
-										}
-										numTranslations++;
-									} else if (mode == 1) {
-										for (int i = 0; i < rotation.Length; i++) {
-											buffer.AddRange(BitConverter.GetBytes(rotation[i]));
-										}
-										numRotations++;
-									} else if (mode == 2) {
-										for (int i = 0; i < scale.Length; i++) {
-											buffer.AddRange(BitConverter.GetBytes(scale[i]));
-										}
-										numScales++;
-									}
-								}
-							}
-							#endregion
-
-							#region Accessors & Buffers
-
-							#region Translation Accessor & Buffer
-							GLTFAccessor nodeTranslationAccessor = new GLTFAccessor {
-								ThisIndex = currentAccessorIndex,
-								BufferView = currentBufferViewIndex,
-								ComponentType = GLTFComponentType.FLOAT,
-								Type = GLTFValueType.VEC3,
-								Count = numTranslations
-							};
-							JSONData.Accessors.Add(nodeTranslationAccessor);
-
-							// Now create a dummy buffer with the necessary size.
-							JSONData.BufferViews.Add(new GLTFBufferView {
-								ThisIndex = currentBufferViewIndex,
-								ByteLength = nodeTranslationAccessor.Size,
-								ByteOffset = currentOffset
-							});
-							currentAccessorIndex++;
-							currentBufferViewIndex++;
-							currentOffset += nodeTranslationAccessor.Size;
-							#endregion
-
-							#region Rotation Accessor & Buffer
-							GLTFAccessor nodeRotationAccessor = new GLTFAccessor {
-								ThisIndex = currentAccessorIndex,
-								BufferView = currentBufferViewIndex,
-								ComponentType = GLTFComponentType.FLOAT,
-								Type = GLTFValueType.VEC4,
-								Count = numRotations
-							};
-							JSONData.Accessors.Add(nodeRotationAccessor);
-
-							JSONData.BufferViews.Add(new GLTFBufferView {
-								ThisIndex = currentBufferViewIndex,
-								ByteLength = nodeRotationAccessor.Size,
-								ByteOffset = currentOffset
-							});
-
-							currentAccessorIndex++;
-							currentBufferViewIndex++;
-							currentOffset += nodeRotationAccessor.Size;
-							#endregion
-
-							#region Scale Accessor & Buffer
-							GLTFAccessor nodeScaleAccessor = new GLTFAccessor {
-								ThisIndex = currentAccessorIndex,
-								BufferView = currentBufferViewIndex,
-								ComponentType = GLTFComponentType.FLOAT,
-								Type = GLTFValueType.VEC3,
-								Count = numScales
-							};
-							JSONData.Accessors.Add(nodeScaleAccessor);
-
-							JSONData.BufferViews.Add(new GLTFBufferView {
-								ThisIndex = currentBufferViewIndex,
-								ByteLength = nodeScaleAccessor.Size,
-								ByteOffset = currentOffset
-							});
-
-							currentAccessorIndex++;
-							currentBufferViewIndex++;
-							currentOffset += nodeScaleAccessor.Size;
-							#endregion
-
-							#endregion
-
-							#region Samplers & Channels
-
-							#region Translation Sampler & Channel
-							GLTFAnimationSampler translationSampler = new GLTFAnimationSampler {
-								ThisIndex = animationSamplerIndex,
-								Input = timeAccessor.ThisIndex,
-								Interpolation = GLTFAnimationInterpolation.LINEAR,
-								Output = nodeTranslationAccessor.ThisIndex
-							};
-
-							GLTFAnimationChannel translationChannel = new GLTFAnimationChannel {
-								Sampler = translationSampler.ThisIndex,
-								Target = new GLTFAnimationChannelTarget {
-									Node = thisNodeIndex,
-									Path = GLTFAnimationPath.TRANSLATION
-								},
-							};
-							animationSamplerIndex++;
-							#endregion
-
-							#region Rotation Sampler & Channel
-							GLTFAnimationSampler rotationSampler = new GLTFAnimationSampler {
-								ThisIndex = animationSamplerIndex,
-								Input = timeAccessor.ThisIndex,
-								Interpolation = GLTFAnimationInterpolation.LINEAR,
-								Output = nodeRotationAccessor.ThisIndex
-							};
-
-							GLTFAnimationChannel rotationChannel = new GLTFAnimationChannel {
-								Sampler = rotationSampler.ThisIndex,
-								Target = new GLTFAnimationChannelTarget {
-									Node = thisNodeIndex,
-									Path = GLTFAnimationPath.ROTATION
-								},
-							};
-							animationSamplerIndex++;
-							#endregion
-
-							#region Scale Sampler & Channel
-							GLTFAnimationSampler scaleSampler = new GLTFAnimationSampler {
-								ThisIndex = animationSamplerIndex,
-								Input = timeAccessor.ThisIndex,
-								Interpolation = GLTFAnimationInterpolation.LINEAR,
-								Output = nodeScaleAccessor.ThisIndex
-							};
-
-							GLTFAnimationChannel scaleChannel = new GLTFAnimationChannel {
-								Sampler = scaleSampler.ThisIndex,
-								Target = new GLTFAnimationChannelTarget {
-									Node = thisNodeIndex,
-									Path = GLTFAnimationPath.SCALE
-								},
-							};
-							animationSamplerIndex++;
-							#endregion
-
-							#region Register Samplers & Channels
-							glAnim.Samplers.Add(translationSampler);
-							glAnim.Samplers.Add(rotationSampler);
-							glAnim.Samplers.Add(scaleSampler);
-
-							glAnim.Channels.Add(translationChannel);
-							glAnim.Channels.Add(rotationChannel);
-							glAnim.Channels.Add(scaleChannel);
-							#endregion
-
-							#endregion
-						}
-
-						binBuffer.AddRange(buffer);
+						currentAccessorIndex++;
+						currentBufferViewIndex++;
+						currentOffset += nodeScaleAccessor.Size;
+						#endregion
 
 						#endregion
 
-						JSONData.Animations.Add(glAnim);
+						#region Samplers & Channels
+
+						#region Translation Sampler & Channel
+						GLTFAnimationSampler translationSampler = new GLTFAnimationSampler {
+							ThisIndex = animationSamplerIndex,
+							Input = timeAccessor.ThisIndex,
+							Interpolation = GLTFAnimationInterpolation.LINEAR,
+							Output = nodeTranslationAccessor.ThisIndex
+						};
+
+						GLTFAnimationChannel translationChannel = new GLTFAnimationChannel {
+							Sampler = translationSampler.ThisIndex,
+							Target = new GLTFAnimationChannelTarget {
+								Node = thisNodeIndex,
+								Path = GLTFAnimationPath.TRANSLATION
+							},
+						};
+						animationSamplerIndex++;
+						#endregion
+
+						#region Rotation Sampler & Channel
+						GLTFAnimationSampler rotationSampler = new GLTFAnimationSampler {
+							ThisIndex = animationSamplerIndex,
+							Input = timeAccessor.ThisIndex,
+							Interpolation = GLTFAnimationInterpolation.LINEAR,
+							Output = nodeRotationAccessor.ThisIndex
+						};
+
+						GLTFAnimationChannel rotationChannel = new GLTFAnimationChannel {
+							Sampler = rotationSampler.ThisIndex,
+							Target = new GLTFAnimationChannelTarget {
+								Node = thisNodeIndex,
+								Path = GLTFAnimationPath.ROTATION
+							},
+						};
+						animationSamplerIndex++;
+						#endregion
+
+						#region Scale Sampler & Channel
+						GLTFAnimationSampler scaleSampler = new GLTFAnimationSampler {
+							ThisIndex = animationSamplerIndex,
+							Input = timeAccessor.ThisIndex,
+							Interpolation = GLTFAnimationInterpolation.LINEAR,
+							Output = nodeScaleAccessor.ThisIndex
+						};
+
+						GLTFAnimationChannel scaleChannel = new GLTFAnimationChannel {
+							Sampler = scaleSampler.ThisIndex,
+							Target = new GLTFAnimationChannelTarget {
+								Node = thisNodeIndex,
+								Path = GLTFAnimationPath.SCALE
+							},
+						};
+						animationSamplerIndex++;
+						#endregion
+
+						#region Register Samplers & Channels
+						glAnim.Samplers.Add(translationSampler);
+						glAnim.Samplers.Add(rotationSampler);
+						glAnim.Samplers.Add(scaleSampler);
+
+						glAnim.Channels.Add(translationChannel);
+						glAnim.Channels.Add(rotationChannel);
+						glAnim.Channels.Add(scaleChannel);
+						#endregion
+
+						#endregion
 					}
+
+					binBuffer.AddRange(buffer);
+
+					#endregion
+
+					JSONData.Animations.Add(glAnim);
 				}
+				
 				#endregion
 
 				#region Create Object (If Static)
@@ -1196,7 +1205,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						associatedParentNode.Children.Add(associatedNode.ThisIndex);
 						XanLogger.WriteLine("Parented model [" + model.Name + "] to model [" + model.AttachmentModel.Name + "]", XanLogger.TRACE);
 					} else {
-						XanLogger.WriteLine("WARNING: Model [" + model.Name + "] (which " + (hasChild ? "DOES" : "DOES NOT") + " exist) wants to attach to model [" + parent.Name + "] (which " + (hasParent ? "DOES" : "DOES NOT") + " exist)");
+						XanLogger.WriteLine("WARNING: Model [" + model.Name + "] (which " + (hasChild ? "DOES" : "DOES NOT") + " exist) wants to attach to model [" + parent.Name + "] (which " + (hasParent ? "DOES" : "DOES NOT") + " exist)", XanLogger.DEBUG);
 					}
 				}
 			}
@@ -1227,7 +1236,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 
 			#endregion
 
-			XanLogger.WriteLine($"glTF Exporter instantiated {numModelsCreated} models (skipped {numModelsSkipped} models).");
+			XanLogger.WriteLine($"glTF Exporter instantiated {numModelsCreated} models (skipped {numModelsSkipped} models and {numModelsEmpty} empty or unused attachment nodes).");
 
 			return binBuffer.ToArray();
 		}

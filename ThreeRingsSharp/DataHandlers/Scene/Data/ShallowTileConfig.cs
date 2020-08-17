@@ -2,6 +2,7 @@
 using com.threerings.opengl.model.config;
 using com.threerings.tudey.config;
 using com.threerings.tudey.data;
+using System;
 using System.Collections.Generic;
 using ThreeRingsSharp.XansData.Extensions;
 
@@ -10,7 +11,7 @@ namespace ThreeRingsSharp.DataHandlers.Scene.Data {
 	/// <summary>
 	/// Represents a <see cref="TileConfig"/> in a non-descriptive manner (that is, as a bare-bones object with the information needed to load the data inside).
 	/// </summary>
-	public class ShallowTileConfig {
+	[Obsolete("The system can now read actual Tiles, so a shallow config is useless.")] public class ShallowTileConfig {
 
 		/// <summary>
 		/// A lookup from <see cref="Name"/> to <see cref="ShallowTileConfig"/> instance.

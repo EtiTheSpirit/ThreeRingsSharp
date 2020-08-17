@@ -47,6 +47,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			foreach (VisibleMesh mesh in renderedMeshes) {
 				string meshTitle = "-Mesh[" + idx + "]";
 
+
 				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
 				meshToModel.Name = depth1Name + meshTitle;
 				meshToModel.Transform = meshToModel.Transform.compose(globalTransform).compose(new Transform3D(meshes.bounds.getCenter(), Quaternion.IDENTITY, 1f));

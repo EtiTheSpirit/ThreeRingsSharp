@@ -1,4 +1,9 @@
-﻿using System;
+﻿using com.threerings.export.tools;
+using ikvm.runtime;
+using System;
+using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using ThreeRingsSharp.Utility;
@@ -12,6 +17,8 @@ namespace SKAnimatorTools {
 		[STAThread]
 		static void Main() {
 			XanLogger.MainThreadId = Thread.CurrentThread.ManagedThreadId;
+			Startup.addBootClassPathAssembly(Assembly.Load("OOOLibAndDeps"));
+
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 			Application.Run(new MainWindow());

@@ -43,6 +43,20 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
+		/// Directly copied from SK jar for now. Sets the given key to the given value on a clone of this config reference, then returns the clone.
+		/// </summary>
+		/// <param name="cfgRef"></param>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public static ConfigReference SetArgumentOnClone(this ConfigReference cfgRef, string key, object value) {
+			ConfigReference configReference;
+			ConfigReference configReference1;
+			(configReference1 = configReference = (ConfigReference)(configReference1 = cfgRef).clone()).getArguments().put(key, value);
+			return configReference;
+		}
+
+		/// <summary>
 		/// Takes the <see cref="ArgumentMap"/> within this <see cref="ConfigReference"/> and translates it into the dictionary format used by TRS's extra data containers.
 		/// </summary>
 		/// <param name="cfgRef">The ConfigReference to get the data from.</param>
