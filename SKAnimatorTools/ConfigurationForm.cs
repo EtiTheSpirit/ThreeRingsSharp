@@ -124,6 +124,8 @@ namespace SKAnimatorTools {
 				MainTooltip.SetToolTip(PicBox_RsrcDir, "The given directory is invalid (you didn't input a path) or it doesn't exist!");
 			}
 
+			Option_StaticSetExportMode_SelectedIndexChanged(null, null);
+
 			BtnSave.Enabled = IsOK;
 		}
 
@@ -202,16 +204,50 @@ namespace SKAnimatorTools {
 			}
 		}
 
-		private void OnFolderSelMouseEnter(object sender, EventArgs e) {
+
+		private void BtnHelpConditionalConfig_Click(object sender, EventArgs e) {
+			MessageBox.Show(
+				"ConditionalConfigs are a special type of model that rely on game " +
+				"code to determine whether or not they show up. Generally speaking, " +
+				"these are only used in scenes (for example, they might be used " +
+				"when a model appears or disappears after you step on a button or " +
+				"flip a switch).\n\nFor most cases, the default option is fine, but " +
+				"if you want an automatic selection, models whose conditions = true " +
+				"is a good default.", "What Are ConditionalConfigs?", MessageBoxButtons.OK, MessageBoxIcon.Information);
+		}
+
+		private void BtnHelpStaticSetConfig_Click(object sender, EventArgs e) {
+			MessageBox.Show(
+				"StaticSetConfigs are, hence the name, a set of meshes. " +
+				"Generally speaking, these are used for models that contain several " +
+				"variations. These are used extensively for things like tiles in scenes " +
+				"as they can pack hundreds of models into a single file. Every StaticSet " +
+				"has a value that says which model out of the set is being used, which is " +
+				"referred to as the \"Target Model\".\n\n" +
+				"For most cases, only exporting the target model in the " +
+				"set is the best way to go.", "What Are StaticSetConfigs?", MessageBoxButtons.OK, MessageBoxIcon.Information);
+		}
+
+		private void OnPicButtonMouseEnter(object sender, EventArgs e) {
 			((Control)sender).BackColor = ((SolidBrush)SystemBrushes.ControlLight).Color;
 		}
 
-		private void OnFolderSelMouseLeave(object sender, EventArgs e) {
+		private void OnPicButtonMouseLeave(object sender, EventArgs e) {
 			((Control)sender).BackColor = ((SolidBrush)SystemBrushes.Control).Color;
 		}
 
 		private void CheckBox_PreferSpeed_CheckedChanged(object sender, EventArgs e) {
 			VerboseLoggingChanged(sender, e);
+		}
+
+		private void Option_StaticSetExportMode_SelectedIndexChanged(object sender, EventArgs e) {
+			if (Option_StaticSetExportMode.SelectedIndex == 1) {
+				PicBox_StaticSetExpMode.Image = Warning;
+				MainTooltip.SetToolTip(PicBox_StaticSetExpMode, "This option can result in a exporting lot of extra/junk models that you don't want!");
+			} else {
+				PicBox_StaticSetExpMode.Image = Accepted;
+				MainTooltip.SetToolTip(PicBox_StaticSetExpMode, string.Empty);
+			}
 		}
 	}
 }
