@@ -69,7 +69,10 @@ namespace AppUpdater {
 		private void OnDownloadCompleted(object sender, AsyncCompletedEventArgs e) {
 			LabelDownloading.Text = "Extracting Zip...";
 			Update();
-			ZipFile.ExtractToDirectory(Destination.FullName, Destination.Directory.FullName);
+			try {
+				// Silently drop any errors here.
+				ZipFile.ExtractToDirectory(Destination.FullName, Destination.Directory.FullName);
+			} catch { } 
 			Destination.Delete();
 			Close();
 		}

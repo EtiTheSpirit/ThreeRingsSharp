@@ -3,8 +3,8 @@ F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\AppUpdater.Auto
 F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\AppUpdater.Properties.Resources.resources
 F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\AppUpdater.csproj.GenerateResource.cache
 F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\AppUpdater.csproj.CoreCompileInputs.cache
-F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\bin\Release\TRSUpdater.exe.config
-F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\bin\Release\TRSUpdater.exe
-F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\bin\Release\TRSUpdater.pdb
-F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\TRSUpdater.exe
-F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\TRSUpdater.pdb
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\bin\Release\TRSUpdaterV2.exe.config
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\bin\Release\TRSUpdaterV2.exe
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\bin\Release\TRSUpdaterV2.pdb
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\TRSUpdaterV2.exe
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\TRSUpdaterV2.pdb

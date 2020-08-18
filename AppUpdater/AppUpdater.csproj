@@ -7,7 +7,7 @@
     <ProjectGuid>{16553C36-B341-4C99-929D-F60FDF7DBB22}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>AppUpdater</RootNamespace>
-    <AssemblyName>TRSUpdater</AssemblyName>
+    <AssemblyName>TRSUpdaterV2</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -67,6 +67,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
