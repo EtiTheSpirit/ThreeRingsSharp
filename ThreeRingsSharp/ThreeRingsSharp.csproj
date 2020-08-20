@@ -154,6 +154,7 @@
     <Compile Include="XansData\Extensions\ChoiceExtensions.cs" />
     <Compile Include="XansData\Extensions\ConfigReferenceExtension.cs" />
     <Compile Include="XansData\Extensions\DeepObjectExtensions.cs" />
+    <Compile Include="XansData\Extensions\FileInfoExtension.cs" />
     <Compile Include="XansData\Extensions\JavaExtensions.cs" />
     <Compile Include="XansData\Extensions\ParameterizedConfigExtension.cs" />
     <Compile Include="XansData\Extensions\TileEntryExtensions.cs" />

@@ -5,6 +5,7 @@ using com.threerings.tudey.data;
 using com.threerings.util;
 using java.io;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using ThreeRingsSharp.Utility;
@@ -95,6 +96,11 @@ namespace ThreeRingsSharp.DataHandlers {
 
 			// New task.
 			SKAnimatorToolsProxy.IncrementEnd();
+
+			string fPath = clydeFile.AsResourcePath().ToLower();
+			if (fPath == "rsrc/character/pc/model.dat" || fPath == "rsrc/character/npc/crew/model.dat") {
+				XanLogger.WriteLine("SPECIAL: While version 2.0.0 has added the ability to convert knights, the process for this is a little complex! If you need help, please watch this tutorial video: https://youtu.be/RWhRABs4ds4", color: Color.Red);
+			}
 
 			if (!ClydeObjectCache.ContainsKey(clydeFile.FullName)) {
 				XanLogger.WriteLine($"Loading [{clydeFile.FullName}] because it hasn't been initialized before...", XanLogger.DEBUG);

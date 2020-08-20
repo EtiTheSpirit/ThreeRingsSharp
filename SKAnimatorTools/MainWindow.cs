@@ -243,7 +243,6 @@ namespace SKAnimatorTools {
 			
 			ConfigReferenceBootstrapper.PopulateConfigRefsAsync();
 
-			XanLogger.WriteLine("SPECIAL: Version 2.0.0 has added the ability to convert knights, but the process for this is a little complex! If you need help, please watch this tutorial video: https://youtu.be/RWhRABs4ds4", color: Color.Red);
 			XanLogger.UpdateAutomatically = false;
 			if (XanLogger.LoggingLevel > XanLogger.STANDARD) {
 				ShowWindow(ConsolePtr, 5);
