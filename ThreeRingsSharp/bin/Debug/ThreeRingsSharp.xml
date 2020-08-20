@@ -320,6 +320,14 @@
             <param name="cfg"></param>
             <returns></returns>
         </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.FindTexturesAndActiveFromDirects(com.threerings.opengl.model.config.ModelConfig,System.String)">
+            <summary>
+            Assuming this is a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> storing textures, this will try to find the textures from its parameters. Additionally, it will find the default texture of the model.
+            </summary>
+            <param name="cfg"></param>
+            <param name="defaultTextureFromVisibleMesh"></param>
+            <returns></returns>
+        </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.GetDefaultTextures(com.threerings.opengl.model.config.ModelConfig.Imported)">
             <summary>
             Returns the currently active textures for each of the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Imported.MaterialMapping"/>s within this <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.<para/>
@@ -1801,6 +1809,11 @@
             <returns></returns>
             <exception cref="T:System.ArgumentOutOfRangeException">Thrown if depth is 0.</exception>
         </member>
+        <member name="T:ThreeRingsSharp.Utility.TextureGrabber">
+            <summary>
+            <see cref="!:ModelPropertyUtility"/>
+            </summary>
+        </member>
         <member name="M:ThreeRingsSharp.Utility.TextureGrabber.GetFullTexturePath(System.IO.FileInfo,System.String)">
             <summary>
             A utility method that, when given the directory of a model file and a texture name, will attempt to locate a given texture.
@@ -2289,14 +2302,14 @@
         <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve(com.threerings.config.ConfigReference)">
             <summary>
             Using the information in this <see cref="T:com.threerings.config.ConfigReference"/>, the object this reference points to will be resolved and returned. This <see cref="T:com.threerings.config.ConfigReference"/> must point to an actual configuration. If it points to a file, an <see cref="T:System.InvalidOperationException"/> will be thrown.<para/>
-            Consider using <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveAs``1(com.threerings.config.ConfigReference)"/> if the type of the result is known.<para/>
+            Consider using <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve``1(com.threerings.config.ConfigReference)"/> if the type of the result is known.<para/>
             This will automatically populate the arguments in the referenced config if applicable, making usage of the returned object relatively straightforward.
             </summary>
             <param name="cfgRef">The ConfigReference to resolve the reference to.</param>
             <returns>The ManagedConfig the given ConfigReference is pointing to.</returns>
             <exception cref="T:System.InvalidOperationException">If IsFileReference() returns true on this ConfigReference.</exception>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveAs``1(com.threerings.config.ConfigReference)">
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve``1(com.threerings.config.ConfigReference)">
             <summary>
             Using the information in this <see cref="T:com.threerings.config.ConfigReference"/>, the object this reference points to will be resolved and returned. This <see cref="T:com.threerings.config.ConfigReference"/> must point to an actual configuration. If it points to a file, an <see cref="T:System.InvalidOperationException"/> will be thrown.<para/>
             This will automatically populate the arguments in the referenced config if applicable, making usage of the returned object relatively straightforward.
@@ -2323,6 +2336,23 @@
             <param name="cfgRef"></param>
             <returns></returns>
         </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveAuto(com.threerings.config.ConfigReference)">
+            <summary>
+            Attempts to selectively call <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve(com.threerings.config.ConfigReference)"/> or <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveFile(com.threerings.config.ConfigReference)"/>.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="cfgRef"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveAuto``1(com.threerings.config.ConfigReference)">
+            <summary>
+            Attempts to selectively call <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve``1(com.threerings.config.ConfigReference)"/> or <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveFile``1(com.threerings.config.ConfigReference)"/>.<para/>
+            Unlike <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveAuto(com.threerings.config.ConfigReference)"/>, this may throw a <see cref="T:System.InvalidCastException"/> in the event that the config is not a file reference and <typeparamref name="T"/> is not a <see cref="T:com.threerings.config.ManagedConfig"/>.
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="cfgRef"></param>
+            <returns></returns>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.Extensions.DeepObjectExtensions">
             <summary>
             Extends <see cref="T:com.threerings.util.DeepObject"/> to add a typed Clone method.
@@ -2343,6 +2373,19 @@
             <typeparam name="T"></typeparam>
             <param name="original"></param>
             <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Extensions.FileInfoExtension">
+            <summary>
+            Offers extensions to <see cref="T:System.IO.FileInfo"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.FileInfoExtension.AsResourcePath(System.IO.FileInfo,System.Boolean,System.Boolean)">
+            <summary>
+            Returns a string which is the path of this <see cref="T:System.IO.FileInfo"/> relative to the rsrc folder. The returned path will never start with a slash.
+            </summary>
+            <param name="info">The <see cref="T:System.IO.FileInfo"/> to extract the data from.</param>
+            <param name="useSystemSeparators">If <see langword="true"/>, the system's filepath separator character will be used. If <see langword="false"/>, forward slashes (<c>/</c>) will be used.</param>
+            <param name="appendRsrc">If <see langword="true"/>, the path will start with <c>/rsrc</c></param>
         </member>
         <member name="T:ThreeRingsSharp.XansData.Extensions.JavaExtensions">
             <summary>
@@ -2965,7 +3008,7 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.Size">
             <summary>
-            The size of this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> in bytes.
+            The size of this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> in bytes. Useful for its associated <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFBufferView"/>.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.NeedsToCalculateSize">
@@ -3180,14 +3223,19 @@
             The name of this material.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFMaterial.PbrMetallicRoughness">
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFMaterial.PBRMetallicRoughness">
             <summary>
             The metallic roughness determining factor. This also stores the base texture.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFMaterial.AlphaMode">
             <summary>
-            The alpha mode of this material. OPAQUE means alpha is ignored, MASK means there is an alpha mask image attached, and BLEND uses image alpha.
+            The alpha mode of this material. OPAQUE, MASK, and BLEND are valid options. Default value is MASK.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFMaterial.AlphaCutoff">
+            <summary>
+            The threshold from which a transparent pixel is dubbed transparent enough to discard. Only relevant if <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFMaterial.AlphaMode"/> is MASK. Default value is 0.5f
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFMesh">
@@ -3584,12 +3632,6 @@
             </summary>
             <param name="name">The name to assign.</param>
             <exception cref="T:System.ArgumentNullException">If <paramref name="name"/> is null.</exception>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.MeshData.SetOffsetToAABBCenter">
-            <summary>
-            Since this is used by every tile when exporting scenes, it has its own method. This iterates through <see cref="P:ThreeRingsSharp.XansData.MeshData.Vertices"/> and then sets <see cref="P:ThreeRingsSharp.XansData.MeshData.VertexOffset"/> to the center of their axis-aligned bounding box.<para/>
-            This skips the Y axis.
-            </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.SetBones(com.threerings.opengl.model.config.ArticulatedConfig.Node)">
             <summary>

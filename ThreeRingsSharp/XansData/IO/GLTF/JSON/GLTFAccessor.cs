@@ -12,7 +12,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		#region Automatic Size
 
 		/// <summary>
-		/// The size of this <see cref="GLTFAccessor"/> in bytes.
+		/// The size of this <see cref="GLTFAccessor"/> in bytes. Useful for its associated <see cref="GLTFBufferView"/>.
 		/// </summary>
 		[JsonIgnore]
 		public int Size {

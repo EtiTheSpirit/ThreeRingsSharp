@@ -5,8 +5,12 @@ using System.Linq;
 
 namespace ThreeRingsSharp.Utility {
 
-	[Obsolete("This method of getting textures is incorrect. Use ModelPropertyUtility.FindTexturesFromDirects instead.", true)]
+	/// <summary>
+	/// <see cref="ModelPropertyUtility"/>
+	/// </summary>
+	[Obsolete("This method of getting textures is incorrect. Use ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.FindTexturesFromDirects instead.", true)]
 	public class TextureGrabber {
+		
 
 		/// <summary>
 		/// A utility method that, when given the directory of a model file and a texture name, will attempt to locate a given texture.

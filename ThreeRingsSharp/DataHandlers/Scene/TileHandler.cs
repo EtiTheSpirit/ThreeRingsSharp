@@ -96,18 +96,18 @@ namespace ThreeRingsSharp.DataHandlers.Scene {
 				}
 			} while (true);
 
+			
 			//tile.GetExportTransform(originalImpl, out Transform3D transform);
 			// All transforms are relative to the center of the object. the origin of the actual models is in their lower-back-left bounds.
 			// I need to add a flag to tell the exporter to move the geometry based on bounds center.
 			Transform3D transform = new Transform3D();
 			tile.getTransform(originalImpl, transform);
+			//transform.getTranslation().addLocal(new Vector3f(0, tile.elevation / 2, 0));
+			
+
 			string relativeModelPath = originalImpl.model.getName();
 			XanLogger.WriteLine("Grabbing tile [" + tile.tile.getName() + "] at " + relativeModelPath, XanLogger.DEBUG);
-			// , true, new Dictionary<string, dynamic>() { ["SceneObjectFlag"] = true, ["SceneObjectTransform"] = transform }
-			List<Model3D> acquiredModels = ConfigReferenceUtil.HandleConfigReference(sourceFile, originalImpl.model, modelCollection, dataTreeParent, globalTransform.compose(transform));
-			foreach (Model3D model in acquiredModels) {
-				model.Mesh.SetOffsetToAABBCenter();
-			}
+			ConfigReferenceUtil.HandleConfigReference(sourceFile, originalImpl.model, modelCollection, dataTreeParent, globalTransform.compose(transform));
 			SKAnimatorToolsProxy.IncrementProgress();
 		}
 

@@ -99,7 +99,8 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 			int currentMeshIndex = 0;
 			int currentModelIndex = 0;
 			int currentOffset = 0;
-			int totalImageCount = 0;
+			int totalTextureCount = 0;
+			int totalMaterialCount = 0;
 
 			int numModelsSkipped = 0;
 			int numModelsCreated = 0;
@@ -110,6 +111,10 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 
 			// A mapping from texture filepath to integer index for textures in the glTF data.
 			Dictionary<string, int> texFileToIndexMap = new Dictionary<string, int>();
+
+			// Keep track of meshes that have fake materials since they had no textures.
+			// This is handy because users may want to add a texture to a model, and if there's hundreds of this model, it can be very tedious.
+			Dictionary<MeshData, GLTFMaterial> meshesWithDummyMaterials = new Dictionary<MeshData, GLTFMaterial>();
 
 			// A mapping from MeshData to its associated GLTFMesh
 			Dictionary<MeshData, GLTFMesh> meshesToGLTF = new Dictionary<MeshData, GLTFMesh>();
@@ -593,97 +598,116 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 			// This is kind of like MeshData compared to Model3D -- multiple Model3Ds may share MeshData.
 
 			foreach (Model3D model in models) {
-				foreach (string texPath in model.Textures) {
-					if (texPath != null && texPath.Length > 0) {
-						FileInfo texFile = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + texPath);
-						if (texFile.Exists) {
-							// Sometimes these reference stuff like photoshop files, so check if it actually exists.
-							// TODO: Find out how these map out to actual images.
-							if (!texFileToIndexMap.ContainsKey(texPath)) {
-								// New texture. Append it.
-								texFileToIndexMap[texPath] = totalImageCount;
+				// modelHasTextures is used to track if a dummy material should be cr
+				bool modelHasValidTextures = false;
+				if (model.Textures.Count > 0) {
+					foreach (string texPath in model.Textures) {
+						if (!string.IsNullOrEmpty(texPath)) {
+							FileInfo texFile = new FileInfo(ResourceDirectoryGrabber.ResourceDirectoryPath + texPath);
+							if (texFile.Exists) {
+								modelHasValidTextures = true;
 
-								if (EmbedTextures) {
-									XanLogger.WriteLine($"Embedding [{texFile.FullName}].", XanLogger.DEBUG);
+								if (!texFileToIndexMap.ContainsKey(texPath)) {
+									// New texture. Append it.
+									texFileToIndexMap[texPath] = totalTextureCount;
 
-									#region Assign Core Data
-									(byte[], string) iData = GetImageData(texFile);
+									if (EmbedTextures) {
+										XanLogger.WriteLine($"Embedding [{texFile.FullName}].", XanLogger.DEBUG);
 
-									#region Create Buffer View & Write Bytes
-									binBuffer.AddRange(iData.Item1);
-									GLTFBufferView imageView = new GLTFBufferView() {
-										ThisIndex = currentBufferViewIndex,
-										ByteLength = iData.Item1.Length,
-										ByteOffset = currentOffset
-									};
-									currentOffset += iData.Item1.Length;
-									currentBufferViewIndex++;
-									#endregion
+										#region Assign Core Data
+										(byte[], string) iData = GetImageData(texFile);
 
-									#region Create Image & Texture
-									GLTFImage image = new GLTFImage() {
-										ThisIndex = totalImageCount,
-										BufferView = imageView.ThisIndex,
-										MimeType = iData.Item2
-									};
-									GLTFTexture tex = new GLTFTexture() {
-										Source = image.ThisIndex
-									};
-									#endregion
+										#region Create Buffer View & Write Bytes
+										binBuffer.AddRange(iData.Item1);
+										GLTFBufferView imageView = new GLTFBufferView() {
+											ThisIndex = currentBufferViewIndex,
+											ByteLength = iData.Item1.Length,
+											ByteOffset = currentOffset
+										};
+										currentOffset += iData.Item1.Length;
+										currentBufferViewIndex++;
+										#endregion
 
-									#region Create Material
-									GLTFMaterial material = new GLTFMaterial() {
-										Name = texFile.Name.Replace(texFile.Extension, "")
-									};
-									material.PbrMetallicRoughness.BaseColorTexture.Index = image.ThisIndex;
-									material.PbrMetallicRoughness.BaseColorTexture.TexCoord = 0;
-									#endregion
+										#region Create Image & Texture
+										GLTFImage image = new GLTFImage() {
+											ThisIndex = totalTextureCount,
+											BufferView = imageView.ThisIndex,
+											MimeType = iData.Item2
+										};
+										GLTFTexture tex = new GLTFTexture() {
+											Source = image.ThisIndex
+										};
+										#endregion
 
-									#endregion
+										#region Create Material
+										GLTFMaterial material = new GLTFMaterial() {
+											Name = texFile.Name.Replace(texFile.Extension, "")
+										};
+										material.PBRMetallicRoughness.BaseColorTexture.Index = image.ThisIndex;
+										material.PBRMetallicRoughness.BaseColorTexture.TexCoord = 0;
+										material.ThisIndex = totalMaterialCount;
+										#endregion
 
-									#region Register Data
-									JSONData.BufferViews.Add(imageView);
-									JSONData.Images.Add(image);
-									JSONData.Textures.Add(tex);
-									JSONData.Materials.Add(material);
-									#endregion
+										#endregion
 
-								} else {
-									XanLogger.WriteLine($"Adding reference to [{texFile.FullName}].", XanLogger.DEBUG);
+										#region Register Data
+										JSONData.BufferViews.Add(imageView);
+										JSONData.Images.Add(image);
+										JSONData.Textures.Add(tex);
+										JSONData.Materials.Add(material);
+										#endregion
 
-									#region Assign Core Data
-									#region Create Image & Texture
-									GLTFImage image = new GLTFImage() {
-										ThisIndex = totalImageCount,
-										URI = texFile.FullName.Replace('\\', '/')
-									};
-									GLTFTexture tex = new GLTFTexture() {
-										Source = image.ThisIndex
-									};
-									#endregion
+									} else {
+										XanLogger.WriteLine($"Adding reference to [{texFile.FullName}].", XanLogger.DEBUG);
 
-									#region Create Material
-									GLTFMaterial material = new GLTFMaterial() {
-										Name = texFile.Name.Replace(texFile.Extension, "")
-									};
-									material.PbrMetallicRoughness.BaseColorTexture.Index = image.ThisIndex;
-									material.PbrMetallicRoughness.BaseColorTexture.TexCoord = 0;
-									#endregion
-									#endregion
+										#region Assign Core Data
+										#region Create Image & Texture
+										GLTFImage image = new GLTFImage() {
+											ThisIndex = totalTextureCount,
+											URI = texFile.FullName.Replace('\\', '/')
+										};
+										GLTFTexture tex = new GLTFTexture() {
+											Source = image.ThisIndex
+										};
+										#endregion
 
-									#region Register Data
-									JSONData.Images.Add(image);
-									JSONData.Textures.Add(tex);
-									JSONData.Materials.Add(material);
-									#endregion
+										#region Create Material
+										GLTFMaterial material = new GLTFMaterial() {
+											Name = texFile.Name.Replace(texFile.Extension, "")
+										};
+										material.PBRMetallicRoughness.BaseColorTexture.Index = image.ThisIndex;
+										material.PBRMetallicRoughness.BaseColorTexture.TexCoord = 0;
+										material.ThisIndex = totalMaterialCount;
+										#endregion
+										#endregion
+
+										#region Register Data
+										JSONData.Images.Add(image);
+										JSONData.Textures.Add(tex);
+										JSONData.Materials.Add(material);
+										#endregion
+
+									}
+									totalTextureCount++;
+									totalMaterialCount++;
 								}
-								totalImageCount++;
+							} else {
+								XanLogger.WriteLine($"Attempt to create texture image [{texFile.FullName}] failed -- File does not exist.", XanLogger.DEBUG, Color.Gray);
 							}
-						} else {
-							XanLogger.WriteLine($"Attempt to create texture image [{texFile.FullName}] failed -- File does not exist.", XanLogger.STANDARD, Color.Gray);
 						}
-					} else {
-						XanLogger.WriteLine($"Attempt to create texture image failed -- Image is null!", XanLogger.STANDARD, Color.Gray);
+					}
+				}
+
+				if (!modelHasValidTextures && model.Mesh != null) {
+					// No valid textures on this model. Let's create a dummy material for this model's mesh if one doesn't exist already.
+					if (!meshesWithDummyMaterials.ContainsKey(model.Mesh)) {
+						meshesWithDummyMaterials[model.Mesh] = new GLTFMaterial {
+							Name = "dummymtl-" + model.Mesh.Name,
+							PBRMetallicRoughness = null,
+							ThisIndex = totalMaterialCount
+						};
+						JSONData.Materials.Add(meshesWithDummyMaterials[model.Mesh]);
+						totalMaterialCount++;
 					}
 				}
 			}
@@ -1159,14 +1183,32 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						Mesh = glMesh.ThisIndex
 					};
 					if (JSONData.Materials.Count > 0) {
-						string fullName = model.Textures.Where(texturePath => {
-							if (texturePath != null) {
-								return new FileInfo(texturePath).Name == model.ActiveTexture;
+						if (!meshesWithDummyMaterials.ContainsKey(model.Mesh)) {
+							// Real Material
+							string fullName = model.Textures.Count == 1 ? model.Textures.First() : model.Textures.Where(texturePath => {
+								if (texturePath != null) {
+									return new FileInfo(texturePath).Name == model.ActiveTexture;
+								} else {
+									return false;
+								}
+							}).FirstOrDefault();
+							if (fullName != null) {
+								glMesh.Primitives[0].Material = texFileToIndexMap[fullName];
 							} else {
-								return false;
+								// XanLogger.WriteLine("A texture whose index (not necessarily the filename even if it is the name of a file) was " + model.ActiveTexture + " was not found", color: Color.Red);
+								GLTFMaterial dummyMtl = new GLTFMaterial {
+									PBRMetallicRoughness = null,
+									ThisIndex = totalMaterialCount,
+									Name = "dummymtl-" + model.Mesh.Name
+								};
+								meshesWithDummyMaterials[model.Mesh] = dummyMtl;
+								glMesh.Primitives[0].Material = dummyMtl.ThisIndex;
+								JSONData.Materials.Add(dummyMtl);
 							}
-						}).FirstOrDefault();
-						if (fullName != null) glMesh.Primitives[0].Material = texFileToIndexMap[fullName];
+						} else {
+							// Dummy Material
+							glMesh.Primitives[0].Material = meshesWithDummyMaterials[model.Mesh].ThisIndex;
+						}
 					}
 					model.ApplyScaling();
 					node.SetTransform(model.Transform);

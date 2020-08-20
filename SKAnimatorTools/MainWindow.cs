@@ -86,7 +86,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The version of this release of the program.
 		/// </summary>
-		public readonly int[] THIS_VERSION = { 2, 0, 1 };
+		public readonly int[] THIS_VERSION = { 2, 1, 0 };
 
 		/// <summary>
 		/// Attempts to access the github to acquire the latest version.
@@ -202,6 +202,13 @@ namespace SKAnimatorTools {
 			GLTFExporter.EmbedTextures = UserConfiguration.EmbedTextures;
 
 			SKAnimatorToolsProxy.PreferSpeedOverFeedback = UserConfiguration.PreferSpeed;
+
+			if (XanLogger.IsDebugMode) {
+				if (UserConfiguration.LoggingLevel == XanLogger.STANDARD) {
+					UserConfiguration.LoggingLevel = XanLogger.DEBUG;
+				}
+			}
+
 			XanLogger.LoggingLevel = UserConfiguration.LoggingLevel;
 
 			#region Prepare Information
@@ -333,6 +340,10 @@ namespace SKAnimatorTools {
 		private void SaveClicked(object sender, EventArgs e) {
 			DialogResult result = SaveModel.ShowDialog();
 			if (result == DialogResult.OK) {
+				BtnSaveModel.Enabled = false;
+				XanLogger.WriteLine("Exporting model...");
+				XanLogger.ForceUpdateLog();
+
 				FileInfo saveTo = new FileInfo(SaveModel.FileName);
 				ConfigurationInterface.SetConfigurationValue("LastSaveDirectory", saveTo.DirectoryName);
 				ModelFormat targetFmt = ModelFormatUtil.ExtensionToFormatBindings[saveTo.Extension];
@@ -343,6 +354,8 @@ namespace SKAnimatorTools {
 				} catch (Exception ex) {
 					XanLogger.WriteLine($"Failed to save to [{saveTo.FullName}] -- Reason: {ex.GetType().Name} thrown!\n{ex.Message}", color: Color.IndianRed);
 				}
+				XanLogger.ForceUpdateLog();
+				BtnSaveModel.Enabled = true;
 			}
 		}
 

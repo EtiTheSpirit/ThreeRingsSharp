@@ -55,8 +55,11 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle, model.root);
 				meshToModel.Name = depth1Name + meshTitle;
 				if (globalTransform != null) meshToModel.Transform.composeLocal(globalTransform);
-				meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
-				meshToModel.ActiveTexture = mesh.texture;
+
+				(List<string> textureFiles, string active) = ModelPropertyUtility.FindTexturesAndActiveFromDirects(baseModel, mesh.texture);
+				meshToModel.Textures.SetFrom(textureFiles);
+				meshToModel.ActiveTexture = active;
+
 				if (meshToModel.Mesh.HasBoneData) {
 					XanLogger.WriteLine("Model has bone data, setting that up.", XanLogger.TRACE);
 					// meshToModel.Mesh.SetBones(model.root);
@@ -180,8 +183,16 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						Model3D meshToModel = GeometryConfigTranslator.GetGeometryInformation(mesh.geometry, fullDepthName + meshTitle);
 						meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + meshTitle;
 						meshToModel.RawName = node.name;
+
+						(List<string> textureFiles, string active) = ModelPropertyUtility.FindTexturesAndActiveFromDirects(baseModel, mesh.texture);
+						meshToModel.Textures.SetFrom(textureFiles);
+						meshToModel.ActiveTexture = active;
+
+						/*
 						meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
 						meshToModel.ActiveTexture = mesh.texture;
+						*/
+
 						// Modify the transform that it already has to the node's transform.						
 						meshToModel.Transform.composeLocal(latestTransform);
 						meshToModel.Transform.composeLocal(node.transform);

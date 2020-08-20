@@ -81,7 +81,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 
 		/// <summary>
 		/// Using the information in this <see cref="ConfigReference"/>, the object this reference points to will be resolved and returned. This <see cref="ConfigReference"/> must point to an actual configuration. If it points to a file, an <see cref="InvalidOperationException"/> will be thrown.<para/>
-		/// Consider using <see cref="ResolveAs{T}(ConfigReference)"/> if the type of the result is known.<para/>
+		/// Consider using <see cref="Resolve{T}(ConfigReference)"/> if the type of the result is known.<para/>
 		/// This will automatically populate the arguments in the referenced config if applicable, making usage of the returned object relatively straightforward.
 		/// </summary>
 		/// <param name="cfgRef">The ConfigReference to resolve the reference to.</param>
@@ -111,7 +111,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <typeparam name="T">The destination type for the new ManagedConfig</typeparam>
 		/// <returns>The ManagedConfig the given ConfigReference is pointing to.</returns>
 		/// <exception cref="InvalidOperationException">If IsFileReference() returns true on this ConfigReference.</exception>
-		public static T ResolveAs<T>(this ConfigReference cfgRef) where T : ManagedConfig {
+		public static T Resolve<T>(this ConfigReference cfgRef) where T : ManagedConfig {
 			if (cfgRef.IsFileReference()) throw new InvalidOperationException("Cannot resolve the path to a non-config reference (this ConfigReference points to a file!)");
 			T mgCfg = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(cfgRef.getName())?.CloneAs<T>();
 
@@ -165,6 +165,43 @@ namespace ThreeRingsSharp.XansData.Extensions {
 				return paramCfg;
 			}
 			return clydeObject;
+		}
+
+		#endregion
+
+		#region Ambiguous Resolution
+
+		/// <summary>
+		/// Attempts to selectively call <see cref="Resolve(ConfigReference)"/> or <see cref="ResolveFile(ConfigReference)"/>.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="cfgRef"></param>
+		/// <returns></returns>
+		public static object ResolveAuto(this ConfigReference cfgRef) {
+			if (cfgRef.IsFileReference()) {
+				return ResolveFile(cfgRef);
+			} else {
+				return Resolve(cfgRef);
+			}
+		}
+
+		/// <summary>
+		/// Attempts to selectively call <see cref="Resolve{T}(ConfigReference)"/> or <see cref="ResolveFile{T}(ConfigReference)"/>.<para/>
+		/// Unlike <see cref="ResolveAuto(ConfigReference)"/>, this may throw a <see cref="InvalidCastException"/> in the event that the config is not a file reference and <typeparamref name="T"/> is not a <see cref="ManagedConfig"/>.
+		/// </summary>
+		/// <typeparam name="T"></typeparam>
+		/// <param name="cfgRef"></param>
+		/// <returns></returns>
+		public static T ResolveAuto<T>(this ConfigReference cfgRef) where T : class {
+			if (cfgRef.IsFileReference()) {
+				return ResolveFile<T>(cfgRef);
+			} else {
+				if (typeof(ManagedConfig).IsAssignableFrom(typeof(T))) {
+					return Resolve<ManagedConfig>(cfgRef) as T;
+				} else {
+					throw new InvalidCastException("ResolveAuto<T> for a ConfigReference failed because the reference points to configs and the desired type is not a ManagedConfig!");
+				}
+			}
 		}
 
 		#endregion

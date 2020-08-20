@@ -30,6 +30,8 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		public bool ShouldSerializeBufferView() => URI == null;
 
 		public bool ShouldSerializeMimeType() => ShouldSerializeBufferView();
+
+		public bool ShouldSerializeURI() => !ShouldSerializeBufferView();
 		#endregion
 
 	}

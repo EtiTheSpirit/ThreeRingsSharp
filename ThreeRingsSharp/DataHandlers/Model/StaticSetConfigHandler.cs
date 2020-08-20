@@ -117,8 +117,12 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						meshToModel.ExtraData["StaticSetConfig"] = staticSet;
 						if (globalTransform != null) meshToModel.Transform = globalTransform.compose(meshToModel.Transform);
 
-						meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
-						meshToModel.ActiveTexture = mesh.texture;
+						//meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
+						//meshToModel.ActiveTexture = mesh.texture;
+
+						(List<string> textureFiles, string active) = ModelPropertyUtility.FindTexturesAndActiveFromDirects(baseModel, mesh.texture);
+						meshToModel.Textures.SetFrom(textureFiles);
+						meshToModel.ActiveTexture = active;
 
 						modelCollection.Add(meshToModel);
 						idx++;

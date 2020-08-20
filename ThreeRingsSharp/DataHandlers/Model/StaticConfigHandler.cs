@@ -52,9 +52,13 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				meshToModel.Name = depth1Name + meshTitle;
 				meshToModel.Transform = meshToModel.Transform.compose(globalTransform).compose(new Transform3D(meshes.bounds.getCenter(), Quaternion.IDENTITY, 1f));
 				//meshToModel.Textures.SetFrom(ModelConfigHandler.GetTexturesFromModel(sourceFile, model));
-				meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
+				//meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));
 				//meshToModel.Textures.SetFrom(new List<string>() { mesh.texture });
-				meshToModel.ActiveTexture = mesh.texture;
+				//meshToModel.ActiveTexture = mesh.texture;
+
+				(List<string> textureFiles, string active) = ModelPropertyUtility.FindTexturesAndActiveFromDirects(baseModel, mesh.texture);
+				meshToModel.Textures.SetFrom(textureFiles);
+				meshToModel.ActiveTexture = active;
 
 				modelCollection.Add(meshToModel);
 				idx++;

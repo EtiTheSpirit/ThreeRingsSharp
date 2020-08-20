@@ -1,7 +1,9 @@
 ﻿using com.threerings.math;
+using com.threerings.tudey.config;
 using com.threerings.tudey.util;
 using System;
 using ThreeRingsSharp.DataHandlers.Scene.Data;
+using ThreeRingsSharp.XansData.Structs;
 using static com.threerings.tudey.data.TudeySceneModel;
 
 namespace ThreeRingsSharp.XansData.Extensions {
