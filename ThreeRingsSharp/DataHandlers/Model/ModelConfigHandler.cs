@@ -60,7 +60,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			List<object> parameters = new List<object>();
 			foreach (Parameter prop in model.parameters) {
 				if (prop is Parameter.Direct direct) {
-					DataTreeObject paths = new DataTreeObject() {
+					DataTreeObject paths = new DataTreeObject {
 						ImageKey = SilkImage.Tag,
 						Text = "Direct: " + direct.name
 					};
@@ -71,19 +71,30 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					}
 					parameters.Add(paths);
 				} else if (prop is Parameter.Choice choice) {
-					DataTreeObject choices = new DataTreeObject() {
+					DataTreeObject choices = new DataTreeObject {
 						ImageKey = SilkImage.Value,
 						Text = "Choice: " + choice.name + " [Default: " + choice.choice + "]"
 					};
-					List<string> choiceList = new List<string>();
-					foreach (string c in choice.GetChoiceOptions()) {
-						choiceList.Add(c);
+					List<DataTreeObject> choiceList = new List<DataTreeObject>();
+					foreach (Parameter.Choice.Option option in choice.options) {
+						// choiceList.Add(c);
+						DataTreeObject choiceInfo = new DataTreeObject {
+							ImageKey = SilkImage.Tag,
+							Text = option.name
+						};
+						ArgumentMap args = option.arguments;
+						object[] keys = args.keySet().toArray();
+						foreach (object key in keys) {
+							choiceInfo.AddSimpleProperty(key.ToString(), args.get(key));
+						}
+						
+						choiceList.Add(choiceInfo);
 					}
 					choices.AddSimpleProperty("Choices", choiceList.ToArray(), SilkImage.Value, SilkImage.Tag, false);
 
 					List<DataTreeObject> subDirects = new List<DataTreeObject>();
 					foreach (Parameter.Direct dir in choice.directs) {
-						DataTreeObject dirObj = new DataTreeObject() {
+						DataTreeObject dirObj = new DataTreeObject {
 							ImageKey = SilkImage.Tag,
 							Text = "Direct: " + dir.name
 						};

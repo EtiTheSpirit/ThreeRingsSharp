@@ -525,7 +525,7 @@ namespace SKAnimatorTools {
 					}
 				} else {
 					foreach (DataTreeObject property in propValues) {
-						if (!property.CreatedFromProperty) {
+						if (property.CreatedFromProperty) {
 							nodeObj.Nodes.Add(property.ToTreeNode());
 						} else {
 							TreeNode containerNode = property.ToTreeNode();

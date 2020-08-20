@@ -47,7 +47,7 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 			Name = option.name;
 			ParentChoice = choice;
 			BaseOption = option;
-			Arguments = args ?? option.GetArguments();
+			Arguments = args ?? option.arguments;
 			// _arguments was exposed via an IL edit that I did. This is not possible under normal OOO behavior.
 			// I aim to undo this soon as a method is better for the sake of uniformity.
 

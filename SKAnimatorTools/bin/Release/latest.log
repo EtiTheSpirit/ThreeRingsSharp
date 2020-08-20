@@ -1,4 +1,3 @@
-SPECIAL: Version 2.0.0 has added the ability to convert knights, but the process for this is a little complex! If you need help, please watch this tutorial video: https://youtu.be/RWhRABs4ds4
 [DEBUG] Hold up! This model wants to reference some configs. I'm populating that data now... This might take just a moment!
 [DEBUG] Populated [actor].
 [DEBUG] Populated [area].
@@ -20,6 +19,53 @@ SPECIAL: Version 2.0.0 has added the ability to convert knights, but the process
 [DEBUG] Populated [sounder].
 [DEBUG] Populated [style].
 [DEBUG] Populated [texture].
+Just a second! I'm still loading up the config references. The model will load once that's done.
 [DEBUG] Populated [tile].
 [DEBUG] Populated [wall].
 Config data has been populated.
+Alright. Let's load it up now.
+Working. This might take a bit...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\null\model.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform as identity transform with scale=1
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ArticulatedConfig'. Accessing handlers...
+Resolved target Model/Skinned/Masked (Soft) as a MaterialConfig
+Resolved target 2D/File/Default as a TextureConfig
+[TRACE] Model has bone data, setting that up.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\circle.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] Model is of the type 'ModelConfig::Schemed'. Accessing handlers...
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\world\environment\shadow\part_circle.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: SceneInfluencerConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
+
+[TRACE] Loading Clyde object from cache because this .dat file has already been loaded.
+[TRACE] Instantiated global transform by cloning the existing passed in transform of [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 1.0], 1.0]
+[TRACE] Clyde object is ModelConfig.
+[DEBUG] 
+ERROR: A ModelConfig had an unknown implementation!
+=> Implementation: SceneInfluencerConfig
+=> Referenced In: E:/Steam Games/steamapps/common/Spiral Knights/rsrc/world/environment/shadow/part_circle.dat
+
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\standing.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\walking_nowep.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\animation\sequential\simple.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\reacting_knockback.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\reacting_recover.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+[DEBUG] Loading [E:\Steam Games\steamapps\common\Spiral Knights\rsrc\character\npc\monster\gremlin\animation\dying.dat] because it hasn't been initialized before...
+[TRACE] Read file to grab the raw info.
+Number of models loaded: 1 (0 as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)
+Number of unique meshes instantiated: 2
