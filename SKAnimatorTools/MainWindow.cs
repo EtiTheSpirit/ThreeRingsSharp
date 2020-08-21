@@ -1,4 +1,6 @@
-﻿using com.threerings.opengl.model.config;
+﻿using com.samskivert.util;
+using com.threerings;
+using com.threerings.opengl.model.config;
 using SKAnimatorTools.Configuration;
 using System;
 using System.Collections.Generic;
@@ -15,6 +17,7 @@ using System.Windows.Forms;
 using ThreeRingsSharp;
 using ThreeRingsSharp.DataHandlers;
 using ThreeRingsSharp.DataHandlers.Properties;
+using ThreeRingsSharp.ILPatches;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
@@ -166,8 +169,9 @@ namespace SKAnimatorTools {
 				Update(); // Update all of the display data.
 			};
 
-			SKAnimatorToolsProxy.ConfigsErroredAction = error => {
-				MessageBox.Show(error.Message + "\n\nThe program cannot continue when this error occurs and must exit, as this data is 100% required for it to function properly.", "Configuration Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			SKAnimatorToolsProxy.ConfigsErroredAction = (Exception error, string extraMessage) => {
+				string ext = extraMessage != null ? ("\n\n" + extraMessage) : string.Empty;
+				MessageBox.Show(error.Message + ext + "\n\nThe program cannot continue when this error occurs and must exit, as this data is 100% required for it to function properly.", "Configuration Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				Environment.Exit(1);
 			};
 
@@ -241,6 +245,15 @@ namespace SKAnimatorTools {
 		public MainWindow() {
 			UISyncContext = SynchronizationContext.Current;
 			ConfigurationForm.CurrentVersion = THIS_VERSION[0] + "." + THIS_VERSION[1] + "." + THIS_VERSION[2];
+
+			// Logger.setFactory(new DummyLoggerFactory());
+			// Under the current modified version of OOOLibAndDeps, this MUST BE SET.
+			// The new DLL makes the static ctor of Logger that creates this empty.
+
+			// Why was this change made?
+			// Strangely, some users get a TypeInitializationException in ClydeLog. Who gets this error is seemingly random and it
+			// makes absolutely no sense. Ideally, removing the faulty field and replacing it with something that does nothing
+			// should resolve the issue and make the program usable for these people.
 
 			InitializeComponent();
 

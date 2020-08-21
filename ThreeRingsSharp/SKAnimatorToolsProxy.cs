@@ -34,7 +34,7 @@ namespace ThreeRingsSharp {
 		/// An <see cref="Action"/> to run when something goes wrong while configs are loading.<para/>
 		/// Implemented by <see cref="ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="ConfigsErroredThroughSync(Exception)"/>
 		/// </summary>
-		public static Action<Exception> ConfigsErroredAction { get; set; } = null;
+		public static Action<Exception, string> ConfigsErroredAction { get; set; } = null;
 
 		/// <summary>
 		/// An action that fires whenever a single config reference file is loaded.
@@ -76,10 +76,11 @@ namespace ThreeRingsSharp {
 		/// Calls <see cref="ConfigsErroredAction"/> through <see cref="UISyncContext"/>.<para/>
 		/// This will do nothing if one or both of these is not defined.
 		/// </summary>
-		/// <param name="error"></param>
-		public static void ConfigsErroredThroughSync(Exception error) {
+		/// <param name="error">The error that occurred.</param>
+		/// <param name="extraMessage">Any extra information to relay.</param>
+		public static void ConfigsErroredThroughSync(Exception error, string extraMessage = null) {
 			UISyncContext?.Send(callback => {
-				ConfigsErroredAction?.Invoke(error);
+				ConfigsErroredAction?.Invoke(error, extraMessage);
 			}, null);
 		}
 

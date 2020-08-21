@@ -166,7 +166,7 @@ namespace ThreeRingsSharp.Utility {
 			string prefix = "";
 			if (logLevel == DEBUG) prefix = "[DEBUG] ";
 			if (logLevel == TRACE) prefix = "[TRACE] ";
-			byte[] fileWrite = Encoding.ASCII.GetBytes(prefix + strippedText);
+			byte[] fileWrite = Encoding.Unicode.GetBytes(prefix + strippedText);
 			LogFileStream.Write(fileWrite, 0, fileWrite.Length);
 
 			if (!canLog) return;

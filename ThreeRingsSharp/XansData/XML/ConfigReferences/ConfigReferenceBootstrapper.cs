@@ -8,6 +8,7 @@ using java.io;
 using java.lang;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -148,6 +149,14 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				}
 
 				HasPopulatedConfigs = true;
+			} catch (TypeInitializationException typeInitErr) {
+				System.Exception lowest = typeInitErr;
+				while (lowest is TypeInitializationException err) {
+					lowest = err.InnerException;
+				}
+				XanLogger.WriteLine("TypeInitializationException occurred. Lowest level inner Exception (if one exists): " + lowest?.GetType().Name + "\n\n" + lowest?.Message, XanLogger.STANDARD, Color.Red);
+
+				SKAnimatorToolsProxy.ConfigsErroredThroughSync(typeInitErr, typeInitErr.Message);
 			} catch (System.Exception error) {
 				SKAnimatorToolsProxy.ConfigsErroredThroughSync(error);
 			}

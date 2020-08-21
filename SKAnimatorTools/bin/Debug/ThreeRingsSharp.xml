@@ -738,7 +738,7 @@
         <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsErroredAction">
             <summary>
             An <see cref="T:System.Action"/> to run when something goes wrong while configs are loading.<para/>
-            Implemented by <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="M:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsErroredThroughSync(System.Exception)"/>
+            Implemented by <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="!:ConfigsErroredThroughSync(Exception)"/>
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsLoadingAction">
@@ -773,12 +773,13 @@
             This will do nothing if one or both of these is not defined.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsErroredThroughSync(System.Exception)">
+        <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsErroredThroughSync(System.Exception,System.String)">
             <summary>
             Calls <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsErroredAction"/> through <see cref="P:ThreeRingsSharp.SKAnimatorToolsProxy.UISyncContext"/>.<para/>
             This will do nothing if one or both of these is not defined.
             </summary>
-            <param name="error"></param>
+            <param name="error">The error that occurred.</param>
+            <param name="extraMessage">Any extra information to relay.</param>
         </member>
         <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsPopulatedThroughSync">
             <summary>

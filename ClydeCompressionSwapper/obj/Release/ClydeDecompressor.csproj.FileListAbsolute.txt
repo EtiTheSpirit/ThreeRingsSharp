@@ -16,6 +16,12 @@ F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\OO
 F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\ThreeRingsSharp.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\Newtonsoft.Json.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\Microsoft.Bcl.HashCode.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\IKVM.OpenJDK.Naming.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\IKVM.OpenJDK.Corba.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\IKVM.AWT.WinForms.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\IKVM.OpenJDK.Charsets.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\IKVM.OpenJDK.Management.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\IKVM.OpenJDK.Remoting.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\ThreeRingsSharp.pdb
 F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\ThreeRingsSharp.dll.config
 F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Release\Newtonsoft.Json.xml
