@@ -4,5 +4,5 @@
 [assembly: AssemblyDescription("Provides a GUI to use ThreeRingsSharp.")]
 [assembly: AssemblyCompany("Xan the Dragon // Eti the Spirit")]
 [assembly: AssemblyProduct("Spiral Knights Animator Tools")]
-[assembly: AssemblyVersion("1.4.5")]
-[assembly: AssemblyFileVersion("1.4.5")]
+[assembly: AssemblyVersion("0.0.0.0")]
+[assembly: AssemblyFileVersion("0.0.0.0")]

@@ -28,3 +28,17 @@ F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\Newtonsoft.J
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\Newtonsoft.Json.xml
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\Microsoft.Bcl.HashCode.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\Microsoft.Bcl.HashCode.xml
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\ICSharpCode.SharpZipLib.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.AWT.WinForms.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.OpenJDK.Cldrdata.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.OpenJDK.Localedata.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.OpenJDK.Misc.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.OpenJDK.Nashorn.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.OpenJDK.Tools.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Debug\IKVM.Reflection.dll

@@ -712,6 +712,11 @@
             <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name. Additionally, it will not have its implementation property.</param>
             <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="T:com.threerings.math.Transform3D"/>.</param>
         </member>
+        <member name="T:ThreeRingsSharp.ILPatches.DummyLogger">
+            <summary>
+            Implements <see cref="T:com.samskivert.util.Logger"/> and provides a log that does nothing.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.SKAnimatorToolsProxy">
             <summary>
             Offers various bits and pieces that are used by the GUI portion of the program that are separate from this library.<para/>

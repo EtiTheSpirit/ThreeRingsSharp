@@ -36,7 +36,6 @@ F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Release\Newtonsoft
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Release\OOOLibAndDeps.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Release\Microsoft.Bcl.HashCode.xml
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\bin\Release\Newtonsoft.Json.xml
-F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\obj\Release\ThreeRingsSharp.csprojAssemblyReference.cache
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\obj\Release\ThreeRingsSharp.csproj.CoreCompileInputs.cache
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\obj\Release\ThreeRingsSharp.csproj.CopyComplete
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\obj\Release\ThreeRingsSharp.dll

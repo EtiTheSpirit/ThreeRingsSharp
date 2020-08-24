@@ -139,7 +139,11 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 							return;
 						}
 
-						ParameterizedConfig referencedConfig = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(configRefPath).CloneAs<ParameterizedConfig>();
+						ParameterizedConfig referencedConfig = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(configRefPath)?.CloneAs<ParameterizedConfig>();
+						if (referencedConfig == null) {
+							XanLogger.WriteLine("Something failed to reference a ConfigReference (It tried to search for \"" + configRefPath + "\", which doesn't exist). Some information on this model may not load properly!", XanLogger.DEBUG, System.Drawing.Color.DarkGoldenrod);
+							return;
+						}
 
 						ArgumentMap args = latestAsCfg.getArguments();
 
@@ -245,7 +249,11 @@ namespace ThreeRingsSharp.DataHandlers.Properties {
 							latestAsCfg.getArguments().put(parameterName, argValue);
 							return null;
 						}
-						ParameterizedConfig referencedConfig = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(configRefPath).CloneAs<ParameterizedConfig>();
+						ParameterizedConfig referencedConfig = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(configRefPath)?.CloneAs<ParameterizedConfig>();
+						if (referencedConfig == null) {
+							XanLogger.WriteLine("Something failed to reference a ConfigReference (It tried to search for \"" + configRefPath + "\", which doesn't exist). Some information on this model may not load properly!", XanLogger.DEBUG, System.Drawing.Color.DarkGoldenrod);
+							return null;
+						}
 
 						// So there's our reference. Now we need to get a parameter from it.
 						Parameter referencedParam = referencedConfig.getParameter(parameterName);

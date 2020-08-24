@@ -26,3 +26,9 @@ F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Debug\Thre
 F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Debug\ThreeRingsSharp.dll.config
 F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Debug\Newtonsoft.Json.xml
 F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Debug\Microsoft.Bcl.HashCode.xml
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Debug\IKVM.OpenJDK.Naming.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Debug\IKVM.OpenJDK.Corba.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Debug\IKVM.AWT.WinForms.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Debug\IKVM.OpenJDK.Charsets.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Debug\IKVM.OpenJDK.Management.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\ClydeCompressionSwapper\bin\Debug\IKVM.OpenJDK.Remoting.dll

@@ -47,3 +47,14 @@ F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.Wi
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.pdb
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\Microsoft.WindowsAPICodePack.ShellExtensions.xml
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Debug\SKAnimatorTools.Updater.resources
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\ICSharpCode.SharpZipLib.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.AWT.WinForms.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.Tools.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.XML.Bind.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.XML.Crypto.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.XML.Parse.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.XML.Transform.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.XML.WebServices.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.Reflection.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.Misc.dll
