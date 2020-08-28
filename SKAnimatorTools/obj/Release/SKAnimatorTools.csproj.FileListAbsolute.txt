@@ -5,6 +5,7 @@ F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Release\ICSharpCod
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Release\IKVM.AWT.WinForms.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Release\IKVM.OpenJDK.Beans.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Release\IKVM.OpenJDK.Charsets.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Release\IKVM.OpenJDK.Cldrdata.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Release\IKVM.OpenJDK.Corba.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Release\IKVM.OpenJDK.Core.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Release\IKVM.OpenJDK.Jdbc.dll
@@ -57,3 +58,5 @@ F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Release\SKAnimator
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Release\SKAnimatorTools.csproj.CopyComplete
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Release\SKAnimatorTools.exe
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\obj\Release\SKAnimatorTools.pdb
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Release\IKVM.OpenJDK.Localedata.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Release\IKVM.OpenJDK.Nashorn.dll

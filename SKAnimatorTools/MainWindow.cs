@@ -1,6 +1,4 @@
-﻿using com.samskivert.util;
-using com.threerings;
-using com.threerings.opengl.model.config;
+﻿using com.threerings.opengl.model.config;
 using SKAnimatorTools.Configuration;
 using System;
 using System.Collections.Generic;
@@ -16,8 +14,6 @@ using System.Threading;
 using System.Windows.Forms;
 using ThreeRingsSharp;
 using ThreeRingsSharp.DataHandlers;
-using ThreeRingsSharp.DataHandlers.Properties;
-using ThreeRingsSharp.ILPatches;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
@@ -89,7 +85,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The version of this release of the program.
 		/// </summary>
-		public readonly int[] THIS_VERSION = { 2, 1, 2 };
+		public readonly int[] THIS_VERSION = { 2, 1, 3 };
 
 		/// <summary>
 		/// Attempts to access the github to acquire the latest version.

@@ -65,6 +65,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\IKVM.OpenJDK.Charsets.dll</HintPath>
     </Reference>
+    <Reference Include="IKVM.OpenJDK.Cldrdata, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\libs\IKVM.OpenJDK.Cldrdata.dll</HintPath>
+    </Reference>
     <Reference Include="IKVM.OpenJDK.Corba, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\IKVM.OpenJDK.Corba.dll</HintPath>
@@ -75,6 +79,9 @@
     <Reference Include="IKVM.OpenJDK.Jdbc">
       <HintPath>..\libs\IKVM.OpenJDK.Jdbc.dll</HintPath>
     </Reference>
+    <Reference Include="IKVM.OpenJDK.Localedata">
+      <HintPath>..\libs\IKVM.OpenJDK.Localedata.dll</HintPath>
+    </Reference>
     <Reference Include="IKVM.OpenJDK.Management, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\IKVM.OpenJDK.Management.dll</HintPath>
@@ -82,9 +89,16 @@
     <Reference Include="IKVM.OpenJDK.Media">
       <HintPath>..\libs\IKVM.OpenJDK.Media.dll</HintPath>
     </Reference>
+    <Reference Include="IKVM.OpenJDK.Misc, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\libs\IKVM.OpenJDK.Misc.dll</HintPath>
+    </Reference>
     <Reference Include="IKVM.OpenJDK.Naming, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\IKVM.OpenJDK.Naming.dll</HintPath>
+    </Reference>
+    <Reference Include="IKVM.OpenJDK.Nashorn">
+      <HintPath>..\libs\IKVM.OpenJDK.Nashorn.dll</HintPath>
     </Reference>
     <Reference Include="IKVM.OpenJDK.Remoting, Version=8.1.5717.0, Culture=neutral, PublicKeyToken=13235d27fcbfff58, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
