@@ -1,9 +1,9 @@
 ---
 name: Report a Bug
-about: Something not working right? Let me know!
+about: Something not working right? Let me know! This is better suited for other bug categories that do not fall under conversion or export.
 title: "[Bug] (Bug Title Here)"
 labels: bug
-assignees: XanTheDragon
+assignees: EtiTheSpirit
 
 ---
 
@@ -11,7 +11,7 @@ assignees: XanTheDragon
 ### Requirement: Is it already going to be fixed? (Erase after you read this) ###
 Check ...
 - This page! Search for your issue first and see if it hasn't been sent by someone else yet.
-- Next Update Plans at https://github.com/XanTheDragon/ThreeRingsSharp/projects/3?fullscreen=true
+- Next Update Plans at https://github.com/EtiTheSpirit/ThreeRingsSharp/projects/3?fullscreen=true
 
 Is your feature listed here? If it is, please do not submit this feature request.
 #############################################################################
