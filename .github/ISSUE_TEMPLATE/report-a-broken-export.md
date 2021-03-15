@@ -1,5 +1,5 @@
 ---
-name: Report a Conversion Problem
+name: Report an Export Error
 about: Use this if the export is completely broken, and causes your modeling software to error.
 title: "[Export] (Briefly explain what broke in a few words)"
 labels: [
