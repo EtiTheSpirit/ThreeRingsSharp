@@ -16,6 +16,9 @@ Check ...
 - This page! Search for your issue first and see if it hasn't been sent by someone else yet.
 - Next Update Plans at https://github.com/EtiTheSpirit/ThreeRingsSharp/projects/3?fullscreen=true
 
+Ensure ...
+- You are reporting an issue **that you noticed in your 3D modeling software.** If the error is in ThreeRingsSharp itself, use the "Report a Bug" option.
+
 Is your feature listed here? If it is, please do not submit this feature request.
 #############################################################################
 
