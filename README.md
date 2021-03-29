@@ -1,5 +1,5 @@
 # ThreeRingsSharp
-Abbreviated as TRS, this is port of Grey Havens's *Clyde*, *Narya*, *Nenya*, and *Vilya* libraries (as well as their dependencies) into C# via IKVM, because let's face it: Java is kinda stupid.
+Abbreviated as TRS or TR#, this is port of Grey Havens's *Clyde*, *Narya*, *Nenya*, and *Vilya* libraries (as well as their dependencies) into C# via IKVM, because let's face it: Java is kinda stupid.
 
 This program rips models from any Clyde-based game (mostly intended for Spiral Knights) and converts it to the glTF 2.0 format so you can use it for animations or whatever it may be.
 
