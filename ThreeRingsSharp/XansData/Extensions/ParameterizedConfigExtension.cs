@@ -1,7 +1,14 @@
 ﻿using com.threerings.config;
-using ThreeRingsSharp.DataHandlers.Properties;
+using System;
+using ThreeRingsSharp.DataHandlers.Parameters;
+using ThreeRingsSharp.Utility;
+using static ThreeRingsSharp.DataHandlers.Parameters.XDirect;
 
 namespace ThreeRingsSharp.XansData.Extensions {
+
+	/// <summary>
+	/// Appends an extension to <see cref="ParameterizedConfig"/> that allows applying the provided <see cref="ArgumentMap"/> to it.
+	/// </summary>
 	public static class ParameterizedConfigExtension {
 
 		/// <summary>
@@ -17,16 +24,24 @@ namespace ThreeRingsSharp.XansData.Extensions {
 					//object impl = ReflectionHelper.Get(config, "implementation"); // TODO: Is this OK to use?
 					if (parentChoiceName != null) {
 						if (config.getParameter(parentChoiceName) is Parameter.Choice choice) {
-							foreach (Parameter.Direct choiceDirect in choice.directs) {
-								if (choiceDirect.name == strKey) {
-									WrappedDirect.SetDataOn(config, choiceDirect.paths, args.get(key));
+							XChoice cho = new XChoice(config, choice);
+							foreach (XDirect dir in cho.Directs) {
+								if (dir.Name == strKey) {
+									dir.GetValuePointer().Value = args.getOrDefault(key, null);
 								}
 							}
 						}
 					} else {
 						Parameter param = config.getParameter(strKey);
 						if (param is Parameter.Direct direct) {
-							WrappedDirect.SetDataOn(config, direct.paths, args.get(key));
+							XDirect dir = new XDirect(config, direct);
+							object newValue = args.getOrDefault(key, null);
+							DirectPointer ptr = dir.GetValuePointer();
+							try {
+								ptr.Value = newValue;
+							} catch (Exception) {
+								XanLogger.WriteLine($"A Direct [{ptr.DereferencedPath}] attempted to have its value set to {newValue}, but it failed! This data will not apply properly.");
+							}
 						}
 					}
 				}

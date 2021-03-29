@@ -1,8 +1,12 @@
 ﻿using com.threerings.config;
-using ThreeRingsSharp.DataHandlers.Properties;
+using ThreeRingsSharp.DataHandlers.Parameters;
 using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.Utility {
+
+	/// <summary>
+	/// A utility to create <see cref="ConfigReference"/> instances.
+	/// </summary>
 	public static class ConfigReferenceConstructor {
 
 
@@ -15,8 +19,9 @@ namespace ThreeRingsSharp.Utility {
 			ArgumentMap args = new ArgumentMap();
 			foreach (Parameter param in cfg.parameters) {
 				if (param is Parameter.Direct direct) {
-					WrappedDirect wDir = new WrappedDirect(cfg, direct);
-					args.put(param.name, wDir.GetValue());
+					//WrappedDirect wDir = new WrappedDirect(cfg, direct);
+					XDirect dir = new XDirect(cfg, direct);
+					args.put(param.name, dir.GetValue());
 				}
 			}
 

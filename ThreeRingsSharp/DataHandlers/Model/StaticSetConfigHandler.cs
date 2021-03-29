@@ -4,7 +4,7 @@ using com.threerings.opengl.model.config;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ThreeRingsSharp.DataHandlers.Properties;
+using ThreeRingsSharp.DataHandlers.Parameters;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;

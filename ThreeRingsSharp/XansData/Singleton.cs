@@ -1,7 +1,7 @@
 ﻿namespace ThreeRingsSharp.XansData {
 
 	/// <summary>
-	/// When extended, a property named <c>Instance</c> is statically provided for the given type that references a singleton instance of said type.
+	/// When extended, a property named <c>Instance</c> is statically provided for the given type that references a singleton instance of said type. The only requirement is that the class has a publicly available parameterless constructor.
 	/// </summary>
 	/// <typeparam name="T">The type of the singleton instance.</typeparam>
 	public abstract class Singleton<T> where T : new() {

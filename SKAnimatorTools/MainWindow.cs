@@ -85,7 +85,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The version of this release of the program.
 		/// </summary>
-		public readonly int[] THIS_VERSION = { 2, 1, 3 };
+		public readonly int[] THIS_VERSION = { 2, 2, 0 };
 
 		/// <summary>
 		/// Attempts to access the github to acquire the latest version.
@@ -166,6 +166,19 @@ namespace SKAnimatorTools {
 			};
 
 			SKAnimatorToolsProxy.ConfigsErroredAction = (Exception error, string extraMessage) => {
+
+				if (error is TypeInitializationException typeInitErr) {
+					if (typeInitErr.Message.Contains("ClydeLog")) {
+						// Y U K K I.
+						// TODO: Better method of tracking this down?
+						MessageBox.Show("A critical error has occurred when attempting to initialize ClydeLog (OOO's main logging class for Clyde)! " +
+							"This issue is caused by the underlying system that TRS runs on top of and cannot be fixed by me.\n\n" +
+							"This can be resolved by installing the English Language Pack for Windows.", "ClydeLog Initialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+						Environment.Exit(2);
+					}
+				}
+
+
 				string ext = extraMessage != null ? ("\n\n" + extraMessage) : string.Empty;
 				MessageBox.Show(error.Message + ext + "\n\nThe program cannot continue when this error occurs and must exit, as this data is 100% required for it to function properly.", "Configuration Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				Environment.Exit(1);
@@ -361,7 +374,7 @@ namespace SKAnimatorTools {
 					Model3D.ExportIntoOne(saveTo, targetFmt, AllModels.ToArray());
 					XanLogger.WriteLine($"Done! Exported to [{saveTo.FullName}]");
 				} catch (Exception ex) {
-					XanLogger.WriteLine($"Failed to save to [{saveTo.FullName}] -- Reason: {ex.GetType().Name} thrown!\n{ex.Message}", color: Color.IndianRed);
+					XanLogger.WriteLine($"Failed to save to [{saveTo.FullName}] -- Reason: {ex.GetType().Name} thrown!\n{ex.Message}\n\n{ex.StackTrace}", color: Color.IndianRed);
 				}
 				XanLogger.ForceUpdateLog();
 				BtnSaveModel.Enabled = true;

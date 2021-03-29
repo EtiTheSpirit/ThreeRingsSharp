@@ -7,3 +7,4 @@ F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\AppUpdater.cspr
 F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\AppUpdater.csproj.CoreCompileInputs.cache
 F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\TRSUpdaterV2.exe
 F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\TRSUpdaterV2.pdb
+F:\Users\Xan\source\repos\SKAnimatorTools\AppUpdater\obj\Release\AppUpdater.csprojAssemblyReference.cache

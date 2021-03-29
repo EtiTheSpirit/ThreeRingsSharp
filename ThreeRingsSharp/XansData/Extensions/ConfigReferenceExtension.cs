@@ -81,15 +81,21 @@ namespace ThreeRingsSharp.XansData.Extensions {
 
 		/// <summary>
 		/// Using the information in this <see cref="ConfigReference"/>, the object this reference points to will be resolved and returned. This <see cref="ConfigReference"/> must point to an actual configuration. If it points to a file, an <see cref="InvalidOperationException"/> will be thrown.<para/>
-		/// Consider using <see cref="Resolve{T}(ConfigReference)"/> if the type of the result is known.<para/>
+		/// Consider using <see cref="Resolve{T}(ConfigReference, bool)"/> if the type of the result is known.<para/>
 		/// This will automatically populate the arguments in the referenced config if applicable, making usage of the returned object relatively straightforward.
 		/// </summary>
 		/// <param name="cfgRef">The ConfigReference to resolve the reference to.</param>
+		/// <param name="noClone">If <see langword="true"/>, the acquired <see cref="ConfigReference"/>'s value is not cloned.</param>
 		/// <returns>The ManagedConfig the given ConfigReference is pointing to.</returns>
 		/// <exception cref="InvalidOperationException">If IsFileReference() returns true on this ConfigReference.</exception>
-		public static ManagedConfig Resolve(this ConfigReference cfgRef) {
+		public static ManagedConfig Resolve(this ConfigReference cfgRef, bool noClone = false) {
 			if (cfgRef.IsFileReference()) throw new InvalidOperationException("Cannot resolve the path to a non-config reference (this ConfigReference points to a file!)");
-			ManagedConfig mgCfg = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(cfgRef.getName())?.Clone();
+			ManagedConfig mgCfg;
+			if (noClone) {
+				mgCfg = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(cfgRef.getName());
+			} else {
+				mgCfg = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(cfgRef.getName())?.Clone();
+			}
 
 			// Populate the values of the referenced object if possible.
 			if (mgCfg is ParameterizedConfig paramCfg) {
@@ -108,12 +114,18 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// This will automatically populate the arguments in the referenced config if applicable, making usage of the returned object relatively straightforward.
 		/// </summary>
 		/// <param name="cfgRef">The ConfigReference to resolve the reference to.</param>
+		/// <param name="noClone">If <see langword="true"/>, the acquired <see cref="ConfigReference"/>'s value is not cloned.</param>
 		/// <typeparam name="T">The destination type for the new ManagedConfig</typeparam>
 		/// <returns>The ManagedConfig the given ConfigReference is pointing to.</returns>
 		/// <exception cref="InvalidOperationException">If IsFileReference() returns true on this ConfigReference.</exception>
-		public static T Resolve<T>(this ConfigReference cfgRef) where T : ManagedConfig {
+		public static T Resolve<T>(this ConfigReference cfgRef, bool noClone = false) where T : ManagedConfig {
 			if (cfgRef.IsFileReference()) throw new InvalidOperationException("Cannot resolve the path to a non-config reference (this ConfigReference points to a file!)");
-			T mgCfg = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(cfgRef.getName())?.CloneAs<T>();
+			T mgCfg;
+			if (noClone) {
+				mgCfg = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(cfgRef.getName()) as T;
+			} else {
+				mgCfg = ConfigReferenceBootstrapper.ConfigReferences.TryGetReferenceFromName(cfgRef.getName())?.CloneAs<T>();
+			}
 
 			// Populate the values of the referenced object if possible.
 			if (mgCfg is ParameterizedConfig paramCfg) {
@@ -172,9 +184,8 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		#region Ambiguous Resolution
 
 		/// <summary>
-		/// Attempts to selectively call <see cref="Resolve(ConfigReference)"/> or <see cref="ResolveFile(ConfigReference)"/>.
+		/// Attempts to selectively call <see cref="Resolve(ConfigReference, bool)"/> or <see cref="ResolveFile(ConfigReference)"/> depending on the nature of the target contained within the <see cref="ConfigReference"/>.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
 		/// <param name="cfgRef"></param>
 		/// <returns></returns>
 		public static object ResolveAuto(this ConfigReference cfgRef) {
@@ -186,7 +197,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
-		/// Attempts to selectively call <see cref="Resolve{T}(ConfigReference)"/> or <see cref="ResolveFile{T}(ConfigReference)"/>.<para/>
+		/// Attempts to selectively call <see cref="Resolve{T}(ConfigReference, bool)"/> or <see cref="ResolveFile{T}(ConfigReference)"/>.<para/>
 		/// Unlike <see cref="ResolveAuto(ConfigReference)"/>, this may throw a <see cref="InvalidCastException"/> in the event that the config is not a file reference and <typeparamref name="T"/> is not a <see cref="ManagedConfig"/>.
 		/// </summary>
 		/// <typeparam name="T"></typeparam>

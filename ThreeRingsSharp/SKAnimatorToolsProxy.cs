@@ -8,8 +8,10 @@ using ThreeRingsSharp.XansData.XML.ConfigReferences;
 namespace ThreeRingsSharp {
 
 	/// <summary>
-	/// Offers various bits and pieces that are used by the GUI portion of the program that are separate from this library.<para/>
-	/// Its most important capability is to transfer data from the background worker thread to the main thread.
+	/// Offers various bits and pieces that are used by the GUI portion of SK Animator Tools that are separate from this library.
+	/// Its most important capability is to transfer data from the background worker thread to the main thread.<para/>
+	/// <para/>
+	/// If you are using TRS exclusively for its library implementation, this class is useless and you can safely ignore it. That said - if you are making your own UI, this should help pretty nicely with getting a sense of progress when loading model data!
 	/// </summary>
 	public static class SKAnimatorToolsProxy {
 
@@ -32,7 +34,7 @@ namespace ThreeRingsSharp {
 
 		/// <summary>
 		/// An <see cref="Action"/> to run when something goes wrong while configs are loading.<para/>
-		/// Implemented by <see cref="ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="ConfigsErroredThroughSync(Exception)"/>
+		/// Implemented by <see cref="ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="ConfigsErroredThroughSync(Exception, string)"/>
 		/// </summary>
 		public static Action<Exception, string> ConfigsErroredAction { get; set; } = null;
 
@@ -128,7 +130,7 @@ namespace ThreeRingsSharp {
 		public static void IncrementProgress(int num = 1) => ReportProgress(CurrentProgress + num);
 
 		/// <summary>
-		/// Increments the maximum value of the progress bar.
+		/// Increments the maximum value of the progress bar to denote more tasks have come in.
 		/// </summary>
 		/// <param name="num"></param>
 		public static void IncrementEnd(int num = 1) {

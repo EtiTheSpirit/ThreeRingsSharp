@@ -4,7 +4,7 @@ using com.threerings.opengl.model.config;
 using System.Collections.Generic;
 using System.IO;
 using ThreeRingsSharp.DataHandlers.AnimationHandlers;
-using ThreeRingsSharp.DataHandlers.Properties;
+using ThreeRingsSharp.DataHandlers.Parameters;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
@@ -144,7 +144,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 					object animationObj = animationRef.ResolveFile();
 					if (animationObj is AnimationConfig animation) {
 						SKAnimatorToolsProxy.SetProgressState(ProgressBarState.ExtraWork);
-						AnimationConfigHandler.HandleAnimationImplementation(animationRef, animationMapping.name, animation, animation.implementation, allModelsAndNodes);
+						AnimationConfigHandler.HandleAnimationImplementation(animationRef, animationMapping.name, animation, animation.implementation, allModelsAndNodes, model);
 						SKAnimatorToolsProxy.SetProgressState(ProgressBarState.OK);
 					}
 				}

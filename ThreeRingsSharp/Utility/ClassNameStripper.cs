@@ -20,7 +20,7 @@ namespace ThreeRingsSharp.Utility {
 		public static string[] GetSplitClassName(Class cls) => GetSplitClassName(cls.getTypeName());
 
 		/// <summary>
-		/// Returns a <see cref="string"/> that contains everything after the last index of <c>.</c>. This does not filter out subclasses (e.g. <c>MyClass0$MySubclass0</c>) and will return the string containing the $ and everything.<para/>
+		/// Returns a <see cref="string"/> that contains everything after the last index of <c>.</c> (this cuts off the package, namely). This does not filter out subclasses (e.g. <c>MyClass0$MySubclass0</c>) and will return the string containing the $ and everything.<para/>
 		/// Returns <see langword="null"/> if the string does not have a locatable instance of '<c>.</c>'
 		/// </summary>
 		/// <param name="cls">The <see cref="Class"/> to get the name of.</param>

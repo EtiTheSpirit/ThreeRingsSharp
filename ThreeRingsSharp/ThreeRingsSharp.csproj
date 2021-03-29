@@ -160,7 +160,10 @@
     <Compile Include="DataHandlers\AnimationHandlers\IAnimationHandler.cs" />
     <Compile Include="DataHandlers\ClydeFileHandler.cs" />
     <Compile Include="DataHandlers\Model\ConditionalConfigHandler.cs" />
-    <Compile Include="DataHandlers\Properties\ModelPropertyUtility.cs" />
+    <Compile Include="DataHandlers\Parameters\ModelPropertyUtility.cs" />
+    <Compile Include="DataHandlers\Parameters\XChoice.cs" />
+    <Compile Include="DataHandlers\Parameters\XDirect.cs" />
+    <Compile Include="DataHandlers\Parameters\XParameter.cs" />
     <Compile Include="DataHandlers\ModelConfigBrancher.cs" />
     <Compile Include="DataHandlers\Model\ArticulatedConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\CompoundConfigHandler.cs" />
@@ -173,10 +176,6 @@
     <Compile Include="DataHandlers\Model\StaticConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\StaticSetConfigHandler.cs" />
     <Compile Include="DataHandlers\Model\ViewerAffecterConfigHandler.cs" />
-    <Compile Include="DataHandlers\Properties\WrappedChoice.cs" />
-    <Compile Include="DataHandlers\Properties\WrappedChoiceOption.cs" />
-    <Compile Include="DataHandlers\Properties\WrappedDirect.cs" />
-    <Compile Include="DataHandlers\Properties\WrappedParameter.cs" />
     <Compile Include="DataHandlers\Scene\Data\ShallowTileConfig.cs" />
     <Compile Include="DataHandlers\Scene\IEntryHandler.cs" />
     <Compile Include="DataHandlers\Scene\PlaceableHandler.cs" />
@@ -193,7 +192,8 @@
     <Compile Include="SKAnimatorToolsProxy.cs" />
     <Compile Include="Utility\ClassNameStripper.cs" />
     <Compile Include="Utility\ConfigReferenceConstructor.cs" />
-    <Compile Include="Utility\DummyScope.cs" />
+    <Compile Include="Utility\JavaToCSPrimitive.cs" />
+    <Compile Include="Utility\SimpleReferenceScope.cs" />
     <Compile Include="Utility\Interface\AsyncMessageBox.cs" />
     <Compile Include="Utility\Interface\ConsoleColorVT.cs" />
     <Compile Include="Utility\Interface\DataTreeObject.cs" />
@@ -202,7 +202,6 @@
     <Compile Include="Utility\ReferenceRoot.cs" />
     <Compile Include="Utility\ReflectionHelper.cs" />
     <Compile Include="Utility\ResourceDirectoryGrabber.cs" />
-    <Compile Include="Utility\TextureGrabber.cs" />
     <Compile Include="Utility\VersionInfoScraper.cs" />
     <Compile Include="Utility\XanLogger.cs" />
     <Compile Include="XansData\Animation.cs" />
@@ -329,6 +328,7 @@
     <Content Include="ConfigRefs\variant.xml" />
     <Content Include="ConfigRefs\variant_table.xml" />
     <Content Include="ConfigRefs\wall.xml" />
+    <Content Include="Contributing - Where to Start.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

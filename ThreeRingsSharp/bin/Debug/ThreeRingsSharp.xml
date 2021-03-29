@@ -4,15 +4,16 @@
         <name>ThreeRingsSharp</name>
     </assembly>
     <members>
-        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.AnimationConfigHandler.HandleAnimationImplementation(com.threerings.config.ConfigReference,System.String,com.threerings.opengl.model.config.AnimationConfig,com.threerings.opengl.model.config.AnimationConfig.Implementation,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D})">
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.AnimationConfigHandler.HandleAnimationImplementation(com.threerings.config.ConfigReference,System.String,com.threerings.opengl.model.config.AnimationConfig,com.threerings.opengl.model.config.AnimationConfig.Implementation,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.opengl.model.config.ArticulatedConfig)">
             <summary>
             Handles the given <see cref="T:com.threerings.opengl.model.config.AnimationConfig"/> and applies it to the already loaded <see cref="T:ThreeRingsSharp.XansData.Model3D"/>s.
             </summary>
-            <param name="srcConfig"></param>
-            <param name="name"></param>
-            <param name="original"></param>
-            <param name="animationImplementation"></param>
-            <param name="attachToModels"></param>
+            <param name="srcConfig">The ConfigReference that points to this animation.</param>
+            <param name="name">The name of the animation.</param>
+            <param name="original">For sequential animations, this is the animation that contains it.</param>
+            <param name="animationImplementation">The actual implementation of the animation.</param>
+            <param name="attachToModels">All models that will use this animation.</param>
+            <param name="source">The ArticulatedConfig that had this animation, which is necessary for scopes.</param>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.AnimationConfigHandler.Dereference(com.threerings.opengl.model.config.AnimationConfig.Derived)">
             <summary>
@@ -250,20 +251,12 @@
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.SetupCosmeticInformation(com.threerings.opengl.model.config.ModelConfig,ThreeRingsSharp.Utility.Interface.DataTreeObject,System.Boolean)">
             <summary>
-            Sets up the cosmetic data for this model, or, what's displayed in the GUI for the program.<para/>
+            Sets up the cosmetic data for this model, or, what's displayed in the GUI for the program. This populates the lower data tree, visualizing configuration information.<para/>
             This specific method populates data that is common across all imported models.
             </summary>
             <param name="model">The model containing other data, such as the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/>.</param>
-            <param name="dataTreeParent">This is the instance in the data tree that represents this object in the hierarchy. If null, this method call is skipped.</param>
+            <param name="dataTreeParent">This is the instance in the data tree that represents this object in the hierarchy. If <see langword="null"/>, this method call is skipped.</param>
             <param name="dataTreeNameIsImplementation">If <see langword="true"/>, the name of <paramref name="dataTreeParent"/> is the implementation of the model, so the implementation property will not be added.</param>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.GetTexturesFromModel(System.IO.FileInfo,com.threerings.opengl.model.config.ModelConfig.Implementation)">
-            <summary>
-            Given an <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/>, this will extract all textures referenced by it. This will return <see langword="null"/> if the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Implementation"/> is not <see cref="T:com.threerings.opengl.model.config.ModelConfig.Imported"/>.
-            </summary>
-            <param name="sourceFile">The file containing the <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> that has defined <paramref name="implementation"/>.</param>
-            <param name="implementation">The specific type of model that this is.</param>
-            <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.Model.ModelConfigHandler.DerivedHandler">
             <summary>
@@ -308,19 +301,12 @@
             Handles instance of <see cref="T:com.threerings.opengl.scene.config.ViewerAffecterConfig"/> and their associated <see cref="T:com.threerings.opengl.scene.config.ViewerEffectConfig"/>s.
             </summary>
         </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility">
+        <member name="T:ThreeRingsSharp.DataHandlers.Parameters.ModelPropertyUtility">
             <summary>
             Specialized methods to pull specific data out of models via their directs.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.FindTexturesFromDirects(com.threerings.opengl.model.config.ModelConfig)">
-            <summary>
-            Assuming this is a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> storing textures, this will try to find the textures from its parameters.
-            </summary>
-            <param name="cfg"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.FindTexturesAndActiveFromDirects(com.threerings.opengl.model.config.ModelConfig,System.String)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Parameters.ModelPropertyUtility.FindTexturesAndActiveFromDirects(com.threerings.opengl.model.config.ModelConfig,System.String)">
             <summary>
             Assuming this is a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> storing textures, this will try to find the textures from its parameters. Additionally, it will find the default texture of the model.
             </summary>
@@ -328,7 +314,7 @@
             <param name="defaultTextureFromVisibleMesh"></param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.ModelPropertyUtility.GetDefaultTextures(com.threerings.opengl.model.config.ModelConfig.Imported)">
+        <member name="M:ThreeRingsSharp.DataHandlers.Parameters.ModelPropertyUtility.GetDefaultTextures(com.threerings.opengl.model.config.ModelConfig.Imported)">
             <summary>
             Returns the currently active textures for each of the <see cref="T:com.threerings.opengl.model.config.ModelConfig.Imported.MaterialMapping"/>s within this <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>.<para/>
             This will only pull the textures actively in use by the model. Any other variants will not be acquired.
@@ -336,252 +322,142 @@
             <param name="model"></param>
             <returns></returns>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Choice">
+        <member name="T:ThreeRingsSharp.DataHandlers.Parameters.XChoice">
             <summary>
-            The string choice that is currently selected. To get the <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/> that is associated with this choice, consider calling <see cref="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.CurrentSelectedChoice"/>.<para/>
-            This property's <see langword="setter"/> will throw an <see cref="T:System.ArgumentException"/> if the given <see cref="T:System.String"/> is not included in <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.PossibleChoices"/>. If the given <see cref="T:System.String"/> is <see langword="null"/>, it will be replaced with <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.DefaultChoice"/>.<para/>
-            <para/>
-            WARNING: Object not functional entirely.
+            A wrapped variant of <see cref="T:com.threerings.config.Parameter.Choice"/>
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.DefaultChoice">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Options">
             <summary>
-            The stock choice that the underlying <see cref="T:com.threerings.config.Parameter.Choice"/> came with as its default option.
+            A lookup for every option by its name.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.PossibleChoices">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Directs">
             <summary>
-            A reference to <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.BaseChoice"/><c>.getChoiceOptions</c> (see <see cref="M:com.threerings.config.Parameter.Choice.getChoiceOptions"/>) which returns a string array of all legal choices.
+            A lookup of every <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/> that this option will change depending on the selected <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Choice"/>
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Config">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Choice">
             <summary>
-            The reference to the Clyde object associated with this choice.
+            The currently selected option applying to whatever this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XChoice"/> is a part of.<para/>
+            Setting this value will update the model. Throws <see cref="T:System.ArgumentOutOfRangeException"/> if the string is set to something that is not a key in <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Options"/>.
             </summary>
+            <exception cref="T:System.ArgumentOutOfRangeException">If the new string is not a valid entry in <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Options"/></exception>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.BaseChoice">
-            <summary>
-            The underlying <see cref="T:com.threerings.config.Parameter.Choice"/> that this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/> was created from.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Options">
-            <summary>
-            The actual options in this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/>.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.#ctor(com.threerings.config.ParameterizedConfig,com.threerings.config.Parameter.Choice,com.threerings.config.ArgumentMap)">
-            <summary>
-            Construct a new <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/> from the underlying Clyde object and the given <see cref="T:com.threerings.config.Parameter.Choice"/>.
-            </summary>
-            <param name="cfg"></param>
-            <param name="choice"></param>
-            <param name="args"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.CurrentSelectedChoice">
-            <summary>
-            Attempts to return the associated <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption"/> with this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/>'s current <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Choice"/> property.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.GetDefaultChoice">
-            <summary>
-            Returns the <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption"/> associated with this <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.DefaultChoice"/>.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.GetOptionFromChoiceName(System.String)">
-            <summary>
-            Given a <see cref="T:System.String"/> <paramref name="choice"/>, this will attempt to return its associated <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption"/>, or null if it could not be found.
-            </summary>
-            <param name="choice"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.CreateVariantsFromOptions">
-            <summary>
-            Clones this <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Config"/> for each entry in <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Options"/>, and applies that option's data to the cloned <see cref="T:com.threerings.config.ParameterizedConfig"/>.<para/>
-            This returns an array of these duplicated <see cref="T:com.threerings.config.ParameterizedConfig"/>s. The indices are parallel to <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice.Options"/> (so indexing [1] on the return value of this method will return the data applied by Options[1])
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption">
-            <summary>
-            An option within a <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/>.<para/>
-            <para/>
-            WARNING: Object not functional entirely.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption.ParentChoice">
-            <summary>
-            The <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/> that contains this as one of its options.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption.Name">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption.Name">
             <summary>
             The name of this option.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption.BaseOption">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption.Parent">
             <summary>
-            The underlying <see cref="T:com.threerings.config.Parameter.Choice.Option"/> that this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption"/> was created from.
+            The parent <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XChoice"/> that contains this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption"/>.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption.Directs">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption.Original">
             <summary>
-            A reference to the <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/>s defined by the parent <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/>. Unlike typical behavior, this actually clones the directs for this option specifically and then returns the unique directs that contain this option's data.<para/>
-            (Under stock OOO behavior, a choice contains the data to apply to the direct, and then when the choice is selected, it applies its data to the parent directs contained in the choice object. In THIS object, each option contains its own personal directs rather than relying on editing the parent choice object.)
+            The original <see cref="T:com.threerings.config.Parameter.Choice.Option"/> that this was created around.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption.Arguments">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Paths">
             <summary>
-            The arguments associated with this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/> that dictate what it does to the object it is tied to.
+            Every path that is a part of this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/>, which is a complex identifier for the data it changes.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption.#ctor(ThreeRingsSharp.DataHandlers.Properties.WrappedChoice,com.threerings.config.Parameter.Choice.Option,com.threerings.config.ArgumentMap)">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Values">
             <summary>
-            Construct a new <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoiceOption"/> from the given parent <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/> and the given option within said choice.
-            </summary>
-            <param name="choice"></param>
-            <param name="option"></param>
-            <param name="args"></param>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect">
-            <summary>
-            Represents a <see cref="T:com.threerings.config.Parameter.Direct"/> in a different manner that allows directly
-            accessing the object or data it points to.<para/>
-            <para/>
-            WARNING: Object not functional entirely.
+            Corresponding directly to <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Paths"/>, this is the value of what each path pointed to.<para/>
+            Please note that choosing between one of these for the "right value" is a non-problem. Think of a direct's paths like a list of instructions.
+            If I tell you to write your name on 5 different papers, your name isn't going to change between those pages, so if I need to find your name, I can pick any.
+            Likewise, you can pick anything out of this and it'll be the "right value" you are looking for.<para/>
+            If you are feeling particularly indecisive, you can use <see cref="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.GetValue"/>.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.Config">
+        <member name="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.GetValue">
             <summary>
-            The reference to the Clyde object associated with this direct.
+            Returns the first entry in <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Values"/> (all values are identical), or <see langword="null"/> if there are no values due to <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Paths"/> being empty.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.GetValuePointer">
+            <summary>
+            Returns a <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect.DirectPointer"/> to the value this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/> represents.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.IsIndexedPathElement(System.String)">
+            <summary>
+            Returns whether or not the given path element is indexed, or, ends in square brackets to index an array element or parameter.
+            </summary>
+            <param name="pathElement"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.GetIndexedElementAndParameter(System.String)">
+            <summary>
+            Given a path element with an index on the end (such as <c>material_mappings[0]</c> or <c>material["Texture"]</c>, this returns a pair of strings.<para/>
+            Take the example <c>material["Texture"]</c>. This returns:
+            <list type="number">
+            <item>material</item>
+            <item>"Texture" (quotes included in the returned string)</item>
+            </list>
+            </summary>
+            <param name="pathElement"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect.DirectPointer">
+            <summary>
+            Points to a value pointed at by a <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/>. This is, hence its name, best compared to a pointer.<para/>
+            When a Direct in OOO points to something's value, that Direct becomes a means of reading and writing to that value. As such, this class aims
+            to mirror that behavior in the most minimal way possible. This class does not care about the path or parameters that stand between the model and its affected property.
+            This class exclusively provides access to the value.<para/>
+            Note that this behaves as more than a simple container, as it actually <em>modifies</em> the value on the model if you change it through this class.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.Name">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.DirectPointer.Value">
             <summary>
-            A reference to <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.BaseDirect"/>'s <c>name</c> property (see <see cref="F:com.threerings.config.Parameter.name"/>).
+            The value pointed at by this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect.DirectPointer"/>.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.Paths">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.DirectPointer.DereferencedPath">
             <summary>
-            The raw text-based paths for this direct.
+            The path that this direct occupies, with its parameter references stripped away.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.ConfigReferenceContainerName">
+        <member name="T:ThreeRingsSharp.DataHandlers.Parameters.XParameter">
             <summary>
-            If this direct references a ConfigReference, and if that ConfigReference points to one of the packed configs, this is the name of the packed config (e.g. <c>"material"</c>)
+            An implementation of model parameters in C#
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.ParentChoice">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XParameter.Name">
             <summary>
-            If this is non-null, this is a reference to the parent <see cref="T:com.threerings.config.Parameter.Choice"/> that contains this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/>.
+            The name of this parameter.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.BaseDirect">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XParameter.Original">
             <summary>
-            A reference to the <see cref="T:com.threerings.config.Parameter.Direct"/> that this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/> was created from.
+            The original <see cref="T:com.threerings.config.Parameter"/> used to construct this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XParameter"/>.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.EndReferences">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XParameter.Parent">
             <summary>
-            The object at the end of each path in this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/>.<para/>
-            Some of these objects may be other <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/>s or <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/>s. See <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference"/> for more information on how to handle this.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.GetValue">
-            <summary>
-            Since Directs always point to a specific value, it is possible to get this value.<para/>
-            Some directs may branch into more than one sub-direct, but since it is not possible to select which branch is traversed, all values are the same.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.SetValue(System.Object)">
-            <summary>
-            Sets the value of all items this Direct affects (in <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.Config"/>) to the given value.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.ApplyArgs">
-            <summary>
-            Assuming this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/> has arguments, this will apply the arguments to <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.Config"/>.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.TraverseDirectPath(System.String)">
-            <summary>
-            Given a full path from a <see cref="T:com.threerings.config.Parameter.Direct"/>, this will traverse it and acquire the data at the end.<para/>
-            This will stop if it runs into another direct and instantiate a new <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/>. This will occur if there is a reference chain, for instance, in many textures it references material["Texture"] (a direct) followed by a second direct ["File"]. Since each may have multiple paths, it's best to reference a new <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/>.
-            </summary>
-            <param name="path"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.SetDataOn(com.threerings.config.ParameterizedConfig,System.String[],System.Object,System.Boolean)">
-            <summary>
-            Given a <see cref="T:com.threerings.config.ParameterizedConfig"/> and a set of paths from a direct as well as a target value, this will modify the <see cref="T:com.threerings.config.ParameterizedConfig"/> so that its fields reflect the given value.<para/>
-            Returns an array where the indices of given <see cref="T:com.threerings.config.ConfigReference"/>s correspond to the indices of the <paramref name="paths"/>, or <see langword="null"/> if there were no returned <see cref="T:com.threerings.config.ConfigReference"/>s due to a direct chain.
-            </summary>
-            <param name="config"></param>
-            <param name="paths"></param>
-            <param name="argValue"></param>
-            <param name="setToNull">If true, and if argValue is null, the property will actually be set to null (if this is false, it will skip applying it)</param>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.SetDataOn(com.threerings.config.ParameterizedConfig,System.String,System.Object,System.Boolean)">
-            <summary>
-            Given a <see cref="T:com.threerings.config.ParameterizedConfig"/> and a path from a direct as well as a target value, this will modify the <see cref="T:com.threerings.config.ParameterizedConfig"/> so that its fields reflect the given value.<para/>
-            If this data cannot be set due to it being on a direct chain (the end value is a <see cref="T:com.threerings.config.ConfigReference"/>), that <see cref="T:com.threerings.config.ConfigReference"/> will be returned 
-            </summary>
-            <param name="config"></param>
-            <param name="path"></param>
-            <param name="argValue"></param>
-            <param name="setToNull">If true, and if argValue is null, the property will actually be set to null (if this is false, it will skip applying it)</param>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference">
-            <summary>
-            An object at the end of a direct path. This is used because in some cases, the end of a direct chain might be early because it points to another direct (which needs to be resolved separately)<para/>
-            Rather than storing <see cref="T:System.Object"/>s in <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.EndReferences"/>, this is used so that developers can easily discern between cases like mentioned above and know whether to continue traversing or that they truly have their end object.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference.Reference">
-            <summary>
-            Discerns what type of object <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference.Object"/> is, which will either be a generic object (your end goal), a <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/>, or a <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/>.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference.Object">
-            <summary>
-            The object that the <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/> containing this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference"/> is pointing to. This may need to be cast to a <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/> or <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/> depending on <see cref="P:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference.Reference"/>'s value.
-            </summary>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference.ReferenceType">
-            <summary>
-            Used to discern what a <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference"/> is referencing.
-            </summary>
-        </member>
-        <member name="F:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference.ReferenceType.Object">
-            <summary>
-            The <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference"/> associated with this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference.ReferenceType"/> is a generic object.
-            </summary>
-        </member>
-        <member name="F:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference.ReferenceType.Direct">
-            <summary>
-            The <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference"/> associated with this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference.ReferenceType"/> is a <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect"/>.
-            </summary>
-        </member>
-        <member name="F:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference.ReferenceType.Choice">
-            <summary>
-            The <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference"/> associated with this <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedDirect.DirectEndReference.ReferenceType"/> is a <see cref="T:ThreeRingsSharp.DataHandlers.Properties.WrappedChoice"/>.
+            The <see cref="T:com.threerings.config.ParameterizedConfig"/> containing <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XParameter.Original"/> as one of its parameters.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.ModelConfigBrancher">
             <summary>
-            A class that takes in a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>, determines its subtype (e.g. <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/>, <see cref="T:com.threerings.opengl.model.config.StaticConfig"/>, etc.), and handles the data appropriately.
+            A class that takes in a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/>, determines its subtype (e.g. <see cref="T:com.threerings.opengl.model.config.ArticulatedConfig"/>, <see cref="T:com.threerings.opengl.model.config.StaticConfig"/>, etc.), and translates the data into the TRS formats used as an intermediate step between OOO =&gt; glTF.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.ModelConfigBrancher.HandleDataFrom(System.IO.FileInfo,com.threerings.opengl.model.config.ModelConfig,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},ThreeRingsSharp.Utility.Interface.DataTreeObject,System.Boolean,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>
-            Sends an arbitrary <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> into the data brancher and processes it.
+            Sends an arbitrary <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> into the data brancher and processes it. The data brancher is the component that attempts to locate the associated model type, and directs the data to the appropriate class. For all classes involved with converting model types, see the <see cref="N:ThreeRingsSharp.DataHandlers.Model"/> <see langword="namespace"/>.
             </summary>
-            <param name="sourceFile">The file that the given <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> came from.</param>
-            <param name="model">The <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> itself.</param>
-            <param name="models">A list containing every processed model from the entire hierarchy.</param>
-            <param name="currentDataTreeObject">The current element in the data tree hierarchy to use.</param>
-            <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name. Additionally, it will not have its implementation property.</param>
-            <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="T:com.threerings.math.Transform3D"/>.</param>
+            <param name="sourceFile">The file that the given <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> came from. This is a .dat or .xml file.</param>
+            <param name="model">The <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> itself, which should be acquired via <see cref="T:com.threerings.export.BinaryImporter"/> or <see cref="T:com.threerings.export.XMLImporter"/>.</param>
+            <param name="models">A list containing every processed model from the entire hierarchy. This is only useful on recursive calls to this method, and externally calling this method to begin conversion fresh out of the box should input an empty list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/></param>
+            <param name="currentDataTreeObject">The current element in the data tree hierarchy to use. Similarly to <paramref name="models"/>, this is used mostly in recursion. This is only useful for the dedicated GUI that comes with TRS, and if you are implementing this library yourself and are either running it headless or running it without a data tree to visualize the hierarchy of the model, this can safely be <see langword="null"/>.</param>
+            <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name in the GUI. On the contrary, if this is <see langword="true"/>, the data tree for this model will not display the implementation property as it would be redundant.</param>
+            <param name="transform">Intended to be used by reference loaders (recursive calls), this specifies an offset for referenced models on this method call. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="T:com.threerings.math.Transform3D"/> located at the origin.</param>
             <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="T:com.threerings.opengl.model.config.StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
         </member>
         <member name="T:ThreeRingsSharp.DataHandlers.IDataTreeInterface`1">
@@ -719,8 +595,10 @@
         </member>
         <member name="T:ThreeRingsSharp.SKAnimatorToolsProxy">
             <summary>
-            Offers various bits and pieces that are used by the GUI portion of the program that are separate from this library.<para/>
-            Its most important capability is to transfer data from the background worker thread to the main thread.
+            Offers various bits and pieces that are used by the GUI portion of SK Animator Tools that are separate from this library.
+            Its most important capability is to transfer data from the background worker thread to the main thread.<para/>
+            <para/>
+            If you are using TRS exclusively for its library implementation, this class is useless and you can safely ignore it. That said - if you are making your own UI, this should help pretty nicely with getting a sense of progress when loading model data!
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.UISyncContext">
@@ -743,7 +621,7 @@
         <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsErroredAction">
             <summary>
             An <see cref="T:System.Action"/> to run when something goes wrong while configs are loading.<para/>
-            Implemented by <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="!:ConfigsErroredThroughSync(Exception)"/>
+            Implemented by <see cref="T:ThreeRingsSharp.XansData.XML.ConfigReferences.ConfigReferenceBootstrapper"/>. It is advised that this is called through <see cref="M:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsErroredThroughSync(System.Exception,System.String)"/>
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.SKAnimatorToolsProxy.ConfigsLoadingAction">
@@ -816,7 +694,7 @@
         </member>
         <member name="M:ThreeRingsSharp.SKAnimatorToolsProxy.IncrementEnd(System.Int32)">
             <summary>
-            Increments the maximum value of the progress bar.
+            Increments the maximum value of the progress bar to denote more tasks have come in.
             </summary>
             <param name="num"></param>
         </member>
@@ -870,7 +748,7 @@
         </member>
         <member name="M:ThreeRingsSharp.Utility.JavaClassNameStripper.GetWholeClassName(java.lang.Class)">
             <summary>
-            Returns a <see cref="T:System.String"/> that contains everything after the last index of <c>.</c>. This does not filter out subclasses (e.g. <c>MyClass0$MySubclass0</c>) and will return the string containing the $ and everything.<para/>
+            Returns a <see cref="T:System.String"/> that contains everything after the last index of <c>.</c> (this cuts off the package, namely). This does not filter out subclasses (e.g. <c>MyClass0$MySubclass0</c>) and will return the string containing the $ and everything.<para/>
             Returns <see langword="null"/> if the string does not have a locatable instance of '<c>.</c>'
             </summary>
             <param name="cls">The <see cref="T:java.lang.Class"/> to get the name of.</param>
@@ -916,6 +794,11 @@
             <param name="className"></param>
             <returns></returns>
         </member>
+        <member name="T:ThreeRingsSharp.Utility.ConfigReferenceConstructor">
+            <summary>
+            A utility to create <see cref="T:com.threerings.config.ConfigReference"/> instances.
+            </summary>
+        </member>
         <member name="M:ThreeRingsSharp.Utility.ConfigReferenceConstructor.MakeConfigReferenceTo(com.threerings.config.ParameterizedConfig)">
             <summary>
             Creates a new <see cref="T:com.threerings.config.ConfigReference"/> pointing to the given <see cref="T:com.threerings.config.ParameterizedConfig"/> and automatically populates the <see cref="T:com.threerings.config.ConfigReference"/>'s arguments with the data defined by the <see cref="T:com.threerings.config.ParameterizedConfig"/>.
@@ -933,13 +816,27 @@
             <param name="args"></param>
             <returns></returns>
         </member>
-        <member name="T:ThreeRingsSharp.Utility.DummyScope">
+        <member name="M:ThreeRingsSharp.Utility.JavaToCSPrimitive.AsCSPrimitive(System.Object)">
+            <summary>
+            Given a java primitive type <strong>class</strong> (java.lang.Boolean, for instance) this will turn it into its C# primitive type.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utility.JavaToCSPrimitive.AsJavaPrimitive(System.Object)">
+            <summary>
+            Given a C# primitive type, this will turn it into its Java primitive type.
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.Utility.SimpleReferenceScope">
             <summary>
             Provides an means of lazily implementing <see cref="T:com.threerings.expr.Scope"/>.<para/>
             A <see cref="T:com.threerings.expr.Scope"/> is basically a glorified reflection accessor.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.Utility.DummyScope.ReferenceObject">
+        <member name="P:ThreeRingsSharp.Utility.SimpleReferenceScope.ReferenceObject">
             <summary>
             The object that this <see cref="T:com.threerings.expr.Scope"/> is pointing to.
             </summary>
@@ -1815,19 +1712,6 @@
             <returns></returns>
             <exception cref="T:System.ArgumentOutOfRangeException">Thrown if depth is 0.</exception>
         </member>
-        <member name="T:ThreeRingsSharp.Utility.TextureGrabber">
-            <summary>
-            <see cref="!:ModelPropertyUtility"/>
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.Utility.TextureGrabber.GetFullTexturePath(System.IO.FileInfo,System.String)">
-            <summary>
-            A utility method that, when given the directory of a model file and a texture name, will attempt to locate a given texture.
-            </summary>
-            <param name="sourceFile"></param>
-            <param name="textureName"></param>
-            <returns></returns>
-        </member>
         <member name="T:ThreeRingsSharp.Utility.VersionInfoScraper">
             <summary>
             A hacky class that can read the raw binary of a Clyde file and find its implementation.<para/>
@@ -2220,6 +2104,13 @@
             An exception thrown when a method that handles an arbitrary class type receives a type that is invalid for the given context (but is otherwise within constraints defined by the language)
             </summary>
         </member>
+        <member name="M:ThreeRingsSharp.XansData.Exceptions.InvalidTypeException.#ctor">
+            <inheritdoc cref="T:ThreeRingsSharp.XansData.Exceptions.InvalidTypeException"/>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Exceptions.InvalidTypeException.#ctor(System.String)">
+            <inheritdoc cref="T:ThreeRingsSharp.XansData.Exceptions.InvalidTypeException"/>
+            <param name="message">A message to include with the error.</param>
+        </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.AttributeExtension.GetSize(System.Type,System.Object)">
             <summary>
             Assuming <see cref="T:System.Type"/> is a GLTF value type, this will get the size attribute of the given field.
@@ -2305,22 +2196,24 @@
             <param name="createSubDict">If true, the returned dictionary has a single key called "DirectArgs" which contains the arguments. If false, the arguments are returned as the dictionary itself.</param>
             <returns>A dictionary containing the arguments for the directs on the given destination object.</returns>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve(com.threerings.config.ConfigReference)">
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve(com.threerings.config.ConfigReference,System.Boolean)">
             <summary>
             Using the information in this <see cref="T:com.threerings.config.ConfigReference"/>, the object this reference points to will be resolved and returned. This <see cref="T:com.threerings.config.ConfigReference"/> must point to an actual configuration. If it points to a file, an <see cref="T:System.InvalidOperationException"/> will be thrown.<para/>
-            Consider using <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve``1(com.threerings.config.ConfigReference)"/> if the type of the result is known.<para/>
+            Consider using <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve``1(com.threerings.config.ConfigReference,System.Boolean)"/> if the type of the result is known.<para/>
             This will automatically populate the arguments in the referenced config if applicable, making usage of the returned object relatively straightforward.
             </summary>
             <param name="cfgRef">The ConfigReference to resolve the reference to.</param>
+            <param name="noClone">If <see langword="true"/>, the acquired <see cref="T:com.threerings.config.ConfigReference"/>'s value is not cloned.</param>
             <returns>The ManagedConfig the given ConfigReference is pointing to.</returns>
             <exception cref="T:System.InvalidOperationException">If IsFileReference() returns true on this ConfigReference.</exception>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve``1(com.threerings.config.ConfigReference)">
+        <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve``1(com.threerings.config.ConfigReference,System.Boolean)">
             <summary>
             Using the information in this <see cref="T:com.threerings.config.ConfigReference"/>, the object this reference points to will be resolved and returned. This <see cref="T:com.threerings.config.ConfigReference"/> must point to an actual configuration. If it points to a file, an <see cref="T:System.InvalidOperationException"/> will be thrown.<para/>
             This will automatically populate the arguments in the referenced config if applicable, making usage of the returned object relatively straightforward.
             </summary>
             <param name="cfgRef">The ConfigReference to resolve the reference to.</param>
+            <param name="noClone">If <see langword="true"/>, the acquired <see cref="T:com.threerings.config.ConfigReference"/>'s value is not cloned.</param>
             <typeparam name="T">The destination type for the new ManagedConfig</typeparam>
             <returns>The ManagedConfig the given ConfigReference is pointing to.</returns>
             <exception cref="T:System.InvalidOperationException">If IsFileReference() returns true on this ConfigReference.</exception>
@@ -2344,15 +2237,14 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveAuto(com.threerings.config.ConfigReference)">
             <summary>
-            Attempts to selectively call <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve(com.threerings.config.ConfigReference)"/> or <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveFile(com.threerings.config.ConfigReference)"/>.
+            Attempts to selectively call <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve(com.threerings.config.ConfigReference,System.Boolean)"/> or <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveFile(com.threerings.config.ConfigReference)"/> depending on the nature of the target contained within the <see cref="T:com.threerings.config.ConfigReference"/>.
             </summary>
-            <typeparam name="T"></typeparam>
             <param name="cfgRef"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveAuto``1(com.threerings.config.ConfigReference)">
             <summary>
-            Attempts to selectively call <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve``1(com.threerings.config.ConfigReference)"/> or <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveFile``1(com.threerings.config.ConfigReference)"/>.<para/>
+            Attempts to selectively call <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.Resolve``1(com.threerings.config.ConfigReference,System.Boolean)"/> or <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveFile``1(com.threerings.config.ConfigReference)"/>.<para/>
             Unlike <see cref="M:ThreeRingsSharp.XansData.Extensions.ConfigReferenceExtension.ResolveAuto(com.threerings.config.ConfigReference)"/>, this may throw a <see cref="T:System.InvalidCastException"/> in the event that the config is not a file reference and <typeparamref name="T"/> is not a <see cref="T:com.threerings.config.ManagedConfig"/>.
             </summary>
             <typeparam name="T"></typeparam>
@@ -2426,6 +2318,11 @@
             <param name="obj"></param>
             <param name="classEquivalent"></param>
             <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Extensions.ParameterizedConfigExtension">
+            <summary>
+            Appends an extension to <see cref="T:com.threerings.config.ParameterizedConfig"/> that allows applying the provided <see cref="T:com.threerings.config.ArgumentMap"/> to it.
+            </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ParameterizedConfigExtension.ApplyArguments(com.threerings.config.ParameterizedConfig,com.threerings.config.ArgumentMap,System.String)">
             <summary>
@@ -2661,6 +2558,13 @@
         <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.BetweenBrackets(System.String)">
             <summary>
             Looks for the first instance of text between square brackets [like this] and returns that string, or <see langword="null"/> if it couldn't be found.
+            </summary>
+            <param name="str"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.BetweenQuotes(System.String)">
+            <summary>
+            Assuming <paramref name="str"/> is between quotation marks (that is, <paramref name="str"/> starts and ends with literal <c>"</c>s), this will strip them off of the end. Returns <see langword="null"/> if the string is not surrounded by quotes.
             </summary>
             <param name="str"></param>
             <returns></returns>
@@ -3017,11 +2921,6 @@
             The size of this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/> in bytes. Useful for its associated <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFBufferView"/>.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.NeedsToCalculateSize">
-            <summary>
-            Will be <see langword="true"/> if <see cref="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.Size"/> needs to be recalculated.
-            </summary>
-        </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.BufferView">
             <summary>
             The <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFBufferView"/> this points to.
@@ -3058,6 +2957,31 @@
             <summary>
             The offset in the referenced buffer that this accessor should start at.
             </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor`1">
+            <summary>
+            A typed variant of <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor"/>.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor`1.Max">
+            <summary>
+            NOTE: Cast these values into their appropriate type as dictated by <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.ComponentType"/>.<para/>
+            Set the count to zero to skip writing this data.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor`1.Min">
+            <summary>
+            NOTE: Cast these values into their appropriate type as dictated by <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.ComponentType"/>.<para/>
+            Set the count to zero to skip writing this data.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor`1.#ctor">
+            <summary>
+            Create a new typed <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor`1"/> which automatically sets <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor.ComponentType"/> appropriately.<para/>
+            If <typeparamref name="T"/> is not a valid glTF component type, this will throw <see cref="T:System.InvalidOperationException"/>.
+            </summary>
+            <exception cref="T:System.InvalidOperationException">If <typeparamref name="T"/> is not able to be turned into a component type.</exception>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAnimation">
             <summary>
@@ -3703,7 +3627,7 @@
         </member>
         <member name="T:ThreeRingsSharp.XansData.Singleton`1">
             <summary>
-            When extended, a property named <c>Instance</c> is statically provided for the given type that references a singleton instance of said type.
+            When extended, a property named <c>Instance</c> is statically provided for the given type that references a singleton instance of said type. The only requirement is that the class has a publicly available parameterless constructor.
             </summary>
             <typeparam name="T">The type of the singleton instance.</typeparam>
         </member>

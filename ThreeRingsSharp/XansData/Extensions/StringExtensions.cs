@@ -52,13 +52,28 @@ namespace ThreeRingsSharp.XansData.Extensions {
 			return str.Substring(openBracket + 1, closeBracket - openBracket - 1);
 		}
 
+
+		/// <summary>
+		/// Assuming <paramref name="str"/> is between quotation marks (that is, <paramref name="str"/> starts and ends with literal <c>"</c>s), this will strip them off of the end. Returns <see langword="null"/> if the string is not surrounded by quotes.
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns></returns>
+		public static string BetweenQuotes(this string str) {
+			int openQuote = str.IndexOf('"');
+			if (openQuote == -1) return null;
+			int closeQuote = str.IndexOf('"', openQuote + 1);
+			if (closeQuote == -1) return null;
+
+			return str.Substring(openQuote + 1, closeQuote - openQuote - 1);
+		}
+
 		/// <summary>
 		/// Converts a <c>snake_case_string</c> to a <c>camelCaseString</c>.
 		/// </summary>
 		/// <param name="snakeCaseString"></param>
 		/// <returns></returns>
 		public static string SnakeToCamel(this string snakeCaseString) {
-			if (snakeCaseString == null) throw new ArgumentNullException("snakeCaseString");
+			if (snakeCaseString == null) throw new ArgumentNullException(nameof(snakeCaseString));
 			if (!snakeCaseString.Contains("_")) return snakeCaseString;
 			string[] parts = snakeCaseString.Split('_');
 			if (parts.Length == 1) return parts[0];
@@ -77,7 +92,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <param name="camelCaseString"></param>
 		/// <returns></returns>
 		public static string CamelToPascal(this string camelCaseString) {
-			if (camelCaseString == null) throw new ArgumentNullException("camelCaseString");
+			if (camelCaseString == null) throw new ArgumentNullException(nameof(camelCaseString));
 			string firstLetter = camelCaseString.Substring(0, 1);
 			if (firstLetter.IsUppercase()) return camelCaseString;
 			return firstLetter.ToUpper() + camelCaseString.Substring(1);

@@ -58,3 +58,6 @@ F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.XML.XPath.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.Reflection.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.Misc.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.Cldrdata.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.Localedata.dll
+F:\Users\Xan\source\repos\SKAnimatorTools\SKAnimatorTools\bin\Debug\IKVM.OpenJDK.Nashorn.dll

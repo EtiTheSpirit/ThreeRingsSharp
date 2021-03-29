@@ -16,24 +16,23 @@ using com.threerings.projectx.config;
 namespace ThreeRingsSharp.DataHandlers {
 
 	/// <summary>
-	/// A class that takes in a <see cref="ModelConfig"/>, determines its subtype (e.g. <see cref="ArticulatedConfig"/>, <see cref="StaticConfig"/>, etc.), and handles the data appropriately.
+	/// A class that takes in a <see cref="ModelConfig"/>, determines its subtype (e.g. <see cref="ArticulatedConfig"/>, <see cref="StaticConfig"/>, etc.), and translates the data into the TRS formats used as an intermediate step between OOO =&gt; glTF.
 	/// </summary>
 	public class ModelConfigBrancher {
 
 		/// <summary>
-		/// Sends an arbitrary <see cref="ModelConfig"/> into the data brancher and processes it.
+		/// Sends an arbitrary <see cref="ModelConfig"/> into the data brancher and processes it. The data brancher is the component that attempts to locate the associated model type, and directs the data to the appropriate class. For all classes involved with converting model types, see the <see cref="ThreeRingsSharp.DataHandlers.Model"/> <see langword="namespace"/>.
 		/// </summary>
-		/// <param name="sourceFile">The file that the given <see cref="ModelConfig"/> came from.</param>
-		/// <param name="model">The <see cref="ModelConfig"/> itself.</param>
-		/// <param name="models">A list containing every processed model from the entire hierarchy.</param>
-		/// <param name="currentDataTreeObject">The current element in the data tree hierarchy to use.</param>
-		/// <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name. Additionally, it will not have its implementation property.</param>
-		/// <param name="transform">Intended to be used by reference loaders, this specifies an offset for referenced models. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="Transform3D"/>.</param>
+		/// <param name="sourceFile">The file that the given <see cref="ModelConfig"/> came from. This is a .dat or .xml file.</param>
+		/// <param name="model">The <see cref="ModelConfig"/> itself, which should be acquired via <see cref="com.threerings.export.BinaryImporter"/> or <see cref="com.threerings.export.XMLImporter"/>.</param>
+		/// <param name="models">A list containing every processed model from the entire hierarchy. This is only useful on recursive calls to this method, and externally calling this method to begin conversion fresh out of the box should input an empty list of <see cref="Model3D"/></param>
+		/// <param name="currentDataTreeObject">The current element in the data tree hierarchy to use. Similarly to <paramref name="models"/>, this is used mostly in recursion. This is only useful for the dedicated GUI that comes with TRS, and if you are implementing this library yourself and are either running it headless or running it without a data tree to visualize the hierarchy of the model, this can safely be <see langword="null"/>.</param>
+		/// <param name="useImplementation">If <see langword="false"/>, the name of the implementation will be displayed instead of the file name in the GUI. On the contrary, if this is <see langword="true"/>, the data tree for this model will not display the implementation property as it would be redundant.</param>
+		/// <param name="transform">Intended to be used by reference loaders (recursive calls), this specifies an offset for referenced models on this method call. All models loaded by this method in the given chain / hierarchy will have this transform applied to them. If the value passed in is <see langword="null"/>, it will be substituted with a new <see cref="Transform3D"/> located at the origin.</param>
 		/// <param name="extraData">Any extra data that should be included. This is mainly used by references (e.g. a reference is a <see cref="StaticSetConfig"/>, the target model in the set may be included as extra data)</param>
 		public static void HandleDataFrom(FileInfo sourceFile, ModelConfig model, List<Model3D> models, DataTreeObject currentDataTreeObject = null, bool useImplementation = false, Transform3D transform = null, Dictionary<string, dynamic> extraData = null) {
 			transform = transform ?? new Transform3D();
-			//transform.promote(Transform3D.GENERAL);
-
+			
 			SKAnimatorToolsProxy.IncrementEnd(2);
 
 			ModelConfig.Implementation implementation = model.implementation;

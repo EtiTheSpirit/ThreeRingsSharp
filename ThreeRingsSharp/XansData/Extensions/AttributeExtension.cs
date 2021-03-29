@@ -45,15 +45,13 @@ namespace ThreeRingsSharp.XansData.Extensions {
 	[AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
 	public class SizeAttribute : Attribute {
 		public SizeAttribute(int size) {
-			if (size < 0) throw new ArgumentException("Cannot have size less than 0.");
-			_Size = size;
+			if (size <= 0) throw new ArgumentException("Cannot have size less than or equal to 0.");
+			Size = size;
 		}
-
-		private readonly int _Size;
 
 		/// <summary>
 		/// The size of this element.
 		/// </summary>
-		public int Size => _Size;
+		public int Size { get; }
 	}
 }

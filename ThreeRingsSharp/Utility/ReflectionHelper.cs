@@ -46,7 +46,17 @@ namespace ThreeRingsSharp.Utility {
 				SetArray(obj, idx, value);
 				return;
 			}
-			obj.GetType().GetField(field).SetValue(obj, value);
+			FieldInfo fObj = obj.GetType().GetField(field);
+			bool fieldIsJava = fObj.FieldType.FullName.Contains("java.lang");
+			bool valueIsJava = value?.GetType().FullName.Contains("java.lang") ?? false;
+			if (fieldIsJava != valueIsJava) {
+				if (fieldIsJava) {
+					value = JavaToCSPrimitive.AsJavaPrimitive(value);
+				} else {
+					value = JavaToCSPrimitive.AsCSPrimitive(value);
+				}
+			}
+			fObj.SetValue(obj, value);
 		}
 
 		/// <summary>

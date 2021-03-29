@@ -17,7 +17,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 			if (expr != null) {
 				string state = "???";
 				try {
-					state = expr.createEvaluator(new DummyScope()).evaluate().ToString();
+					state = expr.createEvaluator(new SimpleReferenceScope(model)).evaluate().ToString();
 				} catch { }
 				return new DataTreeObjectProperty[] {
 					new DataTreeObjectProperty("Condition: " + expr.toString() + " = " + state, SilkImage.Conditional),
@@ -75,7 +75,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						mdl.ExtraData["ConditionalConfigFlag"] = true;
 						mdl.ExtraData["ConditionalConfigValue"] = true;
 						try {
-							bool state = condition.condition.createEvaluator(new DummyScope(model)).evaluate();
+							bool state = condition.condition.createEvaluator(new Utility.SimpleReferenceScope(model)).evaluate();
 							mdl.ExtraData["ConditionalConfigValue"] = state;
 						} catch { }
 						if (condition.transform != null) mdl.Transform = condition.transform;

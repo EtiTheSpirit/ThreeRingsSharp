@@ -40,3 +40,4 @@ F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\obj\Release\ThreeRings
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\obj\Release\ThreeRingsSharp.csproj.CopyComplete
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\obj\Release\ThreeRingsSharp.dll
 F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\obj\Release\ThreeRingsSharp.pdb
+F:\Users\Xan\source\repos\SKAnimatorTools\ThreeRingsSharp\obj\Release\ThreeRingsSharp.csprojAssemblyReference.cache
