@@ -85,7 +85,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The version of this release of the program.
 		/// </summary>
-		public readonly int[] THIS_VERSION = { 2, 2, 0 };
+		public readonly int[] THIS_VERSION = { 2, 3, 0 };
 
 		/// <summary>
 		/// Attempts to access the github to acquire the latest version.
