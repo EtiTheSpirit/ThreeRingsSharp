@@ -95,7 +95,7 @@ namespace SKAnimatorTools {
 		public bool TryGetVersion(out (int, int, int)? version) {
 			try {
 				using (WebClient cli = new WebClient()) {
-					string v = cli.DownloadString("https://raw.githubusercontent.com/XanTheDragon/ThreeRingsSharp/master/version.txt");
+					string v = cli.DownloadString("https://raw.githubusercontent.com/EtiTheSpirit/ThreeRingsSharp/master/version.txt");
 					string[] revs = v.Split('.');
 					int major = 0;
 					int minor = 0;

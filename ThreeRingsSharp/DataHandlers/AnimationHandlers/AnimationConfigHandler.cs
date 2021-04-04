@@ -8,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using ThreeRingsSharp.DataHandlers.AnimationHandlers.Expressions;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Extensions;
@@ -40,6 +41,9 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 			object speedValue = srcConfig.getArguments().get("Speed");
 			string argumentProvidedNode = (nodeValue is string node) ? node : null;
 			float? argumentProvidedSpeed = (speedValue is float speed) ? (float?)speed : null;
+			// Scope scope = original.getAnimationImplementation(null, null, null);
+
+
 
 			if (animationImplementation is AnimationConfig.Imported imported) {
 
@@ -47,13 +51,8 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 				// The transforms for each target, each frame.
 				Transform3D[][] transforms = imported.transforms;
 
-				// So presumably this means that...
-				// ...It's backwards! First dimension is the frame number, second dimension is the transform for each target.
-				// big brain time
-
-				// ... I swear they must've been waiting for someone like me to come along. Purposely being confusing.
-
-				// Edit after a long time: It makes sense now, I'm the smooth brain here :(
+				// So presumably this means that
+				// First dimension is the frame number, second dimension is the transform for each target.
 				float fps = imported.rate;
 
 				if (argumentProvidedSpeed.HasValue) {
@@ -62,7 +61,8 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 
 				Animation animation = new Animation(name);
 				int numIterations = transforms.Length;
-				if (imported.skipLastFrame) numIterations--;
+				if (imported.skipLastFrame)
+					numIterations--;
 
 				SKAnimatorToolsProxy.IncrementEnd(numIterations);
 				for (int frameIndex = 0; frameIndex < numIterations; frameIndex++) {
@@ -137,127 +137,43 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 					if (argumentProvidedSpeed.Value > 0) {
 						timeIncrement /= argumentProvidedSpeed.Value;
 					} else if (argumentProvidedSpeed.Value < 0) {
-						XanLogger.WriteLine("Speed was negative on a procedural animation, this is not yet supported. Using absolute value of speed...");
+						XanLogger.WriteLine("Speed was negative on a procedural animation, this is not yet supported. Using absolute value of speed... This animation will play backwards relative to what you see in-game!");
 						timeIncrement /= -argumentProvidedSpeed.Value;
 					}
 				}
 				int currentFrame = 0;
-				Scope animationScope = new SimpleReferenceScope(source);
+				// Scope scope = new SimpleReferenceScope(source);
 				foreach (AnimationConfig.TargetTransform targetTrs in targets) {
 					Transform3DExpression expr = targetTrs.expression;
 
-					Transform3D transform;
-					/*
-					if (expr is Transform3DExpression.Constant constantExpr) {
-						
-					} else if (expr is Transform3DExpression.NonUniform nonUniformExpr) {
-						
-					} else if (expr is Transform3DExpression.Reference referenceExpr) {
+					for (int bakeNFrames = 0; bakeNFrames < 60; bakeNFrames++) {
+						Transform3D transform = Transform3DExpressionHandler.Compute(expr, currentFrame);
+						if (transform == null) {
+							XanLogger.WriteLine("Expression evaluation came out to a null animation! Setting to identity transform.", XanLogger.DEBUG);
+							transform = new Transform3D(0);
+						}
 
-					} else if (expr is Transform3DExpression.TextureFrame texFrameExpr) {
+						Animation.Keyframe keyframe = new Animation.Keyframe();
+						for (int targetIndex = 0; targetIndex < targetTrs.targets.Length; targetIndex++) {
 
-					} else if (expr is Transform3DExpression.Uniform uniformExpr) {
-
+							string target = targetTrs.targets[targetIndex];
+							if (string.IsNullOrEmpty(target))
+								target = argumentProvidedNode;
+							if (bakeNFrames == 0) XanLogger.WriteLine("Animation target node: " + target, color: Color.Blue);
+							keyframe.Keys.Add(new Animation.Key {
+								Node = target,
+								Transform = transform
+							});
+							keyframe.Time = currentFrame * timeIncrement;
+						}
+						animation.Keyframes.Add(keyframe);
+						currentFrame++;
 					}
-					*/
-					transform = (Transform3D)expr.createEvaluator(animationScope).evaluate();
-					if (transform == null) {
-						XanLogger.WriteLine("Expression evaluation came out to a null animation! Setting to identity transform.", XanLogger.DEBUG);
-						transform = new Transform3D(0);
-					}
-
-					Animation.Keyframe keyframe = new Animation.Keyframe();
-					for (int targetIndex = 0; targetIndex < targetTrs.targets.Length; targetIndex++) {
-
-						string target = targetTrs.targets[targetIndex];
-						if (string.IsNullOrEmpty(target)) target = argumentProvidedNode;
-						XanLogger.WriteLine("Animation target node: " + target, color: Color.Blue);
-						keyframe.Keys.Add(new Animation.Key {
-							Node = target,
-							Transform = transform
-						});
-						keyframe.Time = currentFrame * timeIncrement;
-					}
-					animation.Keyframes.Add(keyframe);
-					currentFrame++;
 				}
 
 				foreach (Model3D model in attachToModels) {
 					model.Animations.Add(animation);
 				}
-
-				/*
-				} else if (animationImplementation is AnimationConfig.Procedural proc) {
-
-					if (srcFile.Name.StartsWith("rotate_")) {
-						// Rotation animation
-						// The first transform's first target is the node it attaches to.
-
-						string axis = srcFile.Name.Substring(7, 1);
-						if (axis == "x") {
-							object speed = srcConfig.getArguments().get("Speed");
-							string onNode = (string)srcConfig.getArguments().get("Node");
-							// Big thing: Speed is probably a JAVA float, not a C# float
-							if (speed is java.lang.Float jfloat) speed = jfloat.floatValue();
-
-							Animation anim = HardcodedAnimations.CreateRotateX(onNode, (float)(speed ?? 1f));
-
-							IEnumerable<Model3D> targetModels = attachToModels.Where(model => model.RawName == onNode);
-							foreach (Model3D model in targetModels) {
-								model.Animations.Add(anim);
-							}
-
-						} else if (axis == "y") {
-							object speed = srcConfig.getArguments().get("Speed");
-							string onNode = (string)srcConfig.getArguments().get("Node");
-							if (speed is java.lang.Float jfloat) speed = jfloat.floatValue();
-
-							Animation anim = HardcodedAnimations.CreateRotateY(onNode,(float)(speed ?? 1f));
-							IEnumerable<Model3D> targetModels = attachToModels.Where(model => model.RawName == onNode);
-							foreach (Model3D model in targetModels) {
-								model.Animations.Add(anim);
-							}
-
-						} else if (axis == "z") {
-							object speed = srcConfig.getArguments().get("Speed");
-							string onNode = (string)srcConfig.getArguments().get("Node");
-							if (speed is java.lang.Float jfloat) speed = jfloat.floatValue();
-
-							Animation anim = HardcodedAnimations.CreateRotateZ(onNode, (float)(speed ?? 1f));
-							IEnumerable<Model3D> targetModels = attachToModels.Where(model => model.RawName == onNode);
-							foreach (Model3D model in targetModels) {
-								model.Animations.Add(anim);
-							}
-
-						} else {
-							XanLogger.WriteLine(string.Format(ERR_PROC_NOT_YET_SUPPORTED, srcFile.Name), color: Color.DarkGoldenrod);
-						}
-					} else if (srcFile.Name == "gear_rotation.dat") {
-						// same as rotate y but it has an extra value
-						object speed = srcConfig.getArguments().get("Speed");
-						object sizeRatio = srcConfig.getArguments().get("Size Ratio");
-						string onNode = (string)srcConfig.getArguments().get("Node");
-						if (speed is java.lang.Float jfloat) speed = jfloat.floatValue();
-						if (sizeRatio is java.lang.Float jfloat2) sizeRatio = jfloat2.floatValue();
-
-						float overallSpeed = (float)(speed ?? 1f) * (float)(sizeRatio ?? 1f);
-
-						Animation anim = HardcodedAnimations.CreateRotateY(onNode, overallSpeed);
-						IEnumerable<Model3D> targetModels = attachToModels.Where(model => model.RawName == onNode);
-						foreach (Model3D model in targetModels) {
-							model.Animations.Add(anim);
-						}
-
-					} else {
-						XanLogger.WriteLine(string.Format(ERR_PROC_NOT_YET_SUPPORTED, srcFile.Name), color: Color.DarkGoldenrod);
-					}
-					*/
-
-				/*
-					// Something's wrong with directs that I gotta fix.
-
-				
-				*/
 			} else {
 				XanLogger.WriteLine(string.Format(ERR_IMPL_NOT_SUPPORTED, animationImplementation.GetType().Name), color: Color.DarkGoldenrod);
 			}

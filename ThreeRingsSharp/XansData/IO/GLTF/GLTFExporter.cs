@@ -90,7 +90,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 		/// <returns></returns>
 		private byte[] GetBinaryData(Model3D[] models) {
 			List<byte> binBuffer = new List<byte>();
-			binBuffer.AddRange(BitConverter.GetBytes(0)); // Add a dummy 0 integer. We will change this later.
+			binBuffer.AddRange(BitConverter.GetBytes((uint)0)); // Add a dummy 0 integer. We will change this later.
 			binBuffer.AddRange(BitConverter.GetBytes(0x004E4942)); // The text " BIN" (starting with null)
 
 			#region Set Up Vars

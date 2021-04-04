@@ -38,6 +38,32 @@
             <param name="animationRef">A <see cref="T:com.threerings.config.ConfigReference"/> pointing to an animation.</param>
             <returns></returns>
         </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.Expressions.FloatExpressionHandler.Square(System.Single)">
+            <summary>
+            Returns the sign of the sine wave (-1, 0, or 1)
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.Expressions.FloatExpressionHandler.Triangle(System.Single)">
+            <summary>
+            Uses absolute value of Saw to generate a triangle wave.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.Expressions.FloatExpressionHandler.Saw(System.Single)">
+            <summary>
+            Uses modulo to create a sawtooth wave with the same phase as a sine wave.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.AnimationHandlers.Expressions.Transform3DExpressionHandler">
+            <summary>
+            A tool to assist in the parsing of <see cref="T:com.threerings.expr.Transform3DExpression"/>.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.DataHandlers.AnimationHandlers.HardcodedAnimations">
             <summary>
             Intended to be used for certain procedural animations that are common, such as <c>rotate_x.dat</c> (and its two other axes)
