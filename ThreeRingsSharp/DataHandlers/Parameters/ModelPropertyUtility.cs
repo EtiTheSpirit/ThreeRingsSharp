@@ -19,13 +19,15 @@ namespace ThreeRingsSharp.DataHandlers.Parameters {
 	public class ModelPropertyUtility {
 
 		/// <summary>
-		/// Assuming this is a <see cref="ModelConfig"/> storing textures, this will try to find the textures from its parameters. Additionally, it will find the default texture of the model.
+		/// Assuming this is a <see cref="ModelConfig"/> storing textures, this will try to find the textures from its parameters. Additionally, it will find the default texture of the model, and return the <see cref="XChoice"/> that uses this default if applicable.
 		/// </summary>
 		/// <param name="cfg"></param>
 		/// <param name="defaultTextureFromVisibleMesh"></param>
 		/// <returns></returns>
-		public static (List<string>, string) FindTexturesAndActiveFromDirects(ModelConfig cfg, string defaultTextureFromVisibleMesh) {
+		public static (List<string>, string, XChoice) FindTexturesAndActiveFromDirects(ModelConfig cfg, string defaultTextureFromVisibleMesh) {
 			SKAnimatorToolsProxy.SetProgressState(ProgressBarState.ExtraWork);
+
+			XChoice defaultChoice = null;
 
 			List<string> retn = new List<string>();
 			if (cfg.implementation is Imported imported) {
@@ -39,9 +41,10 @@ namespace ThreeRingsSharp.DataHandlers.Parameters {
 			foreach (Parameter param in cfg.parameters) {
 				if (param is Parameter.Choice choice) {
 					XChoice cho = new XChoice(cfg, choice);
+
 					// Find a direct that looks like it's got textures.
-					foreach (XDirect direct in cho.Directs) {
-						XDirect.DirectPointer ptr = direct.GetValuePointer();
+					foreach (XDirect direct in cho.Directs.Values) {
+						XDirect.DirectPointer ptr = direct.ValuePointer;
 						if (ptr.DereferencedPath.Contains("material_mappings") && ptr.DereferencedPath.EndsWith("file")) {
 							// bingo!
 							foreach (KeyValuePair<string, XChoice.XOption> data in cho.Options) {
@@ -49,6 +52,9 @@ namespace ThreeRingsSharp.DataHandlers.Parameters {
 								object value = option.Original.arguments.getOrDefault(direct.Name, null);
 								if (value is string str) {
 									retn.Add(str);
+									if (defaultChoice == null) {
+										defaultChoice = cho;
+									}
 								}
 							}
 						}
@@ -60,7 +66,7 @@ namespace ThreeRingsSharp.DataHandlers.Parameters {
 			}
 
 			SKAnimatorToolsProxy.SetProgressState(ProgressBarState.OK);
-			return (retn, defaultTextureFromVisibleMesh);
+			return (retn, defaultTextureFromVisibleMesh, defaultChoice);
 		}
 
 		/// <summary>

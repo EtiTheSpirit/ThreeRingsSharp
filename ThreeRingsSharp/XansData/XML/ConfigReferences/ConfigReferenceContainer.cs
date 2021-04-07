@@ -121,7 +121,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				foreach (ManagedConfig cfg in container) {
 					if (cfg.getName() == targetName) {
 						ReferencesByEntryName.Add(targetName, cfg);
-						XanLogger.WriteLine("Resolved target " + targetName + " as a " + cfg.GetType().Name, XanLogger.STANDARD, System.Drawing.Color.Gray);
+						XanLogger.WriteLine("Resolved target " + targetName + " as a " + cfg.GetType().Name, XanLogger.INFO, System.Drawing.Color.Gray);
 						return cfg;
 					}
 				}

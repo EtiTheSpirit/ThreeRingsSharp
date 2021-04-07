@@ -22,7 +22,7 @@ namespace AppUpdater {
 		public bool TryGetVersion(out (int, int, int, string)? version) {
 			try {
 				using (WebClient cli = new WebClient()) {
-					string v = cli.DownloadString("https://raw.githubusercontent.com/XanTheDragon/ThreeRingsSharp/master/version.txt");
+					string v = cli.DownloadString("https://raw.githubusercontent.com/EtiTheSpirit/ThreeRingsSharp/master/version.txt");
 					string[] revs = v.Split('.');
 					int major = 0;
 					int minor = 0;
@@ -51,7 +51,7 @@ namespace AppUpdater {
 			if (Destination.Exists) Destination.Delete();
 			bool gotVersion = TryGetVersion(out (int major, int minor, int patch, string actualVersionText)? versionInfo);
 			if (gotVersion && versionInfo.HasValue) {
-				string dlLink = "https://github.com/XanTheDragon/ThreeRingsSharp/releases/download/{0}/ThreeRingsSharp.zip";
+				string dlLink = "https://github.com/EtiTheSpirit/ThreeRingsSharp/releases/download/{0}/ThreeRingsSharp.zip";
 				using (WebClient client = new WebClient()) {
 					client.DownloadFileCompleted += OnDownloadCompleted;
 					client.DownloadProgressChanged += OnProgressChanged;
@@ -71,9 +71,10 @@ namespace AppUpdater {
 			Update();
 			try {
 				// Silently drop any errors here.
-				ZipFile.ExtractToDirectory(Destination.FullName, Destination.Directory.FullName);
+				ZipFile.ExtractToDirectory(Destination.FullName, Destination.Directory.CreateSubdirectory("NewVersion").FullName);
 			} catch { } 
 			Destination.Delete();
+			MessageBox.Show("The new version has been put into a folder called \"NewVersion\". You may overwrite the files in this directory if you wish.", "Download Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
 			Close();
 		}
 	}

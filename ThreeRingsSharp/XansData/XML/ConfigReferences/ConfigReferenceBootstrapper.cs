@@ -154,7 +154,7 @@ namespace ThreeRingsSharp.XansData.XML.ConfigReferences {
 				while (lowest is TypeInitializationException err) {
 					lowest = err.InnerException;
 				}
-				XanLogger.WriteLine("TypeInitializationException occurred. Lowest level inner Exception (if one exists): " + lowest?.GetType().Name + "\n\n" + lowest?.Message, XanLogger.STANDARD, Color.Red);
+				XanLogger.WriteLine("TypeInitializationException occurred. Lowest level inner Exception (if one exists): " + lowest?.GetType().Name + "\n\n" + lowest?.Message, XanLogger.INFO, Color.Red);
 
 				SKAnimatorToolsProxy.ConfigsErroredThroughSync(typeInitErr, typeInitErr.Message);
 			} catch (System.Exception error) {

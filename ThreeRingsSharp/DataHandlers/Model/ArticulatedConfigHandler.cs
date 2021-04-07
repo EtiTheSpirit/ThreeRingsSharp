@@ -56,9 +56,11 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				meshToModel.Name = depth1Name + meshTitle;
 				if (globalTransform != null) meshToModel.Transform.composeLocal(globalTransform);
 
-				(List<string> textureFiles, string active) = ModelPropertyUtility.FindTexturesAndActiveFromDirects(baseModel, mesh.texture);
+				(List<string> textureFiles, string active, XChoice defaultContainer) = ModelPropertyUtility.FindTexturesAndActiveFromDirects(baseModel, mesh.texture);
 				meshToModel.Textures.SetFrom(textureFiles);
 				meshToModel.ActiveTexture = active;
+				meshToModel.ActiveTextureChoice = defaultContainer;
+
 
 				if (meshToModel.Mesh.HasBoneData) {
 					XanLogger.WriteLine("Model has bone data, setting that up.", XanLogger.TRACE);
@@ -184,9 +186,10 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						meshToModel.Name = ResourceDirectoryGrabber.GetDirectoryDepth(sourceFile) + meshTitle;
 						meshToModel.RawName = node.name;
 
-						(List<string> textureFiles, string active) = ModelPropertyUtility.FindTexturesAndActiveFromDirects(baseModel, mesh.texture);
+						(List<string> textureFiles, string active, XChoice defaultContainer) = ModelPropertyUtility.FindTexturesAndActiveFromDirects(baseModel, mesh.texture);
 						meshToModel.Textures.SetFrom(textureFiles);
 						meshToModel.ActiveTexture = active;
+						meshToModel.ActiveTextureChoice = defaultContainer;
 
 						/*
 						meshToModel.Textures.SetFrom(ModelPropertyUtility.FindTexturesFromDirects(baseModel));

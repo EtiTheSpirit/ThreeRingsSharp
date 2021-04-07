@@ -120,14 +120,6 @@
   <metadata name="MainTooltip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <data name="CheckBox_PreferSpeed.ToolTip" xml:space="preserve">
-    <value>If enabled, the program will skip writing text to the Program Information Feed
-and skip updating the progress bar.
-
-At the cost of not being able to see what's going on, the program will see speed increases
-as it no longer needs to write to the log and update the interface. It will only write to the
-interface after all operations have completed.</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

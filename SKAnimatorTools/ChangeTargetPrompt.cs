@@ -5,6 +5,8 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using com.threerings.config;
+using ThreeRingsSharp.XansData.Extensions;
 
 namespace SKAnimatorTools {
 	public partial class ChangeTargetPrompt : Form {
@@ -12,11 +14,30 @@ namespace SKAnimatorTools {
 			InitializeComponent();
 		}
 
+		/// <summary>
+		/// The available options.
+		/// </summary>
 		public string[] Options { get; private set; } = new string[0];
 
+		/// <summary>
+		/// The current selected option for <see cref="Model"/> or <see cref="Choice"/> to use.
+		/// </summary>
 		public string Option { get; private set; } = null;
 
+		/// <summary>
+		/// The <see cref="StaticSetConfig"/> that this is modifying, if applicable.
+		/// </summary>
 		public StaticSetConfig Model { get; private set; } = null;
+
+		/// <summary>
+		/// The <see cref="Parameter.Choice"/> that this is modifying, if applicable.
+		/// </summary>
+		public Parameter.Choice Choice { get; private set; } = null;
+
+		/// <summary>
+		/// For cases where <see cref="Choice"/> is not <see langword="null"/>, this is the <see cref="ParameterizedConfig"/> that it is a part of that will be changed.
+		/// </summary>
+		public ParameterizedConfig ChoiceAffects { get; private set; } = null;
 
 		public TreeNode Node { get; set; } = null;
 
@@ -25,6 +46,18 @@ namespace SKAnimatorTools {
 			Options = set.getModelOptions();
 			Option_NewTarget.Text = set.model;
 			Option = set.model;
+
+			Option_NewTarget.Items.AddRange(Options);
+			BtnSave.Enabled = true;
+		}
+
+		public void SetPossibleOptionsFrom(ParameterizedConfig cfg, Parameter.Choice choice) {
+			Choice = choice;
+			Options = choice.GetChoiceOptions();
+			Option_NewTarget.Text = choice.choice;
+			Option = choice.choice;
+
+			ChoiceAffects = cfg;
 
 			Option_NewTarget.Items.AddRange(Options);
 			BtnSave.Enabled = true;
@@ -53,7 +86,8 @@ namespace SKAnimatorTools {
 		}
 
 		private void BtnSave_Click(object sender, EventArgs e) {
-			Model.model = Option;
+			if (Model != null) Model.model = Option;
+			if (Choice != null)	Choice.choice = Option;
 			Close();
 		}
 

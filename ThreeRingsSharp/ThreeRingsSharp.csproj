@@ -156,12 +156,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataHandlers\AnimationHandlers\AnimationConfigHandler.cs" />
-    <Compile Include="DataHandlers\AnimationHandlers\Expressions\FloatExpressionHandler.cs" />
-    <Compile Include="DataHandlers\AnimationHandlers\Expressions\QuaternionExpressionHandler.cs" />
-    <Compile Include="DataHandlers\AnimationHandlers\Expressions\Transform3DExpressionHandler.cs" />
-    <Compile Include="DataHandlers\AnimationHandlers\Expressions\Vector3fExpressionHandler.cs" />
     <Compile Include="DataHandlers\AnimationHandlers\IAnimationHandler.cs" />
     <Compile Include="DataHandlers\ClydeFileHandler.cs" />
+    <Compile Include="DataHandlers\Expressions\BooleanExpressionHandler.cs" />
+    <Compile Include="DataHandlers\Expressions\FloatExpressionHandler.cs" />
+    <Compile Include="DataHandlers\Expressions\QuaternionExpressionHandler.cs" />
+    <Compile Include="DataHandlers\Expressions\StringExpressionHandler.cs" />
+    <Compile Include="DataHandlers\Expressions\Transform3DExpressionHandler.cs" />
+    <Compile Include="DataHandlers\Expressions\Vector3fExpressionHandler.cs" />
     <Compile Include="DataHandlers\Model\ConditionalConfigHandler.cs" />
     <Compile Include="DataHandlers\Parameters\ModelPropertyUtility.cs" />
     <Compile Include="DataHandlers\Parameters\XChoice.cs" />

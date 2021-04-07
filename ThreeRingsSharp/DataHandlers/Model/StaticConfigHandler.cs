@@ -56,9 +56,10 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				//meshToModel.Textures.SetFrom(new List<string>() { mesh.texture });
 				//meshToModel.ActiveTexture = mesh.texture;
 
-				(List<string> textureFiles, string active) = ModelPropertyUtility.FindTexturesAndActiveFromDirects(baseModel, mesh.texture);
+				(List<string> textureFiles, string active, XChoice defaultContainer) = ModelPropertyUtility.FindTexturesAndActiveFromDirects(baseModel, mesh.texture);
 				meshToModel.Textures.SetFrom(textureFiles);
 				meshToModel.ActiveTexture = active;
+				meshToModel.ActiveTextureChoice = defaultContainer;
 
 				modelCollection.Add(meshToModel);
 				idx++;

@@ -25,9 +25,9 @@ namespace ThreeRingsSharp.XansData.Extensions {
 					if (parentChoiceName != null) {
 						if (config.getParameter(parentChoiceName) is Parameter.Choice choice) {
 							XChoice cho = new XChoice(config, choice);
-							foreach (XDirect dir in cho.Directs) {
+							foreach (XDirect dir in cho.Directs.Values) {
 								if (dir.Name == strKey) {
-									dir.GetValuePointer().Value = args.getOrDefault(key, null);
+									dir.SetAllValuesTo(args.getOrDefault(key, null));
 								}
 							}
 						}
@@ -36,11 +36,10 @@ namespace ThreeRingsSharp.XansData.Extensions {
 						if (param is Parameter.Direct direct) {
 							XDirect dir = new XDirect(config, direct);
 							object newValue = args.getOrDefault(key, null);
-							DirectPointer ptr = dir.GetValuePointer();
 							try {
-								ptr.Value = newValue;
+								dir.SetAllValuesTo(newValue);
 							} catch (Exception) {
-								XanLogger.WriteLine($"A Direct [{ptr.DereferencedPath}] attempted to have its value set to {newValue}, but it failed! This data will not apply properly.");
+								XanLogger.WriteLine($"A Direct [{dir.Name}] attempted to have its value(s) set to {newValue}, but it failed! This data will not apply properly.");
 							}
 						}
 					}

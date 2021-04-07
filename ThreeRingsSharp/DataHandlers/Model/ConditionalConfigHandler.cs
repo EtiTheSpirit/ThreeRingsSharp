@@ -4,6 +4,7 @@ using com.threerings.math;
 using com.threerings.opengl.model.config;
 using System.Collections.Generic;
 using System.IO;
+using ThreeRingsSharp.DataHandlers.Expressions;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData;
@@ -75,7 +76,7 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 						mdl.ExtraData["ConditionalConfigFlag"] = true;
 						mdl.ExtraData["ConditionalConfigValue"] = true;
 						try {
-							bool state = condition.condition.createEvaluator(new Utility.SimpleReferenceScope(model)).evaluate();
+							bool state = condition.condition.Compute();
 							mdl.ExtraData["ConditionalConfigValue"] = state;
 						} catch { }
 						if (condition.transform != null) mdl.Transform = condition.transform;

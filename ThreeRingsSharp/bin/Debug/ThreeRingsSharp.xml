@@ -38,72 +38,6 @@
             <param name="animationRef">A <see cref="T:com.threerings.config.ConfigReference"/> pointing to an animation.</param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.Expressions.FloatExpressionHandler.Square(System.Single)">
-            <summary>
-            Returns the sign of the sine wave (-1, 0, or 1)
-            </summary>
-            <param name="value"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.Expressions.FloatExpressionHandler.Triangle(System.Single)">
-            <summary>
-            Uses absolute value of Saw to generate a triangle wave.
-            </summary>
-            <param name="value"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.Expressions.FloatExpressionHandler.Saw(System.Single)">
-            <summary>
-            Uses modulo to create a sawtooth wave with the same phase as a sine wave.
-            </summary>
-            <param name="value"></param>
-            <returns></returns>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.AnimationHandlers.Expressions.Transform3DExpressionHandler">
-            <summary>
-            A tool to assist in the parsing of <see cref="T:com.threerings.expr.Transform3DExpression"/>.
-            </summary>
-        </member>
-        <member name="T:ThreeRingsSharp.DataHandlers.AnimationHandlers.HardcodedAnimations">
-            <summary>
-            Intended to be used for certain procedural animations that are common, such as <c>rotate_x.dat</c> (and its two other axes)
-            </summary>
-        </member>
-        <member name="F:ThreeRingsSharp.DataHandlers.AnimationHandlers.HardcodedAnimations.TAU">
-            <summary>
-            The mathematical constant τ, or 2π
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.HardcodedAnimations.CreateRotateX(System.String,System.Single,System.Single,System.Int32)">
-            <summary>
-            Creates a new animation for rotation on the X (left/right) axis.
-            </summary>
-            <param name="onNode">The node that the animation targets.</param>
-            <param name="speed">The speed multiplier of the animation.</param>
-            <param name="durationSeconds">How long the animation lasts. It is recommended to keep this relatively low.</param>
-            <param name="framerate">The framerate to generate the animation with.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.HardcodedAnimations.CreateRotateY(System.String,System.Single,System.Single,System.Int32)">
-            <summary>
-            Creates a new animation for rotation on the Y (up/down) axis.
-            </summary>
-            <param name="onNode">The node that the animation targets.</param>
-            <param name="speed">The speed multiplier of the animation.</param>
-            <param name="durationSeconds">How long the animation lasts. It is recommended to keep this relatively low.</param>
-            <param name="framerate">The framerate to generate the animation with.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.HardcodedAnimations.CreateRotateZ(System.String,System.Single,System.Single,System.Int32)">
-            <summary>
-            Creates a new animation for rotation on the Z (forward/backward) axis.
-            </summary>
-            <param name="onNode">The node that the animation targets.</param>
-            <param name="speed">The speed multiplier of the animation.</param>
-            <param name="durationSeconds">How long the animation lasts. It is recommended to keep this relatively low.</param>
-            <param name="framerate">The framerate to generate the animation with.</param>
-            <returns></returns>
-        </member>
         <member name="M:ThreeRingsSharp.DataHandlers.AnimationHandlers.IAnimationHandler.HandleAnimationConfig(System.IO.FileInfo,com.threerings.opengl.model.config.AnimationConfig,ThreeRingsSharp.XansData.Model3D,System.Collections.Generic.Dictionary{System.String,System.Object})">
             <summary>
             Handles the given <see cref="T:com.threerings.opengl.model.config.AnimationConfig"/>.
@@ -170,6 +104,86 @@
             Similar to <see cref="M:ThreeRingsSharp.DataHandlers.ClydeFileHandler.HandleClydeFile(System.IO.FileInfo,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},System.Boolean,System.Object,System.Boolean,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,System.Object})"/>, except it just returns the raw object returned by clyde. This will return <see langword="null"/> if the model fails to laod.
             </summary>
             <param name="clydeFile"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Expressions.BooleanExpressionHandler.Compute(com.threerings.expr.BooleanExpression,System.Int32)">
+            <summary>
+            Given a <see cref="T:com.threerings.expr.BooleanExpression"/> and an optional frame number (if this expression is part of an animation), this will attempt to compute its value. 
+            Most expression types are supported, but some are not.
+            </summary>
+            <param name="expression"></param>
+            <param name="frameNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Expressions.FloatExpressionHandler.Square(System.Single)">
+            <summary>
+            Returns the sign of the sine wave (-1, 0, or 1)
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Expressions.FloatExpressionHandler.Triangle(System.Single)">
+            <summary>
+            Uses absolute value of Saw to generate a triangle wave.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Expressions.FloatExpressionHandler.Saw(System.Single)">
+            <summary>
+            Uses modulo to create a sawtooth wave with the same phase as a sine wave.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Expressions.FloatExpressionHandler.Compute(com.threerings.expr.FloatExpression,System.Int32)">
+            <summary>
+            Given a <see cref="T:com.threerings.expr.FloatExpression"/> and an optional frame number (if this expression is part of an animation), this will attempt to compute its value. 
+            Most expression types are supported, but some are not.
+            </summary>
+            <param name="expression"></param>
+            <param name="frameNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Expressions.QuaternionExpressionHandler.Compute(com.threerings.expr.QuaternionExpression,System.Int32)">
+            <summary>
+            Given a <see cref="T:com.threerings.math.Quaternion"/> and an optional frame number (if this expression is part of an animation), this will attempt to compute its value. 
+            Most expression types are supported, but some are not.
+            </summary>
+            <param name="expression"></param>
+            <param name="frameNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Expressions.StringExpressionHandler.Compute(com.threerings.expr.StringExpression,System.Int32)">
+            <summary>
+            Given a <see cref="T:com.threerings.expr.StringExpression"/> and an optional frame number (if this expression is part of an animation), this will attempt to compute its value. 
+            Most expression types are supported, but some are not.
+            </summary>
+            <param name="expression"></param>
+            <param name="frameNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Expressions.Transform3DExpressionHandler">
+            <summary>
+            A tool to assist in the parsing of <see cref="T:com.threerings.expr.Transform3DExpression"/>.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Expressions.Transform3DExpressionHandler.Compute(com.threerings.expr.Transform3DExpression,System.Int32)">
+            <summary>
+            Given a <see cref="T:com.threerings.expr.Transform3DExpression"/> and an optional frame number (if this expression is part of an animation), this will attempt to compute its value. 
+            Most expression types are supported, but some are not.
+            </summary>
+            <param name="expression"></param>
+            <param name="keyframeNumber"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Expressions.Vector3fExpressionHandler.Compute(com.threerings.expr.Vector3fExpression,System.Int32)">
+            <summary>
+            Given a <see cref="T:com.threerings.expr.Vector3fExpression"/> and an optional frame number (if this expression is part of an animation), this will attempt to compute its value. 
+            Most expression types are supported, but some are not.
+            </summary>
+            <param name="expression"></param>
+            <param name="frameNumber"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Model.ArticulatedConfigHandler.RecursivelyIterateNodes(com.threerings.opengl.model.config.ModelConfig,com.threerings.opengl.model.config.ArticulatedConfig,System.IO.FileInfo,com.threerings.opengl.model.config.ArticulatedConfig.Node,System.Collections.Generic.List{ThreeRingsSharp.XansData.Model3D},com.threerings.math.Transform3D,com.threerings.math.Transform3D,System.Collections.Generic.Dictionary{System.String,ThreeRingsSharp.XansData.Model3D},System.String)">
@@ -334,7 +348,7 @@
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Parameters.ModelPropertyUtility.FindTexturesAndActiveFromDirects(com.threerings.opengl.model.config.ModelConfig,System.String)">
             <summary>
-            Assuming this is a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> storing textures, this will try to find the textures from its parameters. Additionally, it will find the default texture of the model.
+            Assuming this is a <see cref="T:com.threerings.opengl.model.config.ModelConfig"/> storing textures, this will try to find the textures from its parameters. Additionally, it will find the default texture of the model, and return the <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XChoice"/> that uses this default if applicable.
             </summary>
             <param name="cfg"></param>
             <param name="defaultTextureFromVisibleMesh"></param>
@@ -360,7 +374,7 @@
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Directs">
             <summary>
-            A lookup of every <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/> that this option will change depending on the selected <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Choice"/>
+            A lookup of every <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/> that this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XChoice"/> will change depending on the selected <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Choice"/>. Keys are equivalent to the associated <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XParameter.Name"/> of the <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/>s.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Choice">
@@ -369,6 +383,38 @@
             Setting this value will update the model. Throws <see cref="T:System.ArgumentOutOfRangeException"/> if the string is set to something that is not a key in <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Options"/>.
             </summary>
             <exception cref="T:System.ArgumentOutOfRangeException">If the new string is not a valid entry in <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Options"/></exception>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Default">
+            <summary>
+            The default option.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Current">
+            <summary>
+            The currently selected option, as denoted by <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Choice"/>. This may be <see langword="null"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.DefaultValues">
+            <summary>
+            The value(s) associated with the default choice's arguments. The keys correspond to that of <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Directs"/>. Identical to referencing <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Default"/><c>.Values</c>
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.CurrentValues">
+            <summary>
+            The value(s) associated with the current choice's arguments. The keys correspond to that of <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Directs"/>. Identical to referencing <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.Current"/><c>.Values</c>
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Parameters.XChoice.#ctor(com.threerings.config.ParameterizedConfig,com.threerings.config.Parameter.Choice)">
+            <summary>
+            Construct a new <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XChoice"/> for the given <see cref="T:com.threerings.config.ParameterizedConfig"/> and source <see cref="T:com.threerings.config.Parameter.Choice"/> object.
+            </summary>
+            <param name="parent"></param>
+            <param name="source"></param>
+        </member>
+        <member name="T:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption">
+            <summary>
+            An option within this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XChoice"/>
+            </summary>
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption.Name">
             <summary>
@@ -385,6 +431,16 @@
             The original <see cref="T:com.threerings.config.Parameter.Choice.Option"/> that this was created around.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption.Values">
+            <summary>
+            The values that this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption"/> will apply when selected. Keys are the names of <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/>s present in the <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption.Parent"/>, and values are what all <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/> paths associated with this argument are set to.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption.Apply">
+            <summary>
+            Applies <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption.Values"/> to all directs in the <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XChoice.XOption.Parent"/>.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Paths">
             <summary>
             Every path that is a part of this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/>, which is a complex identifier for the data it changes.
@@ -392,24 +448,34 @@
         </member>
         <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Values">
             <summary>
-            Corresponding directly to <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Paths"/>, this is the value of what each path pointed to.<para/>
-            Please note that choosing between one of these for the "right value" is a non-problem. Think of a direct's paths like a list of instructions.
-            If I tell you to write your name on 5 different papers, your name isn't going to change between those pages, so if I need to find your name, I can pick any.
-            Likewise, you can pick anything out of this and it'll be the "right value" you are looking for.<para/>
-            If you are feeling particularly indecisive, you can use <see cref="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.GetValue"/>.
+            Corresponding directly to <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Paths"/>, this is the value of what each path pointed to.<para/><para/>
+            Please note that choosing between one of these for the "right value" to <strong>read from</strong> is a non-problem. Think of a direct's paths like a list of instructions.
+            If I tell you to write your name on 5 different papers, your name isn't going to change between those pages, so if I need to find your name, I can pick any page I want and still get the right value.
+            Likewise, you can pick anything out of this and it'll be the "right value" you are looking for.<para/><para/>
+            If you are feeling particularly indecisive, you can just reference <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Value"/>.<para/><para/>
+            If you need to set the values however, overriding <em>all</em> entries is required, and this can be done with <see cref="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.SetAllValuesTo(System.Object)"/>.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.GetValue">
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Value">
             <summary>
-            Returns the first entry in <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Values"/> (all values are identical), or <see langword="null"/> if there are no values due to <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Paths"/> being empty.
+            Returns the value of the first <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect.DirectPointer"/> this modifies.
+            </summary>
+            <remarks>
+            The actual selected value out of <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Values"/> does not matter, hence why this loosely picks the first. See docs on <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Values"/> for more information.
+            </remarks>
+        </member>
+        <member name="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.ValuePointer">
+            <summary>
+            The <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect.DirectPointer"/> to the value this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/> represents.<para/>
+            <strong>Note:</strong> Do <em>NOT</em> use this to modify the value of this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/>! To change the value of this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/> properly and not create a critical desynchronization, use <see cref="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.SetAllValuesTo(System.Object)"/>
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.GetValuePointer">
+        <member name="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.SetAllValuesTo(System.Object)">
             <summary>
-            Returns a <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect.DirectPointer"/> to the value this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/> represents.
+            Modifies all <see cref="P:ThreeRingsSharp.DataHandlers.Parameters.XDirect.Values"/> to be the new value, ensuring that the new value is applied without desynchronizing this <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XDirect"/>'s values.
             </summary>
-            <returns></returns>
+            <param name="value"></param>
         </member>
         <member name="M:ThreeRingsSharp.DataHandlers.Parameters.XDirect.IsIndexedPathElement(System.String)">
             <summary>
@@ -1812,7 +1878,12 @@
             Represents a Clyde file in its XML format.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.Utility.XanLogger.STANDARD">
+        <member name="T:ThreeRingsSharp.Utility.XanLogger">
+            <summary>
+            Provides a means of writing to the program's main log through any thread.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utility.XanLogger.INFO">
             <summary>
             Indicates a standard log message that is shown no matter what.
             </summary>
@@ -1910,7 +1981,6 @@
             <param name="obj">The text to write to the log.</param>
             <param name="logLevel">The level to log. If this is greater than <see cref="P:ThreeRingsSharp.Utility.XanLogger.LoggingLevel"/>, it will not be appended to the log.</param>
             <param name="color">The color of the text in the log.</param>
-            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
         </member>
         <member name="M:ThreeRingsSharp.Utility.XanLogger.LogException(System.Exception)">
             <summary>
@@ -2170,7 +2240,8 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.ChoiceExtensions.GetDefaultOption(com.threerings.config.Parameter.Choice)">
             <summary>
-            Returns the default option of this choice. Will return null if it couldn't be found for whatever reason.
+            Returns the default option of this choice. Will return <see langword="null"/> if it couldn't be found for whatever reason.<para/>
+            All this does is iterate through <see cref="F:com.threerings.config.Parameter.Choice.options"/> and attempts to locate <see cref="F:com.threerings.config.Parameter.Choice.choice"/>. If it is found in the options array, it simply returns <see cref="F:com.threerings.config.Parameter.Choice.choice"/>, effectively validating the choice is proper or not.
             </summary>
             <param name="choice">The choice to get the default option from.</param>
             <returns></returns>
@@ -3922,7 +3993,14 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.ActiveTexture">
             <summary>
-            The texture that this model uses. This is by filename, not full path.
+            The texture that this model uses. This is by filename (skin_orange.png) or filepath relative to rsrc (character/npc/monster/gremlin/null/skin_orange.png).<para/>
+            Depending on the value of <see cref="P:ThreeRingsSharp.XansData.Model3D.ActiveTextureChoice"/>, this will either return the value manually set with <see langword="set"/>, or the first texture pointed at by <see cref="P:ThreeRingsSharp.XansData.Model3D.ActiveTextureChoice"/>.<para/>
+            If <see cref="P:ThreeRingsSharp.XansData.Model3D.ActiveTextureChoice"/> is not <see langword="null"/>, <see langword="set"/> will throw <see cref="T:System.InvalidOperationException"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Model3D.ActiveTextureChoice">
+            <summary>
+            The <see cref="T:ThreeRingsSharp.DataHandlers.Parameters.XChoice"/> containing the directs that represent the active texture.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.AttachmentNode">

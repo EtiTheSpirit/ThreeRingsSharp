@@ -21,7 +21,7 @@ namespace ThreeRingsSharp.Utility {
 				if (param is Parameter.Direct direct) {
 					//WrappedDirect wDir = new WrappedDirect(cfg, direct);
 					XDirect dir = new XDirect(cfg, direct);
-					args.put(param.name, dir.GetValue());
+					args.put(param.name, dir.Value);
 				}
 			}
 

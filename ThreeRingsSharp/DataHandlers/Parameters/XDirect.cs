@@ -19,11 +19,12 @@ namespace ThreeRingsSharp.DataHandlers.Parameters {
 		public IReadOnlyList<string> Paths { get; }
 
 		/// <summary>
-		/// Corresponding directly to <see cref="Paths"/>, this is the value of what each path pointed to.<para/>
-		/// Please note that choosing between one of these for the "right value" is a non-problem. Think of a direct's paths like a list of instructions.
-		/// If I tell you to write your name on 5 different papers, your name isn't going to change between those pages, so if I need to find your name, I can pick any.
-		/// Likewise, you can pick anything out of this and it'll be the "right value" you are looking for.<para/>
-		/// If you are feeling particularly indecisive, you can use <see cref="GetValue"/>.
+		/// Corresponding directly to <see cref="Paths"/>, this is the value of what each path pointed to.<para/><para/>
+		/// Please note that choosing between one of these for the "right value" to <strong>read from</strong> is a non-problem. Think of a direct's paths like a list of instructions.
+		/// If I tell you to write your name on 5 different papers, your name isn't going to change between those pages, so if I need to find your name, I can pick any page I want and still get the right value.
+		/// Likewise, you can pick anything out of this and it'll be the "right value" you are looking for.<para/><para/>
+		/// If you are feeling particularly indecisive, you can just reference <see cref="Value"/>.<para/><para/>
+		/// If you need to set the values however, overriding <em>all</em> entries is required, and this can be done with <see cref="SetAllValuesTo(object)"/>.
 		/// </summary>
 		public IReadOnlyList<DirectPointer> Values { get; }
 
@@ -37,21 +38,28 @@ namespace ThreeRingsSharp.DataHandlers.Parameters {
 		}
 
 		/// <summary>
-		/// Returns the first entry in <see cref="Values"/> (all values are identical), or <see langword="null"/> if there are no values due to <see cref="Paths"/> being empty.
+		/// Returns the value of the first <see cref="DirectPointer"/> this modifies.
 		/// </summary>
-		/// <returns></returns>
-		public object GetValue() {
-			return GetValuePointer().Value;
-		}
+		/// <remarks>
+		/// The actual selected value out of <see cref="Values"/> does not matter, hence why this loosely picks the first. See docs on <see cref="Values"/> for more information.
+		/// </remarks>
+		public object Value => ValuePointer?.Value;
 
 		/// <summary>
-		/// Returns a <see cref="DirectPointer"/> to the value this <see cref="XDirect"/> represents.
+		/// The <see cref="DirectPointer"/> to the value this <see cref="XDirect"/> represents.<para/>
+		/// <strong>Note:</strong> Do <em>NOT</em> use this to modify the value of this <see cref="XDirect"/>! To change the value of this <see cref="XDirect"/> properly and not create a critical desynchronization, use <see cref="SetAllValuesTo(object)"/>
 		/// </summary>
 		/// <returns></returns>
-		public DirectPointer GetValuePointer() {
-			if (Values.Count == 0)
-				return null;
-			return Values[0];
+		public DirectPointer ValuePointer => Values.FirstOrDefault();
+
+		/// <summary>
+		/// Modifies all <see cref="Values"/> to be the new value, ensuring that the new value is applied without desynchronizing this <see cref="XDirect"/>'s values.
+		/// </summary>
+		/// <param name="value"></param>
+		public void SetAllValuesTo(object value) {
+			foreach (DirectPointer ptr in Values) {
+				ptr.Value = value;
+			}
 		}
 
 		private DirectPointer Traverse(string path) {

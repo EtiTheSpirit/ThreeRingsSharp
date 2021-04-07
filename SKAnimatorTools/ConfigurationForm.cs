@@ -12,9 +12,25 @@ using ThreeRingsSharp.XansData.Structs;
 namespace SKAnimatorTools {
 	public partial class ConfigurationForm : Form {
 
+		/// <summary>
+		/// A general default directory for where Spiral Knights might be located on most users' PCs.
+		/// </summary>
 		public const string DEFAULT_DIRECTORY = @"C:\Program Files (x86)\Steam\steamapps\common\Spiral Knights\rsrc";
 
+		/// <summary>
+		/// The current version to display at the top of the config form. Set by the main window's update checker routine.
+		/// </summary>
 		public static string CurrentVersion { get; set; } = "0.0.0";
+
+		/// <summary>
+		/// Whether or not the program is out of date. Set by the main window's update checker routine.
+		/// </summary>
+		public static bool IsOutOfDate { get; set; } = false;
+
+		/// <summary>
+		/// The text to use in the version display label.
+		/// </summary>
+		private static string VersionLabel => $"ThreeRingsSharp v{CurrentVersion}{(IsOutOfDate ? " (New Version Available)" : "")}";
 
 		/// <summary>
 		/// True if the values in the UI are all okay and it's safe to save the configuration values.
@@ -43,7 +59,7 @@ namespace SKAnimatorTools {
 
 		public ConfigurationForm() {
 			InitializeComponent();
-			LabelCurrentVersion.Text = "ThreeRingsSharp v" + CurrentVersion;
+			LabelCurrentVersion.Text = VersionLabel;
 			IsOK = true;
 
 			TextBox_DefaultLoadLoc.Text = UserConfiguration.DefaultLoadDirectory;
@@ -56,7 +72,6 @@ namespace SKAnimatorTools {
 			CheckBox_EmbedTextures.Checked = UserConfiguration.EmbedTextures;
 			Option_LogLevel.SelectedIndex = UserConfiguration.LoggingLevel;
 			Option_StaticSetExportMode.SelectedIndex = UserConfiguration.StaticSetExportMode;
-			CheckBox_PreferSpeed.Checked = UserConfiguration.PreferSpeed;
 			VerifyAllPathIntegrity();
 		}
 
@@ -74,7 +89,6 @@ namespace SKAnimatorTools {
 			UserConfiguration.ConditionalConfigExportMode = Option_ConditionalExportMode.SelectedIndex;
 			UserConfiguration.StaticSetExportMode = Option_StaticSetExportMode.SelectedIndex;
 			UserConfiguration.EmbedTextures = CheckBox_EmbedTextures.Checked;
-			UserConfiguration.PreferSpeed = CheckBox_PreferSpeed.Checked;
 			UserConfiguration.LoggingLevel = Option_LogLevel.SelectedIndex;
 			UserConfiguration.IsFirstTimeOpening = false;
 
@@ -157,14 +171,9 @@ namespace SKAnimatorTools {
 
 		private void VerboseLoggingChanged(object sender, EventArgs e) {
 			// SelectedIndex translates to the level nicely.
-			if (Option_LogLevel.SelectedIndex > XanLogger.STANDARD) {
-				if (!CheckBox_PreferSpeed.Checked) {
-					PicBox_VerboseLogging.Image = Warning;
-					MainTooltip.SetToolTip(PicBox_VerboseLogging, "Enabling debug or trace logging can slow down the program\n(it has to wait while the text is written to the console). This does not need to be set\nto change how latest.log is written, and is only useful for debugging during runtime.");
-				} else {
-					PicBox_VerboseLogging.Image = Information;
-					MainTooltip.SetToolTip(PicBox_VerboseLogging, "Generally, setting this above standard is not advised, however since\nPrefer Speed Over Feedback is enabled, the effects of this option do not apply.");
-				}
+			if (Option_LogLevel.SelectedIndex > XanLogger.INFO) {
+				PicBox_VerboseLogging.Image = Information;
+				MainTooltip.SetToolTip(PicBox_VerboseLogging, "Enabling debug or trace logging can make tracking progress hard for standard users, and it is only advised to do this for actual program debugging.");
 			} else {
 				PicBox_VerboseLogging.Image = Accepted;
 				MainTooltip.SetToolTip(PicBox_VerboseLogging, string.Empty);

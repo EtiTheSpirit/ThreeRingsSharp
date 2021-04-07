@@ -56,10 +56,11 @@ namespace ThreeRingsSharp.DataHandlers.Model {
 				} else if (prop is Parameter.Choice choice) {
 					DataTreeObject choices = new DataTreeObject {
 						ImageKey = SilkImage.Value,
-						Text = "Choice: " + choice.name + " [Default: " + choice.choice + "]"
+						Text = "Choice: " + choice.name + " [Current: " + choice.choice + "]"
 					};
-					choices.ExtraData["Choice"] = choice.choice;
-					choice.GetChoiceOptions();
+					choices.ExtraData["ModelConfig"] = model;
+					choices.ExtraData["RawOOOChoice"] = choice;
+
 					List<DataTreeObject> choiceList = new List<DataTreeObject>();
 					foreach (Parameter.Choice.Option option in choice.options) {
 						// choiceList.Add(c);

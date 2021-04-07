@@ -24,11 +24,12 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
-		/// Returns the default option of this choice. Will return null if it couldn't be found for whatever reason.
+		/// Returns the default option of this choice. Will return <see langword="null"/> if it couldn't be found for whatever reason.<para/>
+		/// All this does is iterate through <see cref="Parameter.Choice.options"/> and attempts to locate <see cref="Parameter.Choice.choice"/>. If it is found in the options array, it simply returns <see cref="Parameter.Choice.choice"/>, effectively validating the choice is proper or not.
 		/// </summary>
 		/// <param name="choice">The choice to get the default option from.</param>
 		/// <returns></returns>
-		public static Parameter.Choice.Option GetDefaultOption(this Parameter.Choice choice) {
+		[Obsolete("Way too expensive for such a simple thing. Just reference choice.choice")] public static Parameter.Choice.Option GetDefaultOption(this Parameter.Choice choice) {
 			return choice.options.Where(opt => opt.name == choice.choice).FirstOrDefault();
 		}
 

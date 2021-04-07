@@ -10,6 +10,10 @@ using ThreeRingsSharp.Utility.Interface;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 
 namespace ThreeRingsSharp.Utility {
+
+	/// <summary>
+	/// Provides a means of writing to the program's main log through any thread.
+	/// </summary>
 	public static class XanLogger {
 
 		#region Log Levels
@@ -17,7 +21,7 @@ namespace ThreeRingsSharp.Utility {
 		/// <summary>
 		/// Indicates a standard log message that is shown no matter what.
 		/// </summary>
-		public const int STANDARD = 0;
+		public const int INFO = 0;
 
 		/// <summary>
 		/// Indicates a debug log message, which is generally more frequent and used to acutely guide the developer through code.
@@ -44,7 +48,7 @@ namespace ThreeRingsSharp.Utility {
 		/// <summary>
 		/// The level of messages to display.
 		/// </summary>
-		public static int LoggingLevel { get; set; } = IsDebugMode ? DEBUG : STANDARD;
+		public static int LoggingLevel { get; set; } = IsDebugMode ? DEBUG : INFO;
 
 #if DEBUG
 		/// <summary>
@@ -137,7 +141,7 @@ namespace ThreeRingsSharp.Utility {
 		/// </summary>
 		/// <param name="logLevel">The level to log. If this is greater than <see cref="LoggingLevel"/>, it will not be appended to the log.</param>
 		/// <param name="color">The color of the text in the log.</param>
-		public static void WriteLine(int logLevel = STANDARD, Color? color = null) => Write("\n", logLevel, color);
+		public static void WriteLine(int logLevel = INFO, Color? color = null) => Write("\n", logLevel, color);
 
 		/// <summary>
 		/// Append the given text to the log and advance by one line.
@@ -146,7 +150,7 @@ namespace ThreeRingsSharp.Utility {
 		/// <param name="logLevel">The level to log. If this is greater than <see cref="LoggingLevel"/>, it will not be appended to the log.</param>
 		/// <param name="color">The color of the text in the log.</param>
 		/// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
-		public static void WriteLine(object obj, int logLevel = STANDARD, Color? color = null) {
+		public static void WriteLine(object obj, int logLevel = INFO, Color? color = null) {
 			Write((obj?.ToString() ?? "null") + "\n", logLevel, color);
 		}
 
@@ -156,9 +160,8 @@ namespace ThreeRingsSharp.Utility {
 		/// <param name="obj">The text to write to the log.</param>
 		/// <param name="logLevel">The level to log. If this is greater than <see cref="LoggingLevel"/>, it will not be appended to the log.</param>
 		/// <param name="color">The color of the text in the log.</param>
-		/// <exception cref="ArgumentNullException">Thrown if <paramref name="obj"/> is <see langword="null"/>.</exception>
-		public static void Write(object obj, int logLevel = STANDARD, Color? color = null) {
-			if (obj == null) throw new ArgumentNullException("obj");
+		public static void Write(object obj, int logLevel = INFO, Color? color = null) {
+			// if (obj == null) throw new ArgumentNullException("obj");
 			string text = obj?.ToString() ?? "null";
 			string strippedText = VTConsole.StripColorFormattingCode(text);
 			bool canLog = logLevel <= LoggingLevel;
@@ -192,24 +195,6 @@ namespace ThreeRingsSharp.Utility {
 			if (UpdateAutomatically) {
 				UpdateLog();
 			}
-			/*
-			if (UpdateAutomatically) {
-				WasAtBottom = BoxReference.IsScrolledToBottom();
-				BoxReference.AppendText(strippedText, writeColor);
-
-				if (WasAtBottom && !BoxReference.IsScrolledToBottom()) {
-					BoxReference.SelectionStart = BoxReference.TextLength;
-					BoxReference.ScrollToCaret();
-				}
-
-				BoxReference.Update();
-			} else {
-				if (!UpdateComplete.IsSet) {
-					//UpdateComplete.Wait(); // Wait until the latest update is done.
-				} else {
-					LogWhileNotUpdating.Add((strippedText, writeColor, logLevel));
-				}
-			}*/
 
 			if (!IsMainThread) {
 				// Yes, set the private member here.

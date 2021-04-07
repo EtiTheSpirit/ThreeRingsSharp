@@ -8,7 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using ThreeRingsSharp.DataHandlers.AnimationHandlers.Expressions;
+using ThreeRingsSharp.DataHandlers.Expressions;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Extensions;
@@ -147,7 +147,7 @@ namespace ThreeRingsSharp.DataHandlers.AnimationHandlers {
 					Transform3DExpression expr = targetTrs.expression;
 
 					for (int bakeNFrames = 0; bakeNFrames < 60; bakeNFrames++) {
-						Transform3D transform = Transform3DExpressionHandler.Compute(expr, currentFrame);
+						Transform3D transform = expr.Compute(currentFrame);
 						if (transform == null) {
 							XanLogger.WriteLine("Expression evaluation came out to a null animation! Setting to identity transform.", XanLogger.DEBUG);
 							transform = new Transform3D(0);

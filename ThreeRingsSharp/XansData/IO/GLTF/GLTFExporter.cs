@@ -878,7 +878,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					if (JSONData.Materials.Count > 0) {
 						string fullName = model.Textures.Where(texturePath => {
 							if (texturePath != null) {
-								return new FileInfo(texturePath).Name == model.ActiveTexture;
+								return texturePath == model.ActiveTexture || new FileInfo(texturePath).Name == model.ActiveTexture;
 							} else {
 								return false;
 							}
@@ -948,6 +948,11 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 					animationSamplerIndex = 0;
 
 					IReadOnlyList<Keyframe> ordered = anim.OrderedKeyframes;
+
+					if (ordered.Count == 0) {
+						XanLogger.WriteLine("WARNING: Empty animation detected! Skipping. If this was part of a Sequential animation, it has only skipped one of the subsequences, not the entire thing.", XanLogger.INFO, Color.Goldenrod);
+						continue;
+					}
 
 					GLTFAnimation glAnim = new GLTFAnimation {
 						Name = anim.Name

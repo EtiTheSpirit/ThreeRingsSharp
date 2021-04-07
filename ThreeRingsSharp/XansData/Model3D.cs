@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using ThreeRingsSharp.DataHandlers.Parameters;
 using ThreeRingsSharp.Utility;
 using ThreeRingsSharp.XansData.IO;
 using ThreeRingsSharp.XansData.IO.GLTF;
@@ -98,9 +100,34 @@ namespace ThreeRingsSharp.XansData {
 		public List<string> Textures { get; } = new List<string>();
 
 		/// <summary>
-		/// The texture that this model uses. This is by filename, not full path.
+		/// The texture that this model uses. This is by filename (skin_orange.png) or filepath relative to rsrc (character/npc/monster/gremlin/null/skin_orange.png).<para/>
+		/// Depending on the value of <see cref="ActiveTextureChoice"/>, this will either return the value manually set with <see langword="set"/>, or the first texture pointed at by <see cref="ActiveTextureChoice"/>.<para/>
+		/// If <see cref="ActiveTextureChoice"/> is not <see langword="null"/>, <see langword="set"/> will throw <see cref="InvalidOperationException"/>.
 		/// </summary>
-		public string ActiveTexture { get; set; } = null;
+		public string ActiveTexture {
+			get {
+				if (ActiveTextureChoice != null) {
+					// lol
+					// TODO: Clean (if needed)
+					KeyValuePair<string, object> target = ActiveTextureChoice.CurrentValues.FirstOrDefault(kvp => Textures.Contains(kvp.Value?.ToString() ?? "null"));
+					return target.Value?.ToString() ?? _activeTexture;
+				} else {
+					return _activeTexture;
+				}
+			}
+			set {
+				if (ActiveTextureChoice != null) {
+					throw new InvalidOperationException("Cannot manually set ActiveTexture when ActiveTextureChoice is set.");
+				}
+				_activeTexture = value;
+			}
+		}
+		private string _activeTexture = null;
+
+		/// <summary>
+		/// The <see cref="XChoice"/> containing the directs that represent the active texture.
+		/// </summary>
+		public XChoice ActiveTextureChoice { get; set; } = null;
 
 		/// <summary>
 		/// The <see cref="Armature"/> that this <see cref="Model3D"/> is attached to.

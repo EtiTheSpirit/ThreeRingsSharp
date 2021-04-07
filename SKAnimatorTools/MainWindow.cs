@@ -1,4 +1,5 @@
-﻿using com.threerings.opengl.model.config;
+﻿using com.threerings.config;
+using com.threerings.opengl.model.config;
 using SKAnimatorTools.Configuration;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThreeRingsSharp;
 using ThreeRingsSharp.DataHandlers;
@@ -85,7 +87,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The version of this release of the program.
 		/// </summary>
-		public readonly int[] THIS_VERSION = { 2, 3, 0 };
+		public readonly int[] THIS_VERSION = { 2, 3, 1 };
 
 		/// <summary>
 		/// Attempts to access the github to acquire the latest version.
@@ -120,13 +122,13 @@ namespace SKAnimatorTools {
 		/// Checks the version of the program, and shows the update window if this instance of the program is out of date.
 		/// </summary>
 		/// <returns></returns>
-		public void ShowUpdateDialogIfNeeded() {
+		public void ShowUpdateDialogIfNeeded(bool force = false) {
 			if (TryGetVersion(out (int, int, int)? newVersion) && newVersion.HasValue) {
 				(int major, int minor, int patch) = newVersion.Value;
 				bool newMajor = major > THIS_VERSION[0];
 				bool newMinor = minor > THIS_VERSION[1];
 				bool newPatch = patch > THIS_VERSION[2];
-				bool newUpdate = newMajor || newMinor || newPatch;
+				bool newUpdate = newMajor || newMinor || newPatch || force;
 				// Benefit of semver: ALL increments = new update.
 
 				if (newUpdate) {
@@ -134,6 +136,8 @@ namespace SKAnimatorTools {
 					Updater updWindow = new Updater(verStr);
 					updWindow.ShowDialog(); // Because I want it to yield.
 				}
+			} else {
+				XanLogger.WriteLine("Failed to download new version information. TRS may have an update, but there's no way to know automatically. If you care enough, go check the github page.", XanLogger.INFO, Color.Red);
 			}
 		}
 
@@ -217,7 +221,7 @@ namespace SKAnimatorTools {
 			SKAnimatorToolsProxy.PreferSpeedOverFeedback = UserConfiguration.PreferSpeed;
 
 			if (XanLogger.IsDebugMode) {
-				if (UserConfiguration.LoggingLevel == XanLogger.STANDARD) {
+				if (UserConfiguration.LoggingLevel == XanLogger.INFO) {
 					UserConfiguration.LoggingLevel = XanLogger.DEBUG;
 				}
 			}
@@ -251,7 +255,7 @@ namespace SKAnimatorTools {
 
 		#endregion
 
-		public MainWindow() {
+		public MainWindow(string[] args) {
 			UISyncContext = SynchronizationContext.Current;
 			ConfigurationForm.CurrentVersion = THIS_VERSION[0] + "." + THIS_VERSION[1] + "." + THIS_VERSION[2];
 
@@ -264,16 +268,18 @@ namespace SKAnimatorTools {
 			// makes absolutely no sense. Ideally, removing the faulty field and replacing it with something that does nothing
 			// should resolve the issue and make the program usable for these people.
 
+			ShowUpdateDialogIfNeeded(args.Contains("forceupdate"));
+
 			InitializeComponent();
 
 			SetupConsole();
 			PopulateProxyReferences();
 			LoadConfigs();
 			
-			ConfigReferenceBootstrapper.PopulateConfigRefsAsync();
+			_ = ConfigReferenceBootstrapper.PopulateConfigRefsAsync();
 
 			XanLogger.UpdateAutomatically = false;
-			if (XanLogger.LoggingLevel > XanLogger.STANDARD) {
+			if (XanLogger.LoggingLevel > XanLogger.INFO) {
 				ShowWindow(ConsolePtr, 5);
 			} else {
 				ShowWindow(ConsolePtr, 0);
@@ -283,6 +289,7 @@ namespace SKAnimatorTools {
 		private void OnConfigChanged(string configKey, dynamic oldValue, dynamic newValue) {
 			if (configKey == "RememberDirectoryAfterOpen") {
 				OpenModel.RestoreDirectory = newValue;
+				OpenModel.InitialDirectory = null;
 			} else if (configKey == "RsrcDirectory") {
 				if (Directory.Exists(newValue)) {
 					ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(newValue);
@@ -295,7 +302,7 @@ namespace SKAnimatorTools {
 				Model3D.MultiplyScaleByHundred = newValue;
 			} else if (configKey == "LoggingLevel") {
 				XanLogger.LoggingLevel = newValue;
-				if (newValue > XanLogger.STANDARD) {
+				if (newValue > XanLogger.INFO) {
 					ShowWindow(ConsolePtr, 5);
 				} else {
 					ShowWindow(ConsolePtr, 0);
@@ -509,6 +516,7 @@ namespace SKAnimatorTools {
 						// Add the colon and value only if there's actually a value.
 						// To create nested containers, it's easier to just create another data tree object without text, populate that new object with the sub-properties, and then add the new object as a property to something else.
 						if (propName.ExtraData.ContainsKey("StaticSetConfig")) {
+							// This is a StaticSetConfig so it needs to be able to choose between submodels.
 							nodeObj.Tag = propName.ExtraData["StaticSetConfig"];
 							nodeObj.ImageIndex = (int)SilkImage.Wrench;
 							nodeObj.ForeColor = Color.Blue;
@@ -529,6 +537,13 @@ namespace SKAnimatorTools {
 							nodeObj.Nodes.Add(property.ToTreeNode());
 						} else {
 							TreeNode containerNode = property.ToTreeNode();
+							if (property.ExtraData.ContainsKey("RawOOOChoice")) {
+								containerNode.Tag = (property.ExtraData["ModelConfig"], property.ExtraData["RawOOOChoice"]);
+								containerNode.ImageIndex = (int)SilkImage.Value;
+								containerNode.ForeColor = Color.Blue;
+								containerNode.ToolTipText = "Click on this to change the Choice Option.";
+								containerNode.NodeFont = new Font(FontFamily.GenericSansSerif, 8.25f, FontStyle.Underline);
+							}
 							nodeObj.Nodes.Add(containerNode);
 							PopulateTreeNodeForProperties(containerNode, property);
 						}
@@ -552,6 +567,7 @@ namespace SKAnimatorTools {
 
 				TreeNode nodeObj = propName.ToTreeNode();
 				if (propName.DisplaySingleChildInline && propValues.Count == 1) {
+					
 					nodeObj.Text += ": " + propValues[0].Text;
 					if (!propValues[0].CreatedFromProperty) {
 						// TreeNode propZeroNode = propValues[0].ToTreeNode();
@@ -687,14 +703,20 @@ namespace SKAnimatorTools {
 			}
 		}
 
-		private void OnStaticSetSelectionClosed(object sender, FormClosedEventArgs e) {
+		private void OnStaticSetOrChoiceSelectionClosed(object sender, FormClosedEventArgs e) {
 			if (sender is ChangeTargetPrompt prompt) {
 				string start = prompt.Node.Text;
 				if (start.Contains(":")) {
 					start = start.Substring(0, start.IndexOf(":"));
 				}
-				prompt.Node.Text = start + ": " + prompt.Model.model;
-				prompt.FormClosed -= OnStaticSetSelectionClosed;
+				if (prompt.Model != null) {
+					prompt.Node.Text = $"{start}: {prompt.Model.model}";
+				} else if (prompt.Choice != null) {
+					// Text = "Choice: " + choice.name + " [Current: " + choice.choice + "]"
+					prompt.Node.Text = $"{start}: {prompt.Choice.name} [Current: {prompt.Choice.choice}]";
+					prompt.ChoiceAffects.ApplyArguments(prompt.Choice.options.First(opt => opt.name == prompt.Choice.choice).arguments, prompt.Choice.name);
+				}
+				prompt.FormClosed -= OnStaticSetOrChoiceSelectionClosed;
 			}
 		}
 
@@ -703,12 +725,23 @@ namespace SKAnimatorTools {
 				ChangeTargetPrompt prompt = new ChangeTargetPrompt();
 				prompt.SetPossibleOptionsFrom(staticSetConfig);
 				prompt.Node = e.Node;
-				prompt.FormClosed += OnStaticSetSelectionClosed;
+				prompt.FormClosed += OnStaticSetOrChoiceSelectionClosed;
+				prompt.Show();
+			} else if (e.Node.Tag is ValueTuple<object, object> directTag) {
+				ParameterizedConfig cfg = directTag.Item1 as ParameterizedConfig;
+				Parameter.Choice choice = directTag.Item2 as Parameter.Choice;
+
+				ChangeTargetPrompt prompt = new ChangeTargetPrompt();
+				prompt.SetPossibleOptionsFrom(cfg, choice);
+				prompt.Node = e.Node;
+				prompt.FormClosed += OnStaticSetOrChoiceSelectionClosed;
 				prompt.Show();
 			}
 		}
 
 		#endregion
+
+		#region Background Worker
 
 		private void ModelLoaderBGWorker_DoWork(object sender, DoWorkEventArgs e) {
 			if (SKAnimatorToolsProxy.UISyncContext == null) SKAnimatorToolsProxy.UISyncContext = e.Argument as SynchronizationContext;
@@ -736,5 +769,7 @@ namespace SKAnimatorTools {
 			XanLogger.ForceUpdateLog();
 			Update();
 		}
+
+		#endregion
 	}
 }

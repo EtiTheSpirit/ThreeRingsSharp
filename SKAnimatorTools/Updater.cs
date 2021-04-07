@@ -18,10 +18,10 @@ namespace SKAnimatorTools {
 		}
 
 		private void BtnDownload_Click(object sender, EventArgs e) {
-			if (File.Exists(@".\TRSUpdater.exe")) {
-				Process.Start(@".\TRSUpdater.exe");
+			if (File.Exists(@".\TRSUpdaterV2.exe")) {
+				Process.Start(@".\TRSUpdaterV2.exe");
 			} else {
-				string dlLink = "https://github.com/XanTheDragon/ThreeRingsSharp/releases/download/{0}/ThreeRingsSharp.zip";
+				string dlLink = "https://github.com/EtiTheSpirit/ThreeRingsSharp/releases/download/{0}/ThreeRingsSharp.zip";
 				Process.Start(string.Format(dlLink, LatestVersion));
 			}
 			Close();
@@ -29,8 +29,8 @@ namespace SKAnimatorTools {
 		}
 
 		private void BtnOpenPage_Click(object sender, EventArgs e) {
-			string releaseLink = "https://github.com/XanTheDragon/ThreeRingsSharp/releases/{0}";
-			System.Diagnostics.Process.Start(string.Format(releaseLink, LatestVersion));
+			string releaseLink = "https://github.com/EtiTheSpirit/ThreeRingsSharp/releases/{0}";
+			Process.Start(string.Format(releaseLink, LatestVersion));
 		}
 	}
 }
