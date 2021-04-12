@@ -20,7 +20,7 @@ namespace ThreeRingsSharp.DataHandlers.Expressions {
 			if (expression is StringExpression.Constant constExpr) {
 				return constExpr.value;
 			} else if (expression is StringExpression.Parsed parsedExpr) {
-				return parsedExpr.expression; // This is presumably verbatim. I need to verify this.
+				return ExpressionParserProxy.Parse(parsedExpr);
 			}
 
 			XanLogger.WriteLine($"Cannot parse expression type {expression.GetType().FullName} at this time.", XanLogger.TRACE);

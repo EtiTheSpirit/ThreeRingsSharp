@@ -26,7 +26,7 @@ namespace ThreeRingsSharp.DataHandlers.Expressions {
 					cartExpr.x.Compute(frameNumber),
 					cartExpr.y.Compute(frameNumber),
 					cartExpr.z.Compute(frameNumber)
-				);
+				);		
 			}
 
 			XanLogger.WriteLine($"Cannot parse expression type {expression.GetType().FullName} at this time.", XanLogger.TRACE);

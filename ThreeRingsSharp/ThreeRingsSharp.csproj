@@ -159,6 +159,7 @@
     <Compile Include="DataHandlers\AnimationHandlers\IAnimationHandler.cs" />
     <Compile Include="DataHandlers\ClydeFileHandler.cs" />
     <Compile Include="DataHandlers\Expressions\BooleanExpressionHandler.cs" />
+    <Compile Include="DataHandlers\Expressions\ExpressionParserProxy.cs" />
     <Compile Include="DataHandlers\Expressions\FloatExpressionHandler.cs" />
     <Compile Include="DataHandlers\Expressions\QuaternionExpressionHandler.cs" />
     <Compile Include="DataHandlers\Expressions\StringExpressionHandler.cs" />

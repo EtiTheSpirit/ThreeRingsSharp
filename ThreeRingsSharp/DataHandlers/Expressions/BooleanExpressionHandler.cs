@@ -56,6 +56,10 @@ namespace ThreeRingsSharp.DataHandlers.Expressions {
 
 			} else if (expression is BooleanExpression.FloatLessEquals fleExpr) {
 				return fleExpr.firstOperand.Compute(frameNumber) <= fleExpr.secondOperand.Compute(frameNumber);
+
+			} else if (expression is BooleanExpression.Parsed parsedExpr) {
+				return ExpressionParserProxy.Parse(parsedExpr);
+
 			}
 
 			XanLogger.WriteLine($"Cannot parse expression type {expression.GetType().FullName} at this time.", XanLogger.TRACE);

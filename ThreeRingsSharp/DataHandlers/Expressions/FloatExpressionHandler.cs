@@ -89,6 +89,8 @@ namespace ThreeRingsSharp.DataHandlers.Expressions {
 				return (float)Math.Pow(Compute(powExpr.firstOperand, frameNumber), Compute(powExpr.secondOperand, frameNumber));
 			} else if (expression is FloatExpression.Remainder remainderExpr) {
 				return (float)Math.IEEERemainder(Compute(remainderExpr.firstOperand, frameNumber), Compute(remainderExpr.secondOperand, frameNumber));
+			} else if (expression is FloatExpression.Parsed parsedExpr) {
+				return ExpressionParserProxy.Parse(parsedExpr);
 			}
 
 			XanLogger.WriteLine($"Cannot parse expression type {expression.GetType().FullName} at this time.", XanLogger.TRACE);
