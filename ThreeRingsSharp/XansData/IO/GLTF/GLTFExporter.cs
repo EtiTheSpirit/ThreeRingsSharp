@@ -1020,7 +1020,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 									(translation, rotation, scale) = key.Transform.GetAllComponents();
 								} else {
 									(translation, rotation, scale) = new Transform3D(Transform3D.IDENTITY).GetAllComponents();
-									XanLogger.WriteLine("Unable to find animation keyframe for node " + currentKey + " -- This keyframe will be at the origin, which may cause malformed animations. Technically, this warning should never show, so if you are seeing this, please file an issue at https://github.com/EtiTheSpirit/ThreeRingsSharp/issues/new/choose", XanLogger.DEBUG, Color.DarkGoldenrod);
+									// XanLogger.WriteLine("Unable to find animation keyframe for node " + currentKey + " -- This keyframe will be at the origin, which may cause malformed animations. Technically, this warning should never show, so if you are seeing this, please file an issue at https://github.com/EtiTheSpirit/ThreeRingsSharp/issues/new/choose", XanLogger.DEBUG, Color.DarkGoldenrod);
 								}
 								if (mode == 0) {
 									for (int i = 0; i < translation.Length; i++) {
