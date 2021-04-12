@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using com.threerings.math;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -995,7 +996,10 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 						string currentKey = boneToNodeIndex.Keys.ElementAt(idx);
 						int thisNodeIndex = boneToNodeIndex[currentKey];
 
-						if (ordered.Where(keyframe => keyframe.Keys.Where(key => key.Node == currentKey).FirstOrDefault() != null).FirstOrDefault() == null) {
+						// Find any keyframes that don't have the node we are affecting right now.
+						// If we find one, skip this because it's impossible to animate something that doesn't exist.
+						Keyframe missing = ordered.FirstOrDefault(keyframe => keyframe.Keys.Where(key => key.Node == currentKey).FirstOrDefault() == null);
+						if (missing != null) {
 							continue;
 						}
 
@@ -1015,8 +1019,8 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 								if (key != null) {
 									(translation, rotation, scale) = key.Transform.GetAllComponents();
 								} else {
-									//(translation, rotation, scale) = new Transform3D(Transform3D.IDENTITY).GetAllComponents();
-									throw new InvalidDataException("Unable to find key for node " + currentKey);
+									(translation, rotation, scale) = new Transform3D(Transform3D.IDENTITY).GetAllComponents();
+									XanLogger.WriteLine("Unable to find animation keyframe for node " + currentKey + " -- This keyframe will be at the origin, which may cause malformed animations. Technically, this warning should never show, so if you are seeing this, please file an issue at https://github.com/EtiTheSpirit/ThreeRingsSharp/issues/new/choose", XanLogger.DEBUG, Color.DarkGoldenrod);
 								}
 								if (mode == 0) {
 									for (int i = 0; i < translation.Length; i++) {

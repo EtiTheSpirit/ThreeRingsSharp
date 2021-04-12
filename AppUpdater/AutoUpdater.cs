@@ -51,11 +51,27 @@ namespace AppUpdater {
 			if (Destination.Exists) Destination.Delete();
 			bool gotVersion = TryGetVersion(out (int major, int minor, int patch, string actualVersionText)? versionInfo);
 			if (gotVersion && versionInfo.HasValue) {
-				string dlLink = "https://github.com/EtiTheSpirit/ThreeRingsSharp/releases/download/{0}/ThreeRingsSharp.zip";
-				using (WebClient client = new WebClient()) {
-					client.DownloadFileCompleted += OnDownloadCompleted;
-					client.DownloadProgressChanged += OnProgressChanged;
-					client.DownloadFileAsync(new Uri(string.Format(dlLink, versionInfo.Value.actualVersionText)), Destination.FullName);
+				string dlLink = $"https://github.com/EtiTheSpirit/ThreeRingsSharp/releases/download/{versionInfo.Value.actualVersionText}/ThreeRingsSharp.zip";
+				bool exists = false;
+
+				try {
+					WebRequest verifyExistenceRequest = WebRequest.Create(dlLink);
+					verifyExistenceRequest.Method = "HEAD";
+					using (HttpWebResponse response = (HttpWebResponse)verifyExistenceRequest.GetResponse()) {
+						if (response.StatusCode == HttpStatusCode.OK) {
+							exists = true;
+						}
+					}
+				} catch { }
+
+				if (exists) {
+					using (WebClient client = new WebClient()) {
+						client.DownloadFileCompleted += OnDownloadCompleted;
+						client.DownloadProgressChanged += OnProgressChanged;
+						client.DownloadFileAsync(new Uri(dlLink), Destination.FullName);
+					}
+				} else {
+					MessageBox.Show($"A new version ({versionInfo.Value.actualVersionText}) has been released, however its download could not be found. Try again in a few minutes (chances are, the new version was pushed to GitHub, but the download file hasn't been uploaded yet). If it still fails, consider checking manually.", "New version not available right now", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			} else {
 				MessageBox.Show("Failed to download version information! You will need to go to\nhttps://github.com/XanTheDragon/ThreeRingsSharp/releases yourself and download the top-most release.", "Failed to get version information", MessageBoxButtons.OK, MessageBoxIcon.Error);
