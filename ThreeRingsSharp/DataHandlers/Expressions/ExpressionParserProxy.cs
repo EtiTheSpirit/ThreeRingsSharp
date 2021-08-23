@@ -21,7 +21,7 @@ namespace ThreeRingsSharp.DataHandlers.Expressions {
 			// This is a really terrible hack in general, but I'm at the point where I'm not too bothered.
 			// This is scalable, for one, and while using reflection is a cardinal sin, the method is protected anyway. I could do an IL edit.
 			// Meh.
-			string expression = (string)ReflectionHelper.Get(parsedExpr, "expression");
+			string expression = ReflectionHelper.Get<string>(parsedExpr, "expression");
 			return (TExpr)ReflectionHelper.Call(typeof(TExpr), "parseExpression", null, expression);
 		}
 

@@ -17,12 +17,20 @@ namespace ThreeRingsSharp.Utility {
 		/// </summary>
 		/// <param name="obj">The object to get the data of.</param>
 		/// <param name="field">The name of the field to access.</param>
-		/// <returns></returns>
 		public static object Get(object obj, string field) {
 			if (int.TryParse(field.BetweenBrackets(), out int idx)) {
 				return GetArray(obj, idx);
 			}
 			return obj.GetType().GetField(field).GetValue(obj);
+		}
+
+		/// <inheritdoc/>
+		/// <remarks>
+		/// This is simply an alias to <see cref="Get(object, string)"/>.
+		/// </remarks>
+		/// <typeparam name="T">The type to return as.</typeparam>
+		public static T Get<T>(object obj, string field) {
+			return (T)Get(obj, field);
 		}
 
 		/// <summary>
@@ -70,7 +78,7 @@ namespace ThreeRingsSharp.Utility {
 		}
 
 		/// <summary>
-		/// Calls the given method for the given type.
+		/// Calls the given method for the given type. If the method is an instance method, consider using <see cref="CallMember(object, string, object[])"/>.
 		/// </summary>
 		/// <param name="type"></param>
 		/// <param name="methodName"></param>

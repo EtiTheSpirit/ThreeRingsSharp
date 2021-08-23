@@ -5,11 +5,18 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ThreeRingsSharp.Utility {
+
+	/// <summary>
+	/// A utility class that translates between java classes and C# classes of various primitive types.
+	/// </summary>
 	public static class JavaToCSPrimitive {
 
 		/// <summary>
-		/// Given a java primitive type <strong>class</strong> (java.lang.Boolean, for instance) this will turn it into its C# primitive type.
+		/// Given a java primitive type <strong>class instance</strong> (<see cref="java.lang.Boolean"/>, for instance) this will turn it into its C# primitive type equivalent.
 		/// </summary>
+		/// <remarks>
+		/// Since <see cref="java.lang.String"/> is not classified as a primitive in the JVM, it will not be converted in this method.
+		/// </remarks>
 		/// <param name="obj"></param>
 		/// <returns></returns>
 		public static object AsCSPrimitive(object obj) {
@@ -36,6 +43,9 @@ namespace ThreeRingsSharp.Utility {
 		/// <summary>
 		/// Given a C# primitive type, this will turn it into its Java primitive type.
 		/// </summary>
+		/// <remarks>
+		/// Since <see cref="java.lang.String"/> is not classified as a primitive in the JVM, it will not be converted in this method.
+		/// </remarks>
 		/// <param name="obj"></param>
 		/// <returns></returns>
 		public static object AsJavaPrimitive(object obj) {

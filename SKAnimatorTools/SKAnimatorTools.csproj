@@ -165,6 +165,7 @@
       <HintPath>..\libs\OOOLibAndDeps.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -205,6 +206,7 @@
       <DependentUpon>ChangeTargetPrompt.cs</DependentUpon>
     </Compile>
     <Compile Include="Configuration\UserConfiguration.cs" />
+    <Compile Include="Dumper.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>

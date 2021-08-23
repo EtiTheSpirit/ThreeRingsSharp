@@ -39,8 +39,7 @@ namespace ThreeRingsSharp.DataHandlers.Expressions {
 			} else if (expression is BooleanExpression.BooleanEquals eqExpr) {
 				return eqExpr.firstOperand.Compute(frameNumber) == eqExpr.secondOperand.Compute(frameNumber);
 			} else if (expression is BooleanExpression.StringEquals strExpr) {
-				return strExpr.firstOperand.Compute(frameNumber) == strExpr.secondOperand.Compute(frameNumber);
-			//} else if (expression is BooleanExpression.Parsed parsedExpr) {
+				return strExpr.firstOperand.Compute(frameNumber).Equals(strExpr.secondOperand.Compute(frameNumber));
 			//} else if (expression is BooleanExpression.Reference refExpr) {
 			} else if (expression is BooleanExpression.FloatEquals feqExpr) {
 				return feqExpr.firstOperand.Compute(frameNumber) == feqExpr.secondOperand.Compute(frameNumber);
