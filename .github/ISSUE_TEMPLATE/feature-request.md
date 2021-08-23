@@ -2,8 +2,8 @@
 name: Feature Request
 about: Want something new? Let me know!
 title: '[Request] (briefly describe your feature in a few words)'
-labels: enhancement
-assignees: XanTheDragon
+labels: feature-request
+assignees: EtiTheSpirit
 
 ---
 

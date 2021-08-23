@@ -1,5 +1,6 @@
 ThreeRingsSharp includes a number of open source libraries that each have a number of license agreements tied to them. This document stores the applicable agreements.
 
+Silk Icons - http://www.famfamfam.com/ <br/>
 AOP Alliance - http://aopalliance.sourceforge.net/ <br/>
 Guava - https://github.com/google/guava/blob/master/COPYING <br/>
 Guice - https://github.com/google/guice/blob/master/COPYING <br/>
