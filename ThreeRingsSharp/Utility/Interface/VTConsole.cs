@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
-namespace ThreeRingsSharp.Utility.Interface {
+namespace ThreeRingsSharp.Logging.Interface {
 
 	/// <summary>
 	/// A console logging utility. Offers the ability to format messages with color codes.

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace ThreeRingsSharp.Utility {
+namespace ThreeRingsSharp.Logging {
 
 	/// <summary>
 	/// A utility class that looks at directory information to try to find the rsrc folder.

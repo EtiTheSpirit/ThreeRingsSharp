@@ -14,3 +14,6 @@ dotnet_diagnostic.IDE0035.severity = none
 
 # CS0162: Unreachable code detected
 dotnet_diagnostic.CS0162.severity = none
+
+# IDE0090: Use 'new(...)'
+dotnet_diagnostic.IDE0090.severity = silent

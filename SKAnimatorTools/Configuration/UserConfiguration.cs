@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using com.threerings.opengl.model.config;
 using SKAnimatorTools.Configuration.Attributes;
 
 namespace SKAnimatorTools.Configuration {
@@ -124,7 +123,7 @@ namespace SKAnimatorTools.Configuration {
 		public static void SaveConfiguration() {
 			foreach (PropertyInfo property in typeof(UserConfiguration).GetProperties()) {
 				if (property.GetCustomAttribute<ConfigEntryAttribute>() != null) {
-					object value = property.GetValue(null);
+					object? value = property.GetValue(null);
 					ConfigurationInterface.SetConfigurationValue(property.Name, value);
 				}
 			}
@@ -136,24 +135,24 @@ namespace SKAnimatorTools.Configuration {
 		static UserConfiguration() {
 			foreach (PropertyInfo property in typeof(UserConfiguration).GetProperties()) {
 				if (property.GetCustomAttribute<ConfigEntryAttribute>() != null) {
-					DefaultValueAttribute defaultValueAttr = property.GetCustomAttribute<DefaultValueAttribute>();
+					DefaultValueAttribute? defaultValueAttr = property.GetCustomAttribute<DefaultValueAttribute>();
 					if (defaultValueAttr == null) continue;
 
-					object defaultValue = defaultValueAttr.DefaultValue;
-					if (defaultValue.GetType() != property.PropertyType) throw new InvalidCastException("Property [" + property.Name + "]'s DefaultValue attribute has a different type than the type of the property! (Attempt to cast " + defaultValue.GetType().Name + " into " + property.PropertyType.Name + ")");
-					object storedValue = ConfigurationInterface.GetConfigurationValue(property.Name, defaultValue, true);
+					object? defaultValue = defaultValueAttr.DefaultValue;
+					if (defaultValue?.GetType() != property.PropertyType) throw new InvalidCastException("Property [" + property.Name + "]'s DefaultValue attribute has a different type than the type of the property! (Attempt to cast " + defaultValue.GetType().Name + " into " + property.PropertyType.Name + ")");
+					object? storedValue = ConfigurationInterface.GetConfigurationValue(property.Name, defaultValue, true);
 
 					// Special handling for numeric values.
-					if (storedValue.GetType() == typeof(long))
+					if (storedValue?.GetType() == typeof(long))
 						storedValue = Convert.ToInt32(storedValue);
-					if (storedValue.GetType() == property.PropertyType) {
+					if (storedValue?.GetType() == property.PropertyType) {
 						property.SetValue(null, storedValue);
 					}
 				}
 			}
 
 			ConfigurationInterface.OnConfigurationChanged += (string key, dynamic oldValue, dynamic newValue) => {
-				PropertyInfo prop = typeof(UserConfiguration).GetProperty(key);
+				PropertyInfo? prop = typeof(UserConfiguration).GetProperty(key);
 				if (prop != null) {
 					prop.SetValue(null, newValue);
 				}

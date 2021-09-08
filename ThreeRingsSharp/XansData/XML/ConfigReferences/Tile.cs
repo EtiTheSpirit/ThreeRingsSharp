@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
 using ThreeRingsSharp.DataHandlers.Scene.Data;
-using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.Logging;
 using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.XansData.XML.ConfigReferences {

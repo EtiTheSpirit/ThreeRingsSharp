@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace ThreeRingsSharp.Utility.Interface {
+namespace ThreeRingsSharp.Logging.Interface {
 
 	/// <summary>
 	/// Handles click events for <see cref="DataTreeObject"/> by storing bindings from a <see cref="DataTreeObject"/> to its identical <see cref="TreeNode"/>.

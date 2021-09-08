@@ -1,6 +1,6 @@
 ﻿using com.threerings.export;
 using com.threerings.opengl.model.config;
-using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.Logging.Interface;
 
 namespace ThreeRingsSharp.DataHandlers {
 

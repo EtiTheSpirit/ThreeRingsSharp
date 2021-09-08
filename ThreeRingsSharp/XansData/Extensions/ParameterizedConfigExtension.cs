@@ -1,7 +1,7 @@
 ﻿using com.threerings.config;
 using System;
 using ThreeRingsSharp.DataHandlers.Parameters;
-using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.Logging;
 using static ThreeRingsSharp.DataHandlers.Parameters.XDirect;
 
 namespace ThreeRingsSharp.XansData.Extensions {

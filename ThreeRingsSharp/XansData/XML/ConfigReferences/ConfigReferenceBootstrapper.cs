@@ -16,7 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
-using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.Logging;
 using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.XansData.XML.ConfigReferences {

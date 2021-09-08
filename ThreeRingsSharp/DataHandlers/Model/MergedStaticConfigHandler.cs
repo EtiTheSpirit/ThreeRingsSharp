@@ -2,8 +2,8 @@
 using com.threerings.opengl.model.config;
 using System.Collections.Generic;
 using System.IO;
-using ThreeRingsSharp.Utility;
-using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.Logging;
+using ThreeRingsSharp.Logging.Interface;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Exceptions;
 using static com.threerings.opengl.model.config.CompoundConfig;

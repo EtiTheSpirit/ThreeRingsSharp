@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ThreeRingsSharp.Utility {
+namespace ThreeRingsSharp.Logging {
 
 	/// <summary>
 	/// A utility class that translates between java classes and C# classes of various primitive types.

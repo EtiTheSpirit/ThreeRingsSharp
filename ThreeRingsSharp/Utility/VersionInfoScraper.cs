@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 
-namespace ThreeRingsSharp.Utility {
+namespace ThreeRingsSharp.Logging {
 
 	/// <summary>
 	/// A hacky class that can read the raw binary of a Clyde file and find its implementation.<para/>

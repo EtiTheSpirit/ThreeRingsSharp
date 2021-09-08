@@ -1,0 +1,193 @@
+﻿using OOOReader.Clyde;
+using OOOReader.Reader;
+using SKAnimatorTools.PrimaryInterface;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using ThreeRingsSharp.ConfigHandlers.ModelConfigs;
+using ThreeRingsSharp.Utilities;
+using ThreeRingsSharp.XansData;
+using XDataTree;
+using XDataTree.Data;
+using XDataTree.TreeElements;
+
+namespace ThreeRingsSharp {
+
+	/// <summary>
+	/// This class manages the extraction and conversion of data from a <see cref="ClydeFile"/>. The sort of "main hub" for all read operations.
+	/// </summary>
+	public static class MasterDataExtractor {
+
+		/*
+		 * TO OTHER FUTURE PROGRAMMERS:
+		 * 
+		 *		If you're coming into this program some time in the distant future because I dropped TRS in favor of some other project, I
+		 * apologize ahead of time for the hellscape you are about to enter. ShadowClass and its sister-classes will take a while to get used to, since
+		 * they rely on a fundamental understanding of OOO's engine. The only reason I was able to make them so reliably was because I've been working
+		 * with this for so long. SC is an intuitive data type, but relies on you having a very strong understanding of its workings. If you've dealt with
+		 * a language like Lua before, they are basically glorified Tables when it comes to reading/writing their fields (and are indexed (roughly) the same
+		 * way, with ["key"]).
+		 * 
+		 *		I don't really have any advice as far as "how to work with it" goes, other than just getting used to it. ShadowClass has some helpers on it
+		 * that allow it to be viewed in the debugger with ease, so you can watch what the data looks like. The way it reads the data is (roughly) identical
+		 * to OOO's BinaryImporter class, minus the fact that it relies on a cache of OOO's existing types to optimize how it stores data (see the text file
+		 * dump of all OOO classes and fields).
+		 * 
+		 *		The only issues you may face will likely stem from "What data do I use?", and to answer that question, the fact that OOO published its 
+		 * source code is your #1 lead. It's how I did it long ago, and how you should do it too. Like I said - it requires a fundamental understanding
+		 * of Clyde to really work with efficiently.
+		 * 
+		 *		I'll try to fill my code with comments, but I can't guarantee it everywhere.
+		 * 
+		 */
+
+		private static readonly Dictionary<FileInfo, ShadowClass> Cache = new Dictionary<FileInfo, ShadowClass>();
+		private static readonly Dictionary<FileInfo, ShadowClass[]> ArrayCache = new Dictionary<FileInfo, ShadowClass[]>();
+
+		private static readonly Dictionary<FileInfo, (string, string, string, string)> CLFBindings = new Dictionary<FileInfo, (string, string, string, string)>();
+
+		/// <summary>
+		/// Intended for <see cref="ClydeFile"/>s that return a single <see cref="ShadowClass"/>, this functions as a caching layer. This caches the original
+		/// return from <see cref="ClydeFile.ReadObject"/> and then returns a clone of that value so that edits may be performed without interfering with the cache.
+		/// </summary>
+		/// <param name="file"></param>
+		/// <param name="updateOpenedFileDisplay"></param>
+		public static object Open(FileInfo file, Action<string, string, string, string>? updateOpenedFileDisplay) {
+			if (updateOpenedFileDisplay != null && CLFBindings.TryGetValue(file, out ValueTuple<string, string, string, string> value)) {
+				updateOpenedFileDisplay.Invoke(value.Item1, value.Item2, value.Item3, value.Item4);
+			}
+			if (Cache.TryGetValue(file, out ShadowClass? sc)) {
+				ShadowClass copy = sc.Clone();
+				copy.SetField("__SOURCEFILE", SKEnvironment.GetRSRCRelativePath(file));
+				return copy;
+			}
+			if (ArrayCache.TryGetValue(file, out ShadowClass[]? scs)) {
+				ShadowClass[] dest = new ShadowClass[scs.Length];
+				for (int idx = 0; idx < scs.Length; idx++) {
+					ShadowClass copy = scs[idx].Clone();
+					copy.SetField("__SOURCEFILE", SKEnvironment.GetRSRCRelativePath(file));
+					dest[idx] = copy;
+				}
+				return dest;
+			}
+			using ClydeFile clf = new ClydeFile(file);
+			object? data = clf.ReadObject();
+			if (data is ShadowClass shadow) {
+				Cache[file] = shadow;
+				(string fName, string vName, string comp, string baseType) = (clf.OriginalFile!.Name, clf.Version.ToString(), clf.Compressed.ToString(), shadow.Signature[(shadow.Signature.LastIndexOf('.') + 1)..]);
+				CLFBindings[file] = (fName, vName, comp, baseType);
+				updateOpenedFileDisplay?.Invoke(fName, vName, comp, baseType);
+				ShadowClass copy = shadow.Clone();
+				copy.SetField("__SOURCEFILE", SKEnvironment.GetRSRCRelativePath(file));
+				return copy;
+			} else if (data is ShadowClass[] shadowArray) {
+				ArrayCache[file] = shadowArray;
+				(string fName, string vName, string comp, string baseType) = (clf.OriginalFile!.Name, clf.Version.ToString(), clf.Compressed.ToString(), shadowArray[0].Signature[(shadowArray[0].Signature.LastIndexOf('.') + 1)..] + $"[{shadowArray.Length}]");
+				CLFBindings[file] = (fName, vName, comp, baseType);
+				updateOpenedFileDisplay?.Invoke(fName, vName, comp, baseType);
+				ShadowClass[] dest = new ShadowClass[shadowArray.Length];
+				for (int idx = 0; idx < shadowArray.Length; idx++) {
+					ShadowClass copy = shadowArray[idx].Clone();
+					copy.SetField("__SOURCEFILE", SKEnvironment.GetRSRCRelativePath(file));
+					dest[idx] = copy;
+				}
+				return dest;
+			} else {
+				throw new InvalidOperationException("Unsupported data type: " + data?.GetType().ToString() ?? "null");
+			}
+		}
+
+		/// <summary>
+		/// Begin extracting data from the given context's file, and populate the context with said data.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="updateOpenedFileDisplay"></param>
+		public static void ExtractFrom(ReadFileContext context, Action<string, string, string, string> updateOpenedFileDisplay) {
+			object scType = Open(context.File, updateOpenedFileDisplay);
+			if (scType is ShadowClass sc) {
+				ExtractFrom(context, sc);
+			} else if (scType is ShadowClass[] scs) {
+				for (int idx = 0; idx < scs.Length; idx++) {
+					ShadowClass shd = scs[idx];
+					ExtractFrom(context, shd, idx);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Intended to be called by handlers rather than externally, this continues a chain of models, and is often called when a ConfigReference is resolved.
+		/// </summary>
+		/// <param name="currentContext"></param>
+		/// <param name="subShadow"></param>
+		/// <param name="arrayIndex">If this is part of a loop extracting from an array of <see cref="ShadowClass"/> instances, then this is the array index.</param>
+		public static void ExtractFrom(ReadFileContext currentContext, ShadowClass subShadow, int? arrayIndex = null) {
+			if (subShadow.IsA("com.threerings.opengl.model.config.ModelConfig")) {
+				ShadowClass impl = subShadow["implementation"]!;
+				string implName = impl.Signature[(impl.Signature.LastIndexOf('.') + 1)..];
+
+				XanLogger.WriteLine($"Attempting to translate {implName} instance...");
+				if (impl.IsA("com.threerings.opengl.model.config.ArticulatedConfig")) {
+					ArticulatedConfig.ReadData(currentContext, subShadow);
+				} else if (impl.IsA("com.threerings.opengl.model.config.StaticConfig")) {
+					StaticConfig.ReadData(currentContext, subShadow);
+				} else if (impl.IsA("com.threerings.opengl.model.config.StaticSetConfig")) {
+					StaticSetConfig.ReadData(currentContext, subShadow);
+				} else if (impl.IsA("com.threerings.opengl.model.config.MergedStaticConfig")) {
+					MergedStaticConfig.ReadData(currentContext, subShadow);
+				} else if (impl.IsA("com.threerings.opengl.model.config.CompoundConfig")) {
+					CompoundConfig.ReadData(currentContext, subShadow);
+				} else if (impl.IsA("com.threerings.opengl.model.config.ModelConfig$Derived")) {
+
+				} else if (impl.IsA("com.threerings.opengl.model.config.ModelConfig$Schemed")) {
+
+				} else {
+					SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Missing), true);
+					currentContext.Pop();
+				}
+			} else if (subShadow.IsA("com.threerings.tudey.data.TudeySceneModel")) {
+				SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Missing), true);
+				currentContext.Pop();
+				//} else if (subShadow.IsA("com.threerings.opengl.model.config.AnimationConfig")) {
+				//SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Missing), true);
+				//currentContext.Pop();
+			} else if (subShadow.IsA("com.threerings.tudey.config.TileConfig")) {
+				if (arrayIndex == null) {
+					SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Tile), true);
+				} else {
+					SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name + $"[{arrayIndex.Value}]", SilkImage.Tile), true);
+				}
+				currentContext.Pop();
+			} else {
+				// AsyncMessageBox.ShowAsync("Unfortunately, the .dat file you opened contains an unsupported base type. The type in question: " + subShadow.Signature, "Unsupported Subformat", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
+				XanLogger.WriteLine("Unsupported ManagedConfig type " + subShadow.Signature, 0, System.Drawing.Color.FromArgb(127, 0, 0));
+			}
+		}
+
+		internal static GenericElement SetupBaseInformation(ShadowClass managedConfig, GenericElement objectTreeElement, bool isMissing = false) {
+			if (objectTreeElement.Properties is RootSubstituteElement rse) {
+				if (managedConfig.IsA("com.threerings.opengl.model.config.ModelConfig")) {
+					string impl = managedConfig["implementation"]!.Signature;
+					if (!isMissing) {
+						rse.Add(new KeyValueElement("Implementation", impl, false, SilkImage.Config));
+					} else {
+						KeyValueElement kve = new KeyValueElement("Implementation", impl, false, SilkImage.MissingConfig) {
+							Tooltip = "This implementation wasn't recognized, so I can't read from it!"
+						};
+						rse.Add(kve);
+					}
+				} else if (managedConfig.IsA("com.threerings.tudey.data.TudeySceneModel")) {
+					
+				}
+
+				if (managedConfig.TryGetField("__SOURCEFILE", out string? srcFile)) {
+					rse.Add(new KeyValueElement("Source", srcFile!));
+				}
+			}
+			return objectTreeElement;
+		}
+
+	}
+}

@@ -29,6 +29,7 @@ namespace SKAnimatorTools {
 
 		private void BtnCancel_Click(object sender, EventArgs e) {
 			DialogResult = (DialogResult)5; // lol
+			// edit: 5 is not real
 			Close();
 		}
 

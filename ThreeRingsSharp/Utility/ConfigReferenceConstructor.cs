@@ -2,7 +2,7 @@
 using ThreeRingsSharp.DataHandlers.Parameters;
 using ThreeRingsSharp.XansData.Extensions;
 
-namespace ThreeRingsSharp.Utility {
+namespace ThreeRingsSharp.Logging {
 
 	/// <summary>
 	/// A utility to create <see cref="ConfigReference"/> instances.

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.Logging;
 using ThreeRingsSharp.XansData.Extensions;
 using static com.threerings.opengl.model.config.ModelConfig;
 using static com.threerings.opengl.model.config.ModelConfig.Imported;

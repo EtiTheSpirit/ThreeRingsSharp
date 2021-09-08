@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ThreeRingsSharp.Utility {
+namespace ThreeRingsSharp.Logging {
 
 	/// <summary>
 	/// Provides an means of lazily implementing <see cref="Scope"/>.<para/>

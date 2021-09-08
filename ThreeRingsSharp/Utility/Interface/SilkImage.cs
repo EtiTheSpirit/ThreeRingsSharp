@@ -4,7 +4,7 @@ using com.threerings.opengl.scene.config;
 using com.threerings.tudey.data;
 using System;
 
-namespace ThreeRingsSharp.Utility.Interface {
+namespace ThreeRingsSharp.Logging.Interface {
 	/// <summary>
 	/// An enum that represents the available icons in the data tree. Certain images are not part of the stock Silk image package.<para/>
 	/// Silk Images come from https://famfamfam.com/ <para/>

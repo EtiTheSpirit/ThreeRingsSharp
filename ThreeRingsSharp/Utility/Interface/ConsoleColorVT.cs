@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using ThreeRingsSharp.XansData.Extensions;
 
-namespace ThreeRingsSharp.Utility.Interface {
+namespace ThreeRingsSharp.Logging.Interface {
 
 	/// <summary>
 	/// A console color that uses VT sequences to employ custom RGB colors.

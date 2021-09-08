@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using ThreeRingsSharp.DataHandlers.Parameters;
-using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.Logging;
 using ThreeRingsSharp.XansData.IO;
 using ThreeRingsSharp.XansData.IO.GLTF;
 

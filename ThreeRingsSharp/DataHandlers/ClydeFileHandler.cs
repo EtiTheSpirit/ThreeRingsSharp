@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using ThreeRingsSharp.Utility;
-using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.Logging;
+using ThreeRingsSharp.Logging.Interface;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Exceptions;
 using ThreeRingsSharp.XansData.Extensions;
@@ -159,6 +159,7 @@ namespace ThreeRingsSharp.DataHandlers {
 					throw;
 				}
 			} else {
+				ShadowClass sc;
 				XanLogger.WriteLine("Loading Clyde object from cache because this .dat file has already been loaded.", XanLogger.TRACE);
 				obj = ((DeepObject)ClydeObjectCache[clydeFile.FullName]).clone();
 				(string, string, string) cosmeticInfo = ModelInfoCache[clydeFile.FullName];

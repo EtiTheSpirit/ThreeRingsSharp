@@ -1,13 +1,11 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
 using SKAnimatorTools.Configuration;
+using SKAnimatorTools.PrimaryInterface;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using ThreeRingsSharp.Utility;
-using ThreeRingsSharp.XansData.Structs;
 
 namespace SKAnimatorTools {
 	public partial class ConfigurationForm : Form {
@@ -58,6 +56,9 @@ namespace SKAnimatorTools {
 		private static readonly Bitmap Information = Properties.Resources.Info;
 
 		public ConfigurationForm() {
+			if (MainTooltip == null) {
+				MainTooltip = new Component.FastToolTip();
+			}
 			InitializeComponent();
 			LabelCurrentVersion.Text = VersionLabel;
 			IsOK = true;
@@ -237,19 +238,19 @@ namespace SKAnimatorTools {
 				"set is the best way to go.", "What Are StaticSetConfigs?", MessageBoxButtons.OK, MessageBoxIcon.Information);
 		}
 
-		private void OnPicButtonMouseEnter(object sender, EventArgs e) {
-			((Control)sender).BackColor = ((SolidBrush)SystemBrushes.ControlLight).Color;
+		private void OnPicButtonMouseEnter(object? sender, EventArgs? e) {
+			((Control)sender!).BackColor = ((SolidBrush)SystemBrushes.ControlLight).Color;
 		}
 
-		private void OnPicButtonMouseLeave(object sender, EventArgs e) {
-			((Control)sender).BackColor = ((SolidBrush)SystemBrushes.Control).Color;
+		private void OnPicButtonMouseLeave(object? sender, EventArgs? e) {
+			((Control)sender!).BackColor = ((SolidBrush)SystemBrushes.Control).Color;
 		}
 
-		private void CheckBox_PreferSpeed_CheckedChanged(object sender, EventArgs e) {
-			VerboseLoggingChanged(sender, e);
+		private void CheckBox_PreferSpeed_CheckedChanged(object? sender, EventArgs? e) {
+			VerboseLoggingChanged(sender!, e!);
 		}
 
-		private void Option_StaticSetExportMode_SelectedIndexChanged(object sender, EventArgs e) {
+		private void Option_StaticSetExportMode_SelectedIndexChanged(object? sender, EventArgs? e) {
 			if (Option_StaticSetExportMode.SelectedIndex == 1) {
 				PicBox_StaticSetExpMode.Image = Warning;
 				MainTooltip.SetToolTip(PicBox_StaticSetExpMode, "This option can result in a exporting lot of extra/junk models that you don't want!");

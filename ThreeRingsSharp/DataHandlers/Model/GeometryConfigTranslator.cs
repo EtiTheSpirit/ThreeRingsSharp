@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Runtime.CompilerServices;
-using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.Logging;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Exceptions;
 using ThreeRingsSharp.XansData.Extensions;

@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Forms;
-using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.Logging.Interface;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 
 namespace ThreeRingsSharp {

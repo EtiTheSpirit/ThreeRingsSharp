@@ -1,12 +1,11 @@
-﻿using com.threerings.opengl.model.config;
+﻿using OOOReader.Reader;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using com.threerings.config;
-using ThreeRingsSharp.XansData.Extensions;
+using ThreeRingsSharp.Utilities.Parameters.Implementation;
 
 namespace SKAnimatorTools {
 	public partial class ChangeTargetPrompt : Form {
@@ -17,45 +16,66 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The available options.
 		/// </summary>
-		public string[] Options { get; private set; } = new string[0];
+		public string[] Options { get; private set; } = Array.Empty<string>();
 
 		/// <summary>
 		/// The current selected option for <see cref="Model"/> or <see cref="Choice"/> to use.
 		/// </summary>
-		public string Option { get; private set; } = null;
+		public string? Option { get; private set; } = string.Empty;
 
 		/// <summary>
 		/// The <see cref="StaticSetConfig"/> that this is modifying, if applicable.
 		/// </summary>
-		public StaticSetConfig Model { get; private set; } = null;
+		public ShadowClass? Model { get; private set; }
 
 		/// <summary>
 		/// The <see cref="Parameter.Choice"/> that this is modifying, if applicable.
 		/// </summary>
-		public Parameter.Choice Choice { get; private set; } = null;
+		public Choice? Choice { get; private set; }
 
 		/// <summary>
-		/// For cases where <see cref="Choice"/> is not <see langword="null"/>, this is the <see cref="ParameterizedConfig"/> that it is a part of that will be changed.
+		/// For cases where <see cref="Choice"/> is not <see langword="null"/>, this is the ParameterizedConfig that it is a part of that will be changed.
 		/// </summary>
-		public ParameterizedConfig ChoiceAffects { get; private set; } = null;
+		public ShadowClass? ChoiceAffects { get; private set; }
 
-		public TreeNode Node { get; set; } = null;
+		/// <summary>
+		/// The node that is responsible for visualizing this option.
+		/// </summary>
+		public TreeNode? Node { get; set; }
 
-		public void SetPossibleOptionsFrom(StaticSetConfig set) {
+		/// <summary>
+		/// For StaticSetConfigs, this sets up the dialog to modify the target model of the set.
+		/// </summary>
+		/// <param name="set"></param>
+		public void SetPossibleOptionsFrom(ShadowClass set) {
+			set.AssertIsInstanceOf("com.threerings.opengl.model.config.StaticSetConfig");
 			Model = set;
-			Options = set.getModelOptions();
-			Option_NewTarget.Text = set.model;
-			Option = set.model;
+
+			Dictionary<object, object>.KeyCollection keys = set["meshes"]!.Keys;
+			List<string> options = new List<string>();
+			foreach (object o in keys) {
+				options.Add(o.ToString() ?? "null");
+			}
+			Options = options.ToArray();
+			Option_NewTarget.Text = set["model"]!;
+			Option = set["model"]!;
 
 			Option_NewTarget.Items.AddRange(Options);
 			BtnSave.Enabled = true;
 		}
 
-		public void SetPossibleOptionsFrom(ParameterizedConfig cfg, Parameter.Choice choice) {
+		/// <summary>
+		/// For any general ParameterizedConfig, this sets up the dialog to modify a Choice's parameter.
+		/// </summary>
+		/// <param name="cfg"></param>
+		/// <param name="choice"></param>
+		public void SetPossibleOptionsFrom(ShadowClass cfg, Choice choice) {
+			cfg.AssertIsInstanceOf("com.threerings.config.ParameterizedConfig");
 			Choice = choice;
-			Options = choice.GetChoiceOptions();
-			Option_NewTarget.Text = choice.choice;
-			Option = choice.choice;
+
+			Options = choice.OptionNames;
+			Option_NewTarget.Text = choice.CurrentName;
+			Option = choice.CurrentName;
 
 			ChoiceAffects = cfg;
 
@@ -68,7 +88,7 @@ namespace SKAnimatorTools {
 		/// </summary>
 		/// <param name="option"></param>
 		/// <returns></returns>
-		public string GetOptionFromCaseless(string option) {
+		public string? GetOptionFromCaseless(string option) {
 			IEnumerable<string> trimmed = Options.Where(opt => opt.ToLower() == option.ToLower());
 			if (trimmed.Count() != 1) return null;
 			return trimmed.First();
@@ -86,8 +106,8 @@ namespace SKAnimatorTools {
 		}
 
 		private void BtnSave_Click(object sender, EventArgs e) {
-			if (Model != null) Model.model = Option;
-			if (Choice != null)	Choice.choice = Option;
+			if (Model != null) Model["model"] = Option;
+			if (Choice != null && Option != null) Choice.CurrentName = Option;
 			Close();
 		}
 

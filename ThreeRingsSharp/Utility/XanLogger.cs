@@ -6,10 +6,10 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.Logging.Interface;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 
-namespace ThreeRingsSharp.Utility {
+namespace ThreeRingsSharp.Logging {
 
 	/// <summary>
 	/// Provides a means of writing to the program's main log through any thread.

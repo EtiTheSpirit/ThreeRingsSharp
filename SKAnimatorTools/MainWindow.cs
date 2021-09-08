@@ -1,6 +1,9 @@
-﻿using com.threerings.config;
-using com.threerings.opengl.model.config;
+﻿using EtiLogger.Logging;
+using OOOReader.Clyde;
+using OOOReader.Reader;
+using SKAnimatorTools.Component;
 using SKAnimatorTools.Configuration;
+using SKAnimatorTools.PrimaryInterface;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,14 +18,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThreeRingsSharp;
-using ThreeRingsSharp.DataHandlers;
-using ThreeRingsSharp.Utility;
-using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.Utilities;
+using ThreeRingsSharp.Utilities.Parameters.Implementation;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Exceptions;
 using ThreeRingsSharp.XansData.Extensions;
 using ThreeRingsSharp.XansData.IO.GLTF;
-using ThreeRingsSharp.XansData.XML.ConfigReferences;
+using XDataTree;
+using XDataTree.TreeElements;
 
 namespace SKAnimatorTools {
 	public partial class MainWindow : Form {
@@ -44,7 +47,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The synchronization context used to allow various asynchronous operations to communicate with the GUI.
 		/// </summary>
-		public static SynchronizationContext UISyncContext { get; private set; }
+		public static SynchronizationContext? UISyncContext { get; private set; }
 
 		#region GUI Information
 
@@ -52,7 +55,7 @@ namespace SKAnimatorTools {
 		/// The root <see cref="DataTreeObject"/> that represents the loaded model in the object hierarchy.<para/>
 		/// Rather than creating a new instance for every time a model is loaded, call <see cref="DataTreeObject.ClearAllChildren"/> instead.
 		/// </summary>
-		public DataTreeObject RootDataTreeObject { get; } = new DataTreeObject();
+		public TreeElement RootDataTreeObject { get; } = new GenericElement("implementation");
 
 		/// <summary>
 		/// All models from the latest opened .DAT file.
@@ -62,7 +65,7 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The current configuration form, if it exists.
 		/// </summary>
-		private ConfigurationForm ConfigForm { get; set; }
+		private ConfigurationForm? ConfigForm { get; set; }
 
 		#endregion
 
@@ -87,14 +90,14 @@ namespace SKAnimatorTools {
 		/// <summary>
 		/// The version of this release of the program.
 		/// </summary>
-		public readonly int[] THIS_VERSION = { 2, 3, 2 };
+		public readonly int[] THIS_VERSION = { 3, 0, 0 };
 
 		/// <summary>
 		/// Attempts to access the github to acquire the latest version.
 		/// </summary>
 		/// <param name="version"></param>
 		/// <returns></returns>
-		public bool TryGetVersion(out (int, int, int)? version) {
+		public static bool TryGetVersion(out (int, int, int)? version) {
 			try {
 				using (WebClient cli = new WebClient()) {
 					string v = cli.DownloadString("https://raw.githubusercontent.com/EtiTheSpirit/ThreeRingsSharp/master/version.txt");
@@ -149,16 +152,16 @@ namespace SKAnimatorTools {
 		/// Sets up the Windows console by enabling VT (if possible), setting it's title, and preparing other necessary information.
 		/// </summary>
 		public void SetupConsole() {
-			Console.Title = "Spiral Knights Animator Tools";
-			VTConsole.EnableVTSupport();
 			ConsolePtr = GetConsoleWindow();
+			// Console.Title = "Spiral Knights Animator Tools";
+			VTConsole.EnableVTSupport();
+
 		}
 
 		/// <summary>
 		/// Populates proxy references which allows the DLL library if TRS to communicate with this portion of the program.
 		/// </summary>
 		public void PopulateProxyReferences() {
-			XanLogger.BoxReference = ProgramLog;
 
 			#region Actions
 			SKAnimatorToolsProxy.UpdateGUIAction = (string fileName, string isCompressed, string formatVersion, string type) => {
@@ -169,26 +172,8 @@ namespace SKAnimatorTools {
 				Update(); // Update all of the display data.
 			};
 
-			SKAnimatorToolsProxy.ConfigsErroredAction = (Exception error, string extraMessage) => {
-
-				if (error is TypeInitializationException typeInitErr) {
-					if (typeInitErr.Message.Contains("ClydeLog")) {
-						// Y U K K I.
-						// TODO: Better method of tracking this down?
-						MessageBox.Show("A critical error has occurred when attempting to initialize ClydeLog (OOO's main logging class for Clyde)! " +
-							"This issue is caused by the underlying system that TRS runs on top of and cannot be fixed by me.\n\n" +
-							"This can be resolved by installing the English Language Pack for Windows.", "ClydeLog Initialization Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-						Environment.Exit(2);
-					}
-				}
-
-
-				string ext = extraMessage != null ? ("\n\n" + extraMessage) : string.Empty;
-				MessageBox.Show(error.Message + ext + "\n\nThe program cannot continue when this error occurs and must exit, as this data is 100% required for it to function properly.", "Configuration Load Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				Environment.Exit(1);
-			};
-
-			SKAnimatorToolsProxy.ConfigsLoadingAction = (int? progress, int? max, ProgressBarState? state) => {
+			SKAnimatorToolsProxy.ConfigsLoadingAction = (int? progress, int? max, object? stateO) => {
+				ProgressBarState? state = (ProgressBarState?)stateO;
 				if (state.HasValue) {
 					ModelLoadProgress.SetColorFromState(state.Value);
 				}
@@ -218,8 +203,6 @@ namespace SKAnimatorTools {
 			Model3D.ProtectAgainstZeroScale = UserConfiguration.ProtectAgainstZeroScale;
 			GLTFExporter.EmbedTextures = UserConfiguration.EmbedTextures;
 
-			SKAnimatorToolsProxy.PreferSpeedOverFeedback = UserConfiguration.PreferSpeed;
-
 			if (XanLogger.IsDebugMode) {
 				if (UserConfiguration.LoggingLevel == XanLogger.INFO) {
 					UserConfiguration.LoggingLevel = XanLogger.DEBUG;
@@ -229,10 +212,6 @@ namespace SKAnimatorTools {
 			XanLogger.LoggingLevel = UserConfiguration.LoggingLevel;
 
 			#region Prepare Information
-			if (SKAnimatorToolsProxy.PreferSpeedOverFeedback) {
-				ModelLoadProgress.SpecialDisabled = true;
-				ProgramTooltip.SetToolTip(ModelLoadProgress, "The loading bar will not render if Prefer Speed Over Feedback is enabled.");
-			}
 			if (Directory.Exists(UserConfiguration.DefaultLoadDirectory)) {
 				OpenModel.InitialDirectory = UserConfiguration.DefaultLoadDirectory;
 				OpenModel.Tag = UserConfiguration.DefaultLoadDirectory; // Store it in the tag which makes it easy to keep track of.
@@ -241,7 +220,7 @@ namespace SKAnimatorTools {
 				SaveModel.InitialDirectory = UserConfiguration.LastSaveDirectory;
 			}
 			if (Directory.Exists(UserConfiguration.RsrcDirectory)) {
-				ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(UserConfiguration.RsrcDirectory);
+				SKEnvironment.RSRC_DIR = new DirectoryInfo(UserConfiguration.RsrcDirectory);
 			}
 			OpenModel.RestoreDirectory = UserConfiguration.RememberDirectoryAfterOpen;
 			#endregion
@@ -271,14 +250,14 @@ namespace SKAnimatorTools {
 			ShowUpdateDialogIfNeeded(args.Contains("forceupdate"));
 
 			InitializeComponent();
+			XanLogger.InitializeWith(ProgramLog);
+			ModelLoadProgress = new ColoredProgressBar();
+			ProgramTooltip = new FastToolTip(components!);
 
 			SetupConsole();
 			PopulateProxyReferences();
 			LoadConfigs();
 			
-			_ = ConfigReferenceBootstrapper.PopulateConfigRefsAsync();
-
-			XanLogger.UpdateAutomatically = false;
 			if (XanLogger.LoggingLevel > XanLogger.INFO) {
 				ShowWindow(ConsolePtr, 5);
 			} else {
@@ -292,7 +271,7 @@ namespace SKAnimatorTools {
 				OpenModel.InitialDirectory = null;
 			} else if (configKey == "RsrcDirectory") {
 				if (Directory.Exists(newValue)) {
-					ResourceDirectoryGrabber.ResourceDirectory = new DirectoryInfo(newValue);
+					SKEnvironment.RSRC_DIR = new DirectoryInfo(newValue);
 				}
 			} else if (configKey == "DefaultLoadDirectory") {
 				OpenModel.InitialDirectory = newValue;
@@ -309,16 +288,6 @@ namespace SKAnimatorTools {
 				}
 			} else if (configKey == "EmbedTextures") {
 				GLTFExporter.EmbedTextures = newValue;
-			} else if (configKey == "PreferSpeed") {
-				SKAnimatorToolsProxy.PreferSpeedOverFeedback = newValue;
-				if (newValue == true) {
-					// Render the progress bar a different color. All progress bar changes will be deferred.
-					ModelLoadProgress.SpecialDisabled = true;
-					ProgramTooltip.SetToolTip(ModelLoadProgress, "The loading bar will not render if Prefer Speed Over Feedback is enabled.");
-				} else {
-					ModelLoadProgress.SpecialDisabled = false;
-					ProgramTooltip.SetToolTip(ModelLoadProgress, string.Empty);
-				}
 			}
 		}
 
@@ -330,7 +299,8 @@ namespace SKAnimatorTools {
 		}
 
 		private void OnFileSelectedOpenModel(object sender, CancelEventArgs e) {
-			FileInfo file = new FileInfo(OpenModel.FileName);
+			// FileInfo file = new FileInfo(OpenModel.FileName);
+			/*
 			if (!VersionInfoScraper.IsValidClydeFile(file).Item1) {
 				XanLogger.WriteLine("Can't open this file! It is not a valid Clyde file.", color: Color.DarkGoldenrod);
 				XanLogger.ForceUpdateLog();
@@ -349,17 +319,18 @@ namespace SKAnimatorTools {
 			}
 
 			SKAnimatorToolsProxy.ResetProgress();
+			*/
 			ModelLoaderBGWorker.RunWorkerAsync(UISyncContext);
 		}
 
 		private void OnConfigsPopulated() {
 			XanLogger.WriteLine("Alright. Let's load it up now.");
-			XanLogger.ForceUpdateLog();
+			//XanLogger.ForceUpdateLog();
 			SKAnimatorToolsProxy.ResetProgress();
 			ModelLoaderBGWorker.RunWorkerAsync(UISyncContext);
 			IsYieldingForModel = false;
 			BtnOpenModel.Enabled = true;
-			SKAnimatorToolsProxy.ConfigsPopulatedAction = null;
+			//SKAnimatorToolsProxy.ConfigsPopulatedAction = null;
 		}
 
 		#endregion
@@ -371,7 +342,6 @@ namespace SKAnimatorTools {
 			if (result == DialogResult.OK) {
 				BtnSaveModel.Enabled = false;
 				XanLogger.WriteLine("Exporting model...");
-				XanLogger.ForceUpdateLog();
 
 				FileInfo saveTo = new FileInfo(SaveModel.FileName);
 				ConfigurationInterface.SetConfigurationValue("LastSaveDirectory", saveTo.DirectoryName);
@@ -383,7 +353,6 @@ namespace SKAnimatorTools {
 				} catch (Exception ex) {
 					XanLogger.WriteLine($"Failed to save to [{saveTo.FullName}] -- Reason: {ex.GetType().Name} thrown!\n{ex.Message}\n\n{ex.StackTrace}", color: Color.IndianRed);
 				}
-				XanLogger.ForceUpdateLog();
 				BtnSaveModel.Enabled = true;
 			}
 		}
@@ -391,29 +360,44 @@ namespace SKAnimatorTools {
 		#endregion
 
 		/// <summary>
-		/// NOTE: This runs in an external context!
+		/// NOTE: This runs in an external context from a BackgroundWorker!
 		/// </summary>
 		private void LoadOpenedModel() {
 			if (Busy) return;
-			SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
+			SKAnimatorToolsProxy.UISyncContext?.Send(delegate {
 				BtnOpenModel.Enabled = false;
+				LabelFileName.Text = "Working...";
+				LabelFormatVersion.Text = "N/A";
+				LabelModelCompressed.Text = "N/A";
+				LabelType.Text = "N/A";
 			}, null);
-			DataTreeObjectEventMarshaller.ClearAllNodeBindings();
-			RootDataTreeObject.ClearAllChildren();
-			RootDataTreeObject.Properties.Clear();
+			//RootDataTreeObject.ClearAllChildren();
 
-			SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
+			SKAnimatorToolsProxy.UISyncContext?.Send(delegate {
 				ModelStructureTree.Nodes.Clear();
+				SelectedObjectProperties.Nodes.Clear();
 			}, null);
 
-			FileInfo clydeFile = new FileInfo(OpenModel.FileName);
+			FileInfo targetFile = new FileInfo(OpenModel.FileName);
 			AllModels.Clear();
+			ReadFileContext ctx = new ReadFileContext(targetFile) {
+				AllModels = AllModels
+			};
+			//ctx.Push(RootDataTreeObject);
 			bool isOK = true;
-			XanLogger.UpdateAutomatically = false;
 			try {
 				XanLogger.WriteLine("Working. This might take a bit...");
-				XanLogger.UpdateLog();
-				ClydeFileHandler.HandleClydeFile(clydeFile, AllModels, true, ModelStructureTree);
+				// ClydeFileHandler.HandleClydeFile(clydeFile, AllModels, true, ModelStructureTree);
+				MasterDataExtractor.ExtractFrom(ctx, (fName, vName, comp, baseType) => {
+					SKAnimatorToolsProxy.UISyncContext?.Send(data => {
+						(string file, string version, string compressed, string type) = (ValueTuple<string, string, string, string>)data!;
+						LabelFileName.Text = file;
+						LabelFormatVersion.Text = version;
+						LabelModelCompressed.Text = compressed;
+						LabelType.Text = type;
+					}, (fName, vName, comp, baseType));
+				});
+				
 			} catch (ClydeDataReadException exc) {
 				XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, color: Color.IndianRed);
 				AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
@@ -424,7 +408,7 @@ namespace SKAnimatorTools {
 				Busy = false;
 				throw;
 			} catch (TypeInitializationException tExc) {
-				Exception err = tExc.InnerException;
+				Exception err = tExc.InnerException!;
 				if (err is ClydeDataReadException exc) {
 					XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, color: Color.IndianRed);
 					AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
@@ -453,29 +437,27 @@ namespace SKAnimatorTools {
 			}
 
 			SKAnimatorToolsProxy.UISyncContext?.Send(callbackParam => {
-				TreeView modelStructureTree = callbackParam as TreeView;
-				if (modelStructureTree.Nodes.Count != 0 && modelStructureTree.Nodes[0] != null) {
-					SetPropertiesMenu(DataTreeObjectEventMarshaller.GetDataObjectOf(modelStructureTree.Nodes[0]));
+				if (callbackParam is TreeElement element) {
+					SetModelStructure(element);
 				}
-			}, ModelStructureTree);
+			}, ctx.Root);
 
 
 			Debug.WriteLine(SKAnimatorToolsProxy.UISyncContext);
 			SKAnimatorToolsProxy.UISyncContext?.Send(callbackParam => {
 				Debug.WriteLine(BtnSaveModel.Enabled);
 				Debug.WriteLine(callbackParam);
-				BtnSaveModel.Enabled = (bool)callbackParam;
+				BtnSaveModel.Enabled = (bool)callbackParam!;
 			}, isOK);
-			XanLogger.UpdateAutomatically = true;
 			XanLogger.WriteLine($"Number of models loaded: {AllModels.Where(model => model.IsEmptyObject == false).Count()} ({AllModels.Where(model => model.ExtraData.ContainsKey("StaticSetConfig")).Count()} as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)");
 
 			// TODO: Something more efficient.
 			int meshCount = 0;
 			List<MeshData> alreadyCountedMeshes = new List<MeshData>(AllModels.Count);
 			for (int idx = 0; idx < AllModels.Count; idx++) {
-				if (!alreadyCountedMeshes.Contains(AllModels[idx].Mesh)) {
+				if (!alreadyCountedMeshes.Contains(AllModels[idx].Mesh!)) {
 					meshCount++;
-					alreadyCountedMeshes.Add(AllModels[idx].Mesh);
+					alreadyCountedMeshes.Add(AllModels[idx].Mesh!);
 				}
 			}
 			alreadyCountedMeshes.Clear();
@@ -488,23 +470,68 @@ namespace SKAnimatorTools {
 
 		#region Properties Visualizer
 
-		private TreeNode LastNode { get; set; } = null;
-		private void OnNodeClicked(object sender, TreeNodeMouseClickEventArgs evt) {
-			if (LastNode == evt.Node) return;
-			LastNode = evt.Node;
-			DataTreeObject associatedDataTreeObject = DataTreeObjectEventMarshaller.GetDataObjectOf(evt.Node);
-			if (associatedDataTreeObject != null) {
-				SetPropertiesMenu(associatedDataTreeObject);
+		private TreeNode? LastNode { get; set; } = null;
+		private void ChangeSelection(TreeNode original, int clicks = 1) {
+			TreeElement element = (TreeElement)original.Tag;
+			Debug.WriteLine(clicks);
+			if (clicks > 1) {
+				// Allow activated to fire again
+				element.OnActivated(UISyncContext, this);
 			} else {
-				XanLogger.WriteLine("Warning: Props is null!", XanLogger.DEBUG, Color.DarkGoldenrod);
+				if (LastNode == original) return;
+				// Only allow select to fire if it's the first time
+				element.OnSelected(UISyncContext, this);
+			}
+			if (element.Properties != null) {
+				SetPropertiesMenu(element.Properties);
+			} else {
+				SelectedObjectProperties.Nodes.Clear();
 			}
 		}
 
-		private void SetPropertiesMenu(DataTreeObject propsContainer) {
+		private void OnMainNodeClicked(object sender, TreeNodeMouseClickEventArgs evt) {
+			if (LastNode != null && LastNode.Tag is TreeElement previousElement) {
+				if (LastNode == evt.Node) return; // Don't fire deselect if we click on the same thing.
+				previousElement.OnDeselected(UISyncContext, this);
+			}
+			if (evt.Node.Tag is TreeElement element) {
+				if (evt.Button == MouseButtons.Left) {
+					ChangeSelection(evt.Node, evt.Clicks);
+				} else {
+					if (LastNode == evt.Node) return;
+					// Only allow select to fire if it's the first time
+					element.OnSelected(UISyncContext, this);
+				}
+			}
+
+			LastNode = evt.Node;
+		}
+
+		private void OnNodeSelected(object sender, TreeViewEventArgs e) {
+			ChangeSelection(e.Node);
+			LastNode = e.Node;
+		}
+
+		private void SetModelStructure(TreeElement root) {
+			ModelStructureTree.Nodes.Clear();
+			if (root is RootSubstituteElement rse) {
+				rse.AddToTreeView(ModelStructureTree);
+			} else {
+				ModelStructureTree.Nodes.Add(root.ConvertToNode());
+			}
+		}
+
+		private void SetPropertiesMenu(TreeElement propsContainer) {
 			if (propsContainer == null) return;
 
 			SelectedObjectProperties.Nodes.Clear();
+			if (propsContainer is RootSubstituteElement rootSub) {
+				rootSub.AddToTreeView(SelectedObjectProperties);
+			} else {
+				SelectedObjectProperties.Nodes.Add(propsContainer.ConvertToNode());
+			}
 			// Need to translate properties manually rather than using hierarchy.
+			/*
 			foreach (KeyValuePair<DataTreeObjectProperty, List<DataTreeObject>> prop in propsContainer.Properties) {
 				DataTreeObjectProperty propName = prop.Key;
 				List<DataTreeObject> propValues = prop.Value;
@@ -551,8 +578,10 @@ namespace SKAnimatorTools {
 				}
 				SelectedObjectProperties.Nodes.Add(nodeObj);
 			}
+			*/
 		}
 
+		/*
 		/// <summary>
 		/// Identical to <see cref="SetPropertiesMenu(DataTreeObject)"/> but for nested properties.
 		/// </summary>
@@ -588,18 +617,19 @@ namespace SKAnimatorTools {
 				node.Nodes.Add(nodeObj);
 			}
 		}
+		*/
 		#endregion
 
 		#region Config GUI Handling
 
-		private void OnConfigClicked(object sender, EventArgs e) {
+		private void OnConfigClicked(object? sender, EventArgs? e) {
 			ConfigForm = new ConfigurationForm();
 			ConfigForm.Show();
 			ConfigForm.Activate();
 			ConfigForm.FormClosed += OnConfigFormClosed;
 		}
 
-		private void OnConfigFormClosed(object sender, FormClosedEventArgs e) {
+		private void OnConfigFormClosed(object? sender, FormClosedEventArgs? e) {
 			ConfigForm = null;
 		}
 
@@ -608,7 +638,7 @@ namespace SKAnimatorTools {
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		private void OnMainWindowFocused(object sender, EventArgs e) {
+		private void OnMainWindowFocused(object? sender, EventArgs? e) {
 			if (ConfigForm == null) return;
 			ConfigForm.Activate();
 		}
@@ -617,9 +647,9 @@ namespace SKAnimatorTools {
 
 		#region StaticSetConfig & ConditionalConfig
 
-		private void SaveModel_PromptFileExport(object sender, CancelEventArgs e) {
-			bool hasStaticSetConfig = AllModels.Where(model => model.ExtraData.ContainsKey("StaticSetConfig")).Count() > 0;
-			bool hasConditionalConfig = AllModels.Where(model => model.ExtraData.ContainsKey("ConditionalConfigFlag")).Count() > 0;
+		private void SaveModel_PromptFileExport(object? sender, CancelEventArgs? e) {
+			bool hasStaticSetConfig = AllModels.Where(model => model.ExtraData.ContainsKey("StaticSetConfig")).Any();
+			bool hasConditionalConfig = AllModels.Where(model => model.ExtraData.ContainsKey("ConditionalConfigFlag")).Any();
 			if (hasStaticSetConfig) {
 				// NEW: If their model includes a StaticSetConfig, we need to give them the choice to export all or one model.
 				DialogResult saveAllStaticSetModels = DialogResult.Cancel;
@@ -642,7 +672,7 @@ namespace SKAnimatorTools {
 						MessageBoxIcon.Information
 					);
 					if (saveAllStaticSetModels == DialogResult.Cancel) {
-						e.Cancel = true;
+						e!.Cancel = true;
 						return;
 					}
 				} else {
@@ -652,6 +682,7 @@ namespace SKAnimatorTools {
 
 				bool onlyExportActive = saveAllStaticSetModels == DialogResult.No;
 				foreach (Model3D model in AllModels) {
+					/*
 					model.ExtraData["SkipExport"] = false; // This is important because if we change any data, we want to clear this out and restart from scratch.
 					StaticSetConfig associatedStaticSet = (StaticSetConfig)model.ExtraData.GetOrDefault("StaticSetConfig", null);
 					if (associatedStaticSet != null) {
@@ -664,6 +695,7 @@ namespace SKAnimatorTools {
 						// - Only export active is false
 						model.ExtraData["SkipExport"] = !shouldExport;
 					}
+					*/
 				}
 			}
 			if (hasConditionalConfig) {
@@ -686,8 +718,8 @@ namespace SKAnimatorTools {
 					foreach (Model3D model in AllModels) {
 						if (model.ExtraData.GetOrDefault("ConditionalConfigFlag", null) != null) {
 							if (expType != 1) {
-								bool isDefault = (bool)model.ExtraData.GetOrDefault("ConditionalConfigDefault", false) == true;
-								bool isEnabled = (bool)model.ExtraData.GetOrDefault("ConditionalConfigValue", false) == true;
+								bool isDefault = (bool)model.ExtraData.GetOrDefault("ConditionalConfigDefault", false)! == true;
+								bool isEnabled = (bool)model.ExtraData.GetOrDefault("ConditionalConfigValue", false)! == true;
 								bool skipExport = (expType == 2 && !isEnabled) || (expType == 3 && isEnabled) || (expType == 4 && !isDefault);
 								// Skip conditions:
 								// Export type is default only and it's not default
@@ -703,24 +735,40 @@ namespace SKAnimatorTools {
 			}
 		}
 
-		private void OnStaticSetOrChoiceSelectionClosed(object sender, FormClosedEventArgs e) {
+		private void OnStaticSetOrChoiceSelectionClosed(object? sender, FormClosedEventArgs? e) {
 			if (sender is ChangeTargetPrompt prompt) {
-				string start = prompt.Node.Text;
+				string start = prompt.Node!.Text;
 				if (start.Contains(":")) {
 					start = start.Substring(0, start.IndexOf(":"));
 				}
 				if (prompt.Model != null) {
-					prompt.Node.Text = $"{start}: {prompt.Model.model}";
+					prompt.Node.Text = $"{start}: {prompt.Model["model"]!}";
 				} else if (prompt.Choice != null) {
 					// Text = "Choice: " + choice.name + " [Current: " + choice.choice + "]"
-					prompt.Node.Text = $"{start}: {prompt.Choice.name} [Current: {prompt.Choice.choice}]";
-					prompt.ChoiceAffects.ApplyArguments(prompt.Choice.options.First(opt => opt.name == prompt.Choice.choice).arguments, prompt.Choice.name);
+					prompt.Node.Text = $"{start}: {prompt.Choice.CurrentName}";
+					//prompt.ChoiceAffects.ApplyArguments(prompt.Choice.Options.First(opt => opt.name == prompt.Choice.choice).arguments, prompt.Choice.name);
+					prompt.Choice.Current.Apply();
 				}
 				prompt.FormClosed -= OnStaticSetOrChoiceSelectionClosed;
 			}
 		}
 
-		private void SelectedObjectProperties_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e) {
+		private TreeElement? LastSelectedProperty = null;
+		private TreeNode? LastActivatedPropertyNode = null;
+		private void OnPropertyNodeClicked(object? sender, TreeNodeMouseClickEventArgs? evt) {
+			TreeElement element = (TreeElement)evt!.Node.Tag;
+			if (evt.Clicks >= 2) {
+				LastActivatedPropertyNode = evt!.Node;
+				element.OnActivated(UISyncContext, this);
+			} else {
+				if (LastSelectedProperty == element) return;
+				if (LastSelectedProperty != null) {
+					LastSelectedProperty.OnDeselected(UISyncContext, this);
+				}
+				LastSelectedProperty = element;
+				element.OnSelected(UISyncContext, this);
+			}
+			/*
 			if (e.Node.Tag is StaticSetConfig staticSetConfig) {
 				ChangeTargetPrompt prompt = new ChangeTargetPrompt();
 				prompt.SetPossibleOptionsFrom(staticSetConfig);
@@ -737,21 +785,39 @@ namespace SKAnimatorTools {
 				prompt.FormClosed += OnStaticSetOrChoiceSelectionClosed;
 				prompt.Show();
 			}
+			*/
+		}
+
+		#endregion
+
+		#region Utilities for external stuffs
+
+		public void ShowChangeTargetPrompt(ShadowClass staticSetConfig) {
+			ChangeTargetPrompt ctp = new ChangeTargetPrompt();
+			ctp.SetPossibleOptionsFrom(staticSetConfig);
+			ctp.FormClosed += OnStaticSetOrChoiceSelectionClosed;
+			ctp.Node = LastActivatedPropertyNode!;
+			ctp.Show(this);
+		}
+
+		public void ShowChangeTargetPrompt(ShadowClass parameterizedConfig, Choice choice) {
+			ChangeTargetPrompt ctp = new ChangeTargetPrompt();
+			ctp.SetPossibleOptionsFrom(parameterizedConfig, choice);
+			ctp.FormClosed += OnStaticSetOrChoiceSelectionClosed;
+			ctp.Node = LastActivatedPropertyNode!;
+			ctp.Show(this);
 		}
 
 		#endregion
 
 		#region Background Worker
 
-		private void ModelLoaderBGWorker_DoWork(object sender, DoWorkEventArgs e) {
-			if (SKAnimatorToolsProxy.UISyncContext == null) SKAnimatorToolsProxy.UISyncContext = e.Argument as SynchronizationContext;
+		private void ModelLoaderBGWorker_DoWork(object? sender, DoWorkEventArgs? e) {
+			if (SKAnimatorToolsProxy.UISyncContext == null) SKAnimatorToolsProxy.UISyncContext = e!.Argument as SynchronizationContext;
 			LoadOpenedModel();
 		}
 
 		private void ModelLoaderBGWorker_ProgressChanged(object sender, ProgressChangedEventArgs e) {
-			if (SKAnimatorToolsProxy.PreferSpeedOverFeedback) return;
-			
-
 			if (e.UserState is int maxProgress) {
 				ModelLoadProgress.Maximum = maxProgress;
 			} else if (e.UserState is ProgressBarState state) {
@@ -761,12 +827,9 @@ namespace SKAnimatorTools {
 			if (e.ProgressPercentage > 0) {
 				ModelLoadProgress.Value = e.ProgressPercentage;
 			}
-			XanLogger.UpdateLog();
-			ModelLoadProgress.Update();
 		}
 
-		private void ModelLoaderBGWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e) {
-			XanLogger.ForceUpdateLog();
+		private void ModelLoaderBGWorker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs? e) {
 			Update();
 		}
 

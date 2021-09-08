@@ -2,7 +2,7 @@
 using System.Linq;
 using ThreeRingsSharp.XansData.Extensions;
 
-namespace ThreeRingsSharp.Utility {
+namespace ThreeRingsSharp.Logging {
 
 	/// <summary>
 	/// A utility dedicated to taking in Java classnames and breaking them down into parts.

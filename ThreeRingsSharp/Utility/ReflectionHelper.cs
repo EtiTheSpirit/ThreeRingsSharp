@@ -5,7 +5,7 @@ using System.Reflection;
 using ThreeRingsSharp.XansData.Extensions;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 
-namespace ThreeRingsSharp.Utility {
+namespace ThreeRingsSharp.Logging {
 
 	/// <summary>
 	/// Provides aliases to get fields or indices of objects via reflection.

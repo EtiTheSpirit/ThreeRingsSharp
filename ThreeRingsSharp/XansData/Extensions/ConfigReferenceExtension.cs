@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using ThreeRingsSharp.DataHandlers;
 using ThreeRingsSharp.DataHandlers.Model;
-using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.Logging;
 using ThreeRingsSharp.XansData.XML.ConfigReferences;
 
 namespace ThreeRingsSharp.XansData.Extensions {

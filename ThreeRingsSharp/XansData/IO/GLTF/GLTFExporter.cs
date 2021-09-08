@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.Logging;
 using ThreeRingsSharp.XansData.Exceptions;
 using ThreeRingsSharp.XansData.Extensions;
 using ThreeRingsSharp.XansData.IO.GLTF.JSON;

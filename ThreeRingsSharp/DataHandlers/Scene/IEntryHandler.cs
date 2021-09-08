@@ -2,7 +2,7 @@
 using com.threerings.tudey.data;
 using System.Collections.Generic;
 using System.IO;
-using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.Logging.Interface;
 using ThreeRingsSharp.XansData;
 using static com.threerings.tudey.data.TudeySceneModel;
 

@@ -14,13 +14,13 @@ namespace SKAnimatorTools.Configuration {
 		/// <summary>
 		/// An event that is fired whenever a configuration value changes.
 		/// </summary>
-		public static event ConfigChangedEvent OnConfigurationChanged;
+		public static event ConfigChangedEvent? OnConfigurationChanged;
 		public delegate void ConfigChangedEvent(string configKey, dynamic oldValue, dynamic newValue);
 
 		/// <summary>
 		/// The configuration data.
 		/// </summary>
-		private static Dictionary<string, dynamic> Configuration = null;
+		private static Dictionary<string, dynamic?>? Configuration = null;
 
 		/// <summary>
 		/// A reference to the config file.
@@ -32,12 +32,11 @@ namespace SKAnimatorTools.Configuration {
 		/// </summary>
 		private static void LoadConfigs() {
 			if (!ConfigFile.Exists) {
-				using (FileStream str = ConfigFile.Create()) {
-					str.WriteByte((byte)'{');
-					str.WriteByte((byte)'}');
-				}
+				using FileStream str = ConfigFile.Create(); 
+				str.WriteByte((byte)'{');
+				str.WriteByte((byte)'}');
 			}
-			Configuration = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(File.ReadAllText(ConfigFile.FullName));
+			Configuration = JsonConvert.DeserializeObject<Dictionary<string, dynamic?>>(File.ReadAllText(ConfigFile.FullName));
 		}
 
 		/// <summary>
@@ -55,13 +54,13 @@ namespace SKAnimatorTools.Configuration {
 		/// <param name="writeIfDoesntExist">Whether or not to write the default value (if it's not null) to the configuration.</param>
 		/// <exception cref="ArgumentNullException">Thrown if the key is null or empty.</exception>
 		/// <exception cref="ArgumentException">Thrown if the key contains illegal characters or is longer than 32 characters.</exception>
-		public static dynamic GetConfigurationValue(string key, dynamic defaultValue = null, bool writeIfDoesntExist = false) {
+		public static dynamic? GetConfigurationValue(string key, dynamic? defaultValue = null, bool writeIfDoesntExist = false) {
 			if (string.IsNullOrEmpty(key)) throw new ArgumentNullException("key");
 			if (key.Length > 32) throw new ArgumentException("The key is too long! Please make sure the key is <= 32 characters long.", "key");
 			if (!key.IsAlphanumeric()) throw new ArgumentException("The key contains illegal characters! Please only use alphanumeric characters.", "key");
 			if (Configuration == null) LoadConfigs();
 
-			if (Configuration.ContainsKey(key)) {
+			if (Configuration!.ContainsKey(key)) {
 				return Configuration[key];
 			}
 			if (defaultValue != null && writeIfDoesntExist) {
@@ -79,13 +78,13 @@ namespace SKAnimatorTools.Configuration {
 		/// <returns></returns>
 		/// <exception cref="ArgumentNullException">Thrown if the key is null or empty.</exception>
 		/// <exception cref="ArgumentException">Thrown if the key contains illegal characters or is longer than 32 characters.</exception>
-		public static void SetConfigurationValue(string key, dynamic value) {
-			if (string.IsNullOrEmpty(key)) throw new ArgumentNullException("key");
-			if (key.Length > 32) throw new ArgumentException("The key is too long! Please make sure the key is <= 32 characters long.", "key");
-			if (!key.IsAlphanumeric()) throw new ArgumentException("The key contains illegal characters! Please only use alphanumeric characters.", "key");
+		public static void SetConfigurationValue(string key, dynamic? value) {
+			if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
+			if (key.Length > 32) throw new ArgumentException("The key is too long! Please make sure the key is <= 32 characters long.", nameof(key));
+			if (!key.IsAlphanumeric()) throw new ArgumentException("The key contains illegal characters! Please only use alphanumeric characters.", nameof(key));
 			if (Configuration == null) LoadConfigs();
-			dynamic oldValue = null;
-			if (Configuration.ContainsKey(key)) {
+			dynamic? oldValue = null;
+			if (Configuration!.ContainsKey(key)) {
 				oldValue = Configuration[key];
 			}
 
@@ -106,11 +105,11 @@ namespace SKAnimatorTools.Configuration {
 		/// </summary>
 		/// <param name="key"></param>
 		public static void RemoveConfigurationValue(string key) {
-			if (string.IsNullOrEmpty(key)) throw new ArgumentNullException("key");
-			if (key.Length > 32) throw new ArgumentException("The key is too long! Please make sure the key is <= 32 characters long.", "key");
-			if (!key.IsAlphanumeric()) throw new ArgumentException("The key contains illegal characters! Please only use alphanumeric characters.", "key");
+			if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
+			if (key.Length > 32) throw new ArgumentException("The key is too long! Please make sure the key is <= 32 characters long.", nameof(key));
+			if (!key.IsAlphanumeric()) throw new ArgumentException("The key contains illegal characters! Please only use alphanumeric characters.", nameof(key));
 			if (Configuration == null) LoadConfigs();
-			if (Configuration.ContainsKey(key)) {
+			if (Configuration!.ContainsKey(key)) {
 				Configuration.Remove(key);
 			}
 			SaveConfigs();

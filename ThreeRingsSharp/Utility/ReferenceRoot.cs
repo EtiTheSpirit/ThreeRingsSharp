@@ -1,6 +1,6 @@
 ﻿using com.threerings.config;
 
-namespace ThreeRingsSharp.Utility {
+namespace ThreeRingsSharp.Logging {
 	public class ReferenceRoot {
 
 		private string Name = null;

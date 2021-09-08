@@ -2,7 +2,7 @@
 using com.threerings.opengl.model.config;
 using System.Collections.Generic;
 using System.IO;
-using ThreeRingsSharp.Utility.Interface;
+using ThreeRingsSharp.Logging.Interface;
 using ThreeRingsSharp.XansData;
 
 namespace ThreeRingsSharp.DataHandlers.Model {

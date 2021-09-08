@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ThreeRingsSharp.Utility;
+using ThreeRingsSharp.Logging;
 
 namespace ThreeRingsSharp.DataHandlers.Expressions {
 	public static class StringExpressionHandler {

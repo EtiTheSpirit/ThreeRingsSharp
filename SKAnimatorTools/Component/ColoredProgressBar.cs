@@ -71,7 +71,7 @@ namespace SKAnimatorTools.Component {
 			get => _HashingColor;
 			set {
 				_HashingColor = value;
-				Bitmap tape = CautionTape as Bitmap;
+				Bitmap tape = (Bitmap)CautionTape;
 				for (int y = 0; y < tape.Height; y++) {
 					for (int x = 0; x < tape.Width; x++) {
 						int alpha = tape.GetPixel(x, y).A;
@@ -239,5 +239,13 @@ namespace SKAnimatorTools.Component {
 		public static void SetState(this ProgressBar pBar, int state) {
 			SendMessage(pBar.Handle, 1040, (IntPtr)state, IntPtr.Zero);
 		}
+	}
+
+	public enum ProgressBarState {
+		OK,
+
+		ExtraWork,
+
+		Error
 	}
 }
