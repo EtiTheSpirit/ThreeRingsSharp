@@ -42,7 +42,7 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 		/// <remarks>
 		/// For simpler access, <see cref="CurrentName"/> may be desirable.
 		/// </remarks>
-		public Option Current { get; protected set; }
+		public Option? Current { get; protected set; }
 
 		/// <summary>
 		/// The name of the currently selected option.
@@ -51,7 +51,7 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 		/// The setter of this property will only work if the input name is a valid <see cref="Option"/> (as defined by <see cref="Options"/>). If it is invalid, it will raise an <see cref="ArgumentException"/>.
 		/// </remarks>
 		public string CurrentName {
-			get => Current.Name;
+			get => Current?.Name ?? string.Empty;
 			set => Current = Options.FirstOrDefault(option => option.Name == value) ?? throw new ArgumentException($"Invalid option \"{value}\"!", nameof(value));
 		}
 
@@ -72,7 +72,7 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 			}
 
 			string choice = shadow["choice"]!;
-			Current = Options.FirstOrDefault(opt => opt.Name == choice)!;
+			Current = Options.FirstOrDefault(opt => opt.Name == choice) ?? Options.FirstOrDefault();
 		}
 
 		/// <summary>

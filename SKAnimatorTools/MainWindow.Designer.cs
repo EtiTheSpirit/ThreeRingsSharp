@@ -132,8 +132,9 @@
 			this.SilkImages.Images.SetKeyName(34, "Tag");
 			this.SilkImages.Images.SetKeyName(35, "Wrench");
 			this.SilkImages.Images.SetKeyName(36, "MissingConfig");
-			this.SilkImages.Images.SetKeyName(37, "None");
-			this.SilkImages.Images.SetKeyName(38, "Editable");
+			this.SilkImages.Images.SetKeyName(37, "Editable");
+			this.SilkImages.Images.SetKeyName(38, "RedTag");
+			this.SilkImages.Images.SetKeyName(39, "None");
 			// 
 			// GroupBoxModelInfo
 			// 

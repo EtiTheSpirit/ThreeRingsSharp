@@ -10,6 +10,7 @@ using ThreeRingsSharp.XansData.XDataTreeExtension;
 using XDataTree;
 using XDataTree.Data;
 using XDataTree.TreeElements;
+using static ThreeRingsSharp.Utilities.Parameters.Implementation.Direct;
 
 namespace ThreeRingsSharp.ConfigHandlers.Common {
 	public static class ModelConfig {
@@ -64,7 +65,17 @@ namespace ThreeRingsSharp.ConfigHandlers.Common {
 				parent.Add(choiceElement);
 
 			} else if (param is Direct direct) {
-				KeyValueContainerElement directElement = new KeyValueContainerElement("Direct: " + param.Name, SilkImage.Tag);
+				SilkImage icon = SilkImage.Tag;
+				for (int pathIdx = 0; pathIdx < direct.Pointers.Length; pathIdx++) {
+					if (direct.Pointers[pathIdx] is FaultyDirectPointer) {
+						icon = SilkImage.RedTag;
+						break;
+					}
+				}
+				KeyValueContainerElement directElement = new KeyValueContainerElement("Direct: " + param.Name, icon);
+				if (icon == SilkImage.RedTag) {
+					directElement.Tooltip = "This direct is faulty because one or more of its paths couldn't be resolved.";
+				}
 				for (int pathIdx = 0; pathIdx < direct.Paths.Length; pathIdx++) {
 					// TODO: Wouldn't it be cool if you could click on one of these, and then it'd change the data tree's selection to the object it affects?
 					// Like both the main tree *and* the properties tree, e.g. selects applicable model in main tree, selects applicable property in props.

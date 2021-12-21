@@ -8,6 +8,18 @@ namespace ThreeRingsSharp.XansData.Extensions {
 	/// Provides some handy extension methods for <see cref="string"/>.
 	/// </summary>
 	public static class StringExtensions {
+
+		/// <summary>
+		/// Returns a default string if this string is null or whitespace.
+		/// </summary>
+		/// <param name="str"></param>
+		/// <param name="def"></param>
+		/// <returns></returns>
+		public static string DefaultIfNullOrWhitespace(this string str, string def) {
+			if (string.IsNullOrWhiteSpace(str)) return def;
+			return str;
+		}
+
 		/// <summary>
 		/// Returns a <see langword="string"/> of everything after the first located instance of <paramref name="text"/>. This does not include the sequence. For instance, if the text <c>cool.beans.nice.meme</c> is input and the method is called with a parameter of <c>nice.</c> for <paramref name="text"/>, the return value will be <c>meme</c><para/>
 		/// Returns <see langword="null"/> if <paramref name="text"/> could not be found.
@@ -39,30 +51,30 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
-		/// Looks for the first instance of text between square brackets [like this] and returns that string, or <see langword="null"/> if it couldn't be found.
+		/// Looks for the first instance of text between square brackets [like this] and returns that string, or the input string if it couldn't be found.
 		/// </summary>
 		/// <param name="str"></param>
 		/// <returns></returns>
-		public static string? BetweenBrackets(this string str) {
+		public static string BetweenBrackets(this string str) {
 			int openBracket = str.IndexOf('[');
-			if (openBracket == -1) return null;
+			if (openBracket == -1) return str;
 			int closeBracket = str.IndexOf(']', openBracket + 1);
-			if (closeBracket == -1) return null;
+			if (closeBracket == -1) return str;
 
 			return str.Substring(openBracket + 1, closeBracket - openBracket - 1);
 		}
 
 
 		/// <summary>
-		/// Assuming <paramref name="str"/> is between quotation marks (that is, <paramref name="str"/> starts and ends with literal <c>"</c>s), this will strip them off of the end. Returns <see langword="null"/> if the string is not surrounded by quotes.
+		/// Assuming <paramref name="str"/> is between quotation marks (that is, <paramref name="str"/> starts and ends with literal <c>"</c>s), this will strip them off of the end. Returns the input string if the string is not surrounded by quotes.
 		/// </summary>
 		/// <param name="str"></param>
 		/// <returns></returns>
-		public static string? BetweenQuotes(this string str) {
+		public static string BetweenQuotes(this string str) {
 			int openQuote = str.IndexOf('"');
-			if (openQuote == -1) return null;
+			if (openQuote == -1) return str;
 			int closeQuote = str.IndexOf('"', openQuote + 1);
-			if (closeQuote == -1) return null;
+			if (closeQuote == -1) return str;
 
 			return str.Substring(openQuote + 1, closeQuote - openQuote - 1);
 		}

@@ -1,7 +1,9 @@
 ﻿using OOOReader.Reader;
+using SKAnimatorTools.PrimaryInterface;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -90,6 +92,97 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 			// It allowed me to completely nuke ReflectionHelper
 
 			dynamic elementOrImplementation = ParameterizedConfig;
+			dynamic? secondToLastElement = null;
+			for (int idx = 0; idx < pathElements.Length; idx++) {
+				string currentPathElement = pathElements[idx];
+
+				// PREREQ: Is it an indexed path element?
+				// If so, is it a simple array access or a parameter x-ref?
+				// We care about the latter.
+				if (IsIndexedPathElement(currentPathElement)) {
+					(string element, string index) = GetIndexedElementAndParameter(currentPathElement);
+					if (int.TryParse(index, out int numericIndex)) {
+						// This is an array access. Phew!
+						// Let's do a 2-for-1 by indexing this element and then accessing that as an array, and set the current element ref to the result of that
+						secondToLastElement = elementOrImplementation[element.SnakeToCamel()];
+						elementOrImplementation = secondToLastElement[numericIndex];
+						continue; // Go to the next iteration.
+					}
+
+					// https://youtu.be/9q_rYCEUYfM?t=623
+					// Index [] is not numeric, so it's a reference.
+					index = index.BetweenQuotes();
+					dynamic referencedElement = elementOrImplementation[element.SnakeToCamel()];
+					if (referencedElement is ShadowClass shadow && shadow.IsA("com.threerings.config.ConfigReference")) {
+						secondToLastElement = referencedElement;
+						ConfigReference asCfgRef = new ConfigReference(shadow);
+						elementOrImplementation = asCfgRef.Arguments[index]!;
+
+						continue;
+					}
+					Debug.WriteLine("WARNING: Failed to resolve Direct \"" + path + "\"!");
+					Debugger.Break();
+				}
+
+
+				secondToLastElement = elementOrImplementation;
+				// Standard path?
+				if (IsPathElementAnIndex(currentPathElement)) {
+					currentPathElement = currentPathElement.BetweenBrackets();
+					if (int.TryParse(currentPathElement, out int index)) {
+						elementOrImplementation = secondToLastElement[index];
+						continue;
+					} else {
+						string strIndex = currentPathElement.BetweenQuotes();
+						if (elementOrImplementation is ShadowClass shadow && shadow.IsA("com.threerings.config.ConfigReference")) {
+							ConfigReference asCfgRef = new ConfigReference(shadow);
+							elementOrImplementation = asCfgRef.Arguments[strIndex]!;
+							continue;
+						} else {
+							Debug.WriteLine("WARNING: Failed to resolve Direct \"" + path + "\"!");
+							Debugger.Break();
+						}
+					}
+				} else {
+					elementOrImplementation = elementOrImplementation[currentPathElement.SnakeToCamel()];
+				}
+			}
+			string fieldName = pathElements[^1].SnakeToCamel().BetweenBrackets().BetweenQuotes();
+			return new DirectPointer(secondToLastElement, fieldName, path);
+		}
+
+		[Obsolete("This method of traversal is overcomplicated.")]
+		private DirectPointer Traverse_(string path) {
+			// Create an array of every element in the path.
+			path = path.Replace("\"]", "\"]."); // This helps with chained refs e.g. ["Texture"]["File"] by splitting them.
+												// ^ These need to be split because if we don't, it splits as something like asdfg["some"]["thing"] and that double-ending will break the system.
+
+			while (path.EndsWith(".")) path = path.Substring(0, path.Length - 1); // Clear trailing periods that may have been created by ^
+			while (path.Contains("..")) path = path.Replace("..", ".");
+			string[] pathElements = path.Split('.');
+
+			// Direct paths are composed of three types of accessors, though they can be grouped into two major types:
+			// Indices by name or array index:
+			//		These look like something.somethingelse (separated with a dot) or something[0] (accessing index #0).
+			//		When handled, these can be traversed verbatim via reflection, with a number of name swaps occurring
+			//		(namely, snake case names get converted to camel case)
+			//
+			// Direct x-refs:
+			//		Considerably more complicated, these look like thingy["SomethingElse"]
+			//		When this occurs, ["SomethingElse"] references a parameter on thingy, which means that its own directs may need traversal.
+			//		For obvious reasons, this is where things get very very complicated.
+			//		The basic gist is that I need to hot-swap ["SomethingElse"] for the (or all of the, depending on if there's multiple) paths in the
+			//		referenced parameter's paths.
+
+
+			// UPD: From the first iteration of ThreeRingsSharp, which used actual Clyde code, this had to do a lot of hacky reflection garbage.
+			// With the transition to OOOReader (my homebrewed solution to reading Clyde files), a new, highly versatile class "ShadowClass" has been
+			// introduced. ShadowClass offers an indexer (["this"]) to access its fields. Consequently, this means I can just lazily represent
+			// the current element as a dynamic, and then it just works(tm) -- if it's an object, it's guaranteed to be a ShadowClass, so `[]` will
+			// index a field just like normal. If it's an array, then `[]` will index an element in said array. Win-win.
+			// It allowed me to completely nuke ReflectionHelper
+
+			dynamic elementOrImplementation = ParameterizedConfig;
 			dynamic? secondToLast = null;
 			for (int idx = 0; idx < pathElements.Length; idx++) {
 				string currentPathElement = pathElements[idx];
@@ -110,9 +203,10 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 					// https://youtu.be/9q_rYCEUYfM?t=623
 					index = index.BetweenQuotes()!;
 					dynamic referencedElement = elementOrImplementation[element.SnakeToCamel()];
+					ShadowClass? mgCfg = null; // Keep this out of scope for debugging.
 					if (referencedElement is ShadowClass shadow) {
 						if (shadow.IsA("com.threerings.config.ConfigReference")) {
-							ShadowClass mgCfg = ConfigReferenceResolver.ResolveConfigReference(shadow)!;
+							mgCfg = ConfigReferenceResolver.ResolveConfigReference(shadow).Item1!;
 							mgCfg.AssertIsInstanceOf("com.threerings.config.ParameterizedConfig");
 
 							ShadowClass? parameter = null;
@@ -172,12 +266,14 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 									// I can get away with this because we're not relying on actively storing anything along the way, only getting the value out.
 									continue;
 								}
+							} else {
+								XanLogger.WriteLine("Failed to find parameters for an object.");
 							}
 						}
 					}
-					
-					Debugger.Break();
-					throw new Exception();
+
+					Debug.WriteLine("WARNING: Failed to resolve Direct \"" + path + "\"! Returning a dummy DirectPointer.");
+					return new FaultyDirectPointer();
 				}
 
 				// Standard path.
@@ -189,13 +285,22 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 		}
 
 		/// <summary>
-		/// Returns whether or not the given path element is indexed, or, ends in square brackets to index an array element or parameter.
+		/// Returns whether or not the given path element is indexed, or, ends in square brackets to index an array element or parameter, e.g. a[0] or a["b"]
 		/// </summary>
 		/// <param name="pathElement"></param>
 		/// <returns></returns>
 		private bool IsIndexedPathElement(string pathElement) {
 			// .+(\["?.+"?\])
 			return Regex.IsMatch(pathElement, ".+(\\[\"?.+\"?\\])");
+		}
+
+		/// <summary>
+		/// Returns whether or not the path element is a literal indexer, e.g. [0] or ["Something"]
+		/// </summary>
+		/// <param name="pathElement"></param>
+		/// <returns></returns>
+		private bool IsPathElementAnIndex(string pathElement) {
+			return Regex.IsMatch(pathElement, "(\\[\"?.+\"?\\])");
 		}
 
 		/// <summary>
@@ -221,30 +326,66 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 		/// This class exclusively provides access to the value.<para/>
 		/// Note that this behaves as more than a simple container, as it actually <em>modifies</em> the value on the model if you change it through this class.
 		/// </summary>
-		public sealed class DirectPointer {
+		public class DirectPointer {
+
+			private readonly bool IsContainerCfgRef;
 
 			private readonly ShadowClass Container;
+
+			private readonly ConfigReference? AsCfgRef;
 
 			private readonly string FieldName;
 
 			/// <summary>
 			/// The value pointed at by this <see cref="DirectPointer"/>.
 			/// </summary>
-			public object? Value {
-				get => Container[FieldName];
-				set => Container[FieldName] = value;
+			public virtual object? Value {
+				get {
+					if (IsContainerCfgRef) {
+						return AsCfgRef!.Arguments[FieldName];
+					} else {
+						return Container[FieldName];
+					}
+				}
+				set {
+					if (IsContainerCfgRef) {
+						AsCfgRef!.Arguments[FieldName] = value;
+					} else {
+						Container[FieldName] = value;
+					}
+				}
 			}
 
 			/// <summary>
 			/// The path that this direct occupies, with its parameter references stripped away.
 			/// </summary>
-			public string DereferencedPath { get; }
+			public string Path { get; }
 
-			public DirectPointer(ShadowClass container, string fieldName, string dereferencedPath) {
+			public DirectPointer(ShadowClass container, string fieldName, string path) {
 				Container = container ?? throw new ArgumentNullException(nameof(container));
 				FieldName = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
-				DereferencedPath = dereferencedPath ?? throw new ArgumentNullException(nameof(dereferencedPath));
+				Path = path ?? throw new ArgumentNullException(nameof(path));
+				IsContainerCfgRef = container.IsA("com.threerings.config.ConfigReference");
+				if (IsContainerCfgRef) {
+					AsCfgRef = new ConfigReference(container);
+				}
 			}
+
+			protected internal DirectPointer() {
+				Container = null;
+				FieldName = null;
+				Path = string.Empty;
+			}
+
+		}
+
+		public class FaultyDirectPointer : DirectPointer {
+
+			public FaultyDirectPointer() : base() { }
+
+			private object? ValueInternal = null;
+
+			public override object? Value { get => ValueInternal; set => ValueInternal = value; }
 
 		}
 

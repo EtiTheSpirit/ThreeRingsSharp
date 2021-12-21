@@ -42,12 +42,10 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 
 			foreach (ShadowClass component in models) {
 				ConfigReference cfgRef = new ConfigReference(component["model"]!);
-				ShadowClass? reference = cfgRef.Resolve();
-				if (reference != null) {
-					MasterDataExtractor.ExtractFrom(ctx, reference);
-				}
+				MasterDataExtractor.ExtractFrom(ctx, cfgRef);
 			}
 
+			ctx.Pop();
 		}
 
 	}

@@ -19,17 +19,49 @@ namespace ThreeRingsSharp.Utilities {
 	/// </summary>
 	public static class ConfigReferenceResolver {
 
+		public static Dictionary<string, object?> GetArgumentMap(object? unknown) {
+			if (unknown is Dictionary<string, object?> dict) return dict;
+			if (unknown is Dictionary<object, object?> dict2) {
+				Dictionary<string, object?> arguments = new Dictionary<string, object?>();
+				foreach (KeyValuePair<object, object?> kvp in dict2) {
+					arguments[kvp.Key.ToString()!] = kvp.Value;
+				}
+				return arguments;
+			}
+			if (unknown is ShadowClass argMap) {
+				if (argMap.IsA("com.threerings.config.ArgumentMap")) {
+					ShadowClass sortableArrayList = argMap.GetField<ShadowClass>("_entries")!;
+					object entries = sortableArrayList.GetField<object>("_elements")!; // This may be a shadow of java.lang.Object due to java type erasure.
+																					   // Usually it will be so I'll just quietly hope this works.
+					if (entries is ShadowClass[] entriesArray) {
+						Dictionary<string, object?> arguments = new Dictionary<string, object?>();
+
+						foreach (ShadowClass entry in entriesArray) {
+							if (entry.IsA("java.util.AbstractMap$SimpleEntry")) {
+								arguments[entry["key"]!.ToString()] = entry["value"];
+							} else {
+								throw new InvalidOperationException("Unknown entry type! " + entry.Signature);
+							}
+						}
+
+						return arguments;
+					}
+				}
+			}
+			return new Dictionary<string, object?>();
+		}
+
 		/// <summary>
 		/// Returns the object pointed to by this <see cref="ShadowClass"/> representing a ConfigReference. Additionally, this
 		/// adds a field named <c>__reference</c> onto the input <see cref="ShadowClass"/> for caching.
 		/// </summary>
 		/// <param name="shadow">The <see cref="ShadowClass"/> representing the ConfigReference.</param>
 		/// <exception cref="ShadowTypeMismatchException">If the given <see cref="ShadowClass"/> is not an instance of <c>com.threerings.config.ConfigReference</c></exception>
-		public static ShadowClass? ResolveConfigReference(ShadowClass shadow) {
+		public static (ShadowClass?, FileInfo?) ResolveConfigReference(ShadowClass shadow) {
 			shadow.AssertIsInstanceOf("com.threerings.config.ConfigReference");
 
 			if (shadow.TryGetField("__reference", out ShadowClass? reference)) {
-				return reference;
+				return (reference, reference?.GetFieldOrDefault<FileInfo>("__FILE"));
 			}
 
 			string config = shadow["_name"] ?? "";
@@ -39,7 +71,7 @@ namespace ThreeRingsSharp.Utilities {
 				if (retn != null) {
 					shadow["__reference"] = retn;
 
-					Dictionary<object, object?> args = shadow["_arguments"]!;
+					Dictionary<string, object?> args = GetArgumentMap(shadow["_arguments"]!);
 					if (retn.IsA("com.threerings.config.ParameterizedConfig")) {
 						Parameter[] parameters = retn.GetParameters();
 						foreach (Parameter param in parameters) {
@@ -55,15 +87,15 @@ namespace ThreeRingsSharp.Utilities {
 						}
 					}
 
-					return retn;
+					return (retn, retn.GetFieldOrDefault<FileInfo>("__FILE"));
 				}
-				return null;
+				return (null, null);
 			} else {
 				//using ClydeFile clf = new ClydeFile(resolvedFile.OpenRead());
 				//object? retn = clf.ReadObject();
 				ShadowClass retn = (ShadowClass)MasterDataExtractor.Open(resolvedFile, null);
 
-				Dictionary<object, object?> args = shadow["_arguments"]!;
+				Dictionary<string, object?> args = GetArgumentMap(shadow["_arguments"]!);
 				if (retn.IsA("com.threerings.config.ParameterizedConfig")) {
 					Parameter[] parameters = retn.GetParameters();
 					foreach (Parameter param in parameters) {
@@ -80,7 +112,7 @@ namespace ThreeRingsSharp.Utilities {
 				}
 
 				shadow["__reference"] = retn;
-				return retn;
+				return (retn, resolvedFile);
 			}
 		}
 

@@ -55,6 +55,140 @@
             <param name="name"></param>
             <returns></returns>
         </member>
+        <member name="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord">
+            <summary>
+            Reimplementation of com.threerings.tudey.util.Coord
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.EMPTY">
+            <summary>
+            The encoded form of an empty coordinate, located at -32768, -32768
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.X">
+            <summary>
+            The X component of this coordinate, which responds to left/right in the 3D scene.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.Y">
+            <summary>
+            The Y component of this coordinate, which corresponds to forward/backwards in the 3D scene (not up/down!).
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.Encoded">
+            <summary>
+            The encoded representation of this coordinate pair, where X occupies the upper two bytes and Y occupies the lower two bytes (assuming big endian; 0xXXXXYYYY)
+            </summary>
+            <remarks>
+            Setting this will appropriately set X and Y.
+            </remarks>
+        </member>
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.#ctor">
+            <summary>
+            Create a new <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord"/> at (0, 0)
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.#ctor(ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord)">
+            <summary>
+            Clone the other <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord"/> into a new instance.
+            </summary>
+            <param name="other"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.#ctor(System.Int16,System.Int16)">
+            <summary>
+            Create a new <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord"/> at the given (x, y) coordinate pair.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.#ctor(OOOReader.Reader.ShadowClass)">
+            <summary>
+            Construct a coordinate from a <see cref="T:OOOReader.Reader.ShadowClass"/> representing a coordinate.
+            </summary>
+            <param name="shadow"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.Encode(System.Int32,System.Int32)">
+            <summary>
+            Encodes X and Y into a merged form. Note that only the lower 16 bits are used, so values greater than <see cref="F:System.UInt16.MaxValue"/> will be incorrect.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry.Key">
+            <summary>
+            The coordinate this entry is bound to.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry.Value">
+            <summary>
+            The value at this entry.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry._values">
+            <summary>
+            The values array of this entry. Defaults to an uninitialized array, as it is set to an int[] reference by <see cref="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.CoordEntrySet"/>.
+            As such, using <see cref="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry.SetValue(System.Int32)"/> will actually reflect to the original object in the <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap"/> that created this.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry.#ctor">
+            <summary>
+            Initialize a new, blank <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry"/> at the origin with a value of 0.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry.SetValue(System.Int32)">
+            <summary>
+            Sets the value associated with this entry.
+            </summary>
+            <param name="value">The new value to associated with this entry.</param>
+            <returns>The previous value prior to it being changed.</returns>
+        </member>
+        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.Granularity">
+            <summary>
+            I'll be honest with you, I have no clue what this does.
+            </summary>
+            <remarks>
+            I'm Commander Shepard, and this is my favorite comment in the codebase.
+            </remarks>
+        </member>
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.CoordEntrySet">
+            <summary>
+            Translates the contents of this <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap"/> into a list of <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry"/> elements. These elements store values by reference
+            and so modifications made to these elements will affect this <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap"/>.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.GetCell(System.Int32,System.Int32)">
+            <summary>
+            Returns the cell at the given coordinate.
+            </summary>
+            <param name="x"></param>
+            <param name="y"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.GetCell(ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord)">
+            <summary>
+            Returns the cell at the given coordinate.
+            </summary>
+            <param name="location"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.GetCell">
+            <summary>
+            Returns the current cell that <see cref="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.IndexerCoordinate"/> points to.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.CoordIntMapEnumerator">
+            <summary>
+            An iterator class for <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap"/> that translates all contained values into <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry"/> objects.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.TudeySceneModel">
+            <summary>
+            Represents an implementation of TudeySceneModel in a manner as shallow as needed for function.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.MasterDataExtractor">
             <summary>
             This class manages the extraction and conversion of data from a <see cref="T:OOOReader.Clyde.ClydeFile"/>. The sort of "main hub" for all read operations.
@@ -83,6 +217,14 @@
             <param name="subShadow"></param>
             <param name="arrayIndex">If this is part of a loop extracting from an array of <see cref="T:OOOReader.Reader.ShadowClass"/> instances, then this is the array index.</param>
         </member>
+        <member name="M:ThreeRingsSharp.MasterDataExtractor.ExtractFrom(ThreeRingsSharp.Utilities.ReadFileContext,ThreeRingsSharp.Utilities.ConfigReference,System.String)">
+            <summary>
+            Extracts directly from a <see cref="T:ThreeRingsSharp.Utilities.ConfigReference"/>.
+            </summary>
+            <param name="context"></param>
+            <param name="reference"></param>
+            <param name="extraTag">If defined, then the root element for this model will have the tag appended in brackets: model.dat [extraTag]</param>
+        </member>
         <member name="T:ThreeRingsSharp.Utilities.ArgumentApplier">
             <summary>
             This class is a companion to <see cref="T:ThreeRingsSharp.Utilities.ConfigReferenceResolver"/> which handles applying an ArgumentMap's data to a loaded <see cref="T:OOOReader.Clyde.ClydeFile"/>.
@@ -104,6 +246,12 @@
             <summary>
             The name of this reference, which is either the file path to it (relative to rsrc) or a prenamed config object as seen within rsrc/config's
             many files.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utilities.ConfigReference.FileReference">
+            <summary>
+            An actual <see cref="T:System.IO.FileInfo"/> to the file this <see cref="T:ThreeRingsSharp.Utilities.ConfigReference"/>, including named configs.<para/>
+            <strong>This will be <see langword="null"/> until <see cref="M:ThreeRingsSharp.Utilities.ConfigReference.Resolve"/> is called.</strong>
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.Utilities.ConfigReference.Arguments">
@@ -234,7 +382,14 @@
         </member>
         <member name="M:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.IsIndexedPathElement(System.String)">
             <summary>
-            Returns whether or not the given path element is indexed, or, ends in square brackets to index an array element or parameter.
+            Returns whether or not the given path element is indexed, or, ends in square brackets to index an array element or parameter, e.g. a[0] or a["b"]
+            </summary>
+            <param name="pathElement"></param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.IsPathElementAnIndex(System.String)">
+            <summary>
+            Returns whether or not the path element is a literal indexer, e.g. [0] or ["Something"]
             </summary>
             <param name="pathElement"></param>
             <returns></returns>
@@ -265,7 +420,7 @@
             The value pointed at by this <see cref="T:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.DirectPointer"/>.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.DirectPointer.DereferencedPath">
+        <member name="P:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.DirectPointer.Path">
             <summary>
             The path that this direct occupies, with its parameter references stripped away.
             </summary>
@@ -305,6 +460,7 @@
             <see cref="T:OOOReader.Reader.ShadowClass"/> <em>MUST</em> be an instance of <c>com.threerings.config.ParameterizedConfig</c>
             </summary>
             <param name="parameterizedConfig"></param>
+            <param name="args">The arguments for these parameters, which is used in creation, or null if this is not applicable.</param>
             <returns></returns>
             <exception cref="T:OOOReader.Exceptions.ShadowTypeMismatchException">If the signature is wrong.</exception>
         </member>
@@ -330,9 +486,14 @@
             Represents the context of an opened file.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.OriginalFile">
+            <summary>
+            The file that was opened to create this <see cref="T:ThreeRingsSharp.Utilities.ReadFileContext"/> originally.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.File">
             <summary>
-            The file that was opened to create this.
+            The latest file that this <see cref="T:ThreeRingsSharp.Utilities.ReadFileContext"/> has been used as a container for (useful for <see cref="T:ThreeRingsSharp.Utilities.ConfigReference"/>s).
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.CurrentSceneTransform">
@@ -914,6 +1075,14 @@
             Provides some handy extension methods for <see cref="T:System.String"/>.
             </summary>
         </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.DefaultIfNullOrWhitespace(System.String,System.String)">
+            <summary>
+            Returns a default string if this string is null or whitespace.
+            </summary>
+            <param name="str"></param>
+            <param name="def"></param>
+            <returns></returns>
+        </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.AfterIndexOf(System.String,System.String)">
             <summary>
             Returns a <see langword="string"/> of everything after the first located instance of <paramref name="text"/>. This does not include the sequence. For instance, if the text <c>cool.beans.nice.meme</c> is input and the method is called with a parameter of <c>nice.</c> for <paramref name="text"/>, the return value will be <c>meme</c><para/>
@@ -934,14 +1103,14 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.BetweenBrackets(System.String)">
             <summary>
-            Looks for the first instance of text between square brackets [like this] and returns that string, or <see langword="null"/> if it couldn't be found.
+            Looks for the first instance of text between square brackets [like this] and returns that string, or the input string if it couldn't be found.
             </summary>
             <param name="str"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.BetweenQuotes(System.String)">
             <summary>
-            Assuming <paramref name="str"/> is between quotation marks (that is, <paramref name="str"/> starts and ends with literal <c>"</c>s), this will strip them off of the end. Returns <see langword="null"/> if the string is not surrounded by quotes.
+            Assuming <paramref name="str"/> is between quotation marks (that is, <paramref name="str"/> starts and ends with literal <c>"</c>s), this will strip them off of the end. Returns the input string if the string is not surrounded by quotes.
             </summary>
             <param name="str"></param>
             <returns></returns>

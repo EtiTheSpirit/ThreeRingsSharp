@@ -31,7 +31,7 @@ namespace ThreeRingsSharp.Utilities.Parameters {
 					Choice choice = new Choice(modelConfig, param);
 					foreach (Direct direct in choice.Directs) {
 						Direct.DirectPointer ptr = direct.ValuePointer!;
-						if (ptr.DereferencedPath.Contains("material_mappings") && ptr.DereferencedPath.EndsWith("file")) {
+						if (ptr.Path.Contains("material_mappings") && ptr.Path.EndsWith("file")) {
 							foreach (Choice.Option option in choice.Options) {
 								object? value = option.Arguments[direct.Name];
 								if (value is string str) {

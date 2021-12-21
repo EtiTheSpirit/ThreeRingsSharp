@@ -85,10 +85,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 				foreach (ShadowClass attachment in attachments) {
 					if (attachment["model"] != null) {
 						ConfigReference cfgRef = new ConfigReference(attachment["model"]);
-						ShadowClass? reference = cfgRef.Resolve();
-						if (reference != null) {
-							MasterDataExtractor.ExtractFrom(ctx, reference);
-						}
+						MasterDataExtractor.ExtractFrom(ctx, cfgRef);
 					}
 				}
 			}
@@ -112,7 +109,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 
 				string nodeName = node["name"]!;
 				Transform3D nodeTransform = new Transform3D(node["transform"]!);
-				if (node.IsA("com.threerings.opengl.config.ArticulatedConfig$MeshNode")) {
+				if (node.IsA("com.threerings.opengl.model.config.ArticulatedConfig$MeshNode")) {
 					ShadowClass? mesh = node["visible"];
 					if (mesh != null) {
 						// "Let's use a node designed to store meshes for something that doesn't contain meshes!"

@@ -47,22 +47,22 @@ namespace SKAnimatorTools.PrimaryInterface {
 		/// </summary>
 		/// <exception cref="NotSupportedException"/>
 		public static ConsoleColorVT DefaultColor {
-			get => DefaultColorInternal;
+			get => _defaultColorInternal;
 			set {
 				if (value.GetType() != typeof(ConsoleColor)) {
 					if (!IsVTEnabled) throw new NotSupportedException("Cannot set DefaultColor to ConsoleColorVT -- VT is not enabled. Did you remember to call EnableVTSupport()?");
 				}
-				DefaultColorInternal = value;
+				_defaultColorInternal = value;
 			}
 		}
-		private static ConsoleColorVT DefaultColorInternal = ConsoleColor.White;
+		private static ConsoleColorVT _defaultColorInternal = ConsoleColor.White;
 
 		#endregion
 
 		#region Foreground & Background
 
-		private static ConsoleColorVT FGColorInternal = ConsoleColor.White;
-		private static ConsoleColorVT BGColorInternal = ConsoleColor.Black;
+		private static ConsoleColorVT _foreColorInternal = ConsoleColor.White;
+		private static ConsoleColorVT _backColorInternal = ConsoleColor.Black;
 
 		/// <summary>
 		/// The foreground color of this console.<para/>
@@ -71,14 +71,14 @@ namespace SKAnimatorTools.PrimaryInterface {
 		/// </summary>
 		/// <exception cref="NotSupportedException"/>
 		public static ConsoleColorVT ForegroundColor {
-			get => FGColorInternal;
+			get => _foreColorInternal;
 			set {
 				if (!IsVTEnabled) {
 					ConsoleColor asStock = value.NearestConsoleColor;
 					Console.ForegroundColor = asStock;
 					value = asStock;
 				}
-				FGColorInternal = value;
+				_foreColorInternal = value;
 				value.ApplyToForeground();
 			}
 		}
@@ -90,14 +90,14 @@ namespace SKAnimatorTools.PrimaryInterface {
 		/// </summary>
 		/// <exception cref="NotSupportedException"/>
 		public static ConsoleColorVT BackgroundColor {
-			get => BGColorInternal;
+			get => _backColorInternal;
 			set {
 				if (!IsVTEnabled) {
 					ConsoleColor asStock = value.NearestConsoleColor;
 					Console.ForegroundColor = asStock;
 					value = asStock;
 				}
-				BGColorInternal = value;
+				_backColorInternal = value;
 				value.ApplyToBackground();
 			}
 		}
@@ -148,7 +148,7 @@ namespace SKAnimatorTools.PrimaryInterface {
 			return false;
 		}
 
-		private static bool HasWarnedForLackOfVT = false;
+		private static bool _hasWarnedForLackOfVT = false;
 
 		#endregion
 
@@ -161,10 +161,10 @@ namespace SKAnimatorTools.PrimaryInterface {
 		/// </summary>
 		private static void WriteProxy(string message) {
 			if (Regex.IsMatch(message, @"(\x1b)(\[[^m]+)m") && !IsVTEnabled) {
-				if (!HasWarnedForLackOfVT) {
+				if (!_hasWarnedForLackOfVT) {
 					Console.Beep();
 					Console.WriteLine("\nWARNING: VT Sequence detected, but VT Sequences are not enabled! This warning will only show once. All VT sequences will be removed.\n");
-					HasWarnedForLackOfVT = true;
+					_hasWarnedForLackOfVT = true;
 				}
 				Regex.Replace(message, @"(\x1b)(\[[^m]+)m", "");
 			}

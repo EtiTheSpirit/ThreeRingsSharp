@@ -196,6 +196,16 @@
             Identical to <see cref="F:XDataTree.Data.SilkImage.Config"/> but with a warning icon on it.
             </summary>
         </member>
+        <member name="F:XDataTree.Data.SilkImage.Editable">
+            <summary>
+            Identical to <see cref="F:XDataTree.Data.SilkImage.Value"/> but it has a pencil on it.
+            </summary>
+        </member>
+        <member name="F:XDataTree.Data.SilkImage.RedTag">
+            <summary>
+            Identical to <see cref="F:XDataTree.Data.SilkImage.Tag"/> but the inner part is red instead of blue.
+            </summary>
+        </member>
         <member name="F:XDataTree.Data.SilkImage.None">
             <summary>
             A transparent space.

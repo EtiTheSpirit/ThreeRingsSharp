@@ -18,6 +18,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ThreeRingsSharp;
+using ThreeRingsSharp.ConfigHandlers.Presets;
 using ThreeRingsSharp.Utilities;
 using ThreeRingsSharp.Utilities.Parameters.Implementation;
 using ThreeRingsSharp.XansData;
@@ -263,6 +264,8 @@ namespace SKAnimatorTools {
 			} else {
 				ShowWindow(ConsolePtr, 0);
 			}
+
+			MasterSKConfigs.Initialize();
 		}
 
 		private void OnConfigChanged(string configKey, dynamic oldValue, dynamic newValue) {
@@ -745,9 +748,9 @@ namespace SKAnimatorTools {
 					prompt.Node.Text = $"{start}: {prompt.Model["model"]!}";
 				} else if (prompt.Choice != null) {
 					// Text = "Choice: " + choice.name + " [Current: " + choice.choice + "]"
-					prompt.Node.Text = $"{start}: {prompt.Choice.CurrentName}";
+					prompt.Node.Text = $"{start}: {prompt.Choice?.CurrentName ?? "ERR_NULL_CHOICE"}";
 					//prompt.ChoiceAffects.ApplyArguments(prompt.Choice.Options.First(opt => opt.name == prompt.Choice.choice).arguments, prompt.Choice.name);
-					prompt.Choice.Current.Apply();
+					prompt.Choice?.Current?.Apply();
 				}
 				prompt.FormClosed -= OnStaticSetOrChoiceSelectionClosed;
 			}

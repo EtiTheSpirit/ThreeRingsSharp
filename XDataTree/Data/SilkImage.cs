@@ -193,6 +193,16 @@ namespace XDataTree.Data {
 		MissingConfig,
 
 		/// <summary>
+		/// Identical to <see cref="Value"/> but it has a pencil on it.
+		/// </summary>
+		Editable,
+
+		/// <summary>
+		/// Identical to <see cref="Tag"/> but the inner part is red instead of blue.
+		/// </summary>
+		RedTag,
+
+		/// <summary>
 		/// A transparent space.
 		/// </summary>
 		[Obsolete("Using an empty icon is not advised. Consider using SilkImage.Generic instead.")] None

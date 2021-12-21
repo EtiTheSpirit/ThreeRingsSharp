@@ -1,7 +1,9 @@
 ﻿using OOOReader.Exceptions;
 using OOOReader.Reader;
+using SKAnimatorTools.PrimaryInterface;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -37,21 +39,27 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 		public static void SetupParameters(ShadowClass parameterizedConfig, bool forceOverride = false) {
 			parameterizedConfig.AssertIsInstanceOf("com.threerings.config.ParameterizedConfig");
 
-			if (parameterizedConfig.HasField("RichParameters") && !forceOverride) {
+			if (parameterizedConfig.HasField("__RichParameters") && !forceOverride) {
 				return;
 			}
 
-			ShadowClass[] parameters = parameterizedConfig["parameters"]!;
-			List<Parameter> realParams = new List<Parameter>();
-			foreach (ShadowClass parameter in parameters) {
-				if (parameter.IsA("com.threerings.config.Parameter$Direct")) {
-					realParams.Add(new Direct(parameterizedConfig, parameter));
-				} else if (parameter.IsA("com.threerings.config.Parameter$Choice")) {
-					realParams.Add(new Choice(parameterizedConfig, parameter));
+			object paramsObj = parameterizedConfig["parameters"]!;
+			if (paramsObj is ShadowClass[] parameters) {
+				List<Parameter> realParams = new List<Parameter>();
+				foreach (ShadowClass parameter in parameters) {
+					if (parameter.IsA("com.threerings.config.Parameter$Direct")) {
+						realParams.Add(new Direct(parameterizedConfig, parameter));
+					} else if (parameter.IsA("com.threerings.config.Parameter$Choice")) {
+						realParams.Add(new Choice(parameterizedConfig, parameter));
+					}
 				}
+				parameterizedConfig["__RichParameters"] = realParams.ToArray();
+			} else {
+				if (parameterizedConfig["parameters"] is ShadowClassArrayTemplate pendingArray) {
+					parameterizedConfig["parameters"] = pendingArray.NewInstance();
+				}
+				parameterizedConfig["__RichParameters"] = Array.Empty<Parameter>();
 			}
-			parameterizedConfig["RichParameters"] = realParams.ToArray();
 		}
-
 	}
 }

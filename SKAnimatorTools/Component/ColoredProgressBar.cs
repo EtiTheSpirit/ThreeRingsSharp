@@ -23,7 +23,7 @@ namespace SKAnimatorTools.Component {
 		/// <summary>
 		/// A reference to the red diagonal hashing used in the disabled progress bar.
 		/// </summary>
-		private static readonly Image CautionTape = Properties.Resources.CautionTape;
+		private static readonly Image _cautionTape = Properties.Resources.CautionTape;
 
 		/// <summary>
 		/// If <see langword="true"/>, this is no different than a standard <see cref="ProgressBar"/>.
@@ -34,14 +34,14 @@ namespace SKAnimatorTools.Component {
 			DefaultValue(false)
 		]
 		public bool UseSystemBar {
-			get => _UseSystemBar;
+			get => _useSystemBar;
 			set {
-				_UseSystemBar = value;
+				_useSystemBar = value;
 				if (Application.RenderWithVisualStyles) SetStyle(ControlStyles.UserPaint | ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, !value);
 				Repaint();
 			}
 		}
-		private bool _UseSystemBar = false;
+		private bool _useSystemBar = false;
 
 		/// <summary>
 		/// If <see langword="true"/>, a unique bit of code for TRS will be used that draws a red caution tape texture over the bar.
@@ -52,13 +52,13 @@ namespace SKAnimatorTools.Component {
 			DefaultValue(false)
 		]
 		public bool SpecialDisabled {
-			get => _SpecialDisabled;
+			get => _specialDisabled;
 			set {
-				_SpecialDisabled = value;
+				_specialDisabled = value;
 				Repaint();
 			}
 		}
-		private bool _SpecialDisabled = false;
+		private bool _specialDisabled = false;
 
 		/// <summary>
 		/// Changes the color of the diagonal hashing for when <see cref="SpecialDisabled"/> is <see langword="true"/>.
@@ -68,24 +68,24 @@ namespace SKAnimatorTools.Component {
 			Description("Changes the color of the diagonal hashing used when SpecialDisabled is true. Setting this is expensive as it has to recreate the image.")
 		]
 		public Color HashingColor {
-			get => _HashingColor;
+			get => _hashingColor;
 			set {
-				_HashingColor = value;
-				Bitmap tape = (Bitmap)CautionTape;
+				_hashingColor = value;
+				Bitmap tape = (Bitmap)_cautionTape;
 				for (int y = 0; y < tape.Height; y++) {
 					for (int x = 0; x < tape.Width; x++) {
 						int alpha = tape.GetPixel(x, y).A;
-						tape.SetPixel(x, y, Color.FromArgb(alpha, _HashingColor));
+						tape.SetPixel(x, y, Color.FromArgb(alpha, _hashingColor));
 					}
 				}
-				TapeBrush.Dispose(); // Remove the old one.
-				TapeBrush = new TextureBrush(tape, WrapMode.Tile);
+				_tapeBrush.Dispose(); // Remove the old one.
+				_tapeBrush = new TextureBrush(tape, WrapMode.Tile);
 				Repaint();
 			}
 		}
-		private Color _HashingColor = Color.Red;
+		private Color _hashingColor = Color.Red;
 
-		private TextureBrush TapeBrush { get; set; } = new TextureBrush(CautionTape, WrapMode.Tile);
+		private TextureBrush _tapeBrush { get; set; } = new TextureBrush(_cautionTape, WrapMode.Tile);
 
 		#region Colors
 		/// <summary>
@@ -96,13 +96,13 @@ namespace SKAnimatorTools.Component {
 			Description("The color to use when things are going as expected. This will not be applied if UseSystemBar is true.")
 		]
 		public Color OKColor {
-			get => _OKColor;
+			get => _okColor;
 			set {
-				_OKColor = value;
+				_okColor = value;
 				Repaint();
 			}
 		}
-		private Color _OKColor = Color.FromArgb(31, 192, 31);
+		private Color _okColor = Color.FromArgb(31, 192, 31);
 
 		/// <summary>
 		/// The color to use if there's extra work to be done. This will only apply if <see cref="UseSystemBar"/> is false.
@@ -112,13 +112,13 @@ namespace SKAnimatorTools.Component {
 			Description("The color to use when extra or unexpected work needs to be performed. This will not be applied if UseSystemBar is true.")
 		]
 		public Color ExtraWorkColor {
-			get => _ExtraWorkColor;
+			get => _extraWorkColor;
 			set {
-				_ExtraWorkColor = value;
+				_extraWorkColor = value;
 				Repaint();
 			}
 		}
-		private Color _ExtraWorkColor = Color.FromArgb(220, 180, 0);
+		private Color _extraWorkColor = Color.FromArgb(220, 180, 0);
 
 		/// <summary>
 		/// The color to use if something broke. This will only apply if <see cref="UseSystemBar"/> is false.
@@ -128,13 +128,13 @@ namespace SKAnimatorTools.Component {
 			Description("The color to use when something has critically failed. This will not be applied if UseSystemBar is true.")
 		]
 		public Color ErrorColor {
-			get => _ErrorColor;
+			get => _errorColor;
 			set {
-				_ErrorColor = value;
+				_errorColor = value;
 				Repaint();
 			}
 		}
-		private Color _ErrorColor = Color.FromArgb(220, 0, 0);
+		private Color _errorColor = Color.FromArgb(220, 0, 0);
 
 		[
 			Category("Appearance"),
@@ -197,7 +197,7 @@ namespace SKAnimatorTools.Component {
 
 					rect.Inflate(new Size(-(BAR_INSET - 1), -(BAR_INSET - 1))); // Deflate inner rect.
 					if (SpecialDisabled) {
-						e.Graphics.FillRectangle(TapeBrush, BAR_INSET, BAR_INSET, rect.Width, rect.Height);
+						e.Graphics.FillRectangle(_tapeBrush, BAR_INSET, BAR_INSET, rect.Width, rect.Height);
 						return;
 					}
 

@@ -20,9 +20,14 @@ namespace ThreeRingsSharp.Utilities {
 	public class ReadFileContext {
 
 		/// <summary>
-		/// The file that was opened to create this.
+		/// The file that was opened to create this <see cref="ReadFileContext"/> originally.
 		/// </summary>
-		public FileInfo File { get; }
+		public FileInfo OriginalFile { get; }
+
+		/// <summary>
+		/// The latest file that this <see cref="ReadFileContext"/> has been used as a container for (useful for <see cref="ConfigReference"/>s).
+		/// </summary>
+		public FileInfo File { get; set; }
 
 		/// <summary>
 		/// The current transform of the latest model.
@@ -69,6 +74,7 @@ namespace ThreeRingsSharp.Utilities {
 		private Stack<TreeElement> PreviousParentCache { get; } = new Stack<TreeElement>();
 
 		public ReadFileContext(FileInfo file) {
+			OriginalFile = file;
 			File = file;
 			CurrentSceneTransform = new Transform3D(Transform3D.GENERAL);
 			AllModelsAndNodes = new List<Model3D>();

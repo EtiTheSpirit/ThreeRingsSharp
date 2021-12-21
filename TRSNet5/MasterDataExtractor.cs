@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.ConfigHandlers.ModelConfigs;
+using ThreeRingsSharp.ConfigHandlers.TudeyScenes;
 using ThreeRingsSharp.Utilities;
 using ThreeRingsSharp.XansData;
 using XDataTree;
@@ -27,7 +28,7 @@ namespace ThreeRingsSharp {
 		 *		If you're coming into this program some time in the distant future because I dropped TRS in favor of some other project, I
 		 * apologize ahead of time for the hellscape you are about to enter. ShadowClass and its sister-classes will take a while to get used to, since
 		 * they rely on a fundamental understanding of OOO's engine. The only reason I was able to make them so reliably was because I've been working
-		 * with this for so long. SC is an intuitive data type, but relies on you having a very strong understanding of its workings. If you've dealt with
+		 * with this for so long. SC is an intuitive data type, and relies on you having a very strong understanding of its workings. If you've dealt with
 		 * a language like Lua before, they are basically glorified Tables when it comes to reading/writing their fields (and are indexed (roughly) the same
 		 * way, with ["key"]).
 		 * 
@@ -43,6 +44,10 @@ namespace ThreeRingsSharp {
 		 *		I'll try to fill my code with comments, but I can't guarantee it everywhere.
 		 * 
 		 */
+
+		static MasterDataExtractor() {
+			ShadowClass.Initialize();
+		}
 
 		private static readonly Dictionary<FileInfo, ShadowClass> Cache = new Dictionary<FileInfo, ShadowClass>();
 		private static readonly Dictionary<FileInfo, ShadowClass[]> ArrayCache = new Dictionary<FileInfo, ShadowClass[]>();
@@ -140,17 +145,18 @@ namespace ThreeRingsSharp {
 				} else if (impl.IsA("com.threerings.opengl.model.config.CompoundConfig")) {
 					CompoundConfig.ReadData(currentContext, subShadow);
 				} else if (impl.IsA("com.threerings.opengl.model.config.ModelConfig$Derived")) {
-
+					DerivedModelConfig.ReadData(currentContext, subShadow);
 				} else if (impl.IsA("com.threerings.opengl.model.config.ModelConfig$Schemed")) {
-
+					SchemedModelConfig.ReadData(currentContext, subShadow);
 				} else {
 					SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Missing), true);
 					currentContext.Pop();
 				}
 			} else if (subShadow.IsA("com.threerings.tudey.data.TudeySceneModel")) {
-				SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Missing), true);
-				currentContext.Pop();
-				//} else if (subShadow.IsA("com.threerings.opengl.model.config.AnimationConfig")) {
+				TudeySceneModelReader.ReadData(currentContext, subShadow);
+				//SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Missing), true);
+				//currentContext.Pop();
+			//} else if (subShadow.IsA("com.threerings.opengl.model.config.AnimationConfig")) {
 				//SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Missing), true);
 				//currentContext.Pop();
 			} else if (subShadow.IsA("com.threerings.tudey.config.TileConfig")) {
@@ -163,6 +169,24 @@ namespace ThreeRingsSharp {
 			} else {
 				// AsyncMessageBox.ShowAsync("Unfortunately, the .dat file you opened contains an unsupported base type. The type in question: " + subShadow.Signature, "Unsupported Subformat", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
 				XanLogger.WriteLine("Unsupported ManagedConfig type " + subShadow.Signature, 0, System.Drawing.Color.FromArgb(127, 0, 0));
+			}
+		}
+
+		/// <summary>
+		/// Extracts directly from a <see cref="ConfigReference"/>.
+		/// </summary>
+		/// <param name="context"></param>
+		/// <param name="reference"></param>
+		/// <param name="extraTag">If defined, then the root element for this model will have the tag appended in brackets: model.dat [extraTag]</param>
+		public static void ExtractFrom(ReadFileContext context, ConfigReference reference, string? extraTag = null) {
+			ShadowClass? scRef = reference.Resolve();
+			FileInfo? orgFile = reference.FileReference;
+			if (scRef != null && orgFile != null) {
+				if (!string.IsNullOrWhiteSpace(extraTag)) {
+					scRef.SetField("__TAG", extraTag, true);
+				}
+				context.File = orgFile;
+				ExtractFrom(context, scRef);
 			}
 		}
 
@@ -184,6 +208,9 @@ namespace ThreeRingsSharp {
 
 				if (managedConfig.TryGetField("__SOURCEFILE", out string? srcFile)) {
 					rse.Add(new KeyValueElement("Source", srcFile!));
+				}
+				if (managedConfig.TryGetField("__TAG", out string? tag)) {
+					objectTreeElement.SetText(objectTreeElement.Text + $" [{tag}]");
 				}
 			}
 			return objectTreeElement;

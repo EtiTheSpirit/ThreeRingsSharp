@@ -20,30 +20,30 @@ namespace SKAnimatorTools.Configuration {
 		/// <summary>
 		/// The configuration data.
 		/// </summary>
-		private static Dictionary<string, dynamic?>? Configuration = null;
+		private static Dictionary<string, dynamic?>? _configuration = null;
 
 		/// <summary>
 		/// A reference to the config file.
 		/// </summary>
-		private static readonly FileInfo ConfigFile = new FileInfo(@".\threeringssharp.cfg");
+		private static readonly FileInfo _configFile = new FileInfo(@".\threeringssharp.cfg");
 
 		/// <summary>
 		/// Loads configuration data from the local config file.
 		/// </summary>
 		private static void LoadConfigs() {
-			if (!ConfigFile.Exists) {
-				using FileStream str = ConfigFile.Create(); 
+			if (!_configFile.Exists) {
+				using FileStream str = _configFile.Create(); 
 				str.WriteByte((byte)'{');
 				str.WriteByte((byte)'}');
 			}
-			Configuration = JsonConvert.DeserializeObject<Dictionary<string, dynamic?>>(File.ReadAllText(ConfigFile.FullName));
+			_configuration = JsonConvert.DeserializeObject<Dictionary<string, dynamic?>>(File.ReadAllText(_configFile.FullName));
 		}
 
 		/// <summary>
 		/// Saves configuration data to the local config file.
 		/// </summary>
 		private static void SaveConfigs() {
-			File.WriteAllText(ConfigFile.FullName, JsonConvert.SerializeObject(Configuration));
+			File.WriteAllText(_configFile.FullName, JsonConvert.SerializeObject(_configuration));
 		}
 
 		/// <summary>
@@ -58,13 +58,13 @@ namespace SKAnimatorTools.Configuration {
 			if (string.IsNullOrEmpty(key)) throw new ArgumentNullException("key");
 			if (key.Length > 32) throw new ArgumentException("The key is too long! Please make sure the key is <= 32 characters long.", "key");
 			if (!key.IsAlphanumeric()) throw new ArgumentException("The key contains illegal characters! Please only use alphanumeric characters.", "key");
-			if (Configuration == null) LoadConfigs();
+			if (_configuration == null) LoadConfigs();
 
-			if (Configuration!.ContainsKey(key)) {
-				return Configuration[key];
+			if (_configuration!.ContainsKey(key)) {
+				return _configuration[key];
 			}
 			if (defaultValue != null && writeIfDoesntExist) {
-				Configuration[key] = defaultValue;
+				_configuration[key] = defaultValue;
 				SaveConfigs();
 			}
 			return defaultValue;
@@ -82,19 +82,19 @@ namespace SKAnimatorTools.Configuration {
 			if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
 			if (key.Length > 32) throw new ArgumentException("The key is too long! Please make sure the key is <= 32 characters long.", nameof(key));
 			if (!key.IsAlphanumeric()) throw new ArgumentException("The key contains illegal characters! Please only use alphanumeric characters.", nameof(key));
-			if (Configuration == null) LoadConfigs();
+			if (_configuration == null) LoadConfigs();
 			dynamic? oldValue = null;
-			if (Configuration!.ContainsKey(key)) {
-				oldValue = Configuration[key];
+			if (_configuration!.ContainsKey(key)) {
+				oldValue = _configuration[key];
 			}
 
 			if (value == null) {
-				if (Configuration.ContainsKey(key)) Configuration.Remove(key);
+				if (_configuration.ContainsKey(key)) _configuration.Remove(key);
 				OnConfigurationChanged(key, oldValue, null);
 				return;
 			}
 
-			Configuration[key] = value;
+			_configuration[key] = value;
 			OnConfigurationChanged(key, oldValue, value);
 			SaveConfigs();
 		}
@@ -108,9 +108,9 @@ namespace SKAnimatorTools.Configuration {
 			if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key));
 			if (key.Length > 32) throw new ArgumentException("The key is too long! Please make sure the key is <= 32 characters long.", nameof(key));
 			if (!key.IsAlphanumeric()) throw new ArgumentException("The key contains illegal characters! Please only use alphanumeric characters.", nameof(key));
-			if (Configuration == null) LoadConfigs();
-			if (Configuration!.ContainsKey(key)) {
-				Configuration.Remove(key);
+			if (_configuration == null) LoadConfigs();
+			if (_configuration!.ContainsKey(key)) {
+				_configuration.Remove(key);
 			}
 			SaveConfigs();
 		}

@@ -21,12 +21,13 @@ namespace ThreeRingsSharp.Utilities.Parameters {
 		/// <see cref="ShadowClass"/> <em>MUST</em> be an instance of <c>com.threerings.config.ParameterizedConfig</c>
 		/// </summary>
 		/// <param name="parameterizedConfig"></param>
+		/// <param name="args">The arguments for these parameters, which is used in creation, or null if this is not applicable.</param>
 		/// <returns></returns>
 		/// <exception cref="ShadowTypeMismatchException">If the signature is wrong.</exception>
 		public static Parameter[] GetParameters(this ShadowClass parameterizedConfig) {
 			parameterizedConfig.AssertIsInstanceOf("com.threerings.config.ParameterizedConfig");
 			Parameter.SetupParameters(parameterizedConfig);
-			return parameterizedConfig["RichParameters"]!;
+			return parameterizedConfig["__RichParameters"]!;
 		}
 
 	}

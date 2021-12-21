@@ -604,7 +604,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				if (model.Textures.Count > 0) {
 					foreach (string texPath in model.Textures) {
 						if (!string.IsNullOrEmpty(texPath)) {
-							FileInfo texFile = new FileInfo(Path.Combine(Utilities.SKEnvironment.RSRC_DIR.FullName, "rsrc", texPath));
+							FileInfo texFile = new FileInfo(Path.Combine(Utilities.SKEnvironment.RSRC_DIR.FullName, texPath));
 							if (texFile.Exists) {
 								modelHasValidTextures = true;
 

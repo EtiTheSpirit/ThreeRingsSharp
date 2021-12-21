@@ -11,11 +11,14 @@ using System.Threading.Tasks;
 namespace ThreeRingsSharp.ConfigHandlers.Presets {
 	public static class MasterSKConfigs {
 
-		private static readonly Dictionary<string, ShadowClass[]> CONFIGS = new Dictionary<string, ShadowClass[]>();
-		private static readonly List<ShadowClass> EVERYTHING = new List<ShadowClass>();
-		private static readonly List<string> EVERYTHING_NAME = new List<string>();
+		private static readonly Dictionary<string, ShadowClass[]> _configs = new Dictionary<string, ShadowClass[]>();
+		private static readonly List<ShadowClass> _everything = new List<ShadowClass>();
+		private static readonly List<string> _everything_name = new List<string>();
+		private static bool _initialized = false;
 
-		static MasterSKConfigs() {
+		public static void Initialize() {
+			if (_initialized) return;
+			_initialized = true;
 			try {
 				bool originalStrictTypes = ShadowClass.StrictTypes;
 				ShadowClass.StrictTypes = false; // Very hacky but it gets rid of some confusion in the engine.
@@ -27,13 +30,14 @@ namespace ThreeRingsSharp.ConfigHandlers.Presets {
 						try {
 							using ClydeFile clyde = new ClydeFile(file);
 							ShadowClass[] stuff = (ShadowClass[])clyde.ReadObject()!;
-							CONFIGS[file.Name.Replace(file.Extension, "")] = stuff;
-							EVERYTHING.AddRange(stuff);
+							_configs[file.Name.Replace(file.Extension, "")] = stuff;
+							_everything.AddRange(stuff);
 							foreach (ShadowClass cls in stuff) {
-								EVERYTHING_NAME.Add(cls["_name"]);
+								_everything_name.Add(cls["_name"]);
 								if (cls.TryGetField("implementation", out ShadowClass? impl)) {
 									if (impl == null) Debug.WriteLine($"Config {file.Name}>{cls["_name"]} has a null implementation.");
 								}
+								cls.SetField("__FILE", file, true); // For organizational purposes, this associates a config with its file.
 							}
 						} catch (Exception exc) {
 							string msg = $"Failed to convert {file.Name} - {exc.Message}";
@@ -42,12 +46,12 @@ namespace ThreeRingsSharp.ConfigHandlers.Presets {
 					}
 				}
 
-				EVERYTHING.Sort((left, right) => {
+				_everything.Sort((left, right) => {
 					string leftName = left["_name"]!;
 					string rightName = right["_name"]!;
 					return leftName.CompareTo(rightName);
 				});
-				EVERYTHING_NAME.Sort();
+				_everything_name.Sort();
 
 				ShadowClass.StrictTypes = originalStrictTypes;
 #pragma warning disable CS0168 // Variable is declared but never used
@@ -64,9 +68,10 @@ namespace ThreeRingsSharp.ConfigHandlers.Presets {
 		/// <param name="name"></param>
 		/// <returns></returns>
 		public static ShadowClass? GetConfig(string name) {
-			int index = EVERYTHING_NAME.BinarySearch(name);
+			if (!_initialized) Initialize();
+			int index = _everything_name.BinarySearch(name);
 			if (index >= 0) {
-				return EVERYTHING[index].Clone();
+				return _everything[index].NewInstance();
 			}
 			return null;
 		}

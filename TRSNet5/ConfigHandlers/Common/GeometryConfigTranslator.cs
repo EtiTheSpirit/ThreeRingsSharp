@@ -88,6 +88,10 @@ namespace ThreeRingsSharp.ConfigHandlers.Common {
 						// But in my case, I really can't read that right now.
 						existingMeshData.UsesExternalRoot = true;
 					} else {
+
+						// TODO: Find cause of issue causing bone matrices to be all wonky, probably related to invreftransform?
+						// Wasn't a problem in the original TRS, so check Matrix4f
+
 						existingMeshData.SetBones(rootNode);
 					}
 

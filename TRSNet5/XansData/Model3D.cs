@@ -109,7 +109,7 @@ namespace ThreeRingsSharp.XansData {
 				if (ActiveTextureChoice != null) {
 					// lol
 					// TODO: Clean (if needed)
-					KeyValuePair<string, object?>? target = ActiveTextureChoice?.Current.Arguments.FirstOrDefault(kvp => Textures.Contains(kvp.Value?.ToString() ?? "null"));
+					KeyValuePair<string, object?>? target = ActiveTextureChoice?.Current?.Arguments.FirstOrDefault(kvp => Textures.Contains(kvp.Value?.ToString() ?? "null"));
 					return target?.Value?.ToString() ?? _activeTexture;
 				} else {
 					return _activeTexture;
