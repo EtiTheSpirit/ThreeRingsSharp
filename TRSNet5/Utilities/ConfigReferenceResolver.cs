@@ -30,20 +30,32 @@ namespace ThreeRingsSharp.Utilities {
 			}
 			if (unknown is ShadowClass argMap) {
 				if (argMap.IsA("com.threerings.config.ArgumentMap")) {
-					ShadowClass sortableArrayList = argMap.GetField<ShadowClass>("_entries")!;
-					object entries = sortableArrayList.GetField<object>("_elements")!; // This may be a shadow of java.lang.Object due to java type erasure.
-																					   // Usually it will be so I'll just quietly hope this works.
-					if (entries is ShadowClass[] entriesArray) {
-						Dictionary<string, object?> arguments = new Dictionary<string, object?>();
+					object sortableArrayList = argMap.GetField<object>("_entries")!;
+					if (sortableArrayList is ShadowClass scSortable) {
+						object entries = scSortable.GetField<object>("_elements")!;
+						// This may be a shadow of java.lang.Object due to java type erasure.
+						// Usually it will be so I'll just quietly hope this works.
 
-						foreach (ShadowClass entry in entriesArray) {
-							if (entry.IsA("java.util.AbstractMap$SimpleEntry")) {
+						if (entries is ShadowClass[] entriesArray) {
+							Dictionary<string, object?> arguments = new Dictionary<string, object?>();
+
+							foreach (ShadowClass entry in entriesArray) {
+								if (entry.IsA("java.util.AbstractMap$SimpleEntry")) {
+									arguments[entry["key"]!.ToString()] = entry["value"];
+								} else {
+									throw new InvalidOperationException("Unknown entry type! " + entry.Signature);
+								}
+							}
+
+							return arguments;
+						}
+					} else if (sortableArrayList is List<object> list) {
+						Dictionary<string, object?> arguments = new Dictionary<string, object?>();
+						foreach (object element in list) {
+							if (element is ShadowClass entry) {
 								arguments[entry["key"]!.ToString()] = entry["value"];
-							} else {
-								throw new InvalidOperationException("Unknown entry type! " + entry.Signature);
 							}
 						}
-
 						return arguments;
 					}
 				}
@@ -53,14 +65,14 @@ namespace ThreeRingsSharp.Utilities {
 
 		/// <summary>
 		/// Returns the object pointed to by this <see cref="ShadowClass"/> representing a ConfigReference. Additionally, this
-		/// adds a field named <c>__reference</c> onto the input <see cref="ShadowClass"/> for caching.
+		/// adds a field named <c>__REFERENCE</c> onto the input <see cref="ShadowClass"/> for caching.
 		/// </summary>
 		/// <param name="shadow">The <see cref="ShadowClass"/> representing the ConfigReference.</param>
 		/// <exception cref="ShadowTypeMismatchException">If the given <see cref="ShadowClass"/> is not an instance of <c>com.threerings.config.ConfigReference</c></exception>
 		public static (ShadowClass?, FileInfo?) ResolveConfigReference(ShadowClass shadow) {
 			shadow.AssertIsInstanceOf("com.threerings.config.ConfigReference");
 
-			if (shadow.TryGetField("__reference", out ShadowClass? reference)) {
+			if (shadow.TryGetField("__REFERENCE", out ShadowClass? reference)) {
 				return (reference, reference?.GetFieldOrDefault<FileInfo>("__FILE"));
 			}
 
@@ -69,7 +81,7 @@ namespace ThreeRingsSharp.Utilities {
 			if (!resolvedFile.Exists) {
 				ShadowClass? retn = MasterSKConfigs.GetConfig(config);
 				if (retn != null) {
-					shadow["__reference"] = retn;
+					shadow["__REFERENCE"] = retn;
 
 					Dictionary<string, object?> args = GetArgumentMap(shadow["_arguments"]!);
 					if (retn.IsA("com.threerings.config.ParameterizedConfig")) {
@@ -111,7 +123,7 @@ namespace ThreeRingsSharp.Utilities {
 					}
 				}
 
-				shadow["__reference"] = retn;
+				shadow["__REFERENCE"] = retn;
 				return (retn, resolvedFile);
 			}
 		}

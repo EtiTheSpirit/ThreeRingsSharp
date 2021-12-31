@@ -1,6 +1,7 @@
 ﻿using OOOReader.Reader;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -62,13 +63,28 @@ namespace ThreeRingsSharp.Utilities.Parameters {
 
 			for (int index = 0; index < textures.Length; index++) {
 				ShadowClass mapping = materialMappings[index];
-				Dictionary<object, object?> args = mapping["material"]!["_arguments"];
-				if (args.GetValueOrDefault("Texture") is ShadowClass textureCfg) {
-					args = textureCfg["_arguments"]!;
-					if (args.GetValueOrDefault("File") is string file) {
-						textures[index] = file;
-						if (mapping["texture"] == defFromVisibleMesh) {
-							defFromVisibleMesh = new FileInfo(file).Name;
+				object argsObj = mapping["material"]!["_arguments"];
+				Dictionary<object, object?>? args = null;
+				if (argsObj is Dictionary<object, object?>) {
+					args = (Dictionary<object, object?>)argsObj;
+				} else if (argsObj is ShadowClass argMapShadow) {
+					Debug.WriteLine("Unexpected ShadowClass in place of arguments. Did initialization fail for something?");
+					if (argMapShadow.IsA("com.threerings.config.ArgumentMap") && !argMapShadow.IsTemplate) {
+						if (argMapShadow.TryGetField("_entries", out object? entries)) {
+							if (entries is Dictionary<object, object?> dict) {
+								args = dict;
+							}
+						}
+					}
+				}
+				if (args != null) {
+					if (args.GetValueOrDefault("Texture") is ShadowClass textureCfg) {
+						args = textureCfg["_arguments"]!;
+						if (args.GetValueOrDefault("File") is string file) {
+							textures[index] = file;
+							if (mapping["texture"] == defFromVisibleMesh) {
+								defFromVisibleMesh = new FileInfo(file).Name;
+							}
 						}
 					}
 				}
