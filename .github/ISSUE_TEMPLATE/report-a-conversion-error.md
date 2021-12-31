@@ -1,7 +1,7 @@
 ---
-name: Report a Conversion Problem
-about: Use this if the model you exported isn't quite right, like the mesh is broken or missing parts.
-title: "[Conversion] (Briefly explain what broke in a few words)"
+name: Report a Conversion Problem or Buggy Model
+about: Use this if the model you exported isn't quite right, like the mesh is broken or missing parts in your modeling software.
+title: "(Briefly explain what broke in a few words)"
 labels: [
   "bug",
   "conversion"
@@ -16,10 +16,11 @@ Check ...
 - This page! Search for your issue first and see if it hasn't been sent by someone else yet.
 - Next Update Plans at https://github.com/EtiTheSpirit/ThreeRingsSharp/projects/3?fullscreen=true
 
-Ensure ...
-- You are reporting an issue **that you noticed in your 3D modeling software.** If the error is in ThreeRingsSharp itself, use the "Report a Bug" option.
+Ensure that ...
+- You are reporting an issue **that you noticed in your 3D modeling software.** If the error is in ThreeRingsSharp itself, use the "Report a Different Kind of Bug" option.
+- You are on the latest version of TRS. If you're on an old version, this might already be fixed in a new version!
 
-Is your feature listed here? If it is, please do not submit this feature request.
+Did someone else already report your issue? Don't post this. Upvote their report instead.
 #############################################################################
 
 

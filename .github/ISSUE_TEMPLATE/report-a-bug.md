@@ -1,7 +1,7 @@
 ---
-name: Report a Bug
-about: Something not working right? Let me know! This is better suited for other bug categories that do not fall under conversion or export.
-title: "[Bug] (Bug Title Here)"
+name: Report a Different Kind of Bug
+about: Is something not listed here broken? Let me know! This is better suited for other bug categories that do not fall under conversion or export.
+title: "(Bug Title Here)"
 labels: bug
 assignees: EtiTheSpirit
 
@@ -13,7 +13,10 @@ Check ...
 - This page! Search for your issue first and see if it hasn't been sent by someone else yet.
 - Next Update Plans at https://github.com/EtiTheSpirit/ThreeRingsSharp/projects/3?fullscreen=true
 
-Is your feature listed here? If it is, please do not submit this feature request.
+Ensure that ...
+- You are on the latest version of TRS. If you're on an old version, this might already be fixed in a new version!
+
+Did someone else already report your issue? Don't post this. Upvote their report instead.
 #############################################################################
 
 
