@@ -1,6 +1,8 @@
 ﻿using OOOReader.Reader;
+using OOOReader.Utility.Extension;
 using SKAnimatorTools.PrimaryInterface;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,6 +14,11 @@ using ThreeRingsSharp.XansData.Extensions;
 
 namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 	public class Direct : Parameter {
+
+		/// <summary>
+		/// Temporary, and subject to removal: Whether or not to allow direct traversal to initialize ShadowClass or object instances before indexing them.
+		/// </summary>
+		public static bool AllowInitializingShadows { get; set; } = true;
 
 		public string[] Paths { get; set; }
 
@@ -101,18 +108,44 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 				// We care about the latter.
 				if (IsIndexedPathElement(currentPathElement)) {
 					(string element, string index) = GetIndexedElementAndParameter(currentPathElement);
+					string elementName = element.SnakeToCamel();
 					if (int.TryParse(index, out int numericIndex)) {
 						// This is an array access. Phew!
 						// Let's do a 2-for-1 by indexing this element and then accessing that as an array, and set the current element ref to the result of that
-						secondToLastElement = elementOrImplementation[element.SnakeToCamel()];
-						elementOrImplementation = secondToLastElement[numericIndex];
+						
+						secondToLastElement = elementOrImplementation[elementName];
+						ShadowClass? templateType = null;
+						if (secondToLastElement is ShadowClassArrayTemplate arrayTemplate) {
+							if (AllowInitializingShadows) {
+								templateType = arrayTemplate.ElementType;
+								secondToLastElement = arrayTemplate.NewInstance(numericIndex);
+								elementOrImplementation[elementName] = secondToLastElement;
+								Debug.WriteLine($"WARNING: Encountered an uninitialized shadow array in direct path \"{path}\"! It has been initialized with the minimum number of elements required, but this could cause issues!");
+							} else {
+								throw new InvalidOperationException($"A direct ({path}) attempted to traverse {elementName}[{numericIndex}], but {elementName} was an uninitialized shadow array.");
+							}
+						}
+						if (numericIndex >= secondToLastElement.Length) {
+							if (secondToLastElement is ShadowClass[] scArray) {
+								ShadowClass? instance = scArray.First(sc => sc != null);
+								if (instance != null) {
+									templateType = instance.TemplateType;
+									secondToLastElement = ArrayExtensions.ResizeByReallocationSC(secondToLastElement, templateType, numericIndex + 1);
+									elementOrImplementation = secondToLastElement![numericIndex];
+									continue; // Go to the next iteration.
+								}
+							}
+							secondToLastElement = ArrayExtensions.ResizeByReallocation(secondToLastElement, numericIndex + 1);
+							elementOrImplementation[elementName] = secondToLastElement;
+						}
+						elementOrImplementation = secondToLastElement![numericIndex];
 						continue; // Go to the next iteration.
 					}
 
 					// https://youtu.be/9q_rYCEUYfM?t=623
 					// Index [] is not numeric, so it's a reference.
 					index = index.BetweenQuotes();
-					dynamic referencedElement = elementOrImplementation[element.SnakeToCamel()];
+					dynamic referencedElement = elementOrImplementation[elementName];
 					if (referencedElement is ShadowClass shadow && shadow.IsA("com.threerings.config.ConfigReference")) {
 						secondToLastElement = referencedElement;
 						ConfigReference asCfgRef = new ConfigReference(shadow);
@@ -148,140 +181,24 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 				}
 			}
 			string fieldName = pathElements[^1].SnakeToCamel().BetweenBrackets().BetweenQuotes();
-			return new DirectPointer(secondToLastElement, fieldName, path);
-		}
-
-		[Obsolete("This method of traversal is overcomplicated.")]
-		private DirectPointer Traverse_(string path) {
-			// Create an array of every element in the path.
-			path = path.Replace("\"]", "\"]."); // This helps with chained refs e.g. ["Texture"]["File"] by splitting them.
-												// ^ These need to be split because if we don't, it splits as something like asdfg["some"]["thing"] and that double-ending will break the system.
-
-			while (path.EndsWith(".")) path = path.Substring(0, path.Length - 1); // Clear trailing periods that may have been created by ^
-			while (path.Contains("..")) path = path.Replace("..", ".");
-			string[] pathElements = path.Split('.');
-
-			// Direct paths are composed of three types of accessors, though they can be grouped into two major types:
-			// Indices by name or array index:
-			//		These look like something.somethingelse (separated with a dot) or something[0] (accessing index #0).
-			//		When handled, these can be traversed verbatim via reflection, with a number of name swaps occurring
-			//		(namely, snake case names get converted to camel case)
-			//
-			// Direct x-refs:
-			//		Considerably more complicated, these look like thingy["SomethingElse"]
-			//		When this occurs, ["SomethingElse"] references a parameter on thingy, which means that its own directs may need traversal.
-			//		For obvious reasons, this is where things get very very complicated.
-			//		The basic gist is that I need to hot-swap ["SomethingElse"] for the (or all of the, depending on if there's multiple) paths in the
-			//		referenced parameter's paths.
-
-
-			// UPD: From the first iteration of ThreeRingsSharp, which used actual Clyde code, this had to do a lot of hacky reflection garbage.
-			// With the transition to OOOReader (my homebrewed solution to reading Clyde files), a new, highly versatile class "ShadowClass" has been
-			// introduced. ShadowClass offers an indexer (["this"]) to access its fields. Consequently, this means I can just lazily represent
-			// the current element as a dynamic, and then it just works(tm) -- if it's an object, it's guaranteed to be a ShadowClass, so `[]` will
-			// index a field just like normal. If it's an array, then `[]` will index an element in said array. Win-win.
-			// It allowed me to completely nuke ReflectionHelper
-
-			dynamic elementOrImplementation = ParameterizedConfig;
-			dynamic? secondToLast = null;
-			for (int idx = 0; idx < pathElements.Length; idx++) {
-				string currentPathElement = pathElements[idx];
-
-				// PREREQ: Is it an indexed path element?
-				// If so, is it a simple array access or a parameter x-ref?
-				// We care about the latter.
-				if (IsIndexedPathElement(currentPathElement)) {
-					(string element, string index) = GetIndexedElementAndParameter(currentPathElement);
-					if (int.TryParse(index, out int numericIndex)) {
-						// This is an array access. Phew!
-						// Let's do a 2-for-1 by indexing this element and then accessing that as an array, and set the current element ref to the result of that
-						secondToLast = elementOrImplementation[element.SnakeToCamel()];
-						elementOrImplementation = secondToLast[numericIndex];
-						continue; // Go to the next iteration.
-					}
-
-					// https://youtu.be/9q_rYCEUYfM?t=623
-					index = index.BetweenQuotes()!;
-					dynamic referencedElement = elementOrImplementation[element.SnakeToCamel()];
-					ShadowClass? mgCfg = null; // Keep this out of scope for debugging.
-					if (referencedElement is ShadowClass shadow) {
-						if (shadow.IsA("com.threerings.config.ConfigReference")) {
-							mgCfg = ConfigReferenceResolver.ResolveConfigReference(shadow).Item1!;
-							mgCfg.AssertIsInstanceOf("com.threerings.config.ParameterizedConfig");
-
-							ShadowClass? parameter = null;
-							foreach (ShadowClass shd in mgCfg["parameters"]!) {
-								if (shd["name"] == index) {
-									parameter = shd;
-									break;
-								}
-							}
-							if (parameter != null) {
-								if (parameter.IsA("com.threerings.config.Parameter$Choice")) {
-									parameter = parameter["directs"]![0];
-								}
-
-								if (parameter.IsA("com.threerings.config.Parameter$Direct")) {
-									// This is where things get STANKY.
-									// Snag the first direct path. We're interested in simply getting the value out of it,
-									// and since a direct with multiple paths will simply apply the change to every single path,
-									// we can literally just pick a random one and the result won't be different. So just pick the first.
-									string substitutePath = parameter["paths"]![0];
-
-									// Now, take our original path we have right now, but replace our param reference ["Parameter"] with this actual path.
-									// More on what this is doing in the huge comment block below. It's safe to skip to reading that.
-									path = path.Replace(currentPathElement, element + "." + substitutePath);
-									path = path.Replace(".[\"", "[\"");
-									// ^ This will undo what was done up on line 28 in case something changed from
-									// ["some"]["thing"] => ["some"].["thing"] to blahblahblah.["thing"] which is wrong.
-									// And then we re-do it to update it basically, so that any new splits properly count for double references like that.
-									path = path.Replace("\"]", "\"].");
-									while (path.EndsWith(".")) path = path.Substring(0, path.Length - 1);
-									while (path.Contains("..")) path = path.Replace("..", ".");
-									// And once again, remove any trailing dots.
-
-									// And now we overwrite the existing pathElements array with a new one from our newly composed path.
-									pathElements = path.Split('.');
-									secondToLast = elementOrImplementation;
-									elementOrImplementation = mgCfg;
-
-									// Read closely!
-									// Basically what I'm doing here is hotswapping out the config reference as we go along.
-									// Let's use gremlin/null/model.dat for an example, namely it's texture parameter.
-									// Take this:
-									//	implementation.material_mappings[0].material["Texture"]["File"]
-									// Say we're on material["Texture"] right now (currentPathElement=material["Texture"])
-									// So what we do is replace the current path element (again, material["Texture"]) with the first path
-									// stored in whatever ["Texture"] is.
-									// So we read the first path of the referenced parameter. In that case, it's:
-									//	implementation.techniques[0].enqueuer.passes[0].texture_state.units[0].texture
-									// So again, we take ["Texture"] and swap it out for that path ^^^
-									// This gives us:
-									//	implementation.material_mappings[0].material.implementation.techniques[0].enqueuer.passes[0].texture_state.units[0].texture["File"]
-									// Now, we split the path again just like when we first called this method.
-									// Cool. Now, we'll be on the same index, and when we go to the next iteration, it carries on like nothing happened,
-									// traversing into techniques[0] of our material none the wiser.
-									// For all the system cares, it was just a really convenient path to follow.
-
-									// I can get away with this because we're not relying on actively storing anything along the way, only getting the value out.
-									continue;
-								}
-							} else {
-								XanLogger.WriteLine("Failed to find parameters for an object.");
-							}
-						}
-					}
-
-					Debug.WriteLine("WARNING: Failed to resolve Direct \"" + path + "\"! Returning a dummy DirectPointer.");
-					return new FaultyDirectPointer();
+			if (secondToLastElement is ShadowClass scLastElement) {
+				return new DirectPointer(fieldName, path, scLastElement);
+				//} else if (secondToLastElement is ShadowClass[] scArray) {
+				//	return new DirectPointer(fieldName, path, scArray);
+			} else if (secondToLastElement is Array otherArray) {
+				if (int.TryParse(fieldName, out int index)) {
+					return new ArrayDirectPointer(secondToLastElement!, index);
+				} else {
+					throw new InvalidOperationException($"Unexpected index for the second to last element (value container) of a Direct that pointed to an array. Attempted to turn \"{fieldName}\" into a number to index an array.");
 				}
-
-				// Standard path.
-				secondToLast = elementOrImplementation;
-				elementOrImplementation = elementOrImplementation[currentPathElement.SnakeToCamel()];
+			} else if (secondToLastElement != null && TypeExtensions.IsDictionary(secondToLastElement!.GetType())) {
+				// TODO: Do directs actually support maps?
+				// After testing in-engine, it's possible for Directs to reference a map of some sort, but the editor does not support displaying this information, 
+				// and I have no clue how things like Choice instances handle them. I guess it's good idea to add support for this anyway.
+				return new DictionaryDirectPointer(secondToLastElement!, fieldName);
+			} else {
+				throw new InvalidOperationException($"Unexpected type for the second to last element (value container) of a Direct. Type: {secondToLastElement?.GetType()}");
 			}
-
-			return new DirectPointer(secondToLast, pathElements[^1].SnakeToCamel(), path);
 		}
 
 		/// <summary>
@@ -289,7 +206,7 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 		/// </summary>
 		/// <param name="pathElement"></param>
 		/// <returns></returns>
-		private bool IsIndexedPathElement(string pathElement) {
+		private static bool IsIndexedPathElement(string pathElement) {
 			// .+(\["?.+"?\])
 			return Regex.IsMatch(pathElement, ".+(\\[\"?.+\"?\\])");
 		}
@@ -299,7 +216,7 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 		/// </summary>
 		/// <param name="pathElement"></param>
 		/// <returns></returns>
-		private bool IsPathElementAnIndex(string pathElement) {
+		private static bool IsPathElementAnIndex(string pathElement) {
 			return Regex.IsMatch(pathElement, "(\\[\"?.+\"?\\])");
 		}
 
@@ -313,7 +230,7 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 		/// </summary>
 		/// <param name="pathElement"></param>
 		/// <returns></returns>
-		private (string, string) GetIndexedElementAndParameter(string pathElement) {
+		private static (string, string) GetIndexedElementAndParameter(string pathElement) {
 			Match target = Regex.Match(pathElement, "(.+)(\\[\"?.+\"?\\])");
 			return (target.Groups[1].Value, target.Groups[2].Value.BetweenBrackets())!;
 			// Friendly self-reminder that groups[0] is the whole match.
@@ -328,30 +245,30 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 		/// </summary>
 		public class DirectPointer {
 
-			private readonly bool IsContainerCfgRef;
+			private readonly bool _isContainerCfgRef;
 
-			private readonly ShadowClass Container;
+			private readonly ShadowClass _container;
 
-			private readonly ConfigReference? AsCfgRef;
+			private readonly ConfigReference? _asCfgRef;
 
-			private readonly string FieldName;
+			private readonly string _fieldName;
 
 			/// <summary>
 			/// The value pointed at by this <see cref="DirectPointer"/>.
 			/// </summary>
 			public virtual object? Value {
 				get {
-					if (IsContainerCfgRef) {
-						return AsCfgRef!.Arguments[FieldName];
+					if (_isContainerCfgRef) {
+						return _asCfgRef!.Arguments[_fieldName];
 					} else {
-						return Container[FieldName];
+						return _container[_fieldName];
 					}
 				}
 				set {
-					if (IsContainerCfgRef) {
-						AsCfgRef!.Arguments[FieldName] = value;
+					if (_isContainerCfgRef) {
+						_asCfgRef!.Arguments[_fieldName] = value;
 					} else {
-						Container[FieldName] = value;
+						_container[_fieldName] = value;
 					}
 				}
 			}
@@ -361,20 +278,81 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 			/// </summary>
 			public string Path { get; }
 
-			public DirectPointer(ShadowClass container, string fieldName, string path) {
-				Container = container ?? throw new ArgumentNullException(nameof(container));
-				FieldName = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
+			public DirectPointer(string fieldName, string path, ShadowClass container) {
+				_container = container;
+				_fieldName = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
 				Path = path ?? throw new ArgumentNullException(nameof(path));
-				IsContainerCfgRef = container.IsA("com.threerings.config.ConfigReference");
-				if (IsContainerCfgRef) {
-					AsCfgRef = new ConfigReference(container);
+				if (_container.IsA("com.threerings.config.ConfigReference")) {
+					_isContainerCfgRef = true;
+					_asCfgRef = new ConfigReference(_container);
+				} else {
+					_isContainerCfgRef = false;
+					_asCfgRef = null;
 				}
 			}
 
+#pragma warning disable CS8618, CS8625
 			protected internal DirectPointer() {
-				Container = null;
-				FieldName = null;
+				_container = null;
+				_asCfgRef = null;
+				_fieldName = null;
 				Path = string.Empty;
+			}
+#pragma warning restore CS8618, CS8625
+		}
+
+		/// <summary>
+		/// A variation of <see cref="DirectPointer"/> for use when the last element of a direct is an array.
+		/// </summary>
+		public class ArrayDirectPointer : DirectPointer {
+
+			private readonly Array _indexedArray;
+
+			private readonly int _index;
+
+			//private readonly bool _isShadowArray = false;
+
+			public override object? Value {
+				get => _indexedArray.GetValue(_index);
+				set {
+					try {
+						_indexedArray.SetValue(value, _index);
+					} catch (InvalidCastException) {
+						/*
+						if (Value is ShadowClass sc) {
+							if (sc.IsA("com.threerings.opengl.renderer.config.ColorizationConfig")) {
+								
+							}
+						}*/
+						Debug.WriteLine($"Failed to store value \"{value}\" ({value?.GetType()}) in the place of an instance of {Value?.GetType()}");
+					}
+				}
+			}
+
+			public ArrayDirectPointer(Array indexedArray, int index) {
+				_indexedArray = indexedArray;
+				_index = index;
+				//if (indexedArray.GetType().GetElementType() == typeof(ShadowClass)) {
+				//	_isShadowArray = true;
+				//}
+			}
+
+		}
+
+		public class DictionaryDirectPointer : DirectPointer {
+
+			private readonly IDictionary _indexedDictionary;
+
+			private readonly object _indexerObject;
+
+			public override object? Value {
+				get => _indexedDictionary[_indexerObject];
+				set => _indexedDictionary[_indexerObject] = value;
+			}
+
+			public DictionaryDirectPointer(IDictionary indexedDictionary, object indexerObject) {
+				_indexedDictionary = indexedDictionary;
+				_indexerObject = indexerObject;
 			}
 
 		}
@@ -383,9 +361,9 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 
 			public FaultyDirectPointer() : base() { }
 
-			private object? ValueInternal = null;
+			private object? _valueInternal = null;
 
-			public override object? Value { get => ValueInternal; set => ValueInternal = value; }
+			public override object? Value { get => _valueInternal; set => _valueInternal = value; }
 
 		}
 
