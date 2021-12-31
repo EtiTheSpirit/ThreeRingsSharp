@@ -52,28 +52,35 @@ namespace ThreeRingsSharp {
 		private static readonly Dictionary<FileInfo, ShadowClass> Cache = new Dictionary<FileInfo, ShadowClass>();
 		private static readonly Dictionary<FileInfo, ShadowClass[]> ArrayCache = new Dictionary<FileInfo, ShadowClass[]>();
 
+		/// <summary>
+		/// "CLF" is a lazy abbreviation for "Clyde File". This binds a <see cref="FileInfo"/> to a set of information about the <see cref="ClydeFile"/> that represents
+		/// its main attributes for display in the GUI.
+		/// </summary>
 		private static readonly Dictionary<FileInfo, (string, string, string, string)> CLFBindings = new Dictionary<FileInfo, (string, string, string, string)>();
 
 		/// <summary>
-		/// Intended for <see cref="ClydeFile"/>s that return a single <see cref="ShadowClass"/>, this functions as a caching layer. This caches the original
-		/// return from <see cref="ClydeFile.ReadObject"/> and then returns a clone of that value so that edits may be performed without interfering with the cache.
+		/// Intended for <see cref="ClydeFile"/>s that return a single instance of, or an array of, <see cref="ShadowClass"/>.
+		/// This functions as a caching layer by caching the original return from <see cref="ClydeFile.ReadObject"/>. If it is referenced again,
+		/// then the cached value is cloned and returned rather than opening a <see cref="ClydeFile"/> again.
 		/// </summary>
-		/// <param name="file"></param>
-		/// <param name="updateOpenedFileDisplay"></param>
+		/// <param name="file">The file to read data from.</param>
+		/// <param name="updateOpenedFileDisplay">This action accepts arguments in the order of <c>fileName</c>, <c>clydeVersion</c>, <c>isCompressed</c>, <c>baseManagedConfigClass</c></param>
 		public static object Open(FileInfo file, Action<string, string, string, string>? updateOpenedFileDisplay) {
 			if (updateOpenedFileDisplay != null && CLFBindings.TryGetValue(file, out ValueTuple<string, string, string, string> value)) {
 				updateOpenedFileDisplay.Invoke(value.Item1, value.Item2, value.Item3, value.Item4);
 			}
 			if (Cache.TryGetValue(file, out ShadowClass? sc)) {
 				ShadowClass copy = sc.Clone();
-				copy.SetField("__SOURCEFILE", SKEnvironment.GetRSRCRelativePath(file));
+				copy.SetField("__SOURCELOCALPATH", SKEnvironment.GetRSRCRelativePath(file));
+				copy.SetField("__FILE", file);
 				return copy;
 			}
 			if (ArrayCache.TryGetValue(file, out ShadowClass[]? scs)) {
 				ShadowClass[] dest = new ShadowClass[scs.Length];
 				for (int idx = 0; idx < scs.Length; idx++) {
 					ShadowClass copy = scs[idx].Clone();
-					copy.SetField("__SOURCEFILE", SKEnvironment.GetRSRCRelativePath(file));
+					copy.SetField("__SOURCELOCALPATH", SKEnvironment.GetRSRCRelativePath(file));
+					copy.SetField("__FILE", file);
 					dest[idx] = copy;
 				}
 				return dest;
@@ -86,7 +93,8 @@ namespace ThreeRingsSharp {
 				CLFBindings[file] = (fName, vName, comp, baseType);
 				updateOpenedFileDisplay?.Invoke(fName, vName, comp, baseType);
 				ShadowClass copy = shadow.Clone();
-				copy.SetField("__SOURCEFILE", SKEnvironment.GetRSRCRelativePath(file));
+				copy.SetField("__SOURCELOCALPATH", SKEnvironment.GetRSRCRelativePath(file));
+				copy.SetField("__FILE", file);
 				return copy;
 			} else if (data is ShadowClass[] shadowArray) {
 				ArrayCache[file] = shadowArray;
@@ -96,7 +104,8 @@ namespace ThreeRingsSharp {
 				ShadowClass[] dest = new ShadowClass[shadowArray.Length];
 				for (int idx = 0; idx < shadowArray.Length; idx++) {
 					ShadowClass copy = shadowArray[idx].Clone();
-					copy.SetField("__SOURCEFILE", SKEnvironment.GetRSRCRelativePath(file));
+					copy.SetField("__SOURCELOCALPATH", SKEnvironment.GetRSRCRelativePath(file));
+					copy.SetField("__FILE", file);
 					dest[idx] = copy;
 				}
 				return dest;
@@ -123,7 +132,7 @@ namespace ThreeRingsSharp {
 		}
 
 		/// <summary>
-		/// Intended to be called by handlers rather than externally, this continues a chain of models, and is often called when a ConfigReference is resolved.
+		/// Intended to be called by handlers rather than externally, this continues a chain of models, and is only called when a ConfigReference is resolved.
 		/// </summary>
 		/// <param name="currentContext"></param>
 		/// <param name="subShadow"></param>
@@ -133,7 +142,7 @@ namespace ThreeRingsSharp {
 				ShadowClass impl = subShadow["implementation"]!;
 				string implName = impl.Signature[(impl.Signature.LastIndexOf('.') + 1)..];
 
-				XanLogger.WriteLine($"Attempting to translate {implName} instance...");
+				XanLogger.WriteLine($"Attempting to translate {implName} instance...", XanLogger.TRACE);
 				if (impl.IsA("com.threerings.opengl.model.config.ArticulatedConfig")) {
 					ArticulatedConfig.ReadData(currentContext, subShadow);
 				} else if (impl.IsA("com.threerings.opengl.model.config.StaticConfig")) {
@@ -153,6 +162,7 @@ namespace ThreeRingsSharp {
 					currentContext.Pop();
 				}
 			} else if (subShadow.IsA("com.threerings.tudey.data.TudeySceneModel")) {
+				XanLogger.WriteLine("A scene was loaded. Fair warning that these tend to take a much longer time to open, and you may see the data tree display content before it's done loading.");
 				TudeySceneModelReader.ReadData(currentContext, subShadow);
 				//SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Missing), true);
 				//currentContext.Pop();
@@ -161,14 +171,24 @@ namespace ThreeRingsSharp {
 				//currentContext.Pop();
 			} else if (subShadow.IsA("com.threerings.tudey.config.TileConfig")) {
 				if (arrayIndex == null) {
-					SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Tile), true);
+					//SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Tile), true);
+					ShadowClass impl = subShadow["implementation"]!;
+					string implName = impl.Signature[(impl.Signature.LastIndexOf('.') + 1)..];
+					XanLogger.WriteLine($"Attempting to translate {implName} instance...", XanLogger.TRACE);
+
+					if (impl.TryGetField("model", out ShadowClass? mdlRef)) {
+						if (mdlRef!.IsA("com.threerings.config.ConfigReference")) {
+
+						}
+					}
 				} else {
+					// We've actually loaded a config object
 					SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name + $"[{arrayIndex.Value}]", SilkImage.Tile), true);
 				}
 				currentContext.Pop();
 			} else {
 				// AsyncMessageBox.ShowAsync("Unfortunately, the .dat file you opened contains an unsupported base type. The type in question: " + subShadow.Signature, "Unsupported Subformat", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Information);
-				XanLogger.WriteLine("Unsupported ManagedConfig type " + subShadow.Signature, 0, System.Drawing.Color.FromArgb(127, 0, 0));
+				XanLogger.WriteLine("Unsupported type " + subShadow.Signature, 0, System.Drawing.Color.FromArgb(127, 0, 0));
 			}
 		}
 
@@ -203,10 +223,10 @@ namespace ThreeRingsSharp {
 						rse.Add(kve);
 					}
 				} else if (managedConfig.IsA("com.threerings.tudey.data.TudeySceneModel")) {
-					
+					rse.Add(new KeyValueElement("Implementation", managedConfig.Signature, false, SilkImage.Config));
 				}
 
-				if (managedConfig.TryGetField("__SOURCEFILE", out string? srcFile)) {
+				if (managedConfig.TryGetField("__SOURCELOCALPATH", out string? srcFile)) {
 					rse.Add(new KeyValueElement("Source", srcFile!));
 				}
 				if (managedConfig.TryGetField("__TAG", out string? tag)) {

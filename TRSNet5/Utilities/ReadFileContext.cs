@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using OOOReader.Clyde;
 using OOOReader.Reader;
 using OOOReader.Utility.Mathematics;
 using ThreeRingsSharp.ConfigHandlers.ModelConfigs;
@@ -15,9 +16,13 @@ using XDataTree.TreeElements;
 namespace ThreeRingsSharp.Utilities {
 
 	/// <summary>
-	/// Represents the context of an opened file.
+	/// Represents the context of an opened file. Since files may be read in a chain (that is, file A might reference B and C, which reference D, E, F, and G, so on),
+	/// this contains the cumulative data of all read operations for every file together. A new instance of this should be created and passed in when reading data out of
+	/// a <see cref="ShadowClass"/> acquired from a <see cref="ClydeFile"/>.<para/>
+	/// This class additionally manages the data tree display once the model has loaded. To do this, it uses a stack-based methodology to add items to the tree. Remember
+	/// that there are two trees in TRS, one for the loaded models, and the other for the properties of a given loaded model.
 	/// </summary>
-	public class ReadFileContext {
+	public sealed class ReadFileContext : IDisposable {
 
 		/// <summary>
 		/// The file that was opened to create this <see cref="ReadFileContext"/> originally.
@@ -37,25 +42,43 @@ namespace ThreeRingsSharp.Utilities {
 		/// <summary>
 		/// All loaded models and empty nodes.
 		/// </summary>
-		public List<Model3D> AllModelsAndNodes { get; set; }
+		public List<Model3D> AllModelsAndNodes { get; }
 
 		/// <summary>
-		/// All loaded models.
+		/// All loaded models. Unlike <see cref="AllModelsAndNodes"/>, this does not include empty objects.
 		/// </summary>
-		public List<Model3D> AllModels { get; set; }
+		public List<Model3D> AllModels { get; }
 
 		/// <summary>
 		/// All loaded armatures by name.
 		/// </summary>
-		public Dictionary<string, Armature> AllArmatures { get; set; }
+		public Dictionary<string, Armature> AllArmatures { get; }
 
 		/// <summary>
-		/// Specifically made for implementations of <see cref="StaticSetConfig"/>, this contains a list of all <see cref="Model3D"/>s created from a <see cref="StaticSetConfig"/>'s variants.
+		/// A reference to the top of <see cref="AttachmentNodes"/>, or null if it's empty.
 		/// </summary>
-		/// <remarks>
-		/// Use the <see cref="RegisterStaticSetVariantModel"/> method to easily register items to this.
-		/// </remarks>
-		public Dictionary<ShadowClass, Dictionary<string, List<Model3D>>> StaticSetConfigVariants { get; set; } = new(); // the one time I use this lol
+		public Armature? CurrentAttachmentNode {
+			get {
+				if (AttachmentNodes.TryPeek(out Armature? latest)) {
+					return latest;
+				}
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// For use when loading an ArticualtedConfig's attachments or components. This is a stack of the latest root node that an attached or component model might reference.
+		/// </summary>
+		public Stack<Armature> AttachmentNodes { get; } = new Stack<Armature>();
+
+		/// <summary>
+		/// Specifically made for implementations of <see cref="StaticSetConfig"/>, this contains a list of all <see cref="Model3D"/>s 
+		/// created from a <see cref="StaticSetConfig"/>'s variants. The keys here are the <see cref="ShadowClass"/>es representing <see cref="StaticSetConfig"/>s,
+		/// and the values are a lookup from variant name => all models associated with that variant.<para/>
+		/// 
+		/// Use <see cref="RegisterStaticSetVariantModel"/> to easily register items to this lookup.
+		/// </summary>
+		public Dictionary<ShadowClass, Dictionary<string, List<Model3D>>> StaticSetConfigVariants { get; } = new(); // the one time I use this lol
 
 		/// <summary>
 		/// The root element representing the currently loaded file(s).
@@ -63,24 +86,29 @@ namespace ThreeRingsSharp.Utilities {
 		public TreeElement? Root { get; set; } = new RootSubstituteElement();
 
 		/// <summary>
-		/// The current parent node for the currently loaded file(s), which is the top of the <see cref="PreviousParentCache"/> <see cref="Stack{T}"/>.
+		/// The current parent node for the currently loaded file(s), which is the top of the <see cref="_previousParentCache"/> <see cref="Stack{T}"/>.
 		/// </summary>
-		public TreeElement? CurrentParent => PreviousParentCache.Peek();
+		public TreeElement? CurrentParent => _previousParentCache.Peek();
 
 		/// <summary>
 		/// For nested models, this is a stack of the current parent node for a given model. Loading a new model should push something onto this stack,
 		/// and finishing the processing on that model should pop something off of this stack.
 		/// </summary>
-		private Stack<TreeElement> PreviousParentCache { get; } = new Stack<TreeElement>();
+		private readonly Stack<TreeElement> _previousParentCache = new Stack<TreeElement>();
+
+		/// <summary>
+		/// Whether or not any <see cref="StaticSetConfig"/> has ever been loaded. Expensive to reference.
+		/// </summary>
+		public bool HasStaticSetConfig => AllModels.Where(mdl => mdl.ExtraData.ContainsKey("StaticSetConfig") && ((bool)mdl.ExtraData["StaticSetConfig"] == true)).Any();
 
 		public ReadFileContext(FileInfo file) {
 			OriginalFile = file;
 			File = file;
-			CurrentSceneTransform = new Transform3D(Transform3D.GENERAL);
+			CurrentSceneTransform = Transform3D.NewGeneral();
 			AllModelsAndNodes = new List<Model3D>();
 			AllModels = new List<Model3D>();
 			AllArmatures = new Dictionary<string, Armature>();
-			PreviousParentCache.Push(Root);
+			_previousParentCache.Push(Root);
 		}
 
 		/// <summary>
@@ -94,12 +122,12 @@ namespace ThreeRingsSharp.Utilities {
 		/// <param name="element">The element to push onto the stack.</param>
 		/// <returns>The element passed into <paramref name="element"/> for chaining.</returns>
 		public T Push<T>(T element) where T : TreeElement {
-			if (!PreviousParentCache.Any()) {
+			if (!_previousParentCache.Any()) {
 				Root = element;
 			} else {
-				PreviousParentCache.Peek().Add(element);
+				_previousParentCache.Peek().Add(element);
 			}
-			PreviousParentCache.Push(element);
+			_previousParentCache.Push(element);
 			return element;
 		}
 
@@ -117,7 +145,7 @@ namespace ThreeRingsSharp.Utilities {
 		/// </summary>
 		/// <returns></returns>
 		public TreeElement? Pop() {
-			if (PreviousParentCache.TryPop(out TreeElement? result)) {
+			if (_previousParentCache.TryPop(out TreeElement? result)) {
 				return result;
 			}
 			return null;
@@ -142,7 +170,46 @@ namespace ThreeRingsSharp.Utilities {
 			}
 			model.ExtraData["Parent"] = staticSetConfig;
 			model.ExtraData["ContainingVariantName"] = variantName;
+			model.ExtraData["StaticSetConfig"] = true;
 			models!.Add(model);
+		}
+
+		/// <summary>
+		/// Intended to be called just before export, this sets the Skip flag based on user prefs.
+		/// </summary>
+		public void UpdateExportabilityOfStaticSets(bool exportOnlyEnabled) {
+			if (exportOnlyEnabled) {
+				foreach (Model3D mdl in AllModels) {
+					if (!mdl.ExtraData.ContainsKey("Parent") || !mdl.ExtraData.ContainsKey("ContainingVariantName")) continue;
+					if (mdl.ExtraData["Parent"] is ShadowClass staticSet && mdl.ExtraData["ContainingVariantName"] is string variantOfModel && staticSet.IsA("com.threerings.opengl.model.config.StaticSetConfig")) {
+						string variantName = staticSet["model"]!;
+						mdl.ExtraData["SkipExport"] = variantName != variantOfModel;
+					}
+				}
+			} else {
+				foreach (Model3D mdl in AllModels) {
+					if (!mdl.ExtraData.ContainsKey("Parent") || !mdl.ExtraData.ContainsKey("ContainingVariantName")) continue;
+					if (mdl.ExtraData["Parent"] is ShadowClass staticSet && staticSet.IsA("com.threerings.opengl.model.config.StaticSetConfig")) {
+						mdl.ExtraData["SkipExport"] = false;
+					}
+				}
+			}
+		}
+
+		public void Dispose() {
+			foreach (Model3D mdl in AllModelsAndNodes) {
+				AllModels.Remove(mdl);
+				mdl.Dispose();
+			}
+			foreach (Model3D mdl in AllModels) {
+				mdl.Dispose();
+			}
+			AllModelsAndNodes.Clear();
+			AllModels.Clear();
+			AllArmatures.Clear();
+			AttachmentNodes.Clear();
+			StaticSetConfigVariants.Clear();
+			Root = null;
 		}
 	}
 }

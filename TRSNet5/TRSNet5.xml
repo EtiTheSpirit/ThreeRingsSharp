@@ -35,7 +35,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.ModelConfigs.ArticulatedConfig.RecursivelyIterateNodes(ThreeRingsSharp.Utilities.ReadFileContext,OOOReader.Reader.ShadowClass,OOOReader.Reader.ShadowClass,OOOReader.Reader.ShadowClass,OOOReader.Utility.Mathematics.Transform3D,OOOReader.Utility.Mathematics.Transform3D,System.String)">
+        <member name="M:ThreeRingsSharp.ConfigHandlers.ModelConfigs.ArticulatedConfig.RecursivelyIterateNodes(ThreeRingsSharp.Utilities.ReadFileContext,OOOReader.Reader.ShadowClass,OOOReader.Reader.ShadowClass,OOOReader.Reader.ShadowClass,OOOReader.Utility.Mathematics.Transform3D,OOOReader.Utility.Mathematics.Transform3D,ThreeRingsSharp.XansData.Armature,System.String)">
             <summary>
             A utility function that iterates through all of the nodes recursively, as some may store mesh data.<para/>
             This does not decode the rig. It strictly grabs meshes out of the rig.
@@ -43,9 +43,10 @@
             <param name="ctx">The read-file context storing all ongoing data.</param>
             <param name="baseModelConfig">The <see cref="T:OOOReader.Reader.ShadowClass"/> that contained this <see cref="T:ThreeRingsSharp.ConfigHandlers.ModelConfigs.ArticulatedConfig"/>.</param>
             <param name="articulatedConfigModel">A reference to the <see cref="T:ThreeRingsSharp.ConfigHandlers.ModelConfigs.ArticulatedConfig"/> that contains these nodes.</param>
-            <param name="parentNode">The parent node to iterate through.</param>
+            <param name="parentNodeShadow">The parent node to iterate through.</param>
             <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
             <param name="initialTransform"></param>
+            <param name="parentNode"></param>
             <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
         </member>
         <member name="M:ThreeRingsSharp.ConfigHandlers.Presets.MasterSKConfigs.GetConfig(System.String)">
@@ -55,152 +56,59 @@
             <param name="name"></param>
             <returns></returns>
         </member>
-        <member name="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord">
+        <member name="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry">
             <summary>
-            Reimplementation of com.threerings.tudey.util.Coord
+            The base type for something that's in a TudeySceneModel. This is identical to TudeySceneModel$Entry, minus the fact that it represents all types at once.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.EMPTY">
+        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry.Reference">
             <summary>
-            The encoded form of an empty coordinate, located at -32768, -32768
+            The <see cref="T:ThreeRingsSharp.Utilities.ConfigReference"/> pointing to the model this entry uses.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.X">
+        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry.IsEmpty">
             <summary>
-            The X component of this coordinate, which responds to left/right in the 3D scene.
+            Whether or not this entry is missing necessary data. If this is true, <see cref="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry.Reference"/> is either <see langword="null"/> or empty.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.Y">
+        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry.Transform">
             <summary>
-            The Y component of this coordinate, which corresponds to forward/backwards in the 3D scene (not up/down!).
+            The location of this object in 3D space.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.Encoded">
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry.#ctor(OOOReader.Reader.ShadowClass,OOOReader.Reader.ShadowClass)">
             <summary>
-            The encoded representation of this coordinate pair, where X occupies the upper two bytes and Y occupies the lower two bytes (assuming big endian; 0xXXXXYYYY)
+            Converts a shadowed <c>com.threerings.tudey.data.TudeySceneModel$Entry</c> into an instance of this class.
             </summary>
-            <remarks>
-            Setting this will appropriately set X and Y.
-            </remarks>
+            <param name="scene"></param>
+            <param name="shadowEntry"></param>
         </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.#ctor">
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry.#ctor(OOOReader.Reader.ShadowClass,OOOReader.Utility.ShallowImpl.CoordIntEntry)">
             <summary>
-            Create a new <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord"/> at (0, 0)
+            Creates a <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry"/> by decoding a <see cref="T:OOOReader.Utility.ShallowImpl.CoordIntEntry"/>'s data.
             </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.#ctor(ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord)">
-            <summary>
-            Clone the other <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord"/> into a new instance.
-            </summary>
-            <param name="other"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.#ctor(System.Int16,System.Int16)">
-            <summary>
-            Create a new <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord"/> at the given (x, y) coordinate pair.
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.#ctor(OOOReader.Reader.ShadowClass)">
-            <summary>
-            Construct a coordinate from a <see cref="T:OOOReader.Reader.ShadowClass"/> representing a coordinate.
-            </summary>
-            <param name="shadow"></param>
-        </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord.Encode(System.Int32,System.Int32)">
-            <summary>
-            Encodes X and Y into a merged form. Note that only the lower 16 bits are used, so values greater than <see cref="F:System.UInt16.MaxValue"/> will be incorrect.
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-            <returns></returns>
-        </member>
-        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry.Key">
-            <summary>
-            The coordinate this entry is bound to.
-            </summary>
-        </member>
-        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry.Value">
-            <summary>
-            The value at this entry.
-            </summary>
-        </member>
-        <member name="F:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry._values">
-            <summary>
-            The values array of this entry. Defaults to an uninitialized array, as it is set to an int[] reference by <see cref="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.CoordEntrySet"/>.
-            As such, using <see cref="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry.SetValue(System.Int32)"/> will actually reflect to the original object in the <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap"/> that created this.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry.#ctor">
-            <summary>
-            Initialize a new, blank <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry"/> at the origin with a value of 0.
-            </summary>
-        </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry.SetValue(System.Int32)">
-            <summary>
-            Sets the value associated with this entry.
-            </summary>
-            <param name="value">The new value to associated with this entry.</param>
-            <returns>The previous value prior to it being changed.</returns>
-        </member>
-        <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.Granularity">
-            <summary>
-            I'll be honest with you, I have no clue what this does.
-            </summary>
-            <remarks>
-            I'm Commander Shepard, and this is my favorite comment in the codebase.
-            </remarks>
-        </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.CoordEntrySet">
-            <summary>
-            Translates the contents of this <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap"/> into a list of <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry"/> elements. These elements store values by reference
-            and so modifications made to these elements will affect this <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap"/>.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.GetCell(System.Int32,System.Int32)">
-            <summary>
-            Returns the cell at the given coordinate.
-            </summary>
-            <param name="x"></param>
-            <param name="y"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.GetCell(ThreeRingsSharp.ConfigHandlers.TudeyScenes.Coord)">
-            <summary>
-            Returns the cell at the given coordinate.
-            </summary>
-            <param name="location"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.GetCell">
-            <summary>
-            Returns the current cell that <see cref="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.IndexerCoordinate"/> points to.
-            </summary>
-            <returns></returns>
-        </member>
-        <member name="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap.CoordIntMapEnumerator">
-            <summary>
-            An iterator class for <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntMap"/> that translates all contained values into <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.CoordIntEntry"/> objects.
-            </summary>
-        </member>
-        <member name="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.TudeySceneModel">
-            <summary>
-            Represents an implementation of TudeySceneModel in a manner as shallow as needed for function.
-            </summary>
+            <param name="scene"></param>
+            <param name="entry"></param>
         </member>
         <member name="T:ThreeRingsSharp.MasterDataExtractor">
             <summary>
             This class manages the extraction and conversion of data from a <see cref="T:OOOReader.Clyde.ClydeFile"/>. The sort of "main hub" for all read operations.
             </summary>
         </member>
+        <member name="F:ThreeRingsSharp.MasterDataExtractor.CLFBindings">
+            <summary>
+            "CLF" is a lazy abbreviation for "Clyde File". This binds a <see cref="T:System.IO.FileInfo"/> to a set of information about the <see cref="T:OOOReader.Clyde.ClydeFile"/> that represents
+            its main attributes for display in the GUI.
+            </summary>
+        </member>
         <member name="M:ThreeRingsSharp.MasterDataExtractor.Open(System.IO.FileInfo,System.Action{System.String,System.String,System.String,System.String})">
             <summary>
-            Intended for <see cref="T:OOOReader.Clyde.ClydeFile"/>s that return a single <see cref="T:OOOReader.Reader.ShadowClass"/>, this functions as a caching layer. This caches the original
-            return from <see cref="M:OOOReader.Clyde.ClydeFile.ReadObject"/> and then returns a clone of that value so that edits may be performed without interfering with the cache.
+            Intended for <see cref="T:OOOReader.Clyde.ClydeFile"/>s that return a single instance of, or an array of, <see cref="T:OOOReader.Reader.ShadowClass"/>.
+            This functions as a caching layer by caching the original return from <see cref="M:OOOReader.Clyde.ClydeFile.ReadObject"/>. If it is referenced again,
+            then the cached value is cloned and returned rather than opening a <see cref="T:OOOReader.Clyde.ClydeFile"/> again.
             </summary>
-            <param name="file"></param>
-            <param name="updateOpenedFileDisplay"></param>
+            <param name="file">The file to read data from.</param>
+            <param name="updateOpenedFileDisplay">This action accepts arguments in the order of <c>fileName</c>, <c>clydeVersion</c>, <c>isCompressed</c>, <c>baseManagedConfigClass</c></param>
         </member>
         <member name="M:ThreeRingsSharp.MasterDataExtractor.ExtractFrom(ThreeRingsSharp.Utilities.ReadFileContext,System.Action{System.String,System.String,System.String,System.String})">
             <summary>
@@ -211,7 +119,7 @@
         </member>
         <member name="M:ThreeRingsSharp.MasterDataExtractor.ExtractFrom(ThreeRingsSharp.Utilities.ReadFileContext,OOOReader.Reader.ShadowClass,System.Nullable{System.Int32})">
             <summary>
-            Intended to be called by handlers rather than externally, this continues a chain of models, and is often called when a ConfigReference is resolved.
+            Intended to be called by handlers rather than externally, this continues a chain of models, and is only called when a ConfigReference is resolved.
             </summary>
             <param name="currentContext"></param>
             <param name="subShadow"></param>
@@ -242,6 +150,21 @@
             A wrapper-implementation of OOO's ConfigReference type, which is a way to reference another file without loading it until it's needed.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.Utilities.ConfigReference.Empty">
+            <summary>
+            Returns a new <see cref="T:ThreeRingsSharp.Utilities.ConfigReference"/> pointing to no file, with an empty name, and no arguments.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.Utilities.ConfigReference.IsEmpty">
+            <summary>
+            Whether or not this <see cref="T:ThreeRingsSharp.Utilities.ConfigReference"/> was created via referencing <see cref="P:ThreeRingsSharp.Utilities.ConfigReference.Empty"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utilities.ConfigReference.Resolved">
+            <summary>
+            Whether or not this <see cref="T:ThreeRingsSharp.Utilities.ConfigReference"/> has been resolved (that is, <see cref="M:ThreeRingsSharp.Utilities.ConfigReference.Resolve"/> has been called).
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.Utilities.ConfigReference.Name">
             <summary>
             The name of this reference, which is either the file path to it (relative to rsrc) or a prenamed config object as seen within rsrc/config's
@@ -261,12 +184,18 @@
         </member>
         <member name="F:ThreeRingsSharp.Utilities.ConfigReference.Original">
             <summary>
-            The original <see cref="T:OOOReader.Reader.ShadowClass"/> whose <see cref="P:OOOReader.Reader.ShadowClass.Name"/> is <c>com.threerings.config.ConfigReference</c>.
+            The original <see cref="T:OOOReader.Reader.ShadowClass"/> whose <see cref="!:ShadowClass.Signature"/> is <c>com.threerings.config.ConfigReference</c>.
             </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utilities.ConfigReference.#ctor(OOOReader.Reader.ShadowClass)">
+            <summary>
+            Construct a new <see cref="T:ThreeRingsSharp.Utilities.ConfigReference"/> from a <see cref="T:OOOReader.Reader.ShadowClass"/> shadowing a <c>com.threerings.config.ConfigReference</c>
+            </summary>
+            <param name="shadow"></param>
         </member>
         <member name="M:ThreeRingsSharp.Utilities.ConfigReference.Resolve">
             <summary>
-            Resolve this <see cref="T:ThreeRingsSharp.Utilities.ConfigReference"/>, returning the <see cref="T:OOOReader.Reader.ShadowClass"/> from the file it referenced.
+            Resolve this <see cref="T:ThreeRingsSharp.Utilities.ConfigReference"/>, returning the <see cref="T:OOOReader.Reader.ShadowClass"/> from the file it referenced. This will return null if it could not be resolved.
             </summary>
             <remarks>
             Under normal Clyde engine behavior, the returned <see cref="T:OOOReader.Reader.ShadowClass"/> should either directly or indierectly extend <c>com.threerings.config.ParameterizedConfig</c>.
@@ -281,7 +210,7 @@
         <member name="M:ThreeRingsSharp.Utilities.ConfigReferenceResolver.ResolveConfigReference(OOOReader.Reader.ShadowClass)">
             <summary>
             Returns the object pointed to by this <see cref="T:OOOReader.Reader.ShadowClass"/> representing a ConfigReference. Additionally, this
-            adds a field named <c>__reference</c> onto the input <see cref="T:OOOReader.Reader.ShadowClass"/> for caching.
+            adds a field named <c>__REFERENCE</c> onto the input <see cref="T:OOOReader.Reader.ShadowClass"/> for caching.
             </summary>
             <param name="shadow">The <see cref="T:OOOReader.Reader.ShadowClass"/> representing the ConfigReference.</param>
             <exception cref="T:OOOReader.Exceptions.ShadowTypeMismatchException">If the given <see cref="T:OOOReader.Reader.ShadowClass"/> is not an instance of <c>com.threerings.config.ConfigReference</c></exception>
@@ -347,6 +276,11 @@
         <member name="M:ThreeRingsSharp.Utilities.Parameters.Implementation.Choice.Option.Apply">
             <summary>
             Applies this option to the applicable ParameterizedConfig that the parent <see cref="T:ThreeRingsSharp.Utilities.Parameters.Implementation.Choice"/> is part of.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.AllowInitializingShadows">
+            <summary>
+            Temporary, and subject to removal: Whether or not to allow direct traversal to initialize ShadowClass or object instances before indexing them.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.Pointers">
@@ -425,6 +359,11 @@
             The path that this direct occupies, with its parameter references stripped away.
             </summary>
         </member>
+        <member name="T:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.ArrayDirectPointer">
+            <summary>
+            A variation of <see cref="T:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.DirectPointer"/> for use when the last element of a direct is an array.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.Utilities.Parameters.Implementation.Parameter.Name">
             <summary>
             The name of this parameter.
@@ -483,7 +422,11 @@
         </member>
         <member name="T:ThreeRingsSharp.Utilities.ReadFileContext">
             <summary>
-            Represents the context of an opened file.
+            Represents the context of an opened file. Since files may be read in a chain (that is, file A might reference B and C, which reference D, E, F, and G, so on),
+            this contains the cumulative data of all read operations for every file together. A new instance of this should be created and passed in when reading data out of
+            a <see cref="T:OOOReader.Reader.ShadowClass"/> acquired from a <see cref="T:OOOReader.Clyde.ClydeFile"/>.<para/>
+            This class additionally manages the data tree display once the model has loaded. To do this, it uses a stack-based methodology to add items to the tree. Remember
+            that there are two trees in TRS, one for the loaded models, and the other for the properties of a given loaded model.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.OriginalFile">
@@ -508,7 +451,7 @@
         </member>
         <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.AllModels">
             <summary>
-            All loaded models.
+            All loaded models. Unlike <see cref="P:ThreeRingsSharp.Utilities.ReadFileContext.AllModelsAndNodes"/>, this does not include empty objects.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.AllArmatures">
@@ -516,13 +459,24 @@
             All loaded armatures by name.
             </summary>
         </member>
+        <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.CurrentAttachmentNode">
+            <summary>
+            A reference to the top of <see cref="P:ThreeRingsSharp.Utilities.ReadFileContext.AttachmentNodes"/>, or null if it's empty.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.AttachmentNodes">
+            <summary>
+            For use when loading an ArticualtedConfig's attachments or components. This is a stack of the latest root node that an attached or component model might reference.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.StaticSetConfigVariants">
             <summary>
-            Specifically made for implementations of <see cref="T:ThreeRingsSharp.ConfigHandlers.ModelConfigs.StaticSetConfig"/>, this contains a list of all <see cref="T:ThreeRingsSharp.XansData.Model3D"/>s created from a <see cref="T:ThreeRingsSharp.ConfigHandlers.ModelConfigs.StaticSetConfig"/>'s variants.
+            Specifically made for implementations of <see cref="T:ThreeRingsSharp.ConfigHandlers.ModelConfigs.StaticSetConfig"/>, this contains a list of all <see cref="T:ThreeRingsSharp.XansData.Model3D"/>s 
+            created from a <see cref="T:ThreeRingsSharp.ConfigHandlers.ModelConfigs.StaticSetConfig"/>'s variants. The keys here are the <see cref="T:OOOReader.Reader.ShadowClass"/>es representing <see cref="T:ThreeRingsSharp.ConfigHandlers.ModelConfigs.StaticSetConfig"/>s,
+            and the values are a lookup from variant name => all models associated with that variant.<para/>
+            
+            Use <see cref="M:ThreeRingsSharp.Utilities.ReadFileContext.RegisterStaticSetVariantModel(OOOReader.Reader.ShadowClass,System.String,ThreeRingsSharp.XansData.Model3D)"/> to easily register items to this lookup.
             </summary>
-            <remarks>
-            Use the <see cref="M:ThreeRingsSharp.Utilities.ReadFileContext.RegisterStaticSetVariantModel(OOOReader.Reader.ShadowClass,System.String,ThreeRingsSharp.XansData.Model3D)"/> method to easily register items to this.
-            </remarks>
         </member>
         <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.Root">
             <summary>
@@ -531,13 +485,18 @@
         </member>
         <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.CurrentParent">
             <summary>
-            The current parent node for the currently loaded file(s), which is the top of the <see cref="P:ThreeRingsSharp.Utilities.ReadFileContext.PreviousParentCache"/> <see cref="T:System.Collections.Generic.Stack`1"/>.
+            The current parent node for the currently loaded file(s), which is the top of the <see cref="F:ThreeRingsSharp.Utilities.ReadFileContext._previousParentCache"/> <see cref="T:System.Collections.Generic.Stack`1"/>.
             </summary>
         </member>
-        <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.PreviousParentCache">
+        <member name="F:ThreeRingsSharp.Utilities.ReadFileContext._previousParentCache">
             <summary>
             For nested models, this is a stack of the current parent node for a given model. Loading a new model should push something onto this stack,
             and finishing the processing on that model should pop something off of this stack.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.Utilities.ReadFileContext.HasStaticSetConfig">
+            <summary>
+            Whether or not any <see cref="T:ThreeRingsSharp.ConfigHandlers.ModelConfigs.StaticSetConfig"/> has ever been loaded. Expensive to reference.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.Utilities.ReadFileContext.Push``1(``0)">
@@ -574,6 +533,11 @@
             <param name="staticSetConfig"></param>
             <param name="variantName"></param>
             <param name="model"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.Utilities.ReadFileContext.UpdateExportabilityOfStaticSets(System.Boolean)">
+            <summary>
+            Intended to be called just before export, this sets the Skip flag based on user prefs.
+            </summary>
         </member>
         <member name="P:ThreeRingsSharp.Utilities.RsrcDirectoryTool.ResourceDirectory">
             <summary>
@@ -749,7 +713,8 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.Armature.ConstructHierarchyFromNode(ThreeRingsSharp.XansData.Armature.Node)">
             <summary>
-            Given a <see cref="T:ThreeRingsSharp.XansData.Armature.Node"/> from an ArticulatedConfig, this will translates the <see cref="T:ThreeRingsSharp.XansData.Armature.Node"/> and all its <see cref="P:ThreeRingsSharp.XansData.Armature.Node.Children"/> into <see cref="T:ThreeRingsSharp.XansData.Armature"/>s.
+            Given a <see cref="T:ThreeRingsSharp.XansData.Armature.Node"/> from an ArticulatedConfig, this will translates the <see cref="T:ThreeRingsSharp.XansData.Armature.Node"/> and all its <see cref="P:ThreeRingsSharp.XansData.Armature.Node.Children"/> into <see cref="T:ThreeRingsSharp.XansData.Armature"/>s.<para/>
+            If the given <see cref="T:ThreeRingsSharp.XansData.Armature.Node"/> has already been transformed using this method, it will return the previously created <see cref="T:ThreeRingsSharp.XansData.Armature"/>.
             </summary>
             <param name="rootNode"></param>
             <returns></returns>
@@ -766,6 +731,11 @@
             Recursively get the children of this node.
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Armature.Node">
+            <summary>
+            An intermediary stage from <see cref="T:OOOReader.Reader.ShadowClass"/> to <see cref="P:ThreeRingsSharp.XansData.Armature.Node.RealArmature"/> that is easier to modify in early stages of conversion.
+            </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Armature.Node.Name">
             <summary>
@@ -785,6 +755,11 @@
         <member name="P:ThreeRingsSharp.XansData.Armature.Node.InverseReferenceTransform">
             <summary>
             The inverse reference transform of this node.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.Armature.Node.RealArmature">
+            <summary>
+            The <see cref="T:ThreeRingsSharp.XansData.Armature"/> that has been created from this <see cref="T:ThreeRingsSharp.XansData.Armature.Node"/>, granted that such has been done.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Armature.Node.#ctor(System.String,OOOReader.Utility.Mathematics.Transform3D,ThreeRingsSharp.XansData.Armature.Node[])">
@@ -1414,7 +1389,7 @@
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.MAGIC_NUMBER">
             <summary>
-            The unique header ID describing glTF files. This is the ASCII string "glTF".
+            The unique header ID describing glTF files. This is the ASCII string "glTF" in little endian order.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.VERSION">
@@ -1993,11 +1968,6 @@
             A list of every <see cref="T:ThreeRingsSharp.XansData.MeshData"/> that has been instantiated. Unlike <see cref="P:ThreeRingsSharp.XansData.MeshData.MeshDataBindings"/>, should any meshes have the same name (which will not happen under normal circumstances), this will store all instances.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.MeshData._Users">
-            <summary>
-            A list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances that reference this mesh.
-            </summary>
-        </member>
         <member name="P:ThreeRingsSharp.XansData.MeshData.Users">
             <summary>
             A list of <see cref="T:ThreeRingsSharp.XansData.Model3D"/> instances that reference this mesh.
@@ -2105,7 +2075,13 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.SetBones(ThreeRingsSharp.XansData.Armature.Node)">
             <summary>
-            Sets <see cref="P:ThreeRingsSharp.XansData.MeshData.Skeleton"/> and populates <see cref="P:ThreeRingsSharp.XansData.MeshData.AllBones"/>.
+            Sets <see cref="P:ThreeRingsSharp.XansData.MeshData.Skeleton"/> and populates <see cref="P:ThreeRingsSharp.XansData.MeshData.AllBones"/> for this specific mesh.
+            </summary>
+            <param name="root"></param>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.MeshData.SetBones(ThreeRingsSharp.XansData.Armature)">
+            <summary>
+            Sets <see cref="P:ThreeRingsSharp.XansData.MeshData.Skeleton"/> and populates <see cref="P:ThreeRingsSharp.XansData.MeshData.AllBones"/> for this specific mesh.
             </summary>
             <param name="root"></param>
         </member>
@@ -2130,9 +2106,17 @@
             </summary>
             <exception cref="T:System.ObjectDisposedException">If this <see cref="T:ThreeRingsSharp.XansData.MeshData"/> has been disposed.</exception>
         </member>
+        <member name="M:ThreeRingsSharp.XansData.MeshData.Empty(System.String,OOOReader.Utility.Mathematics.Transform3D)">
+            <summary>
+            Constructs a new mesh with no vertices, indices, or other data associated with geometry. It can optionally have a dummy armature at the given <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/> (unless the transform is <see langword="null"/>, from which no bone will be created. This mesh is 🅱️oneless.)
+            </summary>
+            <param name="name">The name of this mesh, and if a transform is given, its bone.</param>
+            <param name="transform">A transform for the location of this mesh's single empty bone, or null for no bone.</param>
+            <returns></returns>
+        </member>
         <member name="M:ThreeRingsSharp.XansData.MeshData.DisposeIfNoUsersExist">
             <summary>
-            Calls <see cref="M:ThreeRingsSharp.XansData.MeshData.Dispose"/> if <see cref="F:ThreeRingsSharp.XansData.MeshData._Users"/> is empty.
+            Calls <see cref="M:ThreeRingsSharp.XansData.MeshData.Dispose"/> if <see cref="F:ThreeRingsSharp.XansData.MeshData._users"/> is empty.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.Model3D">
@@ -2183,7 +2167,7 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.Transform">
             <summary>
-            The transformation to apply to the model data. By default, this is the identity transformation (so no transform).
+            The transformation to apply to the model data. By default, this is the identity transformation (at the origin, no rotation, 1x scale).
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.Mesh">
@@ -2258,7 +2242,7 @@
             <param name="targetFormat"></param>
             <param name="models"></param>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Model3D.NewEmpty">
+        <member name="M:ThreeRingsSharp.XansData.Model3D.Empty(System.String,System.Boolean,OOOReader.Utility.Mathematics.Transform3D)">
             <summary>
             Creates a new <see cref="T:ThreeRingsSharp.XansData.Model3D"/> without any data and with its <see cref="P:ThreeRingsSharp.XansData.Model3D.IsEmptyObject"/> property set to true.
             </summary>
