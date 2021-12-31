@@ -59,9 +59,9 @@ namespace SKAnimatorTools {
 		public TreeElement RootDataTreeObject { get; } = new GenericElement("implementation");
 
 		/// <summary>
-		/// All models from the latest opened .DAT file.
+		/// The current <see cref="ReadFileContext"/> of the latest opened file, which contains all applicable information.
 		/// </summary>
-		private List<Model3D> AllModels { get; set; } = new List<Model3D>();
+		public ReadFileContext? CurrentContext { get; set; }
 
 		/// <summary>
 		/// The current configuration form, if it exists.
@@ -122,6 +122,12 @@ namespace SKAnimatorTools {
 			}
 		}
 
+		private void AskForUpdate(int major, int minor, int patch) {
+			string verStr = major + "." + minor + "." + patch;
+			Updater updWindow = new Updater(verStr);
+			updWindow.ShowDialog(); // Because I want it to yield.
+		}
+
 		/// <summary>
 		/// Checks the version of the program, and shows the update window if this instance of the program is out of date.
 		/// </summary>
@@ -132,13 +138,25 @@ namespace SKAnimatorTools {
 				bool newMajor = major > THIS_VERSION[0];
 				bool newMinor = minor > THIS_VERSION[1];
 				bool newPatch = patch > THIS_VERSION[2];
-				bool newUpdate = newMajor || newMinor || newPatch || force;
-				// Benefit of semver: ALL increments = new update.
 
-				if (newUpdate) {
-					string verStr = major + "." + minor + "." + patch;
-					Updater updWindow = new Updater(verStr);
-					updWindow.ShowDialog(); // Because I want it to yield.
+				if (!force) {
+					if (THIS_VERSION[0] > major) return; // This major version is newer than the latest. This is a beta build or dev build.
+					if (newMajor) {
+						AskForUpdate(major, minor, patch);
+						return;
+					}
+
+					if (THIS_VERSION[1] > minor) return;
+					if (newMinor) {
+						AskForUpdate(major, minor, patch);
+						return;
+					}
+
+					if (THIS_VERSION[2] > patch) return;
+					if (newPatch) {
+						AskForUpdate(major, minor, patch);
+						return;
+					}
 				}
 			} else {
 				XanLogger.WriteLine("Failed to download new version information. TRS may have an update, but there's no way to know automatically. If you care enough, go check the github page.", XanLogger.INFO, Color.Red);
@@ -350,8 +368,10 @@ namespace SKAnimatorTools {
 				ConfigurationInterface.SetConfigurationValue("LastSaveDirectory", saveTo.DirectoryName);
 				ModelFormat targetFmt = ModelFormatUtil.ExtensionToFormatBindings[saveTo.Extension];
 
+
+
 				try {
-					Model3D.ExportIntoOne(saveTo, targetFmt, AllModels.ToArray());
+					Model3D.ExportIntoOne(saveTo, targetFmt, CurrentContext!.AllModels.ToArray());
 					XanLogger.WriteLine($"Done! Exported to [{saveTo.FullName}]");
 				} catch (Exception ex) {
 					XanLogger.WriteLine($"Failed to save to [{saveTo.FullName}] -- Reason: {ex.GetType().Name} thrown!\n{ex.Message}\n\n{ex.StackTrace}", color: Color.IndianRed);
@@ -368,7 +388,6 @@ namespace SKAnimatorTools {
 		private void LoadOpenedModel() {
 			if (Busy) return;
 			SKAnimatorToolsProxy.UISyncContext?.Send(delegate {
-				BtnOpenModel.Enabled = false;
 				LabelFileName.Text = "Working...";
 				LabelFormatVersion.Text = "N/A";
 				LabelModelCompressed.Text = "N/A";
@@ -379,19 +398,19 @@ namespace SKAnimatorTools {
 			SKAnimatorToolsProxy.UISyncContext?.Send(delegate {
 				ModelStructureTree.Nodes.Clear();
 				SelectedObjectProperties.Nodes.Clear();
+				BtnOpenModel.Enabled = false;
+				BtnSaveModel.Enabled = false;
+				BtnConfig.Enabled = false;
 			}, null);
 
 			FileInfo targetFile = new FileInfo(OpenModel.FileName);
-			AllModels.Clear();
-			ReadFileContext ctx = new ReadFileContext(targetFile) {
-				AllModels = AllModels
-			};
+			if (CurrentContext != null) CurrentContext.Dispose();
+			CurrentContext = new ReadFileContext(targetFile);
 			//ctx.Push(RootDataTreeObject);
-			bool isOK = true;
 			try {
-				XanLogger.WriteLine("Working. This might take a bit...");
+				XanLogger.WriteLine("Working. This could take a bit...");
 				// ClydeFileHandler.HandleClydeFile(clydeFile, AllModels, true, ModelStructureTree);
-				MasterDataExtractor.ExtractFrom(ctx, (fName, vName, comp, baseType) => {
+				MasterDataExtractor.ExtractFrom(CurrentContext, (fName, vName, comp, baseType) => {
 					SKAnimatorToolsProxy.UISyncContext?.Send(data => {
 						(string file, string version, string compressed, string type) = (ValueTuple<string, string, string, string>)data!;
 						LabelFileName.Text = file;
@@ -404,9 +423,10 @@ namespace SKAnimatorTools {
 			} catch (ClydeDataReadException exc) {
 				XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, color: Color.IndianRed);
 				AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
-				isOK = false;
 				SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
 					BtnOpenModel.Enabled = true;
+					BtnSaveModel.Enabled = false;
+					BtnConfig.Enabled = true;
 				}, null);
 				Busy = false;
 				throw;
@@ -415,15 +435,15 @@ namespace SKAnimatorTools {
 				if (err is ClydeDataReadException exc) {
 					XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, color: Color.IndianRed);
 					AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
-					isOK = false;
 				} else {
 					XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", color: Color.IndianRed);
 					XanLogger.LogException(err);
 					AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
-					isOK = false;
 				}
 				SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
 					BtnOpenModel.Enabled = true;
+					BtnSaveModel.Enabled = false;
+					BtnConfig.Enabled = true;
 				}, null);
 				Busy = false;
 				throw;
@@ -431,9 +451,10 @@ namespace SKAnimatorTools {
 				XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", color: Color.IndianRed);
 				XanLogger.LogException(err);
 				AsyncMessageBox.Show($"A critical error has occurred when attempting to process this file:\n{err.GetType().Name} -- {err.Message}\n\n\nIt is safe to click CONTINUE after this error occurs.", "Oh no!", icon: MessageBoxIcon.Error);
-				isOK = false;
 				SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
 					BtnOpenModel.Enabled = true;
+					BtnSaveModel.Enabled = false;
+					BtnConfig.Enabled = true;
 				}, null);
 				Busy = false;
 				throw;
@@ -443,31 +464,27 @@ namespace SKAnimatorTools {
 				if (callbackParam is TreeElement element) {
 					SetModelStructure(element);
 				}
-			}, ctx.Root);
+			}, CurrentContext.Root);
 
-
-			Debug.WriteLine(SKAnimatorToolsProxy.UISyncContext);
-			SKAnimatorToolsProxy.UISyncContext?.Send(callbackParam => {
-				Debug.WriteLine(BtnSaveModel.Enabled);
-				Debug.WriteLine(callbackParam);
-				BtnSaveModel.Enabled = (bool)callbackParam!;
-			}, isOK);
-			XanLogger.WriteLine($"Number of models loaded: {AllModels.Where(model => model.IsEmptyObject == false).Count()} ({AllModels.Where(model => model.ExtraData.ContainsKey("StaticSetConfig")).Count()} as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)");
+			XanLogger.WriteLine($"Number of models loaded: {CurrentContext.AllModels.Where(model => model.IsEmptyObject == false).Count()} ({CurrentContext.AllModels.Where(model => model.ExtraData.ContainsKey("StaticSetConfig")).Count()} as variants in one or more StaticSetConfigs, which may not be exported depending on your preferences.)");
 
 			// TODO: Something more efficient.
 			int meshCount = 0;
-			List<MeshData> alreadyCountedMeshes = new List<MeshData>(AllModels.Count);
-			for (int idx = 0; idx < AllModels.Count; idx++) {
-				if (!alreadyCountedMeshes.Contains(AllModels[idx].Mesh!)) {
+			List<MeshData> alreadyCountedMeshes = new List<MeshData>(CurrentContext.AllModels.Count);
+			for (int idx = 0; idx < CurrentContext.AllModels.Count; idx++) {
+				if (!alreadyCountedMeshes.Contains(CurrentContext.AllModels[idx].Mesh!)) {
 					meshCount++;
-					alreadyCountedMeshes.Add(AllModels[idx].Mesh!);
+					alreadyCountedMeshes.Add(CurrentContext.AllModels[idx].Mesh!);
 				}
 			}
 			alreadyCountedMeshes.Clear();
 
 			XanLogger.WriteLine("Number of unique meshes instantiated: " + meshCount);
+			XanLogger.WriteLine("Done loading this model!");
 			SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
 				BtnOpenModel.Enabled = true;
+				BtnSaveModel.Enabled = true;
+				BtnConfig.Enabled = true;
 			}, null);
 		}
 
@@ -651,24 +668,25 @@ namespace SKAnimatorTools {
 		#region StaticSetConfig & ConditionalConfig
 
 		private void SaveModel_PromptFileExport(object? sender, CancelEventArgs? e) {
-			bool hasStaticSetConfig = AllModels.Where(model => model.ExtraData.ContainsKey("StaticSetConfig")).Any();
-			bool hasConditionalConfig = AllModels.Where(model => model.ExtraData.ContainsKey("ConditionalConfigFlag")).Any();
+			bool hasStaticSetConfig = CurrentContext!.HasStaticSetConfig;
+			bool hasConditionalConfig = false;//CurrentContext.AllModels.Where(model => model.ExtraData.ContainsKey("ConditionalConfigFlag")).Any();
 			if (hasStaticSetConfig) {
 				// NEW: If their model includes a StaticSetConfig, we need to give them the choice to export all or one model.
 				DialogResult saveAllStaticSetModels = DialogResult.Cancel;
 				if (UserConfiguration.StaticSetExportMode == 0) {
+					// "Ask Me" mode
 					saveAllStaticSetModels = MessageBox.Show(
 						"The model you're saving contains one or more StaticSetConfigs! " +
-						"This type of model is used like a variant selection (it provides " +
-						"a set of variants, and it's intended that only one of the models " +
-						"is actually used by the system.\n\n" +
+						"Think of this type of model like a restaurant menu - it provides " +
+						"a set of options, and it's often intended that only one of the " +
+						"models is actually used.\n\n" +
 						"In some cases, you might want all variants (for instance, if you " +
-						"want to get a subtype of a gun such as the Antigua, you would export " +
-						"all of the models in the set and then pick the one you want in your " +
-						"3D editor). Likewise, there are cases in which " +
+						"want to get every subtype of a gun such as the Antigua, you would " +
+						"export all of the models in the set Likewise, there are cases in which " +
 						"you may want only one variant, for instance, in a CompoundConfig " +
 						"for a scene where it's using the set to select a specific tile or " +
 						"prop.\n\n" +
+						"With that in mind...\n" +
 						"Would you like to export ALL of the models within the StaticSetConfigs?",
 						"Export All StaticSetConfig components?",
 						MessageBoxButtons.YesNoCancel,
@@ -684,22 +702,7 @@ namespace SKAnimatorTools {
 				}
 
 				bool onlyExportActive = saveAllStaticSetModels == DialogResult.No;
-				foreach (Model3D model in AllModels) {
-					/*
-					model.ExtraData["SkipExport"] = false; // This is important because if we change any data, we want to clear this out and restart from scratch.
-					StaticSetConfig associatedStaticSet = (StaticSetConfig)model.ExtraData.GetOrDefault("StaticSetConfig", null);
-					if (associatedStaticSet != null) {
-						string targetModel = (string)model.ExtraData.GetOrDefault("StaticSetEntryName", null);
-						bool isTargetModel = associatedStaticSet.model == targetModel;
-
-						bool shouldExport = (isTargetModel && onlyExportActive) || !onlyExportActive;
-						// Should export if:
-						// - This is the target model and only export active is true, or
-						// - Only export active is false
-						model.ExtraData["SkipExport"] = !shouldExport;
-					}
-					*/
-				}
+				CurrentContext.UpdateExportabilityOfStaticSets(onlyExportActive);
 			}
 			if (hasConditionalConfig) {
 				int expType = 5;
@@ -711,14 +714,14 @@ namespace SKAnimatorTools {
 				}
 				if (expType == 5) {
 					// 5 = cancel
-					e.Cancel = true;
+					e!.Cancel = true;
 					return;
 				} else {
 					// 1 = all
 					// 2 = enabled
 					// 3 = disabled
 					// 4 = default
-					foreach (Model3D model in AllModels) {
+					foreach (Model3D model in CurrentContext.AllModels) {
 						if (model.ExtraData.GetOrDefault("ConditionalConfigFlag", null) != null) {
 							if (expType != 1) {
 								bool isDefault = (bool)model.ExtraData.GetOrDefault("ConditionalConfigDefault", false)! == true;
