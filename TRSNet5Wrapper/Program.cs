@@ -11,7 +11,7 @@ namespace ThreeRingsSharp {
 
 		static void Main(string[] args) {
 			FileInfo target = new FileInfo(RSRC + @"character\npc\monster\gremlin\null\model.dat");
-			ShadowClass grem = MasterDataExtractor.Open(target, null);
+			ShadowClass grem = (ShadowClass)MasterDataExtractor.Open(target, null);
 			ReadFileContext ctx = new ReadFileContext(target);
 			ConfigHandlers.ModelConfigs.ArticulatedConfig.ReadData(ctx, grem);
 			foreach (Model3D model in ctx.AllModels) {
