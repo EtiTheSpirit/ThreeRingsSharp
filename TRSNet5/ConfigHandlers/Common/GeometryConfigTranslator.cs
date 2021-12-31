@@ -1,9 +1,11 @@
 ﻿using OOOReader.Reader;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ThreeRingsSharp.Utilities;
 using ThreeRingsSharp.XansData;
 using ThreeRingsSharp.XansData.Extensions;
 using ThreeRingsSharp.XansData.Structs;
@@ -12,7 +14,7 @@ using static ThreeRingsSharp.XansData.Armature;
 namespace ThreeRingsSharp.ConfigHandlers.Common {
 	public static class GeometryConfigTranslator {
 
-		public static Model3D ToModel3D(ShadowClass geometryConfig, string geometryIndex, Node? rootNode) {
+		public static Model3D ToModel3D(ReadFileContext ctx, ShadowClass geometryConfig, string geometryIndex, Node? subRootNodeForMesh) {
 			geometryConfig.AssertIsInstanceOf("com.threerings.opengl.geometry.config.GeometryConfig");
 
 			Model3D model = new Model3D();
@@ -29,7 +31,7 @@ namespace ThreeRingsSharp.ConfigHandlers.Common {
 				bool isIndexed = geometryConfig.IsA("com.threerings.opengl.geometry.config.GeometryConfig$IndexedStored");
 				bool isSkinned = geometryConfig.IsA("com.threerings.opengl.geometry.config.GeometryConfig$SkinnedIndexedStored");
 
-				short[]? indexArray = isIndexed ? geometryConfig["indices"] : null; // Will never be ShortBuffer - those are read as arrays in OOOReader
+				short[]? indexArray = isIndexed ? geometryConfig["indices"] : null; // Will never be ShortBuffer - those are read as arrays in OOOReader, not java.whatever.ShortBuffer
 				string[]? boneNameArray = isSkinned ? geometryConfig["bones"] : null;
 
 				int vtxCount = vertexArray["floatArray"]!.Length * 4 / vertexArray.GetNumericField<int>("stride");
@@ -81,18 +83,14 @@ namespace ThreeRingsSharp.ConfigHandlers.Common {
 
 					existingMeshData.HasBoneData = true;
 
-					if (rootNode == null) {
+					if (subRootNodeForMesh == null) {
 						// The model supplied no root node. This can happen for implementations (e.g. StaticConfig) that has a GeometryConfig
 						// that is skinned.
 						// PRESUMABLY this means that it uses an external reference for its root node (e.g. the knight model has a common root)
 						// But in my case, I really can't read that right now.
 						existingMeshData.UsesExternalRoot = true;
 					} else {
-
-						// TODO: Find cause of issue causing bone matrices to be all wonky, probably related to invreftransform?
-						// Wasn't a problem in the original TRS, so check Matrix4f
-
-						existingMeshData.SetBones(rootNode);
+						existingMeshData.SetBones(subRootNodeForMesh);
 					}
 
 				} else {
@@ -116,7 +114,11 @@ namespace ThreeRingsSharp.ConfigHandlers.Common {
 				existingMeshData.Indices.SetFrom(indices);
 				existingMeshData.ConstructGroups();
 			}
-			model.Mesh = existingMeshData!;
+			if (existingMeshData != null) {
+				model.Mesh = existingMeshData;
+			} else {
+				Debugger.Break();
+			}
 			return model;
 		}
 
