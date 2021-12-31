@@ -12,7 +12,7 @@ using XDataTree.TreeElements.Interop;
 namespace XDataTree {
 
 	/// <summary>
-	/// Represents an element in a data tree.
+	/// Represents an element in a data tree in its most minimal form.
 	/// </summary>
 	public abstract class TreeElement {
 
@@ -55,7 +55,7 @@ namespace XDataTree {
 		public virtual bool IsEditable { get; protected set; } = false;
 
 		/// <summary>
-		/// Only available after calling <see cref="ConvertToNode"/>, this is the equivalent <see cref="TreeNode"/>
+		/// Only available after calling <see cref="ConvertToNode"/>, this is the equivalent <see cref="TreeNode"/> for use in a WinForms based application.
 		/// </summary>
 		public TreeNode? EquivalentNode { get; private set; }
 

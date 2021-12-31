@@ -8,7 +8,8 @@
             <summary>
             An enum that represents the available icons in the data tree. Certain images are not part of the stock Silk image package.<para/>
             Silk Images come from https://famfamfam.com/ <para/>
-            To determine the icon of a TreeNode, simply cast one of these enums to an int and set ImageIndex to the int value.
+            To determine the icon of a TreeNode, simply cast one of these enums to an int and set ImageIndex to the int value. As such, this requires that the indices
+            of images in the TreeNode (see WinForms editor) match up to these.
             </summary>
         </member>
         <member name="F:XDataTree.Data.SilkImage.Generic">
@@ -208,12 +209,12 @@
         </member>
         <member name="F:XDataTree.Data.SilkImage.None">
             <summary>
-            A transparent space.
+            A transparent space. Note that it is not advised to use this when no icon is applicable. Consider using <see cref="F:XDataTree.Data.SilkImage.Generic"/> instead.
             </summary>
         </member>
         <member name="T:XDataTree.TreeElement">
             <summary>
-            Represents an element in a data tree.
+            Represents an element in a data tree in its most minimal form.
             </summary>
         </member>
         <member name="F:XDataTree.TreeElement.Children">
@@ -254,7 +255,7 @@
         </member>
         <member name="P:XDataTree.TreeElement.EquivalentNode">
             <summary>
-            Only available after calling <see cref="M:XDataTree.TreeElement.ConvertToNode"/>, this is the equivalent <see cref="T:System.Windows.Forms.TreeNode"/>
+            Only available after calling <see cref="M:XDataTree.TreeElement.ConvertToNode"/>, this is the equivalent <see cref="T:System.Windows.Forms.TreeNode"/> for use in a WinForms based application.
             </summary>
         </member>
         <member name="M:XDataTree.TreeElement.#ctor(XDataTree.Data.SilkImage)">
@@ -326,7 +327,8 @@
         </member>
         <member name="T:XDataTree.TreeElements.GenericElement">
             <summary>
-            A generic <see cref="T:XDataTree.TreeElement"/> containing text and an icon. Can contain child nodes.
+            A generic <see cref="T:XDataTree.TreeElement"/> containing text and an icon. Can contain child nodes. 
+            It is best compared to a folder, with no special functionality on its own.
             </summary>
         </member>
         <member name="P:XDataTree.TreeElements.GenericElement.Text">
@@ -377,12 +379,13 @@
         </member>
         <member name="P:XDataTree.TreeElements.Interop.EventHandlingTreeNode.OnActivated">
             <summary>
-            An action that will occur when this node is double clicked, or the return key is pressed on it.
+            An action that will occur when this node is double clicked, or when the return key is pressed on it.
             </summary>
         </member>
         <member name="T:XDataTree.TreeElements.KeyValueContainerElement">
             <summary>
-            A container for one or more <see cref="T:XDataTree.TreeElements.KeyValueElement"/>s.
+            A container for one or more <see cref="T:XDataTree.TreeElements.KeyValueElement"/>s. This is primarily useful for cases where bulk-setting a lot of key/value pairs is necessary
+            due to its inclusion of dedicated methods to handle these cases.
             </summary>
         </member>
         <member name="P:XDataTree.TreeElements.KeyValueContainerElement.Text">
@@ -443,7 +446,9 @@
         </member>
         <member name="T:XDataTree.TreeElements.KeyValueElement">
             <summary>
-            A "key-value" element contains a dedicated <see cref="P:XDataTree.TreeElements.KeyValueElement.Key"/> and <see cref="P:XDataTree.TreeElements.KeyValueElement.Value"/> that enforces certain text-based parameters. It cannot contain child nodes, but in turn, can optionally display its value as a child element.
+            A "key-value" element contains dedicated <see cref="P:XDataTree.TreeElements.KeyValueElement.Key"/> and <see cref="P:XDataTree.TreeElements.KeyValueElement.Value"/> properties that both enforce certain text-based parameters. 
+            It cannot contain child nodes, but in turn, can optionally display its value as a child element. To create a list of many key/value pairs together,
+            consider using <see cref="T:XDataTree.TreeElements.KeyValueContainerElement"/>.
             </summary>
         </member>
         <member name="P:XDataTree.TreeElements.KeyValueElement.ValueHolder">
@@ -485,6 +490,31 @@
             <param name="value">The value to display.</param>
             <param name="editable">Whether or not this is intended to be edited, which makes the text show in blue with an underline.</param>
             <param name="icon">The icon to use on this node.</param>
+        </member>
+        <member name="T:XDataTree.TreeElements.RootSubstituteElement">
+            <summary>
+            A <see cref="T:XDataTree.TreeElement"/> that serves as a temporary "root node". It only supports child objects. Attempting to index any other properties or convert it to a node
+            will raise <see cref="T:System.NotSupportedException"/>
+            </summary>
+        </member>
+        <member name="P:XDataTree.TreeElements.RootSubstituteElement.Text">
+            <summary>
+            Cannot be used in <see cref="T:XDataTree.TreeElements.RootSubstituteElement"/> instances.
+            Both <see langword="get"/> and <see langword="set"/> raise <see cref="T:System.NotSupportedException"/>.
+            </summary>
+        </member>
+        <member name="P:XDataTree.TreeElements.RootSubstituteElement.Tooltip">
+            <inheritdoc cref="P:XDataTree.TreeElements.RootSubstituteElement.Text"/>
+        </member>
+        <member name="P:XDataTree.TreeElements.RootSubstituteElement.CanContainChildren">
+            <summary>
+            In <see cref="T:XDataTree.TreeElements.RootSubstituteElement"/>, this is always <see langword="true"/>.
+            </summary>
+        </member>
+        <member name="P:XDataTree.TreeElements.RootSubstituteElement.IsEditable">
+            <summary>
+            In <see cref="T:XDataTree.TreeElements.RootSubstituteElement"/>, this is always <see langword="false"/>.
+            </summary>
         </member>
         <member name="M:XDataTree.TreeElements.RootSubstituteElement.AddToTreeView(System.Windows.Forms.TreeView)">
             <summary>

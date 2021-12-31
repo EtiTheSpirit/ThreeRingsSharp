@@ -8,7 +8,8 @@ using XDataTree.Data;
 namespace XDataTree.TreeElements {
 
 	/// <summary>
-	/// A generic <see cref="TreeElement"/> containing text and an icon. Can contain child nodes.
+	/// A generic <see cref="TreeElement"/> containing text and an icon. Can contain child nodes. 
+	/// It is best compared to a folder, with no special functionality on its own.
 	/// </summary>
 	public class GenericElement : TreeElement {
 

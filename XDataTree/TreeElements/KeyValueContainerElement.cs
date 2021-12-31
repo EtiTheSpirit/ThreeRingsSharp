@@ -9,7 +9,8 @@ using XDataTree.Data;
 namespace XDataTree.TreeElements {
 
 	/// <summary>
-	/// A container for one or more <see cref="KeyValueElement"/>s.
+	/// A container for one or more <see cref="KeyValueElement"/>s. This is primarily useful for cases where bulk-setting a lot of key/value pairs is necessary
+	/// due to its inclusion of dedicated methods to handle these cases.
 	/// </summary>
 	public class KeyValueContainerElement : TreeElement {
 

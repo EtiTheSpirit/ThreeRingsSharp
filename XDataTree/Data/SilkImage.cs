@@ -4,7 +4,8 @@ namespace XDataTree.Data {
 	/// <summary>
 	/// An enum that represents the available icons in the data tree. Certain images are not part of the stock Silk image package.<para/>
 	/// Silk Images come from https://famfamfam.com/ <para/>
-	/// To determine the icon of a TreeNode, simply cast one of these enums to an int and set ImageIndex to the int value.
+	/// To determine the icon of a TreeNode, simply cast one of these enums to an int and set ImageIndex to the int value. As such, this requires that the indices
+	/// of images in the TreeNode (see WinForms editor) match up to these.
 	/// </summary>
 	public enum SilkImage {
 		/// <summary>
@@ -30,7 +31,7 @@ namespace XDataTree.Data {
 		/// <summary>
 		/// A wooden box representing an entire model. Intended to represent a model.
 		/// </summary>
-		[Obsolete("Use a specific image for a given model, or SilkImage.Generic if a model does not have an image.")] Model,
+		Model,
 
 		/// <summary>
 		/// A set of three bricks, each with a unique color. Intended to represent a set of several models grouped together.
@@ -203,8 +204,8 @@ namespace XDataTree.Data {
 		RedTag,
 
 		/// <summary>
-		/// A transparent space.
+		/// A transparent space. Note that it is not advised to use this when no icon is applicable. Consider using <see cref="Generic"/> instead.
 		/// </summary>
-		[Obsolete("Using an empty icon is not advised. Consider using SilkImage.Generic instead.")] None
+		None
 	}
 }

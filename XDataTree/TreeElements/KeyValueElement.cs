@@ -10,7 +10,9 @@ using XDataTree.Data;
 namespace XDataTree.TreeElements {
 
 	/// <summary>
-	/// A "key-value" element contains a dedicated <see cref="Key"/> and <see cref="Value"/> that enforces certain text-based parameters. It cannot contain child nodes, but in turn, can optionally display its value as a child element.
+	/// A "key-value" element contains dedicated <see cref="Key"/> and <see cref="Value"/> properties that both enforce certain text-based parameters. 
+	/// It cannot contain child nodes, but in turn, can optionally display its value as a child element. To create a list of many key/value pairs together,
+	/// consider using <see cref="KeyValueContainerElement"/>.
 	/// </summary>
 	public class KeyValueElement : TreeElement {
 

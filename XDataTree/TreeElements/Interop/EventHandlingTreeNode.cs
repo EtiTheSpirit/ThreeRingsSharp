@@ -34,7 +34,7 @@ namespace XDataTree.TreeElements.Interop {
 		public Action<SynchronizationContext?, object>? OnDeselected { get; set; }
 
 		/// <summary>
-		/// An action that will occur when this node is double clicked, or the return key is pressed on it.
+		/// An action that will occur when this node is double clicked, or when the return key is pressed on it.
 		/// </summary>
 		public Action<SynchronizationContext?, object>? OnActivated { get; set; }
 
