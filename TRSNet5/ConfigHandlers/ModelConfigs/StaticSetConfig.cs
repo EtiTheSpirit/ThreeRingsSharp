@@ -56,7 +56,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 				ShadowClass[] visible = (ShadowClass[])((ShadowClass)meshInfo.Value)["visible"]!;
 				foreach (ShadowClass visMesh in visible) {
 					meshTitle += $"-Submesh[{idx}]";
-					Model3D meshToModel = GeometryConfigTranslator.ToModel3D(visMesh["geometry"], fullDepthName + meshTitle, null);
+					Model3D meshToModel = GeometryConfigTranslator.ToModel3D(ctx, visMesh["geometry"], fullDepthName + meshTitle, ctx.CurrentAttachmentNode?.BaseNode);
 					meshToModel.Transform.ComposeSelf(ctx.CurrentSceneTransform);
 					ctx.RegisterStaticSetVariantModel(staticSetImpl, meshInfo.Key.ToString() ?? "null", meshToModel);
 

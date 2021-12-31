@@ -48,7 +48,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			string fullDepthName = RsrcDirectoryTool.GetDirectoryDepth(ctx.File, -1);
 			foreach (ShadowClass visMesh in visibleMeshes) {
 				string meshTitle = $"-Submesh[{idx}]";
-				Model3D meshToModel = GeometryConfigTranslator.ToModel3D(visMesh["geometry"], fullDepthName + meshTitle, null);
+				Model3D meshToModel = GeometryConfigTranslator.ToModel3D(ctx, visMesh["geometry"], fullDepthName + meshTitle, ctx.CurrentAttachmentNode?.BaseNode);
 				meshToModel.Transform.ComposeSelf(ctx.CurrentSceneTransform);
 
 				// TODO: Textures

@@ -24,7 +24,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 
 			List<string> treeTextures = new List<string>();
 			// List<string> treeMeshes = new List<string>();
-			if (compoundImpl["materialMappings"] is ShadowClass[] mtMaps) {
+			if (compoundImpl.TryGetField("materialMappings", out object? mtMapsObj) && mtMapsObj is ShadowClass[] mtMaps) {
 				foreach (ShadowClass mtlClass in mtMaps!) {
 					treeTextures.Add(mtlClass["texture"]!);
 				}
@@ -41,8 +41,10 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			#endregion
 
 			foreach (ShadowClass component in models) {
-				ConfigReference cfgRef = new ConfigReference(component["model"]!);
-				MasterDataExtractor.ExtractFrom(ctx, cfgRef);
+				if (component.TryGetField("model", out object? mdlObj) && mdlObj is ShadowClass mdlRef) {
+					ConfigReference cfgRef = new ConfigReference(mdlRef);
+					MasterDataExtractor.ExtractFrom(ctx, cfgRef);
+				}
 			}
 
 			ctx.Pop();

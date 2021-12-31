@@ -33,8 +33,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			#endregion
 
 			foreach (ShadowClass sc in modelCfgRef) {
-				ShadowClass? cfgRef = sc["model"];
-				if (cfgRef != null) {
+				if (sc["model"] is ShadowClass cfgRef) {
 					ConfigReference realReference = new ConfigReference(cfgRef);
 					MasterDataExtractor.ExtractFrom(ctx, realReference, $"Scheme={sc["scheme"]!}");
 				}
