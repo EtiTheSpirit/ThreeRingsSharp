@@ -96,14 +96,19 @@ namespace ThreeRingsSharp.XansData {
 		protected Armature(Node node) {
 			Name = node.Name;
 			BaseNode = node;
+			node.RealArmature = this;
 		}
 
 		/// <summary>
-		/// Given a <see cref="Node"/> from an ArticulatedConfig, this will translates the <see cref="Node"/> and all its <see cref="Node.Children"/> into <see cref="Armature"/>s.
+		/// Given a <see cref="Node"/> from an ArticulatedConfig, this will translates the <see cref="Node"/> and all its <see cref="Node.Children"/> into <see cref="Armature"/>s.<para/>
+		/// If the given <see cref="Node"/> has already been transformed using this method, it will return the previously created <see cref="Armature"/>.
 		/// </summary>
 		/// <param name="rootNode"></param>
 		/// <returns></returns>
 		public static Armature ConstructHierarchyFromNode(Node rootNode) {
+			if (rootNode.RealArmature != null) {
+				return rootNode.RealArmature;
+			}
 			Armature fromRoot = new Armature(rootNode);
 			IterateChildren(fromRoot, rootNode);
 			return fromRoot;
@@ -150,6 +155,9 @@ namespace ThreeRingsSharp.XansData {
 
 		#region Nodes
 
+		/// <summary>
+		/// An intermediary stage from <see cref="ShadowClass"/> to <see cref="RealArmature"/> that is easier to modify in early stages of conversion.
+		/// </summary>
 		public class Node {
 			/// <summary>
 			/// The name of this node.
@@ -172,16 +180,21 @@ namespace ThreeRingsSharp.XansData {
 			public Transform3D InverseReferenceTransform { get; set; }
 
 			/// <summary>
+			/// The <see cref="Armature"/> that has been created from this <see cref="Node"/>, granted that such has been done.
+			/// </summary>
+			public Armature? RealArmature { get; internal set; }
+
+			/// <summary>
 			/// Construct a new node with the given name, transform, and children.
 			/// </summary>
 			/// <param name="name"></param>
 			/// <param name="transform"></param>
 			/// <param name="children"></param>
-			public Node(string name, Transform3D transform, Node[] children) {
+			public Node(string name, Transform3D transform, Node[]? children = null) {
 				Name = name;
 				Transform = transform;
-				Children = children;
-				InverseReferenceTransform = new Transform3D(Transform3D.GENERAL);
+				Children = children ?? Array.Empty<Node>();
+				InverseReferenceTransform = Transform3D.NewGeneral();
 			}
 
 			/// <summary>

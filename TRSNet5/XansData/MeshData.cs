@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OOOReader.Utility.Mathematics;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -13,31 +14,27 @@ namespace ThreeRingsSharp.XansData {
 	/// In order to prevent formats that support unqiue objects from exporting the same mesh more than once, this class is used.<para/>
 	/// This allows multiple objects to represent the same mesh data rather than recreating it for every individual instance of the model.
 	/// </summary>
-	public class MeshData : IDisposable, ICloneable<MeshData> {
+	public sealed class MeshData : IDisposable, ICloneable<MeshData> {
 
-		protected internal bool Disposed = false;
+		private bool Disposed = false;
 
 		/// <summary>
 		/// A binding from a <see cref="string"/> identifier to a <see cref="MeshData"/>. This can be used to find existing mesh data for a model.
 		/// </summary>
-		public static IReadOnlyDictionary<string, MeshData> MeshDataBindings => _MeshDataBindings;
-		private static readonly Dictionary<string, MeshData> _MeshDataBindings = new Dictionary<string, MeshData>();
+		public static IReadOnlyDictionary<string, MeshData> MeshDataBindings => _meshDataBindings;
+		private static readonly Dictionary<string, MeshData> _meshDataBindings = new Dictionary<string, MeshData>();
 
 		/// <summary>
 		/// A list of every <see cref="MeshData"/> that has been instantiated. Unlike <see cref="MeshDataBindings"/>, should any meshes have the same name (which will not happen under normal circumstances), this will store all instances.
 		/// </summary>
-		public static IReadOnlyList<MeshData> NonUniqueMeshDataInstances => _NonUniqueMeshDataInstances.AsReadOnly();
-		private static readonly List<MeshData> _NonUniqueMeshDataInstances = new List<MeshData>();
+		public static IReadOnlyList<MeshData> NonUniqueMeshDataInstances => _nonUniqueMeshDataInstances.AsReadOnly();
+		private static readonly List<MeshData> _nonUniqueMeshDataInstances = new List<MeshData>();
 
 		/// <summary>
 		/// A list of <see cref="Model3D"/> instances that reference this mesh.
 		/// </summary>
-		internal readonly List<Model3D> _Users = new List<Model3D>();
-
-		/// <summary>
-		/// A list of <see cref="Model3D"/> instances that reference this mesh.
-		/// </summary>
-		public IReadOnlyList<Model3D> Users => _Users;
+		public IReadOnlyList<Model3D> Users => _users;
+		internal readonly List<Model3D> _users = new List<Model3D>();
 
 		/// <summary>
 		/// They key in <see cref="MeshDataBindings"/> that corresponds to this <see cref="MeshData"/>.
@@ -157,17 +154,21 @@ namespace ThreeRingsSharp.XansData {
 		/// <param name="name">The name to assign.</param>
 		/// <exception cref="ArgumentNullException">If <paramref name="name"/> is null.</exception>
 		public MeshData(string name) {
-			Name = name ?? throw new ArgumentNullException("name");
-			_MeshDataBindings[name] = this;
-			_NonUniqueMeshDataInstances.Add(this);
+			Name = name ?? throw new ArgumentNullException(nameof(name));
+			_meshDataBindings[name] = this;
+			_nonUniqueMeshDataInstances.Add(this);
 		}
 
 		/// <summary>
-		/// Sets <see cref="Skeleton"/> and populates <see cref="AllBones"/>.
+		/// Sets <see cref="Skeleton"/> and populates <see cref="AllBones"/> for this specific mesh.
 		/// </summary>
 		/// <param name="root"></param>
 		public void SetBones(Node root) => SetBones(Armature.ConstructHierarchyFromNode(root));
 
+		/// <summary>
+		/// Sets <see cref="Skeleton"/> and populates <see cref="AllBones"/> for this specific mesh.
+		/// </summary>
+		/// <param name="root"></param>
 		public void SetBones(Armature root) {
 			AllBones.Clear();
 			Skeleton = root;
@@ -210,7 +211,7 @@ namespace ThreeRingsSharp.XansData {
 		/// <returns></returns>
 		/// <exception cref="ObjectDisposedException">If this <see cref="MeshData"/> has been disposed.</exception>
 		public VertexGroup? GetVertexGroupByName(string name) {
-			if (Disposed) throw new ObjectDisposedException("MeshData");
+			if (Disposed) throw new ObjectDisposedException($"{nameof(MeshData)} [{Name}]");
 			return VertexGroups.Where(vtxGroup => vtxGroup.Name == name).FirstOrDefault();
 		}
 
@@ -219,7 +220,7 @@ namespace ThreeRingsSharp.XansData {
 		/// </summary>
 		/// <exception cref="ObjectDisposedException">If this <see cref="MeshData"/> has been disposed.</exception>
 		public void ConstructGroups() {
-			if (Disposed) throw new ObjectDisposedException("MeshData");
+			if (Disposed) throw new ObjectDisposedException($"{nameof(MeshData)} [{Name}]");
 			if (!HasBoneData) return;
 			VertexGroups.Clear(); // Just in case its a second+ call
 								  // To reiterate this from GeometryConfigTranslater since this is where looking back at the program is going to get confusing...
@@ -272,7 +273,7 @@ namespace ThreeRingsSharp.XansData {
 		/// </summary>
 		/// <exception cref="ObjectDisposedException">If this <see cref="MeshData"/> has been disposed.</exception>
 		public MeshData Clone() {
-			if (Disposed) throw new ObjectDisposedException("MeshData");
+			if (Disposed) throw new ObjectDisposedException($"{nameof(MeshData)} [{Name}]");
 
 			MeshData data = new MeshData(Name + "-Clone") {
 				Vertices = Vertices.ShallowClone().ToList(),
@@ -295,19 +296,31 @@ namespace ThreeRingsSharp.XansData {
 		}
 
 		/// <summary>
-		/// Calls <see cref="Dispose"/> if <see cref="_Users"/> is empty.
+		/// Constructs a new mesh with no vertices, indices, or other data associated with geometry. It can optionally have a dummy armature at the given <see cref="Transform3D"/> (unless the transform is <see langword="null"/>, from which no bone will be created. This mesh is 🅱️oneless.)
+		/// </summary>
+		/// <param name="name">The name of this mesh, and if a transform is given, its bone.</param>
+		/// <param name="transform">A transform for the location of this mesh's single empty bone, or null for no bone.</param>
+		/// <returns></returns>
+		public static MeshData Empty(string name, Transform3D? transform = null) {
+			return new MeshData(name) {
+				Skeleton = Armature.ConstructHierarchyFromNode(new Node(name, transform ?? Transform3D.NewGeneral()))
+			};
+		}
+
+		/// <summary>
+		/// Calls <see cref="Dispose"/> if <see cref="_users"/> is empty.
 		/// </summary>
 		internal void DisposeIfNoUsersExist() {
-			if (!Disposed && _Users.Count == 0) {
-				Debug.WriteLine($"MeshData [{Name}] has no users and will be destroyed (It was likely cloned, and this is the original).");
+			if (!Disposed && _users.Count == 0) {
+				Debug.WriteLine($"MeshData [{Name}] has no users and will be destroyed.");
 				Dispose();
 			}
 		}
 
 		public void Dispose() {
-			if (Disposed) throw new ObjectDisposedException("MeshData");
-			if (_MeshDataBindings.ContainsValue(this)) _MeshDataBindings.Remove(this);
-			_NonUniqueMeshDataInstances.Remove(this);
+			if (Disposed) return;
+			if (_meshDataBindings.ContainsValue(this)) _meshDataBindings.Remove(this);
+			_nonUniqueMeshDataInstances.Remove(this);
 			Vertices.Clear();
 			Normals.Clear();
 			UVs.Clear();

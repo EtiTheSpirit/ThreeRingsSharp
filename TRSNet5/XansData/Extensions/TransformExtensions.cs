@@ -26,7 +26,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 				rotation = trs.GetRotation();
 			}
 
-			return (translation ?? new Vector3f(), rotation ?? Quaternion.IDENTITY, scale ?? new Vector3f(trs.GetScale(), trs.GetScale(), trs.GetScale()));
+			return (translation ?? new Vector3f(), rotation ?? Quaternion.NewIdentity(), scale ?? new Vector3f(trs.GetScale(), trs.GetScale(), trs.GetScale()));
 		}
 
 		/// <summary>
@@ -58,8 +58,8 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <param name="trs">The <see cref="Transform3D"/> to extract the components from.</param>
 		/// <returns></returns>
 		public static (float[], float[], float[]) GetAllComponents(this Transform3D trs) {
-			Vector3f translation = trs.ExtractTranslation() ?? Vector3f.ZERO;
-			Quaternion rotation = trs.ExtractRotation() ?? Quaternion.IDENTITY;
+			Vector3f translation = trs.ExtractTranslation() ?? Vector3f.NewZero();
+			Quaternion rotation = trs.ExtractRotation() ?? Quaternion.NewIdentity();
 			Vector3f scale = trs.ExtractScale() ?? new Vector3f(trs.GetScale(), trs.GetScale(), trs.GetScale());
 			return (
 				new float[] { translation.X, translation.Y, translation.Z },

@@ -20,7 +20,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 	public class GLTFExporter : AbstractModelExporter {
 
 		/// <summary>
-		/// The unique header ID describing glTF files. This is the ASCII string "glTF".
+		/// The unique header ID describing glTF files. This is the ASCII string "glTF" in little endian order.
 		/// </summary>
 		public const uint MAGIC_NUMBER = 0x46546C67;
 
@@ -55,7 +55,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 		/// </summary>
 		/// <param name="imageFile"></param>
 		/// <returns></returns>
-		private (byte[], string) GetImageData(FileInfo imageFile) {
+		private static (byte[], string) GetImageData(FileInfo imageFile) {
 			Image img = Image.FromFile(imageFile.FullName);
 			ImageConverter conv = new ImageConverter();
 			string? mime = null;
@@ -65,7 +65,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				mime = "image/jpeg";
 			}
 			if (mime == null) {
-				throw new InvalidTypeException("Attempted to process an image file for glTF inclusion that isn't a jpeg or png!");
+				throw new ArgumentException("Attempted to process an image file for glTF inclusion that isn't a jp(e)g or png!");
 			}
 			return ((byte[])conv.ConvertTo(img, typeof(byte[])), mime);
 		}
@@ -147,8 +147,8 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 				// Go through all model references.
 				// If ALL of them have the SkipExport flag set to true (or, as this condition checks, none of them have it set to false),
 				// this mesh should be skipped as it has no active users.
-				bool skipMesh = meshData.Users.Where(model => (bool)model.ExtraData.GetOrDefault("SkipExport", false)! == false).Count() == 0;
-				if (skipMesh) continue;
+				bool hasMesh = meshData.Users.Any(model => (bool)model.ExtraData.GetOrDefault("SkipExport", false)! == false);
+				if (!hasMesh) continue;
 
 				if (meshData.HasBoneData) {
 
@@ -1019,7 +1019,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF {
 								if (key != null) {
 									(translation, rotation, scale) = key.Transform.GetAllComponents();
 								} else {
-									(translation, rotation, scale) = new Transform3D(Transform3D.IDENTITY).GetAllComponents();
+									(translation, rotation, scale) = Transform3D.NewIdentity().GetAllComponents();
 									// XanLogger.WriteLine("Unable to find animation keyframe for node " + currentKey + " -- This keyframe will be at the origin, which may cause malformed animations. Technically, this warning should never show, so if you are seeing this, please file an issue at https://github.com/EtiTheSpirit/ThreeRingsSharp/issues/new/choose", XanLogger.DEBUG, Color.DarkGoldenrod);
 								}
 								if (mode == 0) {

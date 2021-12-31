@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace SKAnimatorTools.PrimaryInterface {
-	public class XanLogger {
+	public static class XanLogger {
 
-		public static readonly XanLogger Instance = new XanLogger();
+		//public static readonly XanLogger Instance = new XanLogger();
 
-		private XanLogger() { }
+		//private XanLogger() { }
 
 		#region Main Data
 

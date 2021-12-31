@@ -63,7 +63,7 @@ namespace ThreeRingsSharp.XansData {
 		public FileInfo? Source { get; set; }
 
 		/// <summary>
-		/// The transformation to apply to the model data. By default, this is the identity transformation (so no transform).
+		/// The transformation to apply to the model data. By default, this is the identity transformation (at the origin, no rotation, 1x scale).
 		/// </summary>
 		public Transform3D Transform { get; set; } = new Transform3D();
 
@@ -78,11 +78,11 @@ namespace ThreeRingsSharp.XansData {
 				if (_Mesh != null) {
 					// Was existing, now it's being set to something else.
 					// This means we were using it, and now we aren't. Unregister.
-					_Mesh._Users.Remove(this);
+					_Mesh._users.Remove(this);
 					_Mesh.DisposeIfNoUsersExist();
 				}
 				if (value != null) {
-					value._Users.Add(this);
+					value._users.Add(this);
 				}
 				_Mesh = value;
 			}
@@ -171,7 +171,7 @@ namespace ThreeRingsSharp.XansData {
 			if (ProtectAgainstZeroScale) {
 				float fScale = Transform.GetScale();
 				Vector3f vScale = Transform.ExtractScale();
-				float vScaleLength = vScale.DistanceTo(Vector3f.ZERO);
+				float vScaleLength = vScale.DistanceTo(Vector3f.NewZero());
 				if (fScale == 0) {
 					if (vScaleLength != 0) {
 						Transform.SetScale(vScaleLength);
@@ -217,8 +217,8 @@ namespace ThreeRingsSharp.XansData {
 		/// Creates a new <see cref="Model3D"/> without any data and with its <see cref="IsEmptyObject"/> property set to true.
 		/// </summary>
 		/// <returns></returns>
-		public static Model3D NewEmpty() {
-			return new Model3D { IsEmptyObject = true };
+		public static Model3D Empty(string name, bool includeEmptyMesh = false, Transform3D? emptyMeshArmatureOffset = null) {
+			return new Model3D { Name = name, RawName = name, IsEmptyObject = true, Mesh = includeEmptyMesh ? MeshData.Empty(name, emptyMeshArmatureOffset) : null };
 		}
 	}
 }

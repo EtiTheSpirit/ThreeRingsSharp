@@ -70,7 +70,7 @@ namespace SKAnimatorTools.PrimaryInterface {
 					Target.SelectionStart = Target.TextLength;
 					Target.SelectionLength = 0;
 					if (cmp.Color != null) Target.SelectionColor = cmp.Color.Value.ToSystemColor();
-					if (cmp.BackgroundColor != null) Target.SelectionBackColor = cmp.BackgroundColor.Value.ToSystemColor();
+					// if (cmp.BackgroundColor != null) Target.SelectionBackColor = cmp.BackgroundColor.Value.ToSystemColor();
 					Target.SelectionFont = GetFontFrom(Target.Font, cmp.Bold, cmp.Italics, cmp.Underline, cmp.Strike);
 
 					Target.AppendText(cmp.Text);
