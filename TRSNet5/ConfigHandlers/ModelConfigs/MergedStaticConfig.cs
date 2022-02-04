@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.ConfigHandlers.Common;
 using ThreeRingsSharp.Utilities;
+using ThreeRingsSharp.Utilities.DataTree;
 using XDataTree.Data;
 using XDataTree.TreeElements;
 
@@ -38,6 +39,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			//staticTreeNode.Properties.Add(treeMeshRefs);
 			mergedTreeNode.Properties.Add(new KeyValueElement("Models", models.Length.ToString(), false, SilkImage.Static));
 			mergedTreeNode.Properties.Add(ModelConfig.SetupParametersForProperties(modelConfig));
+			mergedTreeNode.Properties.Add(ctx.CurrentSceneTransform.ToKVC());
 			#endregion
 
 			foreach (ShadowClass component in models) {
