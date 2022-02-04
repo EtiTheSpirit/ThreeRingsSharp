@@ -20,7 +20,7 @@ namespace XDataTree.TreeElements {
 		/// The object containing the possible values for this <see cref="KeyValueElement"/>, assuming it's editable.<para/>
 		/// In most cases, this is something like a StaticSetConfig's ShadowClass.
 		/// </summary>
-		public object ValueHolder { get; set; }
+		public object? ValueHolder { get; set; }
 
 		/// <summary>
 		/// The key for this element. Displays as a prefix in <see cref="Text"/>: <c>"Key: "</c>

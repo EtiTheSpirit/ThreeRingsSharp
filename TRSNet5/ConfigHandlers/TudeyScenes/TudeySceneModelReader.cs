@@ -18,8 +18,6 @@ namespace ThreeRingsSharp.ConfigHandlers.TudeyScenes {
 		// L A R G E   B O I   T E R R I T O R Y
 		// H  O  L  Y     S  H  I  T
 
-
-
 		public static void ReadData(ReadFileContext ctx, ShadowClass tudeySceneModel) {
 			tudeySceneModel.AssertIsInstanceOf("com.threerings.tudey.data.TudeySceneModel");
 			ShadowClass coordIntMapTiles = tudeySceneModel["_tiles"]!;
@@ -47,14 +45,16 @@ namespace ThreeRingsSharp.ConfigHandlers.TudeyScenes {
 
 			foreach (SceneEntry entry in objects) {
 				if (entry.IsEmpty) continue;
-				ShadowClass ptr = entry.Reference!.Resolve()!;
-				if (ptr.TryGetField("implementation", out ShadowClass? impl)) {
+				ShadowClass? ptr = entry.Reference!.Resolve();
+				if (ptr != null && ptr.TryGetField("implementation", out ShadowClass? impl)) {
 					if (impl!.TryGetField("model", out ShadowClass? cfgRefTile)) {
 						ConfigReference reference = new ConfigReference(cfgRefTile!);
 						ctx.CurrentSceneTransform.ComposeSelf(entry.Transform);
 						MasterDataExtractor.ExtractFrom(ctx, reference);
 						ctx.CurrentSceneTransform.ComposeSelf(entry.Transform.Invert());
 					}
+				} else {
+					Debug.WriteLine("Failed to resolve ConfigReference: " + entry.Reference.Name);
 				}
 			}
 

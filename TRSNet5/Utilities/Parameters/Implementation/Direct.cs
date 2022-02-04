@@ -50,7 +50,13 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 		public Direct(ShadowClass parameterizedConfig, ShadowClass shadow) : base(parameterizedConfig) {
 			shadow.AssertIsInstanceOf("com.threerings.config.Parameter$Direct");
 			Name = shadow["name"]!;
-			Paths = shadow["paths"]!;
+			object paths = shadow["paths"]!;
+			if (paths is ShadowClassArrayTemplate arrTemplate) {
+				// TODO: Figure out why this might happen.
+				Debug.WriteLine("Failed to read fully from direct due to uninitialized paths array.");
+				paths = arrTemplate.NewInstance();
+			}
+			Paths = (string[])paths;
 			List<DirectPointer> results = new List<DirectPointer>();
 			foreach (string path in Paths) {
 				results.Add(Traverse(path));

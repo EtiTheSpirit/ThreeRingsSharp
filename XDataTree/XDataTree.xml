@@ -67,6 +67,11 @@
             A picture of a speaker. Intended to represent a sound emitter object.
             </summary>
         </member>
+        <member name="F:XDataTree.Data.SilkImage.SoundWarning">
+            <summary>
+            A picture of a speaker with a warning icon in the lower right. Intended to represent the inability to load a sound.
+            </summary>
+        </member>
         <member name="F:XDataTree.Data.SilkImage.Attachment">
             <summary>
             A picture of an electric plug. Intended to represent an external object that attaches to another model in its current context, for instance, the Thwacker Gremlin model has an attachment for their hammer. The hammer should use this icon in this context.
@@ -82,9 +87,9 @@
             A picture of an arrow that diverges. Intended to represent an element that determines conditional attributes in gameplay, specifically a ConditionalConfig.
             </summary>
         </member>
-        <member name="F:XDataTree.Data.SilkImage.CameraShake">
+        <member name="F:XDataTree.Data.SilkImage.CameraBolt">
             <summary>
-            A picture of a camera with a small lightning bolt in the lower right corner. Intended to represent an element that causes the user's camera to shake in gameplay.
+            A picture of a camera with a small lightning bolt in the lower right corner. Intended to represent something that affects rendering in some way, or a visual effect.
             </summary>
         </member>
         <member name="F:XDataTree.Data.SilkImage.Generated">
@@ -177,6 +182,16 @@
             A 3x3 grid of blocks within square brackets [ ] that represents a transformation matrix, intended for Transform3D
             </summary>
         </member>
+        <member name="F:XDataTree.Data.SilkImage.Vector3">
+            <summary>
+            A row of three colored blocks, red, green, and blue for X, Y, and Z respectively. Intended to represent a Vector3f
+            </summary>
+        </member>
+        <member name="F:XDataTree.Data.SilkImage.Vector4">
+            <summary>
+            A row of three colored blocks, red, green, blue, and magenta for X, Y, Z, and W respectively. Intended to represent a Vector4f or Quaternion
+            </summary>
+        </member>
         <member name="F:XDataTree.Data.SilkImage.Missing">
             <summary>
             A transparent red building brick intended to represent a missing asset.
@@ -240,7 +255,7 @@
         </member>
         <member name="P:XDataTree.TreeElement.Tooltip">
             <summary>
-            A tooltip to display on this.
+            The tooltip to display on this when the mouse hovers over it.
             </summary>
         </member>
         <member name="P:XDataTree.TreeElement.CanContainChildren">

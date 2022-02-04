@@ -40,7 +40,7 @@ namespace XDataTree {
 		public abstract string Text { get; protected set; }
 
 		/// <summary>
-		/// A tooltip to display on this.
+		/// The tooltip to display on this when the mouse hovers over it.
 		/// </summary>
 		public virtual string Tooltip { get; set; }
 

@@ -64,6 +64,11 @@ namespace XDataTree.Data {
 		Sound,
 
 		/// <summary>
+		/// A picture of a speaker with a warning icon in the lower right. Intended to represent the inability to load a sound.
+		/// </summary>
+		SoundWarning,
+
+		/// <summary>
 		/// A picture of an electric plug. Intended to represent an external object that attaches to another model in its current context, for instance, the Thwacker Gremlin model has an attachment for their hammer. The hammer should use this icon in this context.
 		/// </summary>
 		Attachment,
@@ -79,9 +84,9 @@ namespace XDataTree.Data {
 		Conditional,
 
 		/// <summary>
-		/// A picture of a camera with a small lightning bolt in the lower right corner. Intended to represent an element that causes the user's camera to shake in gameplay.
+		/// A picture of a camera with a small lightning bolt in the lower right corner. Intended to represent something that affects rendering in some way, or a visual effect.
 		/// </summary>
-		CameraShake,
+		CameraBolt,
 
 		/// <summary>
 		/// A picture of a PC with a small plus symbol in the lower right corner. Intended to represent a model that is generated on the fly from a set of parameters.
@@ -172,6 +177,16 @@ namespace XDataTree.Data {
 		/// A 3x3 grid of blocks within square brackets [ ] that represents a transformation matrix, intended for Transform3D
 		/// </summary>
 		Matrix,
+
+		/// <summary>
+		/// A row of three colored blocks, red, green, and blue for X, Y, and Z respectively. Intended to represent a Vector3f
+		/// </summary>
+		Vector3,
+
+		/// <summary>
+		/// A row of three colored blocks, red, green, blue, and magenta for X, Y, Z, and W respectively. Intended to represent a Vector4f or Quaternion
+		/// </summary>
+		Vector4,
 
 		/// <summary>
 		/// A transparent red building brick intended to represent a missing asset.
