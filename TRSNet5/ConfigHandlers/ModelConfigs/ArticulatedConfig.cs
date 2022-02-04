@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.ConfigHandlers.Common;
 using ThreeRingsSharp.Utilities;
+using ThreeRingsSharp.Utilities.DataTree;
 using ThreeRingsSharp.Utilities.Parameters;
 using ThreeRingsSharp.Utilities.Parameters.Implementation;
 using ThreeRingsSharp.XansData;
@@ -44,10 +45,11 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			articulatedTreeNode.Properties.Add(treeMaterials);
 			articulatedTreeNode.Properties.Add(treeAnimationRefs);
 			articulatedTreeNode.Properties.Add(ModelConfig.SetupParametersForProperties(modelConfig));
+			articulatedTreeNode.Properties.Add(ctx.CurrentSceneTransform.ToKVC());
 			#endregion
 
 			ShadowClass[] skinnedVisibleMeshes = articulatedImpl["skin"]!["visible"]!;
-			// string depth1Name = RsrcDirectoryTool.GetDirectoryDepth(ctx.File);
+			//string depth1Name = RsrcDirectoryTool.GetDirectoryDepth(ctx.File);
 			string fullDepthName = RsrcDirectoryTool.GetDirectoryDepth(ctx.File, -1);
 			int idx = 0;
 
@@ -107,22 +109,22 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 		/// <param name="baseModelConfig">The <see cref="ShadowClass"/> that contained this <see cref="ArticulatedConfig"/>.</param>
 		/// <param name="articulatedConfigModel">A reference to the <see cref="ArticulatedConfig"/> that contains these nodes.</param>
 		/// <param name="parentNodeShadow">The parent node to iterate through.</param>
-		/// <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
+		/// <param name="baseTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
 		/// <param name="initialTransform"></param>
 		/// <param name="parentNode"></param>
 		/// <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
-		public static void RecursivelyIterateNodes(ReadFileContext ctx, ShadowClass baseModelConfig, ShadowClass articulatedConfigModel, ShadowClass parentNodeShadow, Transform3D latestTransform, Transform3D initialTransform, Armature parentNode, string fullDepthName) {
+		public static void RecursivelyIterateNodes(ReadFileContext ctx, ShadowClass baseModelConfig, ShadowClass articulatedConfigModel, ShadowClass parentNodeShadow, Transform3D baseTransform, Transform3D initialTransform, Armature parentNode, string fullDepthName) {
 			foreach (ShadowClass node in parentNodeShadow["children"]!) {
 				Transform3D nodeTransform = new Transform3D(node["transform"]!);
-				ProcessNode(ctx, node, baseModelConfig, latestTransform, parentNode, fullDepthName);
+				ProcessNode(ctx, node, baseModelConfig, baseTransform, parentNode, fullDepthName);
 
 				if (node["children"]!.Length > 0) {
-					RecursivelyIterateNodes(ctx, baseModelConfig, articulatedConfigModel, node, latestTransform.Compose(nodeTransform), initialTransform, parentNode, fullDepthName);
+					RecursivelyIterateNodes(ctx, baseModelConfig, articulatedConfigModel, node, baseTransform.Compose(nodeTransform), initialTransform, parentNode, fullDepthName);
 				}
 			}
 		}
 
-		private static Model3D ProcessNode(ReadFileContext ctx, ShadowClass node, ShadowClass baseModelConfig, Transform3D latestTransform, Armature parentNode, string fullDepthName) {
+		private static Model3D? ProcessNode(ReadFileContext ctx, ShadowClass node, ShadowClass baseModelConfig, Transform3D baseTransform, Armature parentNode, string fullDepthName) {
 			string nodeName = node["name"]!;
 			Transform3D nodeTransform = new Transform3D(node["transform"]!);
 			if (node.IsA("com.threerings.opengl.model.config.ArticulatedConfig$MeshNode")) {
@@ -139,7 +141,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 					// Basically, this node in and of itself has a mesh. It's "skeleton" is actually just a single armature that controls this single mesh.
 					// Decided to put this comment here after being like "what the hell am I doing with a new root node for everything?" so that you don't have to.
 					Model3D meshToModel = GeometryConfigTranslator.ToModel3D(ctx, mesh["geometry"], fullDepthName + meshTitle, new Armature.Node(node));
-					meshToModel.Transform.ComposeSelf(latestTransform);
+					meshToModel.Transform.ComposeSelf(baseTransform);
 					meshToModel.Transform.ComposeSelf(nodeTransform);
 					meshToModel.RawName = nodeName;
 					Armature? skeleton = meshToModel.Mesh!.Skeleton;
@@ -154,13 +156,14 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 					ctx.AllModelsAndNodes.Add(meshToModel);
 					ctx.AllModels.Add(meshToModel);
 					return meshToModel;
+				} else {
+					return null;
 				}
 			}
 			string emptyTitle = "-Nodes[\"" + nodeName + "\"]";
-			Model3D emptyModel = Model3D.Empty(RsrcDirectoryTool.GetDirectoryDepth(ctx.File) + emptyTitle, true, Transform3D.NewGeneral());
-			emptyModel.Transform.ComposeSelf(latestTransform);
+			Model3D emptyModel = Model3D.Empty(RsrcDirectoryTool.GetDirectoryDepth(ctx.File, -1) + emptyTitle, true, Transform3D.NewIdentity());
+			emptyModel.Transform.ComposeSelf(baseTransform);
 			emptyModel.Transform.ComposeSelf(nodeTransform);
-			emptyModel.Mesh!.Skeleton!.Parent = parentNode;
 
 			ctx.AllModelsAndNodes.Add(emptyModel);
 			ctx.AllModels.Add(emptyModel);
