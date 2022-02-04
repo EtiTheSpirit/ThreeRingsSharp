@@ -68,7 +68,6 @@ namespace ThreeRingsSharp.Utilities.Parameters {
 				if (argsObj is Dictionary<object, object?>) {
 					args = (Dictionary<object, object?>)argsObj;
 				} else if (argsObj is ShadowClass argMapShadow) {
-					Debug.WriteLine("Unexpected ShadowClass in place of arguments. Did initialization fail for something?");
 					if (argMapShadow.IsA("com.threerings.config.ArgumentMap") && !argMapShadow.IsTemplate) {
 						if (argMapShadow.TryGetField("_entries", out object? entries)) {
 							if (entries is Dictionary<object, object?> dict) {

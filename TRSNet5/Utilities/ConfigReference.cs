@@ -48,7 +48,7 @@ namespace ThreeRingsSharp.Utilities {
 		public Dictionary<string, object?> Arguments { get; } = new Dictionary<string, object?>();
 
 		/// <summary>
-		/// The original <see cref="ShadowClass"/> whose <see cref="ShadowClass.Signature"/> is <c>com.threerings.config.ConfigReference</c>.
+		/// The original <see cref="ShadowClass"/> whose <see cref="AbstractShadowClassBase.Signature"/> is <c>com.threerings.config.ConfigReference</c>.
 		/// </summary>
 		private readonly ShadowClass Original;
 

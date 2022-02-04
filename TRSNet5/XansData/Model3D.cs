@@ -151,6 +151,10 @@ namespace ThreeRingsSharp.XansData {
 
 		public Model3D() { }
 
+		public Model3D(string name) {
+			Name = name;
+		}
+
 		/// <summary>
 		/// Exports this model in a given format, writing the data to the target <see cref="FileInfo"/>
 		/// </summary>
@@ -167,24 +171,9 @@ namespace ThreeRingsSharp.XansData {
 		/// </summary>
 		public void ApplyScaling() {
 			if (HasAppliedScaleCorrections) return;
-			// TODO: Is zero-scale protection even necessary? Probably not!
+			
 			if (ProtectAgainstZeroScale) {
-				float fScale = Transform.GetScale();
-				Vector3f vScale = Transform.ExtractScale();
-				float vScaleLength = vScale.DistanceTo(Vector3f.NewZero());
-				if (fScale == 0) {
-					if (vScaleLength != 0) {
-						Transform.SetScale(vScaleLength);
-					} else {
-						vScaleLength = 1;
-						Transform.SetScale(1);
-					}
-					XanLogger.WriteLine($"A MeshData had a uniform scale of 0. Protection was enabled, and it has been changed to {vScaleLength}.", XanLogger.DEBUG);
-				} else if (vScaleLength == 0) {
-					// fScale won't be 0 here since if it is, it'll go to the condition above instead.
-					Transform.GetMatrix().SetToScale(fScale);
-					XanLogger.WriteLine($"A MeshData had a matrix scale of 0. Protection was enabled, and it has been changed to {fScale} (on all axes).", XanLogger.DEBUG);
-				}
+				// Obsolete
 			}
 
 			HasAppliedScaleCorrections = true;

@@ -303,7 +303,7 @@ namespace ThreeRingsSharp.XansData {
 		/// <returns></returns>
 		public static MeshData Empty(string name, Transform3D? transform = null) {
 			return new MeshData(name) {
-				Skeleton = Armature.ConstructHierarchyFromNode(new Node(name, transform ?? Transform3D.NewGeneral()))
+				Skeleton = Armature.ConstructHierarchyFromNode(new Node(name, transform ?? Transform3D.NewIdentity()))
 			};
 		}
 

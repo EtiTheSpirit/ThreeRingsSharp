@@ -44,7 +44,7 @@
             <param name="baseModelConfig">The <see cref="T:OOOReader.Reader.ShadowClass"/> that contained this <see cref="T:ThreeRingsSharp.ConfigHandlers.ModelConfigs.ArticulatedConfig"/>.</param>
             <param name="articulatedConfigModel">A reference to the <see cref="T:ThreeRingsSharp.ConfigHandlers.ModelConfigs.ArticulatedConfig"/> that contains these nodes.</param>
             <param name="parentNodeShadow">The parent node to iterate through.</param>
-            <param name="latestTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
+            <param name="baseTransform">The latest transform that has been applied. This is used for recursive motion since nodes inherit the transform of their parent.</param>
             <param name="initialTransform"></param>
             <param name="parentNode"></param>
             <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
@@ -184,7 +184,7 @@
         </member>
         <member name="F:ThreeRingsSharp.Utilities.ConfigReference.Original">
             <summary>
-            The original <see cref="T:OOOReader.Reader.ShadowClass"/> whose <see cref="!:ShadowClass.Signature"/> is <c>com.threerings.config.ConfigReference</c>.
+            The original <see cref="T:OOOReader.Reader.ShadowClass"/> whose <see cref="P:OOOReader.Reader.AbstractShadowClassBase.Signature"/> is <c>com.threerings.config.ConfigReference</c>.
             </summary>
         </member>
         <member name="M:ThreeRingsSharp.Utilities.ConfigReference.#ctor(OOOReader.Reader.ShadowClass)">
@@ -498,6 +498,12 @@
             <summary>
             Whether or not any <see cref="T:ThreeRingsSharp.ConfigHandlers.ModelConfigs.StaticSetConfig"/> has ever been loaded. Expensive to reference.
             </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.Utilities.ReadFileContext.ComposeTransform(OOOReader.Utility.Mathematics.Transform3D)">
+            <summary>
+            An alias to <see cref="M:OOOReader.Utility.Mathematics.Transform3D.ComposeSelf(OOOReader.Utility.Mathematics.Transform3D)"/> (called on <see cref="P:ThreeRingsSharp.Utilities.ReadFileContext.CurrentSceneTransform"/>), but with zero-scale protection.
+            </summary>
+            <param name="toApplyToThis"></param>
         </member>
         <member name="M:ThreeRingsSharp.Utilities.ReadFileContext.Push``1(``0)">
             <summary>
@@ -861,10 +867,10 @@
         </member>
         <member name="T:ThreeRingsSharp.XansData.Extensions.EnumerableExtension">
             <summary>
-            Provides methods that are nice for <see cref="T:System.Collections.Generic.List`1"/>
+            Provides methods that provide specific necessary behavior for <see cref="T:System.Collections.Generic.IEnumerable`1"/> in TRS.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.MergeWith``2(System.Collections.Generic.Dictionary{``0,``1},System.Collections.Generic.Dictionary{``0,``1},System.Boolean)">
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.CreateNewMergedWith``2(System.Collections.Generic.Dictionary{``0,``1},System.Collections.Generic.Dictionary{``0,``1},System.Boolean)">
             <summary>
             Merges the two dictionaries together. This does not modify the dictionary this method is called on, and instead returns a new instance.
             </summary>
@@ -981,7 +987,6 @@
             Clones this <see cref="T:System.Collections.Generic.IEnumerable`1"/> into a new instance.
             If <typeparamref name="T"/> implements <see cref="T:System.ICloneable"/>, then the 
             <see cref="M:System.ICloneable.Clone"/> method will be called on each object.<para/>
-            
             This does not clone nested lists.
             </summary>
             <typeparam name="T">The type of the elements contained within the <see cref="T:System.Collections.Generic.List`1"/></typeparam>
@@ -1016,16 +1021,16 @@
             <returns></returns>
             <exception cref="T:System.IndexOutOfRangeException">Thrown if the given index is out of the range fo the array.</exception>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.ToUshortArray(System.Single[])">
+        <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.ToUInt16Array(System.Single[])">
             <summary>
-            A very specialized method designed specifically for <see cref="T:ThreeRingsSharp.ConfigHandlers.Common.GeometryConfigTranslator"/> which converts a float array to an int array.
+            A very specialized method designed specifically for <see cref="T:ThreeRingsSharp.ConfigHandlers.Common.GeometryConfigTranslator"/> which converts a <see cref="T:System.Single"/> array to a <see cref="T:System.UInt16"/> array.
             </summary>
             <param name="floatArray"></param>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.EnumerableExtension.CastValue``2(System.Collections.Generic.IEnumerable{``0})">
             <summary>
-            Casts value types in an enumerable.
+            Casts value types in an enumerable rather than reference types.
             </summary>
             <typeparam name="TSource"></typeparam>
             <typeparam name="TDestination"></typeparam>
@@ -1432,6 +1437,103 @@
             <param name="models"></param>
             <returns></returns>
         </member>
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.IGLTFExtension">
+            <summary>
+            Denotes a <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFObject"/> as an extension container.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.IGLTFExtension.ExtensionName">
+            <summary>
+            The name of this extension as defined by its specification.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual">
+            <summary>
+            <strong>This is an extension object that is not natively supported by glTF 2.0 Specification.</strong><para/>
+            Defined as <see href="https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_lights_punctual/README.md">KHR_lights_punctual</see>, this extension provides
+            a means of creating various dynamic light types in the scene.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.POINT">
+            <summary>
+            The type used for point lights. These emit in a 360 degree sphere, or, in all directions.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.SPOT">
+            <summary>
+            The type used for spot lights. These emit in a specific direction.
+            </summary>
+        </member>
+        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.DIRECTIONAL">
+            <summary>
+            The type used for directional lights. For Blender users, this is an area light.
+            </summary>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.FromLight(ThreeRingsSharp.XansData.Light)">
+            <summary>
+            Creates a new <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight"/> from a TRS <see cref="T:ThreeRingsSharp.XansData.Light"/> instance.
+            </summary>
+            <param name="light"></param>
+            <returns></returns>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.Name">
+            <summary>
+            The name of this light. Optional.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.Color">
+            <summary>
+            The color of this light in f32 R,G,B format. This is in linear space. Optional, default is [1, 1, 1] (white).
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.Intensity">
+            <summary>
+            The intensity of the light. Default is 1. For point and spot lights, this is in candela (lm/sr), but directional lights use lux (lm/m²)
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.Range">
+            <summary>
+            A hint defining the distance cutoff at which the light's intensity may be considered to have reached zero. Supported only on <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.SPOT"/> and <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.POINT"/>.
+            This is optional, and its default value is <see cref="F:System.Single.PositiveInfinity"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.Type">
+            <summary>
+            The type of light this is. Required, defaults to <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.POINT"/>.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.SpotlightSettings">
+            <summary>
+            The settings for the light. This is strictly used when <see cref="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.Type"/> is <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.SPOT"/>. It is ignored in all other cases.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.SpotSettings">
+            <summary>
+            A class representing spotlight settings.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.SpotSettings.InnerConeAngle">
+            <summary>
+            Angle, in radians, from the center of the spotlight where its falloff begins. Must be greater than or equal to 0 and less than <see cref="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.SpotSettings.OuterConeAngle"/>.
+            This property is validated when serializing. Its default value is 0.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.SpotSettings.OuterConeAngle">
+            <summary>
+            Angle, in radians, from the center of the spotlight where its falloff ends. This must be greater than <see cref="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLight.SpotSettings.InnerConeAngle"/> and less than or equal to pi/2.
+            This property is validated when serializing. Its default value is pi/4
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLightReference.LightObject">
+            <summary>
+            A reference to the light that created this <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLightReference"/>
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual.KHRLightReference.Light">
+            <summary>
+            The index of the light in the registry. This is defined by the <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.KHRLightsPunctual"/> instance that created it.
+            </summary>
+        </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFAccessor">
             <summary>
             Provides access to a <see cref="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFBufferView"/>.
@@ -1734,7 +1836,7 @@
             The child nodes of this node.
             </summary>
         </member>
-        <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.ExportMatrix">
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.ExportMatrix">
             <summary>
             Set this to true to export <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Matrix"/>, and false to export <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Translation"/>, <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Rotation"/>, and <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Scale"/>.
             </summary>
@@ -1777,6 +1879,11 @@
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFObject.ThisIndex">
             <summary>
             Used as a tricky method of referencing this accessor in a node. This is the index of the accessor itself in the json data.
+            </summary>
+        </member>
+        <member name="P:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFObject.Extensions">
+            <summary>
+            Any extensions to this object. The support of extensions in various applications is not guaranteed and so extensions should not be relied upon for core features.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFPBRBaseColor">
@@ -1886,7 +1993,7 @@
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFScene">
             <summary>
-            Represents an entire secene.
+            Represents an entire scene.
             </summary>
         </member>
         <member name="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFScene.Name">
@@ -1950,6 +2057,11 @@
             </summary>
             <returns></returns>
             <exception cref="T:ThreeRingsSharp.XansData.Exceptions.InvalidTypeException">If the user tries to create a <see cref="T:ThreeRingsSharp.XansData.IO.AbstractModelExporter"/> itself.</exception>
+        </member>
+        <member name="T:ThreeRingsSharp.XansData.Light">
+            <summary>
+            Represents a light.
+            </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.MeshData">
             <summary>
@@ -2140,7 +2252,7 @@
             If <see langword="true"/>, any models that have a scale of zero will have their scale corrected. Cases where models are dubbed incorrect are:<para/>
             - The matrix's scale (a <see cref="T:OOOReader.Utility.Mathematics.Vector3f"/>) only has its X value populated, Y and Z are zero. Y and Z will be set to X (this happens for cases where uniform scale is stored as a Vector3f)<para/>
             - The matrix's scale has a magnitude of zero.<para/>
-            - The <see cref="M:OOOReader.Utility.Mathematics.Transform3D.GetScale"/> method returns zero, in which case, if the matrix has a non-zero uniform scale it will be set to this, or it will be directly set to 1.
+            - The <see cref="!:Transform3D.GetScale()"/> method returns zero, in which case, if the matrix has a non-zero uniform scale it will be set to this, or it will be directly set to 1.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.Name">

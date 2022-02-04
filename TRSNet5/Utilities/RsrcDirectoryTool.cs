@@ -71,7 +71,7 @@ namespace ThreeRingsSharp.Utilities {
 		/// <exception cref="ArgumentOutOfRangeException">Thrown if depth is 0.</exception>
 		public static string GetDirectoryDepth(FileInfo fileIn, int depth = 1, bool removeExtension = true, char separator = '.') {
 			if (depth == -1) return GetFormattedPathFromRsrc(fileIn, true, removeExtension, separator);
-			if (depth == 0) throw new ArgumentOutOfRangeException("depth");
+			if (depth == 0) throw new ArgumentOutOfRangeException(nameof(depth));
 			List<string> parents = new List<string>();
 			DirectoryInfo parentDir = fileIn.Directory!;
 			for (int i = 0; i < depth; i++) {

@@ -24,6 +24,17 @@ namespace ThreeRingsSharp.XansData {
 		/// A reference to <see cref="BaseNode"/>.invRefTransform, which is the inverse reference transformation of this <see cref="Armature"/>.
 		/// </summary>
 		public Transform3D InverseReferenceTransform => BaseNode.InverseReferenceTransform;
+		/*
+		public Transform3D InverseReferenceTransform {
+			get {
+				Transform3D? parentTransform = Parent?.Transform;
+				if (parentTransform != null) {
+					return parentTransform.Compose(Transform).Invert();
+				}
+				return Transform3D.NewIdentity();
+			}
+		}
+		*/
 
 		/// <summary>
 		/// A reference to <see cref="BaseNode"/>.transform, which is the main transformation of this <see cref="Armature"/>.
@@ -177,6 +188,7 @@ namespace ThreeRingsSharp.XansData {
 			/// <summary>
 			/// The inverse reference transform of this node.
 			/// </summary>
+			//[Obsolete("This is now computed on the fly in an Armature as it requires a hierarchy reference.")]
 			public Transform3D InverseReferenceTransform { get; set; }
 
 			/// <summary>
@@ -203,30 +215,21 @@ namespace ThreeRingsSharp.XansData {
 			/// <param name="articulatedConfigNode"></param>
 			public Node(ShadowClass articulatedConfigNode) {
 				Name = articulatedConfigNode["name"]!;
+				
 				ShadowClass? transform = (ShadowClass?)articulatedConfigNode["transform"];
-				if (transform == null) transform = ShadowClass.CreateInstanceOf("com.threerings.math.Transform3D");
-				Transform = new Transform3D(transform);
-
 				ShadowClass? invRefTransform = (ShadowClass?)articulatedConfigNode["invRefTransform"];
-				if (invRefTransform == null) invRefTransform = ShadowClass.CreateInstanceOf("com.threerings.math.Transform3D");
-				InverseReferenceTransform = new Transform3D(invRefTransform);
+
+				Transform = transform != null ? new Transform3D(transform) : Transform3D.NewGeneral();
+				InverseReferenceTransform = invRefTransform != null ? new Transform3D(invRefTransform) : Transform3D.NewGeneral();
 
 				ShadowClass[]? children = (ShadowClass[]?)articulatedConfigNode["children"];
-				if (children != null) {
+				if (children != null && children.Length > 0) {
 					Children = new Node[children.Length];
 					for (int i = 0; i < Children.Length; i++) {
 						Children[i] = new Node(children[i]);
 					}
 				} else {
 					Children = Array.Empty<Node>();
-				}
-			}
-
-			public void UpdateRefTransforms(Transform3D parentRefTransform) {
-				Transform3D refTransform = parentRefTransform.Compose(Transform);
-				InverseReferenceTransform = refTransform.Invert();
-				foreach (Node child in Children) {
-					child.UpdateRefTransforms(refTransform);
 				}
 			}
 		}

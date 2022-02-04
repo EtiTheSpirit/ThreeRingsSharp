@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -104,11 +105,31 @@ namespace ThreeRingsSharp.Utilities {
 		public ReadFileContext(FileInfo file) {
 			OriginalFile = file;
 			File = file;
-			CurrentSceneTransform = Transform3D.NewGeneral();
+			CurrentSceneTransform = Transform3D.NewIdentity();
 			AllModelsAndNodes = new List<Model3D>();
 			AllModels = new List<Model3D>();
 			AllArmatures = new Dictionary<string, Armature>();
 			_previousParentCache.Push(Root);
+		}
+
+		/// <summary>
+		/// An alias to <see cref="Transform3D.ComposeSelf(Transform3D)"/> (called on <see cref="CurrentSceneTransform"/>), but with zero-scale protection.
+		/// </summary>
+		/// <param name="toApplyToThis"></param>
+		public void ComposeTransform(Transform3D toApplyToThis) {
+			Vector3f scaleBy = toApplyToThis.Scale;
+			if (Model3D.ProtectAgainstZeroScale && scaleBy.LengthSquared() == 0) {
+				switch (toApplyToThis.Rank) {
+					case Transform3D.UNIFORM:
+						toApplyToThis.SetUniformScale(1f);
+						break;
+					default:
+						Debug.WriteLine("Cannot resolve zero scale value: Non-uniform scale detected; op currently not supported.");
+						break;
+				}
+			}
+
+			CurrentSceneTransform.ComposeSelf(toApplyToThis);
 		}
 
 		/// <summary>

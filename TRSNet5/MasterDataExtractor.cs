@@ -157,6 +157,8 @@ namespace ThreeRingsSharp {
 					DerivedModelConfig.ReadData(currentContext, subShadow);
 				} else if (impl.IsA("com.threerings.opengl.model.config.ModelConfig$Schemed")) {
 					SchemedModelConfig.ReadData(currentContext, subShadow);
+				} else if (impl.IsA("com.threerings.opengl.scene.config.ViewerAffecterConfig")) { 
+					ViewerAffecterConfig.ReadData(currentContext, subShadow);
 				} else {
 					SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Missing), true);
 					currentContext.Pop();
