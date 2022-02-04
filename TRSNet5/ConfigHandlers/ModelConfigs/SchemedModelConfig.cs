@@ -25,11 +25,11 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			foreach (ShadowClass sc in modelCfgRef) {
 				kvc.Add("Scheme", ((string)sc["scheme"]!).DefaultIfNullOrWhitespace("(no name)"), SilkImage.Schemed);
 			}
-			schemesRoot.Add(new KeyValueElement("Current Scheme", ((string)modelCfgRef[0]["scheme"]!).DefaultIfNullOrWhitespace("(no name)"), false, SilkImage.SchemedModel)); // TODO: Editable.
+			// TODO: Allow editing which scheme to export.
+			schemesRoot.Add(new KeyValueElement("Current Scheme", ((string)modelCfgRef[0]["scheme"]!).DefaultIfNullOrWhitespace("(no name)"), false, SilkImage.SchemedModel));
 			schemesRoot.Add(kvc);
 			schemedTreeNode.Properties.Add(schemesRoot);
 			schemedTreeNode.Properties.Add(ModelConfig.SetupParametersForProperties(modelConfig));
-
 			#endregion
 
 			foreach (ShadowClass sc in modelCfgRef) {

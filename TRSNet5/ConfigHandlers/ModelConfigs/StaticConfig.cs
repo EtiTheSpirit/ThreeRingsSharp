@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.ConfigHandlers.Common;
 using ThreeRingsSharp.Utilities;
+using ThreeRingsSharp.Utilities.DataTree;
 using ThreeRingsSharp.Utilities.Parameters;
 using ThreeRingsSharp.Utilities.Parameters.Implementation;
 using ThreeRingsSharp.XansData;
@@ -42,6 +43,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			//staticTreeNode.Properties.Add(treeMeshRefs);
 			staticTreeNode.Properties.Add(new KeyValueElement("Meshes", visibleMeshes.Length.ToString(), false, SilkImage.Triangle));
 			staticTreeNode.Properties.Add(ModelConfig.SetupParametersForProperties(modelConfig));
+			staticTreeNode.Properties.Add(ctx.CurrentSceneTransform.ToKVC());
 			#endregion
 
 			int idx = 0;
