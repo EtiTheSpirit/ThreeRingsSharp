@@ -1,4 +1,5 @@
 ﻿using OOOReader.Reader;
+using OOOReader.Utility.Mathematics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ThreeRingsSharp.ConfigHandlers.Common;
 using ThreeRingsSharp.Utilities;
+using ThreeRingsSharp.Utilities.DataTree;
 using XDataTree.Data;
 using XDataTree.TreeElements;
 
@@ -24,7 +26,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 
 			List<string> treeTextures = new List<string>();
 			// List<string> treeMeshes = new List<string>();
-			if (compoundImpl.TryGetField("materialMappings", out object? mtMapsObj) && mtMapsObj is ShadowClass[] mtMaps) {
+			if (compoundImpl.TryGetField("materialMappings", out ShadowClass[]? mtMaps, true)) {
 				foreach (ShadowClass mtlClass in mtMaps!) {
 					treeTextures.Add(mtlClass["texture"]!);
 				}
@@ -41,9 +43,17 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			#endregion
 
 			foreach (ShadowClass component in models) {
-				if (component.TryGetField("model", out object? mdlObj) && mdlObj is ShadowClass mdlRef) {
-					ConfigReference cfgRef = new ConfigReference(mdlRef);
+				if (component.IsA("com.threerings.opengl.model.config.CompoundConfig$ComponentModel") && component.TryGetFieldAs("model", "com.threerings.config.ConfigReference", out ShadowClass? mdlRef, true) && mdlRef != null) {
+					Transform3D offset;
+					if (component.TryGetFieldAs("transform", "com.threerings.math.Transform3D", out ShadowClass? shdTransform, true) && shdTransform != null) {
+						offset = new Transform3D(shdTransform!);
+					} else {
+						offset = Transform3D.NewIdentity();
+					}
+					ctx.ComposeTransform(offset);
+					ConfigReference cfgRef = new ConfigReference(mdlRef!);
 					MasterDataExtractor.ExtractFrom(ctx, cfgRef);
+					if (!offset.IsSingular()) ctx.ComposeTransform(offset.Invert());
 				}
 			}
 
