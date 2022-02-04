@@ -682,8 +682,8 @@ namespace SKAnimatorTools {
 						"models is actually used.\n\n" +
 						"In some cases, you might want all variants (for instance, if you " +
 						"want to get every subtype of a gun such as the Antigua, you would " +
-						"export all of the models in the set Likewise, there are cases in which " +
-						"you may want only one variant, for instance, in a CompoundConfig " +
+						"export all of the models in the set. Likewise, there are cases in which " +
+						"you may want only one variant, for instance, in a StaticSetConfig " +
 						"for a scene where it's using the set to select a specific tile or " +
 						"prop.\n\n" +
 						"With that in mind...\n" +

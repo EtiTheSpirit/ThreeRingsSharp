@@ -163,7 +163,7 @@ namespace SKAnimatorTools {
 		private void ProtectAgainstZeroScaleChanged(object sender, EventArgs e) {
 			if (CheckBox_ProtectAgainstZeroScale.Checked == false) {
 				PicBox_ZeroScale.Image = Warning;
-				MainTooltip.SetToolTip(PicBox_ZeroScale, "Some models may be unusable in your editor if they have a zero scale!");
+				MainTooltip.SetToolTip(PicBox_ZeroScale, "Some models might not be usable in your editor. This can also cause some models to export incorrectly!");
 			} else {
 				PicBox_ZeroScale.Image = Accepted;
 				MainTooltip.SetToolTip(PicBox_ZeroScale, string.Empty);

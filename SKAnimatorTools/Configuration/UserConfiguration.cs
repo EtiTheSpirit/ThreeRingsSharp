@@ -78,9 +78,9 @@ namespace SKAnimatorTools.Configuration {
 		/// <c>4 = Default model</c><para/>
 		/// </summary>
 		[
-			ConfigEntry, DefaultValue(0)
+			ConfigEntry, DefaultValue(2)
 		]
-		public static int ConditionalConfigExportMode { get; set; } = 0;
+		public static int ConditionalConfigExportMode { get; set; } = 2;
 
 		/// <summary>
 		/// The mode to use when dealing with <see cref="StaticSetConfig"/> instances in the export.<para/>
@@ -89,9 +89,9 @@ namespace SKAnimatorTools.Configuration {
 		/// <c>2 = One</c><para/>
 		/// </summary>
 		[
-			ConfigEntry, DefaultValue(0)
+			ConfigEntry, DefaultValue(2)
 		]
-		public static int StaticSetExportMode { get; set; } = 0;
+		public static int StaticSetExportMode { get; set; } = 2;
 
 		/// <summary>
 		/// Whether or not to embed textures directly in the glTF.
@@ -108,14 +108,6 @@ namespace SKAnimatorTools.Configuration {
 			ConfigEntry, DefaultValue(0)
 		]
 		public static int LoggingLevel { get; set; } = 0;
-
-		/// <summary>
-		/// Disable GUI elements in favor of processing speed.
-		/// </summary>
-		[
-			ConfigEntry, DefaultValue(false)
-		]
-		public static bool PreferSpeed { get; set; } = false;
 
 		/// <summary>
 		/// Saves this configuration to json.
