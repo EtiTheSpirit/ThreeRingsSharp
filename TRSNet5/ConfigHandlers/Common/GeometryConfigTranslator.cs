@@ -17,7 +17,7 @@ namespace ThreeRingsSharp.ConfigHandlers.Common {
 		public static Model3D ToModel3D(ReadFileContext ctx, ShadowClass geometryConfig, string geometryIndex, Node? subRootNodeForMesh) {
 			geometryConfig.AssertIsInstanceOf("com.threerings.opengl.geometry.config.GeometryConfig");
 
-			Model3D model = new Model3D();
+			Model3D model = new Model3D(geometryIndex);
 			MeshData? existingMeshData = MeshData.MeshDataBindings.GetOrDefault(geometryIndex);
 
 			if (existingMeshData == null) {
@@ -155,7 +155,7 @@ namespace ThreeRingsSharp.ConfigHandlers.Common {
 			clientArrayConfig.AssertIsInstanceOf("com.threerings.opengl.renderer.config.ClientArrayConfig");
 
 			float[] source = clientArrayConfig["floatArray"]!; // Will never be FloatBuffer - those are read as arrays in OOOReader
-			int sourceStride = clientArrayConfig.GetNumericField<int>("stride") / 4;
+			int sourceStride = clientArrayConfig.GetNumericField<int>("stride") / 4; // Stride/Offset are in bytes, floats are 4 bytes
 			int sourceIndex = clientArrayConfig.GetNumericField<int>("offset") / 4;
 			int destinationIndex = destinationOffset;
 			for (int i = 0; i < source.Length / sourceStride; i++) {
