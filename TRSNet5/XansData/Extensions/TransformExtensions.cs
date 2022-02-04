@@ -11,22 +11,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <param name="trs"></param>
 		/// <returns></returns>
 		public static (Vector3f, Quaternion, Vector3f) GetAllTransforms(this Transform3D trs) {
-			// Translation will never fail, it directoy references m30, m31, and m32.
-			Vector3f translation = trs.ExtractTranslation();
-
-			// Neither will scale.
-			Vector3f scale = trs.ExtractScale();
-
-			// Rotation is the odd one out that will throw an exception.
-			Quaternion rotation;
-			try {
-				rotation = trs.ExtractRotation(); // Try to get it out of the matrix (if applicable)
-			} catch (InvalidOperationException) {
-				// Give up if the rotation can't be extracted this way, just use the old value.
-				rotation = trs.GetRotation();
-			}
-
-			return (translation ?? new Vector3f(), rotation ?? Quaternion.NewIdentity(), scale ?? new Vector3f(trs.GetScale(), trs.GetScale(), trs.GetScale()));
+			return (trs.Translation, trs.Rotation, trs.Scale);
 		}
 
 		/// <summary>
@@ -34,7 +19,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// </summary>
 		/// <returns></returns>
 		public static float[] GetMatrixComponents(this Transform3D trs) {
-			return trs.Clone().Promote(Transform3D.GENERAL).GetMatrix().GetMatrixComponents();
+			return trs.Clone().Promote(Transform3D.GENERAL).Matrix.GetMatrixComponents();
 		}
 
 
@@ -58,9 +43,9 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <param name="trs">The <see cref="Transform3D"/> to extract the components from.</param>
 		/// <returns></returns>
 		public static (float[], float[], float[]) GetAllComponents(this Transform3D trs) {
-			Vector3f translation = trs.ExtractTranslation() ?? Vector3f.NewZero();
-			Quaternion rotation = trs.ExtractRotation() ?? Quaternion.NewIdentity();
-			Vector3f scale = trs.ExtractScale() ?? new Vector3f(trs.GetScale(), trs.GetScale(), trs.GetScale());
+			Vector3f translation = trs.Translation;
+			Quaternion rotation = trs.Rotation;
+			Vector3f scale = trs.Scale;
 			return (
 				new float[] { translation.X, translation.Y, translation.Z },
 				new float[] { rotation.X, rotation.Y, rotation.Z, rotation.W },

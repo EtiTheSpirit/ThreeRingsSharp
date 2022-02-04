@@ -78,5 +78,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// </summary>
 		[JsonProperty("scenes")] public List<GLTFScene> Scenes = new List<GLTFScene>();
 
+		
+
 	}
 }

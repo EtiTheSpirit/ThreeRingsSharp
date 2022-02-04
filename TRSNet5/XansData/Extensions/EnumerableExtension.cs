@@ -6,7 +6,7 @@ using ThreeRingsSharp.ConfigHandlers.Common;
 namespace ThreeRingsSharp.XansData.Extensions {
 
 	/// <summary>
-	/// Provides methods that are nice for <see cref="List{T}"/>
+	/// Provides methods that provide specific necessary behavior for <see cref="IEnumerable{T}"/> in TRS.
 	/// </summary>
 	public static class EnumerableExtension {
 
@@ -23,7 +23,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <param name="other"></param>
 		/// <param name="overwrite">If true, entries from <paramref name="other"/> will overwrite entries in <paramref name="dictionary"/>. If false, keys that already exist in <paramref name="dictionary"/> will be preserved.</param>
 		/// <returns></returns>
-		public static Dictionary<TKey, TValue> MergeWith<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, Dictionary<TKey, TValue> other, bool overwrite = false) where TKey : notnull {
+		public static Dictionary<TKey, TValue> CreateNewMergedWith<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, Dictionary<TKey, TValue> other, bool overwrite = false) where TKey : notnull {
 			Dictionary<TKey, TValue> newDict = new Dictionary<TKey, TValue>();
 			foreach (TKey key in dictionary.Keys) {
 				newDict[key] = dictionary[key];
@@ -222,7 +222,6 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// Clones this <see cref="IEnumerable{T}"/> into a new instance.
 		/// If <typeparamref name="T"/> implements <see cref="ICloneable"/>, then the 
 		/// <see cref="ICloneable.Clone"/> method will be called on each object.<para/>
-		/// 
 		/// This does not clone nested lists.
 		/// </summary>
 		/// <typeparam name="T">The type of the elements contained within the <see cref="List{T}"/></typeparam>
@@ -293,11 +292,11 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
-		/// A very specialized method designed specifically for <see cref="GeometryConfigTranslator"/> which converts a float array to an int array.
+		/// A very specialized method designed specifically for <see cref="GeometryConfigTranslator"/> which converts a <see cref="float"/> array to a <see cref="ushort"/> array.
 		/// </summary>
 		/// <param name="floatArray"></param>
 		/// <returns></returns>
-		public static ushort[] ToUshortArray(this float[] floatArray) {
+		public static ushort[] ToUInt16Array(this float[] floatArray) {
 			ushort[] retn = new ushort[floatArray.Length];
 			for (int idx = 0; idx < floatArray.Length; idx++) {
 				retn[idx] = (ushort)floatArray[idx];
@@ -310,18 +309,16 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		#region Casting
 
 		/// <summary>
-		/// Casts value types in an enumerable.
+		/// Casts value types in an enumerable rather than reference types.
 		/// </summary>
 		/// <typeparam name="TSource"></typeparam>
 		/// <typeparam name="TDestination"></typeparam>
 		/// <param name="source"></param>
 		/// <returns></returns>
 		public static IEnumerable<TDestination> CastValue<TSource, TDestination>(this IEnumerable<TSource> source) where TSource : struct where TDestination : struct {
-			List<TDestination> dest = new List<TDestination>(source.Count());
 			foreach (TSource src in source) {
-				dest.Add((TDestination)Convert.ChangeType(src, typeof(TDestination)));
+				yield return (TDestination)Convert.ChangeType(src, typeof(TDestination));
 			}
-			return dest;
 		}
 
 		#endregion

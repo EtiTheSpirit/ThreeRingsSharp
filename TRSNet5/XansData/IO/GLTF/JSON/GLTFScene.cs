@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 
 	/// <summary>
-	/// Represents an entire secene.
+	/// Represents an entire scene.
 	/// </summary>
 	public class GLTFScene : GLTFObject {
 

@@ -56,7 +56,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// <summary>
 		/// Set this to true to export <see cref="Matrix"/>, and false to export <see cref="Translation"/>, <see cref="Rotation"/>, and <see cref="Scale"/>.
 		/// </summary>
-		[JsonIgnore] public bool ExportMatrix = false;
+		[JsonIgnore] public bool ExportMatrix { get; set; } = false;
 
 		/// <summary>
 		/// Sets <see cref="Translation"/> to the given <see cref="Vector3"/>.
@@ -104,11 +104,14 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// </summary>
 		/// <param name="transform"></param>
 		public void SetTransform(Transform3D transform) {
-			(Vector3f Translation, Quaternion Rotation, Vector3f Scale) transformData = transform.GetAllTransforms();
-
-			SetPosition(transformData.Translation);
-			SetRotation(transformData.Rotation);
-			SetScale(transformData.Scale);
+			SetPosition(transform.Translation);
+			SetRotation(transform.Rotation);
+			SetScale(transform.Scale);
+			ExportMatrix = false;
+			/*
+			ExportMatrix = true;
+			Matrix = transform.Matrix.GetMatrixComponents();
+			*/
 		}
 
 		#region Newtonsoft Field Write Conditions
