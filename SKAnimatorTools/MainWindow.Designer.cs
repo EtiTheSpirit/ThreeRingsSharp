@@ -49,6 +49,7 @@
 			this.ProgramLog = new System.Windows.Forms.RichTextBox();
 			this.BtnConfig = new System.Windows.Forms.Button();
 			this.ModelLoaderBGWorker = new System.ComponentModel.BackgroundWorker();
+			this.ModelLoadProgress = new SKAnimatorTools.Component.ColoredProgressBar();
 			this.GroupBoxModelInfo.SuspendLayout();
 			this.GroupBoxProperties.SuspendLayout();
 			this.GroupBoxModelTree.SuspendLayout();
@@ -396,12 +397,24 @@
 			this.ModelLoaderBGWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.ModelLoaderBGWorker_ProgressChanged);
 			this.ModelLoaderBGWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.ModelLoaderBGWorker_RunWorkerCompleted);
 			// 
+			// ModelLoadProgress
+			// 
+			this.ModelLoadProgress.ErrorColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+			this.ModelLoadProgress.ExtraWorkColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(180)))), ((int)(((byte)(0)))));
+			this.ModelLoadProgress.HashingColor = System.Drawing.Color.DimGray;
+			this.ModelLoadProgress.Location = new System.Drawing.Point(18, 594);
+			this.ModelLoadProgress.Name = "ModelLoadProgress";
+			this.ModelLoadProgress.OKColor = System.Drawing.Color.FromArgb(((int)(((byte)(31)))), ((int)(((byte)(192)))), ((int)(((byte)(31)))));
+			this.ModelLoadProgress.Size = new System.Drawing.Size(394, 16);
+			this.ModelLoadProgress.TabIndex = 5;
+			// 
 			// MainWindow
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.BackColor = System.Drawing.SystemColors.Control;
 			this.ClientSize = new System.Drawing.Size(919, 657);
+			this.Controls.Add(this.ModelLoadProgress);
 			this.Controls.Add(this.BtnConfig);
 			this.Controls.Add(this.GroupBoxProgramInfo);
 			this.Controls.Add(this.BtnOpenModel);

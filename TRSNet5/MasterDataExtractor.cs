@@ -164,7 +164,7 @@ namespace ThreeRingsSharp {
 					currentContext.Pop();
 				}
 			} else if (subShadow.IsA("com.threerings.tudey.data.TudeySceneModel")) {
-				XanLogger.WriteLine("A scene was loaded. Fair warning that these tend to take a much longer time to open, and you may see the data tree display content before it's done loading.");
+				XanLogger.WriteLine("A scene was loaded. Fair warning that these tend to take a much longer time to open! Additionally, they can take a long time to export (so the program will appear unresponsive). Give it a couple minutes when importing and exporting scenes.");
 				TudeySceneModelReader.ReadData(currentContext, subShadow);
 				//SetupBaseInformation(subShadow, currentContext.Push(currentContext.File.Name, SilkImage.Missing), true);
 				//currentContext.Pop();
@@ -236,6 +236,36 @@ namespace ThreeRingsSharp {
 				}
 			}
 			return objectTreeElement;
+		}
+
+		public static bool CanPurgeCache() => !(Cache.Count == 0 && ArrayCache.Count == 0);
+
+		/// <summary>
+		/// Purges the cache.
+		/// </summary>
+		public static void PurgeCache() {
+			if (!CanPurgeCache()) return;
+			XanLogger.WriteLine("Purging cache. The program might freeze for a moment!");
+			TRSLog.WaitForNextMessagesToWrite();
+
+			long mem = GC.GetTotalMemory(false);
+			Cache.Clear();
+			ArrayCache.Clear();
+			GC.Collect();
+
+			double disposed = mem - GC.GetTotalMemory(true);
+			string disp;
+			if (disposed > 1_000_000_000) {
+				disp = (disposed / 1000000000).ToString("#.#") + "GB";
+			} else if (disposed > 1_000_000) {
+				disp = (disposed / 1000000).ToString("#.#") + "MB";
+			} else if (disposed > 1_000) {
+				disp = (disposed / 1000).ToString("#.#") + "KB";
+			} else {
+				disp = disposed + "B";
+			}
+
+			XanLogger.WriteLine($"Cleaned up {disp} of memory.");
 		}
 
 	}

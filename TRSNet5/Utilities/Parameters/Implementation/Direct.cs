@@ -59,7 +59,14 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 			Paths = (string[])paths;
 			List<DirectPointer> results = new List<DirectPointer>();
 			foreach (string path in Paths) {
-				results.Add(Traverse(path));
+				DirectPointer ptr;
+				try {
+					ptr = Traverse(path);
+				} catch (Exception ex) {
+					ptr = new FaultyDirectPointer();
+					Debug.WriteLine("WARNING: Failed to resolve Direct \"" + path + "\"! Exception was thrown: " + ex.ToString());
+				}
+				results.Add(ptr);
 			}
 			Pointers = results.ToArray();
 		}
@@ -133,7 +140,7 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 						}
 						if (numericIndex >= secondToLastElement.Length) {
 							if (secondToLastElement is ShadowClass[] scArray) {
-								ShadowClass? instance = scArray.First(sc => sc != null);
+								ShadowClass? instance = scArray.FirstOrDefault(sc => sc != null);
 								if (instance != null) {
 									templateType = instance.TemplateType;
 									secondToLastElement = ArrayExtensions.ResizeByReallocationSC(secondToLastElement, templateType, numericIndex + 1);
@@ -160,7 +167,7 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 						continue;
 					}
 					Debug.WriteLine("WARNING: Failed to resolve Direct \"" + path + "\"!");
-					Debugger.Break();
+					return new FaultyDirectPointer();
 				}
 
 
@@ -179,10 +186,16 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 							continue;
 						} else {
 							Debug.WriteLine("WARNING: Failed to resolve Direct \"" + path + "\"!");
-							Debugger.Break();
+							//Debugger.Break();
+							return new FaultyDirectPointer();
 						}
 					}
 				} else {
+					if (elementOrImplementation == null) {
+						Debug.WriteLine("WARNING: Failed to resolve Direct \"" + path + "\"!");
+						//Debugger.Break();
+						return new FaultyDirectPointer();
+					}
 					elementOrImplementation = elementOrImplementation[currentPathElement.SnakeToCamel()];
 				}
 			}
@@ -345,6 +358,9 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 
 		}
 
+		/// <summary>
+		/// An experimental type of pointer that references a specific element in a dictionary. It is unknown whether or not OOO supports these, but the code for them does exist.
+		/// </summary>
 		public class DictionaryDirectPointer : DirectPointer {
 
 			private readonly IDictionary _indexedDictionary;
@@ -363,6 +379,10 @@ namespace ThreeRingsSharp.Utilities.Parameters.Implementation {
 
 		}
 
+		/// <summary>
+		/// A variant of <see cref="DirectPointer"/> that represents a missing or unresolvable direct.
+		/// It can be read to and written from, but its default value is null and it can store any arbitrary data as it behaves more like a husk.
+		/// </summary>
 		public class FaultyDirectPointer : DirectPointer {
 
 			public FaultyDirectPointer() : base() { }

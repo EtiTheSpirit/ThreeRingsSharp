@@ -7,7 +7,7 @@ namespace ThreeRingsSharp.XansData.Structs {
 	/// Stores three <see langword="float"/> values that represent a coordinate in 3D space.<para/>
 	/// Unlike <see cref="System.Numerics.Vector3"/>, this does not contain any vector math methods. This is strictly for data storage.
 	/// </summary>
-	public struct Vector3 : IEquatable<Vector3>, ICloneable<Vector3> {
+	public struct Vector3 : IEquatable<Vector3> {
 
 		/// <summary>
 		/// The X component of this <see cref="Vector3"/> which generally represents left or right positions relative to the world.
@@ -82,10 +82,10 @@ namespace ThreeRingsSharp.XansData.Structs {
 		/// <param name="newAxis"></param>
 		/// <returns></returns>
 		public Vector3 RotateToAxis(Axis newAxis) {
-			Vector3 newVec = Clone();
-			float x = newVec.X;
-			float y = newVec.Y;
-			float z = newVec.Z;
+			Vector3 newVec = new Vector3();
+			float x = X;
+			float y = Y;
+			float z = Z;
 			if (newAxis == Axis.PositiveY) return newVec;
 
 			if (newAxis == Axis.NegativeY) {
@@ -150,9 +150,5 @@ namespace ThreeRingsSharp.XansData.Structs {
 			return $"{X} {Y} {Z}";
 		}
 		#endregion
-
-		public Vector3 Clone() {
-			return new Vector3(X, Y, Z);
-		}
 	}
 }

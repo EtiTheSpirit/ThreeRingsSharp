@@ -45,7 +45,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			articulatedTreeNode.Properties.Add(treeMaterials);
 			articulatedTreeNode.Properties.Add(treeAnimationRefs);
 			articulatedTreeNode.Properties.Add(ModelConfig.SetupParametersForProperties(modelConfig));
-			articulatedTreeNode.Properties.Add(ctx.CurrentSceneTransform.ToKVC());
+			articulatedTreeNode.Properties.Add(ctx.CurrentSceneTransform.ToKeyValueContainer());
 			#endregion
 
 			ShadowClass[] skinnedVisibleMeshes = articulatedImpl["skin"]!["visible"]!;
@@ -69,7 +69,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 				// This offers a lot of data right away
 
 				Model3D meshToModel = GeometryConfigTranslator.ToModel3D(ctx, geometryConfig, fullDepthName + meshTitle, rootNode);
-				meshToModel.Transform.ComposeSelf(ctx.CurrentSceneTransform);
+				meshToModel.Transform *= ctx.CurrentSceneTransform;
 
 				(List<string> textureFiles, string active, Choice? defaultContainer) = TextureHelper.FindTexturesAndActiveFromDirects(modelConfig, (string)mesh["texture"]!);
 				meshToModel.Textures.SetFrom(textureFiles);
@@ -115,18 +115,18 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 		/// <param name="fullDepthName">The complete path to this model from rsrc, rsrc included.</param>
 		public static void RecursivelyIterateNodes(ReadFileContext ctx, ShadowClass baseModelConfig, ShadowClass articulatedConfigModel, ShadowClass parentNodeShadow, Transform3D baseTransform, Transform3D initialTransform, Armature parentNode, string fullDepthName) {
 			foreach (ShadowClass node in parentNodeShadow["children"]!) {
-				Transform3D nodeTransform = new Transform3D(node["transform"]!);
+				Transform3D nodeTransform = Transform3D.FromShadow(node["transform"]!);
 				ProcessNode(ctx, node, baseModelConfig, baseTransform, parentNode, fullDepthName);
 
 				if (node["children"]!.Length > 0) {
-					RecursivelyIterateNodes(ctx, baseModelConfig, articulatedConfigModel, node, baseTransform.Compose(nodeTransform), initialTransform, parentNode, fullDepthName);
+					RecursivelyIterateNodes(ctx, baseModelConfig, articulatedConfigModel, node, baseTransform * nodeTransform, initialTransform, parentNode, fullDepthName);
 				}
 			}
 		}
 
 		private static Model3D? ProcessNode(ReadFileContext ctx, ShadowClass node, ShadowClass baseModelConfig, Transform3D baseTransform, Armature parentNode, string fullDepthName) {
 			string nodeName = node["name"]!;
-			Transform3D nodeTransform = new Transform3D(node["transform"]!);
+			Transform3D nodeTransform = Transform3D.FromShadow(node["transform"]!);
 			if (node.IsA("com.threerings.opengl.model.config.ArticulatedConfig$MeshNode")) {
 				ShadowClass? mesh = node["visible"];
 				if (mesh != null) {
@@ -141,8 +141,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 					// Basically, this node in and of itself has a mesh. It's "skeleton" is actually just a single armature that controls this single mesh.
 					// Decided to put this comment here after being like "what the hell am I doing with a new root node for everything?" so that you don't have to.
 					Model3D meshToModel = GeometryConfigTranslator.ToModel3D(ctx, mesh["geometry"], fullDepthName + meshTitle, new Armature.Node(node));
-					meshToModel.Transform.ComposeSelf(baseTransform);
-					meshToModel.Transform.ComposeSelf(nodeTransform);
+					meshToModel.Transform = meshToModel.Transform * baseTransform * nodeTransform;
 					meshToModel.RawName = nodeName;
 					Armature? skeleton = meshToModel.Mesh!.Skeleton;
 					if (skeleton != null) skeleton.Parent = parentNode;
@@ -161,9 +160,8 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 				}
 			}
 			string emptyTitle = "-Nodes[\"" + nodeName + "\"]";
-			Model3D emptyModel = Model3D.Empty(RsrcDirectoryTool.GetDirectoryDepth(ctx.File, -1) + emptyTitle, true, Transform3D.NewIdentity());
-			emptyModel.Transform.ComposeSelf(baseTransform);
-			emptyModel.Transform.ComposeSelf(nodeTransform);
+			Model3D emptyModel = Model3D.Empty(RsrcDirectoryTool.GetDirectoryDepth(ctx.File, -1) + emptyTitle, true, new Transform3D());
+			emptyModel.Transform = emptyModel.Transform * baseTransform * nodeTransform;
 
 			ctx.AllModelsAndNodes.Add(emptyModel);
 			ctx.AllModels.Add(emptyModel);

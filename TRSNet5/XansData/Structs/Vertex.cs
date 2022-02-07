@@ -5,7 +5,7 @@ namespace ThreeRingsSharp.XansData.Structs {
 	/// <summary>
 	/// Represents a vertex, which contains a <see cref="Vector3"/> Point, a <see cref="float"/> Weight, a <see cref="Vector3"/> Normal, and a <see cref="Vector2"/> UV coordinate.
 	/// </summary>
-	public struct Vertex : IEquatable<Vertex>, ICloneable<Vertex> {
+	public struct Vertex : IEquatable<Vertex> {
 
 		/// <summary>
 		/// The location of this <see cref="Vertex"/> in 3D space.
@@ -85,14 +85,5 @@ namespace ThreeRingsSharp.XansData.Structs {
 			return $"[Point={Point}, Weight={Weight}f]";
 		}
 		#endregion
-
-		public Vertex Clone() {
-			return new Vertex() {
-				Point = Point.Clone(),
-				Weight = Weight,
-				Normal = Normal.Clone(),
-				UV = UV.Clone()
-			};
-		}
 	}
 }

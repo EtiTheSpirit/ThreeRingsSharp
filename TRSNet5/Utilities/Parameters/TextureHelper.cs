@@ -63,7 +63,13 @@ namespace ThreeRingsSharp.Utilities.Parameters {
 
 			for (int index = 0; index < textures.Length; index++) {
 				ShadowClass mapping = materialMappings[index];
-				object argsObj = mapping["material"]!["_arguments"];
+				dynamic material = mapping["material"]!;
+				if (material is not ShadowClass) {
+					string v = material?.ToString() ?? "null";
+					Debug.WriteLine("Unexpected non-shadow material encountered when searching for textures: " + v);
+					continue;
+				}
+				object argsObj = material["_arguments"];
 				Dictionary<object, object?>? args = null;
 				if (argsObj is Dictionary<object, object?>) {
 					args = (Dictionary<object, object?>)argsObj;

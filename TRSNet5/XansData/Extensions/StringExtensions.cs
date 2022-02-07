@@ -172,7 +172,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// <param name="str">The string to write.</param>
 		/// <param name="array">The array to write the string into.</param>
 		/// <param name="offset">The index to start writing at.</param>
-		public static void WriteASCIIToByteArray(this string str, ref byte[] array, int offset = 0) {
+		public static void WriteASCIIToByteArray(this string str, byte[] array, int offset = 0) {
 			if (array.Length - offset > str.Length) throw new IndexOutOfRangeException("Attempt to write string into byte array failed: Array is not large enough to contain this string at the given offset.");
 			byte[] data = Encoding.ASCII.GetBytes(str);
 			for (int idx = 0; idx < data.Length; idx++) {

@@ -43,7 +43,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			//staticTreeNode.Properties.Add(treeMeshRefs);
 			staticTreeNode.Properties.Add(new KeyValueElement("Meshes", visibleMeshes.Length.ToString(), false, SilkImage.Triangle));
 			staticTreeNode.Properties.Add(ModelConfig.SetupParametersForProperties(modelConfig));
-			staticTreeNode.Properties.Add(ctx.CurrentSceneTransform.ToKVC());
+			staticTreeNode.Properties.Add(ctx.CurrentSceneTransform.ToKeyValueContainer());
 			#endregion
 
 			int idx = 0;
@@ -51,8 +51,8 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			foreach (ShadowClass visMesh in visibleMeshes) {
 				string meshTitle = $"-Submesh[{idx}]";
 				Model3D meshToModel = GeometryConfigTranslator.ToModel3D(ctx, visMesh["geometry"], fullDepthName + meshTitle, ctx.CurrentAttachmentNode?.BaseNode);
-				meshToModel.Transform.ComposeSelf(ctx.CurrentSceneTransform);
-
+				meshToModel.Transform *= ctx.CurrentSceneTransform;
+				
 				// TODO: Textures
 				(List<string> textureFiles, string active, Choice? defaultContainer) = TextureHelper.FindTexturesAndActiveFromDirects(modelConfig, (string)visMesh["texture"]!);
 				meshToModel.Textures.SetFrom(textureFiles);

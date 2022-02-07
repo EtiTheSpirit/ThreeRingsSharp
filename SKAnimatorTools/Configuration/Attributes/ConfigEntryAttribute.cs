@@ -7,7 +7,5 @@ using System.Threading.Tasks;
 namespace SKAnimatorTools.Configuration.Attributes {
 
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, Inherited = false, AllowMultiple = false)]
-	public sealed class ConfigEntryAttribute : Attribute {
-		public ConfigEntryAttribute() { }
-	}
+	internal class ConfigEntryAttribute : Attribute { }
 }

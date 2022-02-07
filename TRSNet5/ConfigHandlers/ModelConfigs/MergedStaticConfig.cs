@@ -39,7 +39,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			//staticTreeNode.Properties.Add(treeMeshRefs);
 			mergedTreeNode.Properties.Add(new KeyValueElement("Models", models.Length.ToString(), false, SilkImage.Static));
 			mergedTreeNode.Properties.Add(ModelConfig.SetupParametersForProperties(modelConfig));
-			mergedTreeNode.Properties.Add(ctx.CurrentSceneTransform.ToKVC());
+			mergedTreeNode.Properties.Add(ctx.CurrentSceneTransform.ToKeyValueContainer());
 			#endregion
 
 			foreach (ShadowClass component in models) {

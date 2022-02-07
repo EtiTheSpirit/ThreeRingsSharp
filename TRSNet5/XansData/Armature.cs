@@ -206,7 +206,7 @@ namespace ThreeRingsSharp.XansData {
 				Name = name;
 				Transform = transform;
 				Children = children ?? Array.Empty<Node>();
-				InverseReferenceTransform = Transform3D.NewGeneral();
+				InverseReferenceTransform = new Transform3D();
 			}
 
 			/// <summary>
@@ -219,8 +219,8 @@ namespace ThreeRingsSharp.XansData {
 				ShadowClass? transform = (ShadowClass?)articulatedConfigNode["transform"];
 				ShadowClass? invRefTransform = (ShadowClass?)articulatedConfigNode["invRefTransform"];
 
-				Transform = transform != null ? new Transform3D(transform) : Transform3D.NewGeneral();
-				InverseReferenceTransform = invRefTransform != null ? new Transform3D(invRefTransform) : Transform3D.NewGeneral();
+				Transform = transform != null ? Transform3D.FromShadow(transform) : new Transform3D();
+				InverseReferenceTransform = invRefTransform != null ? Transform3D.FromShadow(invRefTransform) : new Transform3D();
 
 				ShadowClass[]? children = (ShadowClass[]?)articulatedConfigNode["children"];
 				if (children != null && children.Length > 0) {

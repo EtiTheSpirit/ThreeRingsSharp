@@ -6,24 +6,6 @@ namespace ThreeRingsSharp.XansData.Extensions {
 	public static class TransformExtensions {
 
 		/// <summary>
-		/// Returns all components of this transform in the order of <c>translation, rotation, scale (as Vector3f), scale (as float)</c>.
-		/// </summary>
-		/// <param name="trs"></param>
-		/// <returns></returns>
-		public static (Vector3f, Quaternion, Vector3f) GetAllTransforms(this Transform3D trs) {
-			return (trs.Translation, trs.Rotation, trs.Scale);
-		}
-
-		/// <summary>
-		/// Returns the components of this <see cref="Transform3D"/>'s matrix in column-major order. If it does not have a matrix, one will be created via the promotion of a duplicate <see cref="Transform3D"/>.
-		/// </summary>
-		/// <returns></returns>
-		public static float[] GetMatrixComponents(this Transform3D trs) {
-			return trs.Clone().Promote(Transform3D.GENERAL).Matrix.GetMatrixComponents();
-		}
-
-
-		/// <summary>
 		/// Returns the translation, rotation, and scale (in this order) of this <see cref="Transform3D"/> as float arrays.<para/>
 		/// <list type="number">
 		/// <item>
@@ -40,7 +22,7 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		/// </item>
 		/// </list>
 		/// </summary>
-		/// <param name="trs">The <see cref="Transform3D"/> to extract the components from.</param>
+		/// <param name="trs">The <see cref="Transform3DRef"/> to extract the components from.</param>
 		/// <returns></returns>
 		public static (float[], float[], float[]) GetAllComponents(this Transform3D trs) {
 			Vector3f translation = trs.Translation;
@@ -54,9 +36,17 @@ namespace ThreeRingsSharp.XansData.Extensions {
 		}
 
 		/// <summary>
+		/// Returns the components of this <see cref="Transform3D"/> in column-major order.
+		/// </summary>
+		/// <returns></returns>
+		[Obsolete("For glTF writing, use the Write extension.")]
+		public static float[] GetMatrixComponents(this Transform3D trs) => GetMatrixComponents(trs.Matrix);
+
+		/// <summary>
 		/// Returns the components of this <see cref="Matrix4f"/> in column-major order.
 		/// </summary>
 		/// <returns></returns>
+		[Obsolete("For glTF writing, use the Write extension.")]
 		public static float[] GetMatrixComponents(this Matrix4f mtx) {
 			/*
 			// Row Major
@@ -74,53 +64,5 @@ namespace ThreeRingsSharp.XansData.Extensions {
 				mtx.M30, mtx.M31, mtx.M32, mtx.M33
 			};
 		}
-
-		/// <summary>
-		/// Rotates the given <see cref="Transform3D"/> on the given <paramref name="axis"/> by the given <paramref name="rotation"/> (which is in radians)<para/>
-		/// Returns the same <see cref="Transform3D"/> that this was called on for ease in chaining.
-		/// </summary>
-		/// <param name="trs">The translation to alter.</param>
-		/// <param name="axis">The axis to rotate on.</param>
-		/// <param name="rotation">The amount of radians to rotate.</param>
-		/// <returns></returns>
-		public static Transform3D RotateOnAxis(this Transform3D trs, Axis axis, float rotation) {
-			return trs.ComposeSelf(new Transform3D(new Vector3f(), new Quaternion().FromAngleAxis(rotation, Vector3.FromAxis(axis))));
-		}
-
-		/// <summary>
-		/// Rotates the given <see cref="Transform3D"/> on the given <paramref name="axis"/> by the given <paramref name="rotation"/> (which is in degrees)<para/>
-		/// Returns the same <see cref="Transform3D"/> that this was called on for ease in chaining.
-		/// </summary>
-		/// <param name="trs">The translation to alter.</param>
-		/// <param name="axis">The axis to rotate on.</param>
-		/// <param name="rotation">The amount of radians to rotate.</param>
-		/// <returns></returns>
-		public static Transform3D RotateOnAxisDegrees(this Transform3D trs, Axis axis, float rotation) => RotateOnAxis(trs, axis, (float)(Math.PI / 180) * rotation);
-
-		/// <summary>
-		/// Clones this <see cref="Transform3D"/> into a new instance with the same data.
-		/// </summary>
-		/// <param name="trs"></param>
-		/// <returns></returns>
-		public static Transform3D Clone(this Transform3D trs) => new Transform3D(trs);
-
-		/// <summary>
-		/// Returns a new <see cref="Quaternion"/> which is <paramref name="quat"/> but rotated so that 
-		/// </summary>
-		/// <param name="quat"></param>
-		/// <param name="targetUpAxis"></param>
-		/// <returns></returns>
-		public static Quaternion RotateToUpAxis(this Quaternion quat, Axis targetUpAxis) {
-			if (targetUpAxis == Axis.NegativeY) return quat.Mult(new Quaternion().FromAngleAxis((float)Math.PI, new Vector3f(0, 0, 1)));
-
-			if (targetUpAxis == Axis.PositiveX) return quat.Mult(new Quaternion().FromAngleAxis(-(float)Math.PI / 2f, new Vector3f(0, 0, 1)));
-			if (targetUpAxis == Axis.NegativeX) return quat.Mult(new Quaternion().FromAngleAxis((float)Math.PI / 2f, new Vector3f(0, 0, 1)));
-
-			if (targetUpAxis == Axis.PositiveZ) return quat.Mult(new Quaternion().FromAngleAxis(-(float)Math.PI / 2f, new Vector3f(1, 0, 0)));
-			if (targetUpAxis == Axis.NegativeZ) return quat.Mult(new Quaternion().FromAngleAxis((float)Math.PI / 2f, new Vector3f(1, 0, 0)));
-
-			return new Quaternion(quat); // pos y and default
-		}
-
 	}
 }

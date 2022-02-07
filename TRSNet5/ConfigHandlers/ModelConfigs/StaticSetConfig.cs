@@ -48,7 +48,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			staticSetTreeNode.Properties.Add(treeMaterials);
 			staticSetTreeNode.Properties.Add(treeVariantRefs);
 			staticSetTreeNode.Properties.Add(ModelConfig.SetupParametersForProperties(modelConfig));
-			staticSetTreeNode.Properties.Add(ctx.CurrentSceneTransform.ToKVC());
+			staticSetTreeNode.Properties.Add(ctx.CurrentSceneTransform.ToKeyValueContainer());
 			#endregion
 
 			int idx = 0;
@@ -59,7 +59,7 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 				foreach (ShadowClass visMesh in visible) {
 					meshTitle += $"-Submesh[{idx}]";
 					Model3D meshToModel = GeometryConfigTranslator.ToModel3D(ctx, visMesh["geometry"], fullDepthName + meshTitle, ctx.CurrentAttachmentNode?.BaseNode);
-					meshToModel.Transform.ComposeSelf(ctx.CurrentSceneTransform);
+					meshToModel.Transform *= ctx.CurrentSceneTransform;
 					ctx.RegisterStaticSetVariantModel(staticSetImpl, meshInfo.Key.ToString() ?? "null", meshToModel);
 
 					// TODO: Textures

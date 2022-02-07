@@ -283,7 +283,7 @@ namespace SKAnimatorTools {
 				ShowWindow(ConsolePtr, 0);
 			}
 
-			MasterSKConfigs.Initialize();
+			if (!UserConfiguration.IsFirstTimeOpening) MasterSKConfigs.Initialize(); // For first time, the dir might be wrong. Prevent init.
 		}
 
 		private void OnConfigChanged(string configKey, dynamic oldValue, dynamic newValue) {
@@ -368,8 +368,6 @@ namespace SKAnimatorTools {
 				ConfigurationInterface.SetConfigurationValue("LastSaveDirectory", saveTo.DirectoryName);
 				ModelFormat targetFmt = ModelFormatUtil.ExtensionToFormatBindings[saveTo.Extension];
 
-
-
 				try {
 					Model3D.ExportIntoOne(saveTo, targetFmt, CurrentContext!.AllModels.ToArray());
 					XanLogger.WriteLine($"Done! Exported to [{saveTo.FullName}]");
@@ -410,6 +408,7 @@ namespace SKAnimatorTools {
 			try {
 				XanLogger.WriteLine("Working. This could take a bit...");
 				// ClydeFileHandler.HandleClydeFile(clydeFile, AllModels, true, ModelStructureTree);
+				MasterDataExtractor.PurgeCache();
 				MasterDataExtractor.ExtractFrom(CurrentContext, (fName, vName, comp, baseType) => {
 					SKAnimatorToolsProxy.UISyncContext?.Send(data => {
 						(string file, string version, string compressed, string type) = (ValueTuple<string, string, string, string>)data!;
@@ -422,7 +421,7 @@ namespace SKAnimatorTools {
 				
 			} catch (ClydeDataReadException exc) {
 				XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, color: Color.IndianRed);
-				AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
+				AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs, if you see another pop up.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
 				SKAnimatorToolsProxy.UISyncContext?.Send(callback => {
 					BtnOpenModel.Enabled = true;
 					BtnSaveModel.Enabled = false;
@@ -434,7 +433,7 @@ namespace SKAnimatorTools {
 				Exception err = tExc.InnerException!;
 				if (err is ClydeDataReadException exc) {
 					XanLogger.WriteLine("Clyde Data Read Exception Thrown!\n" + exc.Message, color: Color.IndianRed);
-					AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
+					AsyncMessageBox.Show(exc.Message + "\n\n\nIt is safe to click CONTINUE after this error occurs, if you see another pop up.", exc.ErrorWindowTitle ?? "Oh no!", MessageBoxButtons.OK, exc.ErrorWindowIcon);
 				} else {
 					XanLogger.WriteLine($"A critical error has occurred when processing: [{err.GetType().Name} Thrown]\n{err.Message}", color: Color.IndianRed);
 					XanLogger.LogException(err);
@@ -485,6 +484,7 @@ namespace SKAnimatorTools {
 				BtnOpenModel.Enabled = true;
 				BtnSaveModel.Enabled = true;
 				BtnConfig.Enabled = true;
+				ProgramLog.Invalidate();
 			}, null);
 		}
 
@@ -651,6 +651,7 @@ namespace SKAnimatorTools {
 
 		private void OnConfigFormClosed(object? sender, FormClosedEventArgs? e) {
 			ConfigForm = null;
+			MasterSKConfigs.Initialize(); // Does nothing if it is already init
 		}
 
 		/// <summary>
@@ -837,6 +838,7 @@ namespace SKAnimatorTools {
 
 		private void ModelLoaderBGWorker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs? e) {
 			Update();
+			Refresh();
 		}
 
 		#endregion

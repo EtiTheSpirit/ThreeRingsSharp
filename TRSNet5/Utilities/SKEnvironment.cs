@@ -15,7 +15,7 @@ namespace ThreeRingsSharp.Utilities {
 		/// <summary>
 		/// The Spiral Knights game folder.
 		/// </summary>
-		public static DirectoryInfo RSRC_DIR { get; set; } = new DirectoryInfo(@"E:\Steam Games\steamapps\common\Spiral Knights\");
+		public static DirectoryInfo RSRC_DIR { get; set; } = new DirectoryInfo(@"E:\Steam Games\steamapps\common\Spiral Knights\rsrc");
 
 		/// <summary>
 		/// Using <see cref="RSRC_DIR"/> this will return a <see cref="FileInfo"/> described by <paramref name="dir"/>. For example, if <paramref name="dir"/> is <c>character/npc/monster/gremlin/null/model.dat</c>, then this will return the absolute path to that file.

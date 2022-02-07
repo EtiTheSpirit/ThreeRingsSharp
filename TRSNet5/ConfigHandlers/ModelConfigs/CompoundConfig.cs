@@ -46,14 +46,14 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 				if (component.IsA("com.threerings.opengl.model.config.CompoundConfig$ComponentModel") && component.TryGetFieldAs("model", "com.threerings.config.ConfigReference", out ShadowClass? mdlRef, true) && mdlRef != null) {
 					Transform3D offset;
 					if (component.TryGetFieldAs("transform", "com.threerings.math.Transform3D", out ShadowClass? shdTransform, true) && shdTransform != null) {
-						offset = new Transform3D(shdTransform!);
+						offset = Transform3D.FromShadow(shdTransform!);
 					} else {
-						offset = Transform3D.NewIdentity();
+						offset = new Transform3D();
 					}
 					ctx.ComposeTransform(offset);
 					ConfigReference cfgRef = new ConfigReference(mdlRef!);
 					MasterDataExtractor.ExtractFrom(ctx, cfgRef);
-					if (!offset.IsSingular()) ctx.ComposeTransform(offset.Invert());
+					ctx.ComposeTransform(offset.Invert());
 				}
 			}
 

@@ -105,7 +105,7 @@ namespace ThreeRingsSharp.Utilities {
 		public ReadFileContext(FileInfo file) {
 			OriginalFile = file;
 			File = file;
-			CurrentSceneTransform = Transform3D.NewIdentity();
+			CurrentSceneTransform = new Transform3D();
 			AllModelsAndNodes = new List<Model3D>();
 			AllModels = new List<Model3D>();
 			AllArmatures = new Dictionary<string, Armature>();
@@ -113,23 +113,16 @@ namespace ThreeRingsSharp.Utilities {
 		}
 
 		/// <summary>
-		/// An alias to <see cref="Transform3D.ComposeSelf(Transform3D)"/> (called on <see cref="CurrentSceneTransform"/>), but with zero-scale protection.
+		/// An alias to <see cref="Transform3DRef.ComposeSelf(Transform3DRef)"/> (called on <see cref="CurrentSceneTransform"/>), but with zero-scale protection.
 		/// </summary>
 		/// <param name="toApplyToThis"></param>
 		public void ComposeTransform(Transform3D toApplyToThis) {
 			Vector3f scaleBy = toApplyToThis.Scale;
-			if (Model3D.ProtectAgainstZeroScale && scaleBy.LengthSquared() == 0) {
-				switch (toApplyToThis.Rank) {
-					case Transform3D.UNIFORM:
-						toApplyToThis.SetUniformScale(1f);
-						break;
-					default:
-						Debug.WriteLine("Cannot resolve zero scale value: Non-uniform scale detected; op currently not supported.");
-						break;
-				}
+			if (Model3D.ProtectAgainstZeroScale && scaleBy.LengthSquared == 0) {
+				CurrentSceneTransform *= new Transform3D(toApplyToThis.Translation, toApplyToThis.Rotation);
+			} else {
+				CurrentSceneTransform *= toApplyToThis;
 			}
-
-			CurrentSceneTransform.ComposeSelf(toApplyToThis);
 		}
 
 		/// <summary>

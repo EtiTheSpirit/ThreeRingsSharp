@@ -83,7 +83,7 @@ namespace ThreeRingsSharp.ConfigHandlers.Presets {
 #pragma warning disable CS0168 // Variable is declared but never used
 			} catch (Exception exc) {
 #pragma warning restore CS0168 // Variable is declared but never used
-				// Keep for debugging.
+				// Keep exc for debugging.
 				Debugger.Break();
 			}
 #else

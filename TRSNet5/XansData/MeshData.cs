@@ -296,14 +296,14 @@ namespace ThreeRingsSharp.XansData {
 		}
 
 		/// <summary>
-		/// Constructs a new mesh with no vertices, indices, or other data associated with geometry. It can optionally have a dummy armature at the given <see cref="Transform3D"/> (unless the transform is <see langword="null"/>, from which no bone will be created. This mesh is 🅱️oneless.)
+		/// Constructs a new mesh with no vertices, indices, or other data associated with geometry. It can optionally have a dummy armature at the given <see cref="Transform3DRef"/> (unless the transform is <see langword="null"/>, from which no bone will be created. This mesh is 🅱️oneless.)
 		/// </summary>
 		/// <param name="name">The name of this mesh, and if a transform is given, its bone.</param>
 		/// <param name="transform">A transform for the location of this mesh's single empty bone, or null for no bone.</param>
 		/// <returns></returns>
 		public static MeshData Empty(string name, Transform3D? transform = null) {
 			return new MeshData(name) {
-				Skeleton = Armature.ConstructHierarchyFromNode(new Node(name, transform ?? Transform3D.NewIdentity()))
+				Skeleton = Armature.ConstructHierarchyFromNode(new Node(name, transform ?? new Transform3D()))
 			};
 		}
 

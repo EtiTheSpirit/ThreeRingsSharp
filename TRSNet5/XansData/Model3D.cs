@@ -34,9 +34,9 @@ namespace ThreeRingsSharp.XansData {
 
 		/// <summary>
 		/// If <see langword="true"/>, any models that have a scale of zero will have their scale corrected. Cases where models are dubbed incorrect are:<para/>
-		/// - The matrix's scale (a <see cref="Vector3f"/>) only has its X value populated, Y and Z are zero. Y and Z will be set to X (this happens for cases where uniform scale is stored as a Vector3f)<para/>
+		/// - The matrix's scale (a <see cref="Vector3fRef"/>) only has its X value populated, Y and Z are zero. Y and Z will be set to X (this happens for cases where uniform scale is stored as a Vector3f)<para/>
 		/// - The matrix's scale has a magnitude of zero.<para/>
-		/// - The <see cref="Transform3D.GetScale()"/> method returns zero, in which case, if the matrix has a non-zero uniform scale it will be set to this, or it will be directly set to 1.
+		/// - The <see cref="Transform3DRef.GetScale()"/> method returns zero, in which case, if the matrix has a non-zero uniform scale it will be set to this, or it will be directly set to 1.
 		/// </summary>
 		public static bool ProtectAgainstZeroScale { get; set; } = true;
 

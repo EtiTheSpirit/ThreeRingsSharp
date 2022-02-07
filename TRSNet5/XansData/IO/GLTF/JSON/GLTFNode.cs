@@ -62,7 +62,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// Sets <see cref="Translation"/> to the given <see cref="Vector3"/>.
 		/// </summary>
 		/// <param name="translation">The <see cref="Vector3"/> to set <see cref="Translation"/> to.</param>
-		public void SetPosition(Vector3 translation) {
+		public void SetPosition(Vector3f translation) {
 			Translation = new float[3];
 			Translation[0] = translation.X;
 			Translation[1] = translation.Y;
@@ -70,9 +70,9 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		}
 
 		/// <summary>
-		/// Sets <see cref="Rotation"/> to the given <see cref="Quaternion"/>.
+		/// Sets <see cref="Rotation"/> to the given <see cref="QuaternionRef"/>.
 		/// </summary>
-		/// <param name="rotation">The <see cref="Quaternion"/> to set <see cref="Rotation"/> to.</param>
+		/// <param name="rotation">The <see cref="QuaternionRef"/> to set <see cref="Rotation"/> to.</param>
 		public void SetRotation(Quaternion rotation) {
 			Rotation = new float[4];
 			Rotation[0] = rotation.X;
@@ -86,7 +86,7 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// Sets <see cref="Scale"/> to the given <see cref="Vector3"/>.
 		/// </summary>
 		/// <param name="scale">The <see cref="Vector3"/> to set <see cref="Scale"/> to.</param>
-		public void SetScale(Vector3 scale) {
+		public void SetScale(Vector3f scale) {
 			Scale = new float[3];
 			Scale[0] = scale.X;
 			Scale[1] = scale.Y;
@@ -97,10 +97,10 @@ namespace ThreeRingsSharp.XansData.IO.GLTF.JSON {
 		/// Sets <see cref="Scale"/> so that all three components are equal to the given <see cref="float"/>.
 		/// </summary>
 		/// <param name="scale">The <see cref="float"/> to set all components of <see cref="Scale"/> to.</param>
-		public void SetScale(float scale) => SetScale(new Vector3(scale, scale, scale));
+		public void SetScale(float scale) => SetScale(new Vector3f(scale, scale, scale));
 
 		/// <summary>
-		/// Sets all applicable transformation-related properties from the given <see cref="Transform3D"/>.
+		/// Sets all applicable transformation-related properties from the given <see cref="Transform3DRef"/>.
 		/// </summary>
 		/// <param name="transform"></param>
 		public void SetTransform(Transform3D transform) {

@@ -58,7 +58,7 @@
         </member>
         <member name="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry">
             <summary>
-            The base type for something that's in a TudeySceneModel. This is identical to TudeySceneModel$Entry, minus the fact that it represents all types at once.
+            The base type for something that's in a TudeySceneModel. This is comparable to TudeySceneModel$Entry.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry.Reference">
@@ -78,14 +78,14 @@
         </member>
         <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry.#ctor(OOOReader.Reader.ShadowClass,OOOReader.Reader.ShadowClass)">
             <summary>
-            Converts a shadowed <c>com.threerings.tudey.data.TudeySceneModel$Entry</c> into an instance of this class.
+            Converts a shadowed <c>com.threerings.tudey.data.TudeySceneModel$PlaceableEntry</c> into an instance of this class.
             </summary>
             <param name="scene"></param>
             <param name="shadowEntry"></param>
         </member>
-        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry.#ctor(OOOReader.Reader.ShadowClass,OOOReader.Utility.ShallowImpl.CoordIntEntry)">
+        <member name="M:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry.#ctor(OOOReader.Reader.ShadowClass,OOOReader.Utility.TudeyScene.Tile)">
             <summary>
-            Creates a <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry"/> by decoding a <see cref="T:OOOReader.Utility.ShallowImpl.CoordIntEntry"/>'s data.
+            Creates a <see cref="T:ThreeRingsSharp.ConfigHandlers.TudeyScenes.Entries.SceneEntry"/> by decoding a <see cref="!:CoordIntEntry"/>'s data.
             </summary>
             <param name="scene"></param>
             <param name="entry"></param>
@@ -132,6 +132,11 @@
             <param name="context"></param>
             <param name="reference"></param>
             <param name="extraTag">If defined, then the root element for this model will have the tag appended in brackets: model.dat [extraTag]</param>
+        </member>
+        <member name="M:ThreeRingsSharp.MasterDataExtractor.PurgeCache">
+            <summary>
+            Purges the cache.
+            </summary>
         </member>
         <member name="T:ThreeRingsSharp.Utilities.ArgumentApplier">
             <summary>
@@ -364,6 +369,17 @@
             A variation of <see cref="T:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.DirectPointer"/> for use when the last element of a direct is an array.
             </summary>
         </member>
+        <member name="T:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.DictionaryDirectPointer">
+            <summary>
+            An experimental type of pointer that references a specific element in a dictionary. It is unknown whether or not OOO supports these, but the code for them does exist.
+            </summary>
+        </member>
+        <member name="T:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.FaultyDirectPointer">
+            <summary>
+            A variant of <see cref="T:ThreeRingsSharp.Utilities.Parameters.Implementation.Direct.DirectPointer"/> that represents a missing or unresolvable direct.
+            It can be read to and written from, but its default value is null and it can store any arbitrary data as it behaves more like a husk.
+            </summary>
+        </member>
         <member name="P:ThreeRingsSharp.Utilities.Parameters.Implementation.Parameter.Name">
             <summary>
             The name of this parameter.
@@ -501,7 +517,7 @@
         </member>
         <member name="M:ThreeRingsSharp.Utilities.ReadFileContext.ComposeTransform(OOOReader.Utility.Mathematics.Transform3D)">
             <summary>
-            An alias to <see cref="M:OOOReader.Utility.Mathematics.Transform3D.ComposeSelf(OOOReader.Utility.Mathematics.Transform3D)"/> (called on <see cref="P:ThreeRingsSharp.Utilities.ReadFileContext.CurrentSceneTransform"/>), but with zero-scale protection.
+            An alias to <see cref="M:OOOReader.Utility.Mathematics.Transform3DRef.ComposeSelf(OOOReader.Utility.Mathematics.Transform3DRef)"/> (called on <see cref="P:ThreeRingsSharp.Utilities.ReadFileContext.CurrentSceneTransform"/>), but with zero-scale protection.
             </summary>
             <param name="toApplyToThis"></param>
         </member>
@@ -651,7 +667,7 @@
         </member>
         <member name="P:ThreeRingsSharp.XansData.Animation.Key.Transform">
             <summary>
-            The <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/> that should be applied to the bone this <see cref="T:ThreeRingsSharp.XansData.Animation.Key"/> applies to.
+            The <see cref="T:OOOReader.Utility.Mathematics.Transform3DRef"/> that should be applied to the bone this <see cref="T:ThreeRingsSharp.XansData.Animation.Key"/> applies to.
             </summary>
         </member>
         <member name="T:ThreeRingsSharp.XansData.Armature">
@@ -1137,7 +1153,7 @@
             <param name="text"></param>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.WriteASCIIToByteArray(System.String,System.Byte[]@,System.Int32)">
+        <member name="M:ThreeRingsSharp.XansData.Extensions.StringExtensions.WriteASCIIToByteArray(System.String,System.Byte[],System.Int32)">
             <summary>
             Formats the given string to an ASCII string and then writes it to the array, starting at the given offset.<para/>
             Throws <see cref="T:System.IndexOutOfRangeException"/> if the array is too short to contain the string.
@@ -1145,19 +1161,6 @@
             <param name="str">The string to write.</param>
             <param name="array">The array to write the string into.</param>
             <param name="offset">The index to start writing at.</param>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.GetAllTransforms(OOOReader.Utility.Mathematics.Transform3D)">
-            <summary>
-            Returns all components of this transform in the order of <c>translation, rotation, scale (as Vector3f), scale (as float)</c>.
-            </summary>
-            <param name="trs"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.GetMatrixComponents(OOOReader.Utility.Mathematics.Transform3D)">
-            <summary>
-            Returns the components of this <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/>'s matrix in column-major order. If it does not have a matrix, one will be created via the promotion of a duplicate <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/>.
-            </summary>
-            <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.GetAllComponents(OOOReader.Utility.Mathematics.Transform3D)">
             <summary>
@@ -1177,48 +1180,19 @@
             </item>
             </list>
             </summary>
-            <param name="trs">The <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/> to extract the components from.</param>
+            <param name="trs">The <see cref="T:OOOReader.Utility.Mathematics.Transform3DRef"/> to extract the components from.</param>
+            <returns></returns>
+        </member>
+        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.GetMatrixComponents(OOOReader.Utility.Mathematics.Transform3D)">
+            <summary>
+            Returns the components of this <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/> in column-major order.
+            </summary>
             <returns></returns>
         </member>
         <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.GetMatrixComponents(OOOReader.Utility.Mathematics.Matrix4f)">
             <summary>
             Returns the components of this <see cref="T:OOOReader.Utility.Mathematics.Matrix4f"/> in column-major order.
             </summary>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.RotateOnAxis(OOOReader.Utility.Mathematics.Transform3D,ThreeRingsSharp.XansData.Structs.Axis,System.Single)">
-            <summary>
-            Rotates the given <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/> on the given <paramref name="axis"/> by the given <paramref name="rotation"/> (which is in radians)<para/>
-            Returns the same <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/> that this was called on for ease in chaining.
-            </summary>
-            <param name="trs">The translation to alter.</param>
-            <param name="axis">The axis to rotate on.</param>
-            <param name="rotation">The amount of radians to rotate.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.RotateOnAxisDegrees(OOOReader.Utility.Mathematics.Transform3D,ThreeRingsSharp.XansData.Structs.Axis,System.Single)">
-            <summary>
-            Rotates the given <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/> on the given <paramref name="axis"/> by the given <paramref name="rotation"/> (which is in degrees)<para/>
-            Returns the same <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/> that this was called on for ease in chaining.
-            </summary>
-            <param name="trs">The translation to alter.</param>
-            <param name="axis">The axis to rotate on.</param>
-            <param name="rotation">The amount of radians to rotate.</param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.Clone(OOOReader.Utility.Mathematics.Transform3D)">
-            <summary>
-            Clones this <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/> into a new instance with the same data.
-            </summary>
-            <param name="trs"></param>
-            <returns></returns>
-        </member>
-        <member name="M:ThreeRingsSharp.XansData.Extensions.TransformExtensions.RotateToUpAxis(OOOReader.Utility.Mathematics.Quaternion,ThreeRingsSharp.XansData.Structs.Axis)">
-            <summary>
-            Returns a new <see cref="T:OOOReader.Utility.Mathematics.Quaternion"/> which is <paramref name="quat"/> but rotated so that 
-            </summary>
-            <param name="quat"></param>
-            <param name="targetUpAxis"></param>
             <returns></returns>
         </member>
         <member name="T:ThreeRingsSharp.XansData.FileUtils">
@@ -1430,12 +1404,14 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.GetBinaryData(ThreeRingsSharp.XansData.Model3D[])">
+        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.GLTFExporter.WriteBinaryData(System.IO.BinaryWriter,ThreeRingsSharp.XansData.Model3D[])">
             <summary>
             Returns the GLB portion of the file, which stores all of the necessary data. This also populates the json.
             </summary>
+            <param name="stream"></param>
             <param name="models"></param>
             <returns></returns>
+            
         </member>
         <member name="T:ThreeRingsSharp.XansData.IO.GLTF.JSON.Extension.IGLTFExtension">
             <summary>
@@ -1841,7 +1817,7 @@
             Set this to true to export <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Matrix"/>, and false to export <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Translation"/>, <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Rotation"/>, and <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Scale"/>.
             </summary>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.SetPosition(ThreeRingsSharp.XansData.Structs.Vector3)">
+        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.SetPosition(OOOReader.Utility.Mathematics.Vector3f)">
             <summary>
             Sets <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Translation"/> to the given <see cref="T:ThreeRingsSharp.XansData.Structs.Vector3"/>.
             </summary>
@@ -1849,11 +1825,11 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.SetRotation(OOOReader.Utility.Mathematics.Quaternion)">
             <summary>
-            Sets <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Rotation"/> to the given <see cref="T:OOOReader.Utility.Mathematics.Quaternion"/>.
+            Sets <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Rotation"/> to the given <see cref="T:OOOReader.Utility.Mathematics.QuaternionRef"/>.
             </summary>
-            <param name="rotation">The <see cref="T:OOOReader.Utility.Mathematics.Quaternion"/> to set <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Rotation"/> to.</param>
+            <param name="rotation">The <see cref="T:OOOReader.Utility.Mathematics.QuaternionRef"/> to set <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Rotation"/> to.</param>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.SetScale(ThreeRingsSharp.XansData.Structs.Vector3)">
+        <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.SetScale(OOOReader.Utility.Mathematics.Vector3f)">
             <summary>
             Sets <see cref="F:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.Scale"/> to the given <see cref="T:ThreeRingsSharp.XansData.Structs.Vector3"/>.
             </summary>
@@ -1867,7 +1843,7 @@
         </member>
         <member name="M:ThreeRingsSharp.XansData.IO.GLTF.JSON.GLTFNode.SetTransform(OOOReader.Utility.Mathematics.Transform3D)">
             <summary>
-            Sets all applicable transformation-related properties from the given <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/>.
+            Sets all applicable transformation-related properties from the given <see cref="T:OOOReader.Utility.Mathematics.Transform3DRef"/>.
             </summary>
             <param name="transform"></param>
         </member>
@@ -2218,9 +2194,9 @@
             </summary>
             <exception cref="T:System.ObjectDisposedException">If this <see cref="T:ThreeRingsSharp.XansData.MeshData"/> has been disposed.</exception>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.MeshData.Empty(System.String,OOOReader.Utility.Mathematics.Transform3D)">
+        <member name="M:ThreeRingsSharp.XansData.MeshData.Empty(System.String,System.Nullable{OOOReader.Utility.Mathematics.Transform3D})">
             <summary>
-            Constructs a new mesh with no vertices, indices, or other data associated with geometry. It can optionally have a dummy armature at the given <see cref="T:OOOReader.Utility.Mathematics.Transform3D"/> (unless the transform is <see langword="null"/>, from which no bone will be created. This mesh is 🅱️oneless.)
+            Constructs a new mesh with no vertices, indices, or other data associated with geometry. It can optionally have a dummy armature at the given <see cref="T:OOOReader.Utility.Mathematics.Transform3DRef"/> (unless the transform is <see langword="null"/>, from which no bone will be created. This mesh is 🅱️oneless.)
             </summary>
             <param name="name">The name of this mesh, and if a transform is given, its bone.</param>
             <param name="transform">A transform for the location of this mesh's single empty bone, or null for no bone.</param>
@@ -2250,9 +2226,9 @@
         <member name="P:ThreeRingsSharp.XansData.Model3D.ProtectAgainstZeroScale">
             <summary>
             If <see langword="true"/>, any models that have a scale of zero will have their scale corrected. Cases where models are dubbed incorrect are:<para/>
-            - The matrix's scale (a <see cref="T:OOOReader.Utility.Mathematics.Vector3f"/>) only has its X value populated, Y and Z are zero. Y and Z will be set to X (this happens for cases where uniform scale is stored as a Vector3f)<para/>
+            - The matrix's scale (a <see cref="T:OOOReader.Utility.Mathematics.Vector3fRef"/>) only has its X value populated, Y and Z are zero. Y and Z will be set to X (this happens for cases where uniform scale is stored as a Vector3f)<para/>
             - The matrix's scale has a magnitude of zero.<para/>
-            - The <see cref="!:Transform3D.GetScale()"/> method returns zero, in which case, if the matrix has a non-zero uniform scale it will be set to this, or it will be directly set to 1.
+            - The <see cref="!:Transform3DRef.GetScale()"/> method returns zero, in which case, if the matrix has a non-zero uniform scale it will be set to this, or it will be directly set to 1.
             </summary>
         </member>
         <member name="P:ThreeRingsSharp.XansData.Model3D.Name">
@@ -2354,7 +2330,7 @@
             <param name="targetFormat"></param>
             <param name="models"></param>
         </member>
-        <member name="M:ThreeRingsSharp.XansData.Model3D.Empty(System.String,System.Boolean,OOOReader.Utility.Mathematics.Transform3D)">
+        <member name="M:ThreeRingsSharp.XansData.Model3D.Empty(System.String,System.Boolean,System.Nullable{OOOReader.Utility.Mathematics.Transform3D})">
             <summary>
             Creates a new <see cref="T:ThreeRingsSharp.XansData.Model3D"/> without any data and with its <see cref="P:ThreeRingsSharp.XansData.Model3D.IsEmptyObject"/> property set to true.
             </summary>
@@ -2630,6 +2606,11 @@
             <param name="buttons">The buttons used in the message box (e.g. OK)</param>
             <param name="icon">The icon to display on the left side of the message box.</param>
             <returns></returns>
+        </member>
+        <member name="M:SKAnimatorTools.PrimaryInterface.TRSLog.WaitForNextMessagesToWrite">
+            <summary>
+            Waits for the next messages to be written on any TRSLog instance (it should be a singleton anyway)
+            </summary>
         </member>
     </members>
 </doc>

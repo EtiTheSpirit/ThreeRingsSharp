@@ -74,7 +74,7 @@ namespace ThreeRingsSharp.XansData {
 			public string Node { get; set; }
 
 			/// <summary>
-			/// The <see cref="Transform3D"/> that should be applied to the bone this <see cref="Key"/> applies to.
+			/// The <see cref="Transform3DRef"/> that should be applied to the bone this <see cref="Key"/> applies to.
 			/// </summary>
 			public Transform3D Transform { get; set; }
 #pragma warning restore CS8618 // Non-nullable field must contain a non-null value when exiting constructor. Consider declaring as nullable.

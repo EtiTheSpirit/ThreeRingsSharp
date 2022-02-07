@@ -64,9 +64,9 @@ namespace ThreeRingsSharp.ConfigHandlers.ModelConfigs {
 			#endregion
 
 			if (isSkybox) {
-				Vector3f offset = new Vector3f(vEffectCfg["translationOrigin"]);
+				Vector3f offset = Vector3f.FromShadow(vEffectCfg["translationOrigin"]);
 				//Vector3f translationScale = new Vector3f(vEffectCfg["translationScale"]);
-				Transform3D offsetTransform = new Transform3D(offset, Quaternion.NewIdentity());
+				Transform3D offsetTransform = new Transform3D(offset);
 
 				// Note from old program: This is for parallax scale, not actual model scale
 				//Vector3f originalScale = new Vector3f(ctx.CurrentTranslationScale);

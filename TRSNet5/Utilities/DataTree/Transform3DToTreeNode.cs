@@ -10,7 +10,7 @@ using XDataTree.TreeElements;
 namespace ThreeRingsSharp.Utilities.DataTree {
 	public static class Transform3DToTreeNode {
 
-		public static KeyValueContainerElement ToKVC(this Transform3D transform) {
+		public static KeyValueContainerElement ToKeyValueContainer(this Transform3D transform) {
 			KeyValueContainerElement ctr = new KeyValueContainerElement("Transform", SilkImage.Matrix);
 			KeyValueElement trs = new KeyValueElement("Translation", transform.Translation.ToString(), false, SilkImage.Vector3);
 			KeyValueElement rot = new KeyValueElement("Rotation", transform.Rotation.ToString(), false, SilkImage.Vector4);
